@@ -7,7 +7,7 @@ local Hashtags = {}
 local Calls = {}
 local Adverts = {}
 local GeneratedPlates = {}
-local WebHook = ""
+local WebHook = "https://discord.com/api/webhooks/953239515902906388/r3pxmooaAXvLq91CD2RT0T6gdXuNeDh9IGCflAhbh1sauC5ocbChhJspV-gFC6tmNGVf"
 local bannedCharacters = {'%','$',';'}
 
 -- Functions
@@ -626,7 +626,7 @@ NADRP.Functions.CreateCallback('NADRP-phone:server:GetCurrentLawyers', function(
 end)
 
 NADRP.Functions.CreateCallback("NADRP-phone:server:GetWebhook",function(source,cb)
-	if WebHook ~= "" then
+	if WebHook ~= "https://discord.com/api/webhooks/953239515902906388/r3pxmooaAXvLq91CD2RT0T6gdXuNeDh9IGCflAhbh1sauC5ocbChhJspV-gFC6tmNGVf" then
 		cb(WebHook)
 	else
 		print('Set your webhook to ensure that your camera will work!!!!!! Set this on line 10 of the server sided script!!!!!')
