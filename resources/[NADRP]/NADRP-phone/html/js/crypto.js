@@ -153,7 +153,7 @@ $(document).on('click', '#buy-crypto', function(e){
 
     if ((Coins !== "") && (Price !== "")) {
         if (QB.Phone.Data.PlayerData.money.bank >= Price) {
-            $.post('https://denalifw-phone/BuyCrypto', JSON.stringify({
+            $.post('https://NADRP-phone/BuyCrypto', JSON.stringify({
                 Coins: Coins,
                 Price: Price,
             }), function(CryptoData){
@@ -184,7 +184,7 @@ $(document).on('click', '#sell-crypto', function(e){
 
     if ((Coins !== "") && (Price !== "")) {
         if (CryptoData.Portfolio >= parseInt(Coins)) {
-            $.post('https://denalifw-phone/SellCrypto', JSON.stringify({
+            $.post('https://NADRP-phone/SellCrypto', JSON.stringify({
                 Coins: Coins,
                 Price: Price,
             }), function(CryptoData){
@@ -217,7 +217,7 @@ $(document).on('click', '#transfer-crypto', function(e){
     if ((Coins !== "") && (WalletId !== "")) {
         if (CryptoData.Portfolio >= Coins) {
             if (WalletId !== CryptoData.WalletId) {
-                $.post('https://denalifw-phone/TransferCrypto', JSON.stringify({
+                $.post('https://NADRP-phone/TransferCrypto', JSON.stringify({
                     Coins: Coins,
                     WalletId: WalletId,
                 }), function(CryptoData){

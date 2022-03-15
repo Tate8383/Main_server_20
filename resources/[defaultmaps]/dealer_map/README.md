@@ -1,7 +1,7 @@
 # dealer_map
 Vehicle shop used with denalifw-vehicleshop
 
-The author of this map is Patoche, he has given the denalifw framework permission to use it in our txAdmin recipe! Thanks a lot!
+The author of this map is Patoche, he has given the DenaliFW framework permission to use it in our txAdmin recipe! Thanks a lot!
 
 Here is the original listing: https://www.gta5-mods.com/maps/car-dealer-fivem-sp-ready
 

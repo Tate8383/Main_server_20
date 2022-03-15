@@ -113,7 +113,7 @@ RegisterNetEvent('police:client:ActiveCamera', function(cameraId)
         })
         DoScreenFadeIn(250)
     else
-        denalifw.Functions.Notify(Lang:t("error.no_camera"), "error")
+        NADRP.Functions.Notify(Lang:t("error.no_camera"), "error")
     end
 end)
 

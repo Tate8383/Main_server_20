@@ -102,7 +102,7 @@ Databank.Close = function() {
     $(".databank-container").css("display", "none");
     $(".tablet-frame").css("display", "none");
     $(".databank-bg").css("display", "none");
-    $.post("https://denalifw-policejob/closeDatabank", JSON.stringify({}));
+    $.post("https://NADRP-policejob/closeDatabank", JSON.stringify({}));
 }
 
 Fingerprint.Open = function() {
@@ -112,7 +112,7 @@ Fingerprint.Open = function() {
 
 Fingerprint.Close = function() {
     $(".fingerprint-container").fadeOut(150);
-    $.post('https://denalifw-policejob/closeFingerprint');
+    $.post('https://NADRP-policejob/closeFingerprint');
 }
 
 Fingerprint.Update = function(data) {
@@ -120,7 +120,7 @@ Fingerprint.Update = function(data) {
 }
 
 $(document).on('click', '.take-fingerprint', function(){
-    $.post('https://denalifw-policejob/doFingerScan');
+    $.post('https://NADRP-policejob/doFingerScan');
 })
 
 document.onreadystatechange = () => {

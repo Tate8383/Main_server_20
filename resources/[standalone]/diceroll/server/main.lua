@@ -1,8 +1,8 @@
-denalifw = nil
+DenaliFW = nil
 
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local DenaliFW = exports['denalifw-core']:GetCoreObject()
 
-denalifw.Commands.Add("roll", "Roll a number of dice :)", {{name="ammount", help="Amount of dices"}, {name="sides", help="Amount of sides of the dice"}}, true, function(source, args) -- Eigen add command functie mot je vervangen naar esx versie
+DenaliFW.Commands.Add("roll", "Roll a number of dice :)", {{name="ammount", help="Amount of dices"}, {name="sides", help="Amount of sides of the dice"}}, true, function(source, args) -- Eigen add command functie mot je vervangen naar esx versie
     local amount = tonumber(args[1])
     local sides = tonumber(args[2])
     if (sides > 0 and sides <= DiceRoll.maxsides) and (amount > 0 and amount <= DiceRoll.maxamount) then 
@@ -12,6 +12,6 @@ denalifw.Commands.Add("roll", "Roll a number of dice :)", {{name="ammount", help
         end
         TriggerClientEvent("diceroll:client:roll", -1, source, DiceRoll.maxdistance, result, sides)
     else
-        TriggerClientEvent('denalifw:Notify', source, "Too many sides of 0 (max: "..DiceRoll.maxsides..") or amount of dices or 0 (max: "..DiceRoll.maxamount..")", "error") -- Hier moet je ff esx melding neerzetten
+        TriggerClientEvent('DenaliFW:Notify', source, "Too many sides of 0 (max: "..DiceRoll.maxsides..") or amount of dices or 0 (max: "..DiceRoll.maxamount..")", "error") -- Hier moet je ff esx melding neerzetten
     end
 end)

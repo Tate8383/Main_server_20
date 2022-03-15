@@ -1,25 +1,25 @@
-denalifw.Functions = {}
-denalifw.RequestId = 0
+NADRP.Functions = {}
+NADRP.RequestId = 0
 
 -- Player
 
-function denalifw.Functions.GetPlayerData(cb)
+function NADRP.Functions.GetPlayerData(cb)
     if cb then
-        cb(denalifw.PlayerData)
+        cb(NADRP.PlayerData)
     else
-        return denalifw.PlayerData
+        return NADRP.PlayerData
     end
 end
 
-function denalifw.Functions.GetCoords(entity)
+function NADRP.Functions.GetCoords(entity)
     local coords = GetEntityCoords(entity, false)
     local heading = GetEntityHeading(entity)
     return vector4(coords.x, coords.y, coords.z, heading)
 end
 
-function denalifw.Functions.HasItem(item)
+function NADRP.Functions.HasItem(item)
     local p = promise.new()
-    denalifw.Functions.TriggerCallback('denalifw:HasItem', function(result)
+    NADRP.Functions.TriggerCallback('NADRP:HasItem', function(result)
         p:resolve(result)
     end, item)
     return Citizen.Await(p)
@@ -27,7 +27,7 @@ end
 
 -- Utility
 
-function denalifw.Functions.DrawText(x, y, width, height, scale, r, g, b, a, text)
+function NADRP.Functions.DrawText(x, y, width, height, scale, r, g, b, a, text)
     -- Use local function instead
     SetTextFont(4)
     SetTextProportional(0)
@@ -42,7 +42,7 @@ function denalifw.Functions.DrawText(x, y, width, height, scale, r, g, b, a, tex
     DrawText(x - width / 2, y - height / 2 + 0.005)
 end
 
-function denalifw.Functions.DrawText3D(x, y, z, text)
+function NADRP.Functions.DrawText3D(x, y, z, text)
     -- Use local function instead
     SetTextScale(0.35, 0.35)
     SetTextFont(4)
@@ -58,7 +58,7 @@ function denalifw.Functions.DrawText3D(x, y, z, text)
     ClearDrawOrigin()
 end
 
-function denalifw.Functions.CreateBlip(coords, sprite, display, scale, colour, shortRange, title)
+function NADRP.Functions.CreateBlip(coords, sprite, display, scale, colour, shortRange, title)
     if not coords or not sprite or not display or not scale or not colour or shortRange == nil or not title then 
         print("Blip failed to create, most likely missed a setting, debug log: ")
         print("Coords: " .. coords .. " Sprite: " .. sprite .. " Display: " .. display .. " scale: " .. scale .. " shortRange: " .. shortRange .. " Title: " .. title .. " if you're attempting to use a blip without a title, use an empty string.")
@@ -75,7 +75,7 @@ function denalifw.Functions.CreateBlip(coords, sprite, display, scale, colour, s
     end
 end
 
-function denalifw.Functions.RequestAnimDict(animDict)
+function NADRP.Functions.RequestAnimDict(animDict)
 	if not HasAnimDictLoaded(animDict) then
 		RequestAnimDict(animDict)
 
@@ -85,7 +85,7 @@ function denalifw.Functions.RequestAnimDict(animDict)
 	end
 end
 
-function denalifw.Functions.LoadModel(ModelName)
+function NADRP.Functions.LoadModel(ModelName)
 	RequestModel(ModelName)
 	while not HasModelLoaded(ModelName) do
 		Wait(100)
@@ -93,10 +93,10 @@ function denalifw.Functions.LoadModel(ModelName)
 end
 
 RegisterNUICallback('getNotifyConfig', function(_, cb)
-    cb(denalifw.Config.Notify)
+    cb(NADRP.Config.Notify)
 end)
 
-function denalifw.Functions.Notify(text, textype, length)
+function NADRP.Functions.Notify(text, textype, length)
     if type(text) == "table" then
         local ttext = text.text or 'Placeholder'
         local caption = text.caption or 'Placeholder'
@@ -121,16 +121,16 @@ function denalifw.Functions.Notify(text, textype, length)
     end
 end
 
-function denalifw.Debug(resource, obj, depth)
-    TriggerServerEvent('denalifw:DebugSomething', resource, obj, depth)
+function NADRP.Debug(resource, obj, depth)
+    TriggerServerEvent('NADRP:DebugSomething', resource, obj, depth)
 end
 
-function denalifw.Functions.TriggerCallback(name, cb, ...)
-    denalifw.ServerCallbacks[name] = cb
-    TriggerServerEvent('denalifw:Server:TriggerCallback', name, ...)
+function NADRP.Functions.TriggerCallback(name, cb, ...)
+    NADRP.ServerCallbacks[name] = cb
+    TriggerServerEvent('NADRP:Server:TriggerCallback', name, ...)
 end
 
-function denalifw.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
+function NADRP.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
     exports['progressbar']:Progress({
         name = name:lower(),
         duration = duration,
@@ -156,17 +156,17 @@ end
 
 -- Getters
 
-function denalifw.Functions.GetVehicles()
+function NADRP.Functions.GetVehicles()
     return GetGamePool('CVehicle')
 end
-function denalifw.Functions.GetObjects()
+function NADRP.Functions.GetObjects()
     return GetGamePool('CObject')
 end
-function denalifw.Functions.GetPlayers()
+function NADRP.Functions.GetPlayers()
     return GetActivePlayers()
 end
 
-function denalifw.Functions.GetPeds(ignoreList)
+function NADRP.Functions.GetPeds(ignoreList)
     local pedPool = GetGamePool('CPed')
     local ignoreList = ignoreList or {}
     local peds = {}
@@ -184,7 +184,7 @@ function denalifw.Functions.GetPeds(ignoreList)
     return peds
 end
 
-function denalifw.Functions.GetClosestPed(coords, ignoreList)
+function NADRP.Functions.GetClosestPed(coords, ignoreList)
     local ped = PlayerPedId()
     if coords then
         coords = type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords
@@ -192,7 +192,7 @@ function denalifw.Functions.GetClosestPed(coords, ignoreList)
         coords = GetEntityCoords(ped)
     end
     local ignoreList = ignoreList or {}
-    local peds = denalifw.Functions.GetPeds(ignoreList)
+    local peds = NADRP.Functions.GetPeds(ignoreList)
     local closestDistance = -1
     local closestPed = -1
     for i = 1, #peds, 1 do
@@ -207,30 +207,30 @@ function denalifw.Functions.GetClosestPed(coords, ignoreList)
     return closestPed, closestDistance
 end
 
-function denalifw.Functions.IsWearingGloves()
+function NADRP.Functions.IsWearingGloves()
     local armIndex = GetPedDrawableVariation(PlayerPedId(), 3)
     local model = GetEntityModel(PlayerPedId())
     local retval = true
     if model == `mp_m_freemode_01` then
-        if denalifw.Shared.MaleNoGloves[armIndex] ~= nil and denalifw.Shared.MaleNoGloves[armIndex] then
+        if NADRP.Shared.MaleNoGloves[armIndex] ~= nil and NADRP.Shared.MaleNoGloves[armIndex] then
             retval = false
         end
     else
-        if denalifw.Shared.FemaleNoGloves[armIndex] ~= nil and denalifw.Shared.FemaleNoGloves[armIndex] then
+        if NADRP.Shared.FemaleNoGloves[armIndex] ~= nil and NADRP.Shared.FemaleNoGloves[armIndex] then
             retval = false
         end
     end
     return retval
 end
 
-function denalifw.Functions.GetClosestPlayer(coords)
+function NADRP.Functions.GetClosestPlayer(coords)
     local ped = PlayerPedId()
     if coords then
         coords = type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords
     else
         coords = GetEntityCoords(ped)
     end
-    local closestPlayers = denalifw.Functions.GetPlayersFromCoords(coords)
+    local closestPlayers = NADRP.Functions.GetPlayersFromCoords(coords)
     local closestDistance = -1
     local closestPlayer = -1
     for i = 1, #closestPlayers, 1 do
@@ -247,8 +247,8 @@ function denalifw.Functions.GetClosestPlayer(coords)
     return closestPlayer, closestDistance
 end
 
-function denalifw.Functions.GetPlayersFromCoords(coords, distance)
-    local players = denalifw.Functions.GetPlayers()
+function NADRP.Functions.GetPlayersFromCoords(coords, distance)
+    local players = NADRP.Functions.GetPlayers()
     local ped = PlayerPedId()
     if coords then
         coords = type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords
@@ -268,7 +268,7 @@ function denalifw.Functions.GetPlayersFromCoords(coords, distance)
     return closePlayers
 end
 
-function denalifw.Functions.GetClosestVehicle(coords)
+function NADRP.Functions.GetClosestVehicle(coords)
     local ped = PlayerPedId()
     local vehicles = GetGamePool('CVehicle')
     local closestDistance = -1
@@ -290,7 +290,7 @@ function denalifw.Functions.GetClosestVehicle(coords)
     return closestVehicle, closestDistance
 end
 
-function denalifw.Functions.GetClosestObject(coords)
+function NADRP.Functions.GetClosestObject(coords)
     local ped = PlayerPedId()
     local objects = GetGamePool('CObject')
     local closestDistance = -1
@@ -311,7 +311,7 @@ function denalifw.Functions.GetClosestObject(coords)
     return closestObject, closestDistance
 end
 
-function denalifw.Functions.GetClosestBone(entity, list)
+function NADRP.Functions.GetClosestBone(entity, list)
     local playerCoords, bone, coords, distance = GetEntityCoords(PlayerPedId())
 
     for _, element in pairs(list) do
@@ -334,7 +334,7 @@ function denalifw.Functions.GetClosestBone(entity, list)
     return bone, coords, distance
 end
 
-function denalifw.Functions.GetBoneDistance(entity, Type, Bone)
+function NADRP.Functions.GetBoneDistance(entity, Type, Bone)
     local bone
 
     if Type == 1 then
@@ -349,7 +349,7 @@ function denalifw.Functions.GetBoneDistance(entity, Type, Bone)
     return #(boneCoords - playerCoords)
 end
 
-function denalifw.Functions.AttachProp(ped, model, boneId, x, y, z, xR, yR, zR, Vertex)
+function NADRP.Functions.AttachProp(ped, model, boneId, x, y, z, xR, yR, zR, Vertex)
     local modelHash = GetHashKey(model)
     local bone = GetPedBoneIndex(ped, boneId)
     RequestModel(modelHash)
@@ -364,7 +364,7 @@ end
 
 -- Vehicle
 
-function denalifw.Functions.SpawnVehicle(model, cb, coords, isnetworked)
+function NADRP.Functions.SpawnVehicle(model, cb, coords, isnetworked)
     local model = GetHashKey(model)
     local ped = PlayerPedId()
     if coords then
@@ -392,17 +392,17 @@ function denalifw.Functions.SpawnVehicle(model, cb, coords, isnetworked)
     end
 end
 
-function denalifw.Functions.DeleteVehicle(vehicle)
+function NADRP.Functions.DeleteVehicle(vehicle)
     SetEntityAsMissionEntity(vehicle, true, true)
     DeleteVehicle(vehicle)
 end
 
-function denalifw.Functions.GetPlate(vehicle)
+function NADRP.Functions.GetPlate(vehicle)
     if vehicle == 0 then return end
-    return denalifw.Shared.Trim(GetVehicleNumberPlateText(vehicle))
+    return NADRP.Shared.Trim(GetVehicleNumberPlateText(vehicle))
 end
 
-function denalifw.Functions.SpawnClear(coords, radius)
+function NADRP.Functions.SpawnClear(coords, radius)
     local vehicles = GetGamePool('CVehicle')
     local closeVeh = {}
     for i=1, #vehicles, 1 do
@@ -416,7 +416,7 @@ function denalifw.Functions.SpawnClear(coords, radius)
     return true
 end
 
-function denalifw.Functions.GetVehicleProperties(vehicle)
+function NADRP.Functions.GetVehicleProperties(vehicle)
     if DoesEntityExist(vehicle) then
         local colorPrimary, colorSecondary = GetVehicleColours(vehicle)
         local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
@@ -447,13 +447,13 @@ function denalifw.Functions.GetVehicleProperties(vehicle)
 
         return {
             model = GetEntityModel(vehicle),
-            plate = denalifw.Functions.GetPlate(vehicle),
+            plate = NADRP.Functions.GetPlate(vehicle),
             plateIndex = GetVehicleNumberPlateTextIndex(vehicle),
-            bodyHealth = denalifw.Shared.Round(GetVehicleBodyHealth(vehicle), 0.1),
-            engineHealth = denalifw.Shared.Round(GetVehicleEngineHealth(vehicle), 0.1),
-            tankHealth = denalifw.Shared.Round(GetVehiclePetrolTankHealth(vehicle), 0.1),
-            fuelLevel = denalifw.Shared.Round(GetVehicleFuelLevel(vehicle), 0.1),
-            dirtLevel = denalifw.Shared.Round(GetVehicleDirtLevel(vehicle), 0.1),
+            bodyHealth = NADRP.Shared.Round(GetVehicleBodyHealth(vehicle), 0.1),
+            engineHealth = NADRP.Shared.Round(GetVehicleEngineHealth(vehicle), 0.1),
+            tankHealth = NADRP.Shared.Round(GetVehiclePetrolTankHealth(vehicle), 0.1),
+            fuelLevel = NADRP.Shared.Round(GetVehicleFuelLevel(vehicle), 0.1),
+            dirtLevel = NADRP.Shared.Round(GetVehicleDirtLevel(vehicle), 0.1),
             color1 = colorPrimary,
             color2 = colorSecondary,
             pearlescentColor = pearlescentColor,
@@ -525,7 +525,7 @@ function denalifw.Functions.GetVehicleProperties(vehicle)
     end
 end
 
-function denalifw.Functions.SetVehicleProperties(vehicle, props)
+function NADRP.Functions.SetVehicleProperties(vehicle, props)
     if DoesEntityExist(vehicle) then
         local colorPrimary, colorSecondary = GetVehicleColours(vehicle)
         local pearlescentColor, wheelColor = GetVehicleExtraColours(vehicle)
@@ -749,7 +749,7 @@ function denalifw.Functions.SetVehicleProperties(vehicle, props)
     end
 end
 
-function denalifw.Functions.LoadParticleDictionary(dictionary)
+function NADRP.Functions.LoadParticleDictionary(dictionary)
     if not HasNamedPtfxAssetLoaded(dictionary) then
         RequestNamedPtfxAsset(dictionary)
         while not HasNamedPtfxAssetLoaded(dictionary) do
@@ -758,8 +758,8 @@ function denalifw.Functions.LoadParticleDictionary(dictionary)
     end
 end
 
-function denalifw.Functions.StartParticleAtCoord(Dict, ptName, looped, coords, rot, scale, alpha, color, duration)
-    denalifw.Functions.LoadParticleDictionary(Dict)
+function NADRP.Functions.StartParticleAtCoord(Dict, ptName, looped, coords, rot, scale, alpha, color, duration)
+    NADRP.Functions.LoadParticleDictionary(Dict)
     UseParticleFxAssetNextCall(Dict)
     SetPtfxAssetNextCall(Dict)
     local particleHandle
@@ -784,8 +784,8 @@ function denalifw.Functions.StartParticleAtCoord(Dict, ptName, looped, coords, r
     return particleHandle
 end
 
-function denalifw.Functions.StartParticleOnEntity(Dict, ptName, looped, entity, bone, offset, rot, scale, alpha, color, evolution, duration)
-    denalifw.Functions.LoadParticleDictionary(Dict)
+function NADRP.Functions.StartParticleOnEntity(Dict, ptName, looped, entity, bone, offset, rot, scale, alpha, color, evolution, duration)
+    NADRP.Functions.LoadParticleDictionary(Dict)
     UseParticleFxAssetNextCall(Dict)
     local particleHandle, boneID
     if bone and GetEntityType(entity) == 1 then

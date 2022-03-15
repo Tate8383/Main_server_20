@@ -1,7 +1,7 @@
 -- Variables
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local requiredItemsShowed = false
-local requiredItems = {[1] = {name = denalifw.Shared.Items["cryptostick"]["name"], image = denalifw.Shared.Items["cryptostick"]["image"]}}
+local requiredItems = {[1] = {name = NADRP.Shared.Items["cryptostick"]["name"], image = NADRP.Shared.Items["cryptostick"]["image"]}}
 
 -- Functions
 
@@ -21,7 +21,7 @@ local function DrawText3Ds(coords, text)
 end
 
 local function ExchangeSuccess()
-	TriggerServerEvent('denalifw-crypto:server:ExchangeSuccess', math.random(1, 10))
+	TriggerServerEvent('NADRP-crypto:server:ExchangeSuccess', math.random(1, 10))
 end
 
 local function ExchangeFail()
@@ -29,8 +29,8 @@ local function ExchangeFail()
 	local RemoveChance = math.random(1, Odd)
 	local LosingNumber = math.random(1, Odd)
 	if RemoveChance == LosingNumber then
-		TriggerServerEvent('denalifw-crypto:server:ExchangeFail')
-		TriggerServerEvent('denalifw-crypto:server:SyncReboot')
+		TriggerServerEvent('NADRP-crypto:server:ExchangeFail')
+		TriggerServerEvent('NADRP-crypto:server:SyncReboot')
 	end
 end
 
@@ -39,11 +39,11 @@ local function SystemCrashCooldown()
 		while Crypto.Exchange.RebootInfo.state do
 			if (Crypto.Exchange.RebootInfo.percentage + 1) <= 100 then
 				Crypto.Exchange.RebootInfo.percentage = Crypto.Exchange.RebootInfo.percentage + 1
-				TriggerServerEvent('denalifw-crypto:server:Rebooting', true, Crypto.Exchange.RebootInfo.percentage)
+				TriggerServerEvent('NADRP-crypto:server:Rebooting', true, Crypto.Exchange.RebootInfo.percentage)
 			else
 				Crypto.Exchange.RebootInfo.percentage = 0
 				Crypto.Exchange.RebootInfo.state = false
-				TriggerServerEvent('denalifw-crypto:server:Rebooting', false, 0)
+				TriggerServerEvent('NADRP-crypto:server:Rebooting', false, 0)
 			end
 			Wait(1200)
 		end
@@ -78,12 +78,12 @@ CreateThread(function()
 						end
 
 						if IsControlJustPressed(0, 38) then
-							denalifw.Functions.TriggerCallback('denalifw-crypto:server:HasSticky', function(HasItem)
+							NADRP.Functions.TriggerCallback('NADRP-crypto:server:HasSticky', function(HasItem)
 								if HasItem then
 									TriggerEvent("mhacking:show")
 									TriggerEvent("mhacking:start", math.random(4, 6), 45, HackingSuccess)
 								else
-									denalifw.Functions.Notify('You have no Cryptostick', 'error')
+									NADRP.Functions.Notify('You have no Cryptostick', 'error')
 								end
 							end)
 						end
@@ -104,24 +104,24 @@ end)
 
 -- Events
 
-RegisterNetEvent('denalifw-crypto:client:SyncReboot', function()
+RegisterNetEvent('NADRP-crypto:client:SyncReboot', function()
 	Crypto.Exchange.RebootInfo.state = true
 	SystemCrashCooldown()
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-	TriggerServerEvent('denalifw-crypto:server:FetchWorth')
-	TriggerServerEvent('denalifw-crypto:server:GetRebootState')
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+	TriggerServerEvent('NADRP-crypto:server:FetchWorth')
+	TriggerServerEvent('NADRP-crypto:server:GetRebootState')
 end)
 
-RegisterNetEvent('denalifw-crypto:client:UpdateCryptoWorth', function(crypto, amount, history)
+RegisterNetEvent('NADRP-crypto:client:UpdateCryptoWorth', function(crypto, amount, history)
 	Crypto.Worth[crypto] = amount
 	if history ~= nil then
 		Crypto.History[crypto] = history
 	end
 end)
 
-RegisterNetEvent('denalifw-crypto:client:GetRebootState', function(RebootInfo)
+RegisterNetEvent('NADRP-crypto:client:GetRebootState', function(RebootInfo)
 	if RebootInfo.state then
 		Crypto.Exchange.RebootInfo.state = RebootInfo.state
 		Crypto.Exchange.RebootInfo.percentage = RebootInfo.percentage

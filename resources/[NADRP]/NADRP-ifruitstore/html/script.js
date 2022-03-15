@@ -106,7 +106,7 @@ $(document).ready(function() {
         if (distance < HitDistance) {
             // if (unghi > MainAngle - 25 && unghi < MainAngle + 25) {
             MainDigits--;
-            $.post("https://denalifw-ifruitstore/thermiteclick");
+            $.post("https://NADRP-ifruitstore/thermiteclick");
             // If game over, hide the game, display end of game options
             if (!MainDigits) {
                 $("#circle").addClass("hidden");
@@ -196,18 +196,18 @@ Thermite.Open = function(data) {
 }
 
 Thermite.Failed = function() {
-    if (active) $.post("https://denalifw-ifruitstore/thermitefailed");
+    if (active) $.post("https://NADRP-ifruitstore/thermitefailed");
     active = false;
     Thermite.Close();
 }
 
 Thermite.Success = function() {
-    if (active) $.post("https://denalifw-ifruitstore/thermitesuccess");
+    if (active) $.post("https://NADRP-ifruitstore/thermitesuccess");
     active = false;
     Thermite.Close();
 }
 
 Thermite.Close = function() {
     $('.thermite-container').css("display", "none");
-    $.post('https://denalifw-ifruitstore/closethermite');
+    $.post('https://NADRP-ifruitstore/closethermite');
 }

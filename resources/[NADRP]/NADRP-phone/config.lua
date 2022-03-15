@@ -182,7 +182,7 @@ Config.StoreApps = {
         slot = 15,
         Alerts = 0,
         password = true,
-        creator = "denalifw",
+        creator = "NADRP",
         title = "Territory",
     },
 }

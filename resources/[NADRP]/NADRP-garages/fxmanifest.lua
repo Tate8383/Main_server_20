@@ -1,12 +1,12 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-Garages'
+description 'NADRP-Garages'
 version '1.0.0'
 
 shared_scripts {
     'config.lua',
-    '@denalifw-core/shared/locale.lua',
+    '@NADRP-core/shared/locale.lua',
     'locales/en.lua'   -- Choose your language from locales
 }
 

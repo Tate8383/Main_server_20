@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 -- Functions
 
@@ -10,36 +10,36 @@ local function ResetHouseStateTimer(house)
         for k, v in pairs(Config.Houses[house]["furniture"]) do
             v["searched"] = false
         end
-        TriggerClientEvent('denalifw-houserobbery:client:ResetHouseState', -1, house)
+        TriggerClientEvent('NADRP-houserobbery:client:ResetHouseState', -1, house)
     end)
 end
 
 -- Callbacks
 
-denalifw.Functions.CreateCallback('denalifw-houserobbery:server:GetHouseConfig', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-houserobbery:server:GetHouseConfig', function(source, cb)
     cb(Config.Houses)
 end)
 
 -- Events
 
-RegisterNetEvent('denalifw-houserobbery:server:SetBusyState', function(cabin, house, bool)
+RegisterNetEvent('NADRP-houserobbery:server:SetBusyState', function(cabin, house, bool)
     Config.Houses[house]["furniture"][cabin]["isBusy"] = bool
-    TriggerClientEvent('denalifw-houserobbery:client:SetBusyState', -1, cabin, house, bool)
+    TriggerClientEvent('NADRP-houserobbery:client:SetBusyState', -1, cabin, house, bool)
 end)
 
-RegisterNetEvent('denalifw-houserobbery:server:enterHouse', function(house)
+RegisterNetEvent('NADRP-houserobbery:server:enterHouse', function(house)
     local src = source
     if not Config.Houses[house]["opened"] then
         ResetHouseStateTimer(house)
-        TriggerClientEvent('denalifw-houserobbery:client:setHouseState', -1, house, true)
+        TriggerClientEvent('NADRP-houserobbery:client:setHouseState', -1, house, true)
     end
-    TriggerClientEvent('denalifw-houserobbery:client:enterHouse', src, house)
+    TriggerClientEvent('NADRP-houserobbery:client:enterHouse', src, house)
     Config.Houses[house]["opened"] = true
 end)
 
-RegisterNetEvent('denalifw-houserobbery:server:searchCabin', function(cabin, house)
+RegisterNetEvent('NADRP-houserobbery:server:searchCabin', function(cabin, house)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local luck = math.random(1, 10)
     local itemFound = math.random(1, 4)
     local itemCount = 1
@@ -62,15 +62,15 @@ RegisterNetEvent('denalifw-houserobbery:server:searchCabin', function(cabin, hou
 
         for i = 1, itemCount, 1 do
             local randomItem = Config.Rewards[Tier][Config.Houses[house]["furniture"][cabin]["type"]][math.random(1, #Config.Rewards[Tier][Config.Houses[house]["furniture"][cabin]["type"]])]
-            local itemInfo = denalifw.Shared.Items[randomItem]
+            local itemInfo = NADRP.Shared.Items[randomItem]
             if math.random(1, 100) == 69 then
                 randomItem = "painkillers"
-                itemInfo = denalifw.Shared.Items[randomItem]
+                itemInfo = NADRP.Shared.Items[randomItem]
                 Player.Functions.AddItem(randomItem, 2)
                 TriggerClientEvent('inventory:client:ItemBox', src, itemInfo, "add")
             elseif math.random(1, 100) == 35 then
                     randomItem = "weed_og-kush_seed"
-                    itemInfo = denalifw.Shared.Items[randomItem]
+                    itemInfo = NADRP.Shared.Items[randomItem]
                     Player.Functions.AddItem(randomItem, 1)
                     TriggerClientEvent('inventory:client:ItemBox', src, itemInfo, "add")
             else
@@ -98,9 +98,9 @@ RegisterNetEvent('denalifw-houserobbery:server:searchCabin', function(cabin, hou
             -- local weaponChance = math.random(1, 100)
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.emty_box"), 'error')
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.emty_box"), 'error')
     end
 
     Config.Houses[house]["furniture"][cabin]["searched"] = true
-    TriggerClientEvent('denalifw-houserobbery:client:setCabinState', -1, house, cabin, true)
+    TriggerClientEvent('NADRP-houserobbery:client:setCabinState', -1, house, cabin, true)
 end)

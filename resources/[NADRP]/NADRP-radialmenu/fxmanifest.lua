@@ -1,14 +1,14 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-RadialMenu'
+description 'NADRP-RadialMenu'
 version '1.0.0'
 
 ui_page 'html/index.html'
 
 shared_scripts {
     'config.lua',
-    '@denalifw-core/shared/locale.lua',
+    '@NADRP-core/shared/locale.lua',
     'locales/en.lua' -- Change this to your preferred language
 }
 

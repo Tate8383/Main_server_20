@@ -1,5 +1,5 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
-local PlayerData = denalifw.Functions.GetPlayerData()
+local NADRP = exports['NADRP-core']:GetCoreObject()
+local PlayerData = NADRP.Functions.GetPlayerData()
 local config = Config
 local speedMultiplier = config.UseMPH and 2.23694 or 3.6
 local seatbeltOn = false
@@ -65,7 +65,7 @@ local function loadSettings(settings)
             SendNUIMessage({ test = true, event = k, toggle = v})
         end
     end
-    denalifw.Functions.Notify(Lang:t("notify.hud_settings_loaded"), "success")
+    NADRP.Functions.Notify(Lang:t("notify.hud_settings_loaded"), "success")
     Wait(1000)
     TriggerEvent("hud:client:LoadMap")
 end
@@ -74,18 +74,18 @@ local function saveSettings()
     SetResourceKvp('hudSettings', json.encode(Menu))
 end
 
-RegisterNetEvent("denalifw:Client:OnPlayerLoaded", function()
+RegisterNetEvent("NADRP:Client:OnPlayerLoaded", function()
     Wait(2000)
     local hudSettings = GetResourceKvpString('hudSettings')
     if hudSettings then loadSettings(json.decode(hudSettings)) end
-    PlayerData = denalifw.Functions.GetPlayerData()
+    PlayerData = NADRP.Functions.GetPlayerData()
 end)
 
-RegisterNetEvent("denalifw:Client:OnPlayerUnload", function()
+RegisterNetEvent("NADRP:Client:OnPlayerUnload", function()
     PlayerData = {}
 end)
 
-RegisterNetEvent("denalifw:Player:SetPlayerData", function(val)
+RegisterNetEvent("NADRP:Player:SetPlayerData", function(val)
     PlayerData = val
 end)
 
@@ -118,7 +118,7 @@ RegisterKeyMapping('menu', 'Open Menu', 'keyboard', Config.OpenMenu)
 -- Reset hud
 local function restartHud()
     TriggerEvent("hud:client:playResetHudSounds")
-    denalifw.Functions.Notify(Lang:t("notify.hud_restart"), "error")
+    NADRP.Functions.Notify(Lang:t("notify.hud_restart"), "error")
     if IsPedInAnyVehicle(PlayerPedId()) then
         Wait(2600)
         SendNUIMessage({ action = 'car', show = false })
@@ -128,7 +128,7 @@ local function restartHud()
     SendNUIMessage({ action = 'hudtick', show = false })
     SendNUIMessage({ action = 'hudtick', show = true })
     Wait(2600)
-    denalifw.Functions.Notify(Lang:t("notify.hud_start"), "success")
+    NADRP.Functions.Notify(Lang:t("notify.hud_start"), "success")
 end
 
 RegisterNUICallback('restartHud', function()
@@ -151,7 +151,7 @@ RegisterNetEvent("hud:client:resetStorage", function()
     if Menu.isResetSoundsChecked then
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "airwrench", 0.1)
     end
-    denalifw.Functions.TriggerCallback('hud:server:getMenu', function(menu) loadSettings(menu); SetResourceKvp('hudSettings', json.encode(menu)) end)
+    NADRP.Functions.TriggerCallback('hud:server:getMenu', function(menu) loadSettings(menu); SetResourceKvp('hudSettings', json.encode(menu)) end)
 end)
 
 -- Notifications
@@ -327,7 +327,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
             Wait(150)
         end
         if Menu.isMapNotifChecked then
-            denalifw.Functions.Notify(Lang:t("notify.load_square_map"))
+            NADRP.Functions.Notify(Lang:t("notify.load_square_map"))
         end
         SetMinimapClipType(0)
         AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "squaremap", "radarmasksm")
@@ -356,7 +356,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
         end
         Wait(1200)
         if Menu.isMapNotifChecked then
-            denalifw.Functions.Notify(Lang:t("notify.loaded_square_map"))
+            NADRP.Functions.Notify(Lang:t("notify.loaded_square_map"))
         end
     elseif Menu.isToggleMapShapeChecked == "circle" then
         RequestStreamedTextureDict("circlemap", false)
@@ -364,7 +364,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
             Wait(150)
         end
         if Menu.isMapNotifChecked then
-            denalifw.Functions.Notify(Lang:t("notify.load_circle_map"))
+            NADRP.Functions.Notify(Lang:t("notify.load_circle_map"))
         end
         SetMinimapClipType(1)
         AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "circlemap", "radarmasksm")
@@ -393,7 +393,7 @@ RegisterNetEvent("hud:client:LoadMap", function()
         end
         Wait(1200)
         if Menu.isMapNotifChecked then
-            denalifw.Functions.Notify(Lang:t("notify.loaded_circle_map"))
+            NADRP.Functions.Notify(Lang:t("notify.loaded_circle_map"))
         end
     end
 end)
@@ -482,14 +482,14 @@ RegisterNUICallback('cinematicMode', function()
         CinematicShow(false)
         Menu.isCineamticModeChecked = false
         if Menu.isCinematicNotifChecked then
-            denalifw.Functions.Notify(Lang:t("notify.cinematic_off"), 'error')
+            NADRP.Functions.Notify(Lang:t("notify.cinematic_off"), 'error')
         end
         DisplayRadar(1)
     else
         CinematicShow(true)
         Menu.isCineamticModeChecked = true
         if Menu.isCinematicNotifChecked then
-            denalifw.Functions.Notify(Lang:t("notify.cinematic_on"))
+            NADRP.Functions.Notify(Lang:t("notify.cinematic_on"))
         end
     end
     TriggerEvent("hud:client:playHudChecklistSound")
@@ -504,7 +504,7 @@ RegisterNetEvent('hud:client:ToggleAirHud', function()
     showAltitude = not showAltitude
 end)
 
-RegisterNetEvent('hud:client:UpdateNeeds', function(newHunger, newThirst) -- Triggered in denalifw-core
+RegisterNetEvent('hud:client:UpdateNeeds', function(newHunger, newThirst) -- Triggered in NADRP-core
     hunger = newHunger
     thirst = newThirst
 end)
@@ -534,7 +534,7 @@ RegisterNetEvent('hud:client:UpdateHarness', function(harnessHp)
     hp = harnessHp
 end)
 
-RegisterNetEvent("denalifw-admin:client:ToggleDevmode", function()
+RegisterNetEvent("NADRP-admin:client:ToggleDevmode", function()
     dev = not dev
 end)
 
@@ -542,9 +542,9 @@ RegisterCommand('+engine', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
     if vehicle == 0 or GetPedInVehicleSeat(vehicle, -1) ~= PlayerPedId() then return end
     if GetIsVehicleEngineRunning(vehicle) then
-        denalifw.Functions.Notify(Lang:t("notify.engine_off"))
+        NADRP.Functions.Notify(Lang:t("notify.engine_off"))
     else
-        denalifw.Functions.Notify(Lang:t("notify.engine_on"))
+        NADRP.Functions.Notify(Lang:t("notify.engine_on"))
     end
     SetVehicleEngineOn(vehicle, not GetIsVehicleEngineRunning(vehicle), false, true)
 end)
@@ -734,7 +734,7 @@ CreateThread(function()
                     DisplayRadar(true)
                 end
                 wasInVehicle = true
-                denalifw.Functions.TriggerCallback('hud:server:HasHarness', function(hasItem)
+                NADRP.Functions.TriggerCallback('hud:server:HasHarness', function(hasItem)
                     if hasItem then
                         harness = true
                     else
@@ -820,7 +820,7 @@ CreateThread(function()
                 if exports['LegacyFuel']:GetFuel(GetVehiclePedIsIn(ped, false)) <= 20 then -- At 20% Fuel Left
                     if Menu.isLowFuelChecked then
                         TriggerServerEvent("InteractSound_SV:PlayOnSource", "pager", 0.10)
-                        denalifw.Functions.Notify(Lang:t("notify.low_fuel"), "error")
+                        NADRP.Functions.Notify(Lang:t("notify.low_fuel"), "error")
                         Wait(60000) -- repeats every 1 min until empty
                     end
                 end

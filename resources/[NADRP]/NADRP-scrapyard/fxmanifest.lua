@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-Scrapyard'
+description 'NADRP-Scrapyard'
 version '1.0.0'
 
 shared_script 'config.lua'

@@ -1,8 +1,8 @@
-denalifw = nil
-local denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = nil
+local NADRP = exports['NADRP-core']:GetCoreObject()
 CreateThread(function()
     while true do 
-        if denalifw ~= nil then
+        if NADRP ~= nil then
             local ped = PlayerPedId()
             if not IsPedInAnyVehicle(ped, false) and GetEntitySpeed(ped) > 2.5 then
                 if IsControlJustPressed(1, 19) then
@@ -25,7 +25,7 @@ RegisterNetEvent('tackle:client:GetTackled', function()
 end)
 
 function Tackle()
-    closestPlayer, distance = denalifw.Functions.GetClosestPlayer()
+    closestPlayer, distance = NADRP.Functions.GetClosestPlayer()
     local closestPlayerPed = GetPlayerPed(closestPlayer)
     if(distance ~= -1 and distance < 2) then
         TriggerServerEvent("tackle:server:TacklePlayer", GetPlayerServerId(closestPlayer))
@@ -35,7 +35,7 @@ end
 
 function TackleAnim()
     local ped = PlayerPedId()
-    if not denalifw.Functions.GetPlayerData().metadata["ishandcuffed"] and not IsPedRagdoll(ped) then
+    if not NADRP.Functions.GetPlayerData().metadata["ishandcuffed"] and not IsPedRagdoll(ped) then
         RequestAnimDict("swimming@first_person@diving")
         while not HasAnimDictLoaded("swimming@first_person@diving") do
             Wait(1)

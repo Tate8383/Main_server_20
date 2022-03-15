@@ -8,18 +8,18 @@ local blackout = Config.Blackout
 local blackoutVehicle = Config.BlackoutVehicle
 local disable = Config.Disabled
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
     disable = false
-    TriggerServerEvent('denalifw-weathersync:server:RequestStateSync')
-    TriggerServerEvent('denalifw-weathersync:server:RequestCommands')
+    TriggerServerEvent('NADRP-weathersync:server:RequestStateSync')
+    TriggerServerEvent('NADRP-weathersync:server:RequestCommands')
 end)
 
-RegisterNetEvent('denalifw-weathersync:client:EnableSync', function()
+RegisterNetEvent('NADRP-weathersync:client:EnableSync', function()
     disable = false
-    TriggerServerEvent('denalifw-weathersync:server:RequestStateSync')
+    TriggerServerEvent('NADRP-weathersync:server:RequestStateSync')
 end)
 
-RegisterNetEvent('denalifw-weathersync:client:DisableSync', function()
+RegisterNetEvent('NADRP-weathersync:client:DisableSync', function()
 	disable = true
 	CreateThread(function()
 		while disable do
@@ -33,12 +33,12 @@ RegisterNetEvent('denalifw-weathersync:client:DisableSync', function()
 	end)
 end)
 
-RegisterNetEvent('denalifw-weathersync:client:SyncWeather', function(NewWeather, newblackout)
+RegisterNetEvent('NADRP-weathersync:client:SyncWeather', function(NewWeather, newblackout)
     CurrentWeather = NewWeather
     blackout = newblackout
 end)
 
-RegisterNetEvent('denalifw-weathersync:client:RequestCommands', function(isAllowed)
+RegisterNetEvent('NADRP-weathersync:client:RequestCommands', function(isAllowed)
     if isAllowed then
         TriggerEvent('chat:addSuggestion', '/freezetime', Lang:t('help.freezecommand'), {})
         TriggerEvent('chat:addSuggestion', '/freezeweather', Lang:t('help.freezeweathercommand'), {})
@@ -57,7 +57,7 @@ RegisterNetEvent('denalifw-weathersync:client:RequestCommands', function(isAllow
     end
 end)
 
-RegisterNetEvent('denalifw-weathersync:client:SyncTime', function(base, offset, freeze)
+RegisterNetEvent('NADRP-weathersync:client:SyncTime', function(base, offset, freeze)
     freezeTime = freeze
     timeOffset = offset
     baseTime = base

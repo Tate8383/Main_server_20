@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 -- Functions
 
@@ -35,12 +35,12 @@ end
 
 -- Callback
 
-denalifw.Functions.CreateCallback("weapons:server:GetConfig", function(source, cb)
+NADRP.Functions.CreateCallback("weapons:server:GetConfig", function(source, cb)
     cb(Config.WeaponRepairPoints)
 end)
 
-denalifw.Functions.CreateCallback("weapon:server:GetWeaponAmmo", function(source, cb, WeaponData)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback("weapon:server:GetWeaponAmmo", function(source, cb, WeaponData)
+    local Player = NADRP.Functions.GetPlayer(source)
     local retval = 0
     if WeaponData then
         if Player then
@@ -53,9 +53,9 @@ denalifw.Functions.CreateCallback("weapon:server:GetWeaponAmmo", function(source
     cb(retval)
 end)
 
-denalifw.Functions.CreateCallback('weapons:server:RemoveAttachment', function(source, cb, AttachmentData, ItemData)
+NADRP.Functions.CreateCallback('weapons:server:RemoveAttachment', function(source, cb, AttachmentData, ItemData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local Inventory = Player.PlayerData.items
     local AttachmentComponent = WeaponAttachments[ItemData.name:upper()][AttachmentData.attachment]
     if Inventory[ItemData.slot] then
@@ -65,8 +65,8 @@ denalifw.Functions.CreateCallback('weapons:server:RemoveAttachment', function(so
                 table.remove(Inventory[ItemData.slot].info.attachments, key)
                 Player.Functions.SetInventory(Player.PlayerData.items, true)
                 Player.Functions.AddItem(AttachmentComponent.item, 1)
-                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[AttachmentComponent.item], "add")
-                TriggerClientEvent("denalifw:Notify", src, Lang:t('info.removed_attachment', { value = denalifw.Shared.Items[AttachmentComponent.item].label }), "error")
+                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[AttachmentComponent.item], "add")
+                TriggerClientEvent("NADRP:Notify", src, Lang:t('info.removed_attachment', { value = NADRP.Shared.Items[AttachmentComponent.item].label }), "error")
                 cb(Inventory[ItemData.slot].info.attachments)
             else
                 cb(false)
@@ -79,13 +79,13 @@ denalifw.Functions.CreateCallback('weapons:server:RemoveAttachment', function(so
     end
 end)
 
-denalifw.Functions.CreateCallback("weapons:server:RepairWeapon", function(source, cb, RepairPoint, data)
+NADRP.Functions.CreateCallback("weapons:server:RepairWeapon", function(source, cb, RepairPoint, data)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local minute = 60 * 1000
     local Timeout = math.random(5 * minute, 10 * minute)
-    local WeaponData = denalifw.Shared.Weapons[GetHashKey(data.name)]
-    local WeaponClass = (denalifw.Shared.SplitStr(WeaponData.ammotype, "_")[2]):lower()
+    local WeaponData = NADRP.Shared.Weapons[GetHashKey(data.name)]
+    local WeaponClass = (NADRP.Shared.SplitStr(WeaponData.ammotype, "_")[2]):lower()
 
     if Player.PlayerData.items[data.slot] then
         if Player.PlayerData.items[data.slot].info.quality then
@@ -98,7 +98,7 @@ denalifw.Functions.CreateCallback("weapons:server:RepairWeapon", function(source
                         Ready = false,
                     }
                     Player.Functions.RemoveItem(data.name, 1, data.slot)
-                    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[data.name], "remove")
+                    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[data.name], "remove")
                     TriggerClientEvent("inventory:client:CheckWeapon", src, data.name)
                     TriggerClientEvent('weapons:client:SyncRepairShops', -1, Config.WeaponRepairPoints[RepairPoint], RepairPoint)
 
@@ -106,7 +106,7 @@ denalifw.Functions.CreateCallback("weapons:server:RepairWeapon", function(source
                         Config.WeaponRepairPoints[RepairPoint].IsRepairing = false
                         Config.WeaponRepairPoints[RepairPoint].RepairingData.Ready = true
                         TriggerClientEvent('weapons:client:SyncRepairShops', -1, Config.WeaponRepairPoints[RepairPoint], RepairPoint)
-                        TriggerEvent('denalifw-phone:server:sendNewMailToOffline', Player.PlayerData.citizenid, {
+                        TriggerEvent('NADRP-phone:server:sendNewMailToOffline', Player.PlayerData.citizenid, {
                             sender = Lang:t('mail.sender'),
                             subject = Lang:t('mail.subject'),
                             message = Lang:t('mail.message', { value = WeaponData.label })
@@ -124,15 +124,15 @@ denalifw.Functions.CreateCallback("weapons:server:RepairWeapon", function(source
                     cb(false)
                 end
             else
-                TriggerClientEvent("denalifw:Notify", src, Lang:t('error.no_damage_on_weapon'), "error")
+                TriggerClientEvent("NADRP:Notify", src, Lang:t('error.no_damage_on_weapon'), "error")
                 cb(false)
             end
         else
-            TriggerClientEvent("denalifw:Notify", src, Lang:t('error.no_damage_on_weapon'), "error")
+            TriggerClientEvent("NADRP:Notify", src, Lang:t('error.no_damage_on_weapon'), "error")
             cb(false)
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t('error.no_weapon_in_hand'), "error")
+        TriggerClientEvent('NADRP:Notify', src, Lang:t('error.no_weapon_in_hand'), "error")
         TriggerClientEvent('weapons:client:SetCurrentWeapon', src, {}, false)
         cb(false)
     end
@@ -142,7 +142,7 @@ end)
 
 RegisterNetEvent("weapons:server:AddWeaponAmmo", function(CurrentWeaponData, amount)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local amount = tonumber(amount)
     if CurrentWeaponData then
         if Player.PlayerData.items[CurrentWeaponData.slot] then
@@ -154,7 +154,7 @@ end)
 
 RegisterNetEvent("weapons:server:UpdateWeaponAmmo", function(CurrentWeaponData, amount)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local amount = tonumber(amount)
     if CurrentWeaponData then
         if Player.PlayerData.items[CurrentWeaponData.slot] then
@@ -166,11 +166,11 @@ end)
 
 RegisterNetEvent("weapons:server:TakeBackWeapon", function(k, data)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local itemdata = Config.WeaponRepairPoints[k].RepairingData.WeaponData
     itemdata.info.quality = 100
     Player.Functions.AddItem(itemdata.name, 1, false, itemdata.info)
-    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[itemdata.name], "add")
+    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[itemdata.name], "add")
     Config.WeaponRepairPoints[k].IsRepairing = false
     Config.WeaponRepairPoints[k].RepairingData = {}
     TriggerClientEvent('weapons:client:SyncRepairShops', -1, Config.WeaponRepairPoints[k], k)
@@ -178,7 +178,7 @@ end)
 
 RegisterNetEvent("weapons:server:SetWeaponQuality", function(data, hp)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local WeaponSlot = Player.PlayerData.items[data.slot]
     WeaponSlot.info.quality = hp
     Player.Functions.SetInventory(Player.PlayerData.items, true)
@@ -186,8 +186,8 @@ end)
 
 RegisterNetEvent('weapons:server:UpdateWeaponQuality', function(data, RepeatAmount)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
-    local WeaponData = denalifw.Shared.Weapons[GetHashKey(data.name)]
+    local Player = NADRP.Functions.GetPlayer(src)
+    local WeaponData = NADRP.Shared.Weapons[GetHashKey(data.name)]
     local WeaponSlot = Player.PlayerData.items[data.slot]
     local DecreaseAmount = Config.DurabilityMultiplier[data.name]
     if WeaponSlot then
@@ -199,7 +199,7 @@ RegisterNetEvent('weapons:server:UpdateWeaponQuality', function(data, RepeatAmou
                     else
                         WeaponSlot.info.quality = 0
                         TriggerClientEvent('inventory:client:UseWeapon', src, data)
-                        TriggerClientEvent('denalifw:Notify', src, Lang:t('error.weapon_broken_need_repair'), "error")
+                        TriggerClientEvent('NADRP:Notify', src, Lang:t('error.weapon_broken_need_repair'), "error")
                         break
                     end
                 end
@@ -211,7 +211,7 @@ RegisterNetEvent('weapons:server:UpdateWeaponQuality', function(data, RepeatAmou
                     else
                         WeaponSlot.info.quality = 0
                         TriggerClientEvent('inventory:client:UseWeapon', src, data)
-                        TriggerClientEvent('denalifw:Notify', src, Lang:t('error.weapon_broken_need_repair'), "error")
+                        TriggerClientEvent('NADRP:Notify', src, Lang:t('error.weapon_broken_need_repair'), "error")
                         break
                     end
                 end
@@ -223,7 +223,7 @@ end)
 
 RegisterNetEvent("weapons:server:EquipAttachment", function(ItemData, CurrentWeaponData, AttachmentData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local Inventory = Player.PlayerData.items
     local GiveBackItem = nil
     if Inventory[CurrentWeaponData.slot] then
@@ -236,13 +236,13 @@ RegisterNetEvent("weapons:server:EquipAttachment", function(ItemData, CurrentWea
                         if v.type and v.type == currenttype then
                             GiveBackItem = tostring(v.item):lower()
                             table.remove(Inventory[CurrentWeaponData.slot].info.attachments, key)
-                            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[GiveBackItem], "add")
+                            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[GiveBackItem], "add")
                         end
                     end
                 end
                 Inventory[CurrentWeaponData.slot].info.attachments[#Inventory[CurrentWeaponData.slot].info.attachments+1] = {
                     component = AttachmentData.component,
-                    label = denalifw.Shared.Items[AttachmentData.item].label,
+                    label = NADRP.Shared.Items[AttachmentData.item].label,
                     item = AttachmentData.item,
                     type = AttachmentData.type,
                 }
@@ -253,13 +253,13 @@ RegisterNetEvent("weapons:server:EquipAttachment", function(ItemData, CurrentWea
                     TriggerClientEvent('inventory:client:ItemBox', src, ItemData, "remove")
                 end)
             else
-                TriggerClientEvent("denalifw:Notify", src, Lang:t('error.attachment_already_on_weapon' , { value = denalifw.Shared.Items[AttachmentData.item].label }), "error", 3500)
+                TriggerClientEvent("NADRP:Notify", src, Lang:t('error.attachment_already_on_weapon' , { value = NADRP.Shared.Items[AttachmentData.item].label }), "error", 3500)
             end
         else
             Inventory[CurrentWeaponData.slot].info.attachments = {}
             Inventory[CurrentWeaponData.slot].info.attachments[#Inventory[CurrentWeaponData.slot].info.attachments+1] = {
                 component = AttachmentData.component,
-                label = denalifw.Shared.Items[AttachmentData.item].label,
+                label = NADRP.Shared.Items[AttachmentData.item].label,
                 item = AttachmentData.item,
                 type = AttachmentData.type,
             }
@@ -279,491 +279,491 @@ end)
 
 -- Commands
 
-denalifw.Commands.Add("repairweapon", "Repair Weapon (God Only)", {{name="hp", help=Lang:t('info.hp_of_weapon')}}, true, function(source, args)
+NADRP.Commands.Add("repairweapon", "Repair Weapon (God Only)", {{name="hp", help=Lang:t('info.hp_of_weapon')}}, true, function(source, args)
     TriggerClientEvent('weapons:client:SetWeaponQuality', source, tonumber(args[1]))
 end, "god")
 
 -- Items
 
 -- AMMO
-denalifw.Functions.CreateUseableItem('pistol_ammo', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol_ammo', function(source, item)
     TriggerClientEvent('weapon:client:AddAmmo', source, 'AMMO_PISTOL', 12, item)
 end)
 
-denalifw.Functions.CreateUseableItem('rifle_ammo', function(source, item)
+NADRP.Functions.CreateUseableItem('rifle_ammo', function(source, item)
     TriggerClientEvent('weapon:client:AddAmmo', source, 'AMMO_RIFLE', 30, item)
 end)
 
-denalifw.Functions.CreateUseableItem('smg_ammo', function(source, item)
+NADRP.Functions.CreateUseableItem('smg_ammo', function(source, item)
     TriggerClientEvent('weapon:client:AddAmmo', source, 'AMMO_SMG', 20, item)
 end)
 
-denalifw.Functions.CreateUseableItem('shotgun_ammo', function(source, item)
+NADRP.Functions.CreateUseableItem('shotgun_ammo', function(source, item)
     TriggerClientEvent('weapon:client:AddAmmo', source, 'AMMO_SHOTGUN', 10, item)
 end)
 
-denalifw.Functions.CreateUseableItem('mg_ammo', function(source, item)
+NADRP.Functions.CreateUseableItem('mg_ammo', function(source, item)
     TriggerClientEvent('weapon:client:AddAmmo', source, 'AMMO_MG', 30, item)
 end)
 
-denalifw.Functions.CreateUseableItem('snp_ammo', function(source, item)
+NADRP.Functions.CreateUseableItem('snp_ammo', function(source, item)
     TriggerClientEvent('weapon:client:AddAmmo', source, 'AMMO_SNIPER', 10, item)
 end)
 
-denalifw.Functions.CreateUseableItem('emp_ammo', function(source, item)
+NADRP.Functions.CreateUseableItem('emp_ammo', function(source, item)
     TriggerClientEvent('weapon:client:AddAmmo', source, 'AMMO_EMPLAUNCHER', 10, item)
 end)
 
 -- TINTS
-denalifw.Functions.CreateUseableItem('weapontint_black', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_black', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 0)
 end)
 
-denalifw.Functions.CreateUseableItem('weapontint_green', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_green', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 1)
 end)
 
-denalifw.Functions.CreateUseableItem('weapontint_gold', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_gold', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 2)
 end)
 
-denalifw.Functions.CreateUseableItem('weapontint_pink', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_pink', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 3)
 end)
 
-denalifw.Functions.CreateUseableItem('weapontint_army', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_army', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 4)
 end)
 
-denalifw.Functions.CreateUseableItem('weapontint_lspd', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_lspd', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 5)
 end)
 
-denalifw.Functions.CreateUseableItem('weapontint_orange', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_orange', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 6)
 end)
 
-denalifw.Functions.CreateUseableItem('weapontint_plat', function(source)
+NADRP.Functions.CreateUseableItem('weapontint_plat', function(source)
     TriggerClientEvent('weapons:client:EquipTint', source, 7)
 end)
 
 -- ATTACHMENTS
-denalifw.Functions.CreateUseableItem('pistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('pistol_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('pistol_flashlight', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol_flashlight', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'flashlight')
 end)
 
-denalifw.Functions.CreateUseableItem('pistol_suppressor', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol_suppressor', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'suppressor')
 end)
 
-denalifw.Functions.CreateUseableItem('pistol_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpistol_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpistol_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpistol_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpistol_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('appistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('appistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('appistol_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('appistol_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('appistol_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('appistol_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('pistol50_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol50_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('pistol50_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol50_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('pistol50_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('pistol50_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('heavypistol_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('heavypistol_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('revolver_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('revolver_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('doubleaction_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('doubleaction_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('revolver_vipvariant', function(source, item)
+NADRP.Functions.CreateUseableItem('revolver_vipvariant', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'vipvariant')
 end)
 
-denalifw.Functions.CreateUseableItem('revolver_bodyguardvariant', function(source, item)
+NADRP.Functions.CreateUseableItem('revolver_bodyguardvariant', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'bodyguardvariant')
 end)
 
-denalifw.Functions.CreateUseableItem('snspistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('snspistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('snspistol_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('snspistol_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('snspistol_grip', function(source, item)
+NADRP.Functions.CreateUseableItem('snspistol_grip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'grip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavypistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('heavypistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavypistol_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('heavypistol_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavypistol_grip', function(source, item)
+NADRP.Functions.CreateUseableItem('heavypistol_grip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'grip')
 end)
 
-denalifw.Functions.CreateUseableItem('vintagepistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('vintagepistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('vintagepistol_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('vintagepistol_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('microsmg_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('microsmg_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('microsmg_scope', function(source, item)
+NADRP.Functions.CreateUseableItem('microsmg_scope', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'scope')
 end)
 
-denalifw.Functions.CreateUseableItem('microsmg_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('microsmg_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('smg_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('smg_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('smg_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('smg_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('smg_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('smg_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('smg_scope', function(source, item)
+NADRP.Functions.CreateUseableItem('smg_scope', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'scope')
 end)
 
-denalifw.Functions.CreateUseableItem('smg_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('smg_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultsmg_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultsmg_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultsmg_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultsmg_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('pumpshotgun_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('pumpshotgun_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('sawnoffshotgun_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('sawnoffshotgun_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultsmg_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultsmg_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('minismg_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('minismg_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('minismg_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('minismg_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('machinepistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('machinepistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('machinepistol_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('machinepistol_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('machinepistol_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('machinepistol_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpdw_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpdw_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpdw_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpdw_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpistol_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpistol_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('emplauncher_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('emplauncher_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpdw_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpdw_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpdw_grip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpdw_grip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'grip')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpdw_scope', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpdw_scope', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'scope')
 end)
 
-denalifw.Functions.CreateUseableItem('shotgun_suppressor', function(source, item)
+NADRP.Functions.CreateUseableItem('shotgun_suppressor', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'suppressor')
 end)
 
-denalifw.Functions.CreateUseableItem('pumpshotgun_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('pumpshotgun_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('sawnoffshotgun_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('sawnoffshotgun_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('sniper_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('sniper_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultshotgun_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultshotgun_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultshotgun_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultshotgun_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavyshotgun_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('heavyshotgun_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavyshotgun_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('heavyshotgun_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavyshotgun_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('heavyshotgun_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultrifle_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultrifle_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultrifle_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultrifle_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultrifle_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultrifle_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('rifle_flashlight', function(source, item)
+NADRP.Functions.CreateUseableItem('rifle_flashlight', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'flashlight')
 end)
 
-denalifw.Functions.CreateUseableItem('rifle_grip', function(source, item)
+NADRP.Functions.CreateUseableItem('rifle_grip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'grip')
 end)
 
-denalifw.Functions.CreateUseableItem('rifle_suppressor', function(source, item)
+NADRP.Functions.CreateUseableItem('rifle_suppressor', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'suppressor')
 end)
 
-denalifw.Functions.CreateUseableItem('sniperrifle_suppressor', function(source, item)
+NADRP.Functions.CreateUseableItem('sniperrifle_suppressor', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'suppressor')
 end)
 
-denalifw.Functions.CreateUseableItem('assaultrifle_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('assaultrifle_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('carbinerifle_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('carbinerifle_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('carbinerifle_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('carbinerifle_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('carbinerifle_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('carbinerifle_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('combatpdw_grip', function(source, item)
+NADRP.Functions.CreateUseableItem('combatpdw_grip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'grip')
 end)
 
-denalifw.Functions.CreateUseableItem('carbinerifle_scope', function(source, item)
+NADRP.Functions.CreateUseableItem('carbinerifle_scope', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'scope')
 end)
 
-denalifw.Functions.CreateUseableItem('carbinerifle_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('carbinerifle_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('advancedrifle_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('advancedrifle_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('advancedrifle_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('advancedrifle_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('advancedrifle_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('advancedrifle_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('specialcarbine_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('specialcarbine_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('specialcarbine_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('specialcarbine_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('bullpupshotgun_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('bullpupshotgun_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('specialcarbine_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('specialcarbine_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('specialcarbine_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('specialcarbine_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('bullpuprifle_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('bullpuprifle_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('bullpuprifle_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('bullpuprifle_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('bullpuprifle_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('bullpuprifle_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('compactrifle_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('compactrifle_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('compactrifle_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('compactrifle_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('compactrifle_drum', function(source, item)
+NADRP.Functions.CreateUseableItem('compactrifle_drum', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'drum')
 end)
 
-denalifw.Functions.CreateUseableItem('gusenberg_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('gusenberg_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('gusenberg_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('gusenberg_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('microsmg_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('microsmg_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('microsmg_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('microsmg_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('sniperrifle_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('sniperrifle_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('sniper_scope', function(source, item)
+NADRP.Functions.CreateUseableItem('sniper_scope', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'scope')
 end)
 
-denalifw.Functions.CreateUseableItem('snipermax_scope', function(source, item)
+NADRP.Functions.CreateUseableItem('snipermax_scope', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'scope')
 end)
 
-denalifw.Functions.CreateUseableItem('sniper_grip', function(source, item)
+NADRP.Functions.CreateUseableItem('sniper_grip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'grip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavysniper_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('heavysniper_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('heavysniper_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('heavysniper_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('marksmanrifle_defaultclip', function(source, item)
+NADRP.Functions.CreateUseableItem('marksmanrifle_defaultclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'defaultclip')
 end)
 
-denalifw.Functions.CreateUseableItem('marksmanrifle_extendedclip', function(source, item)
+NADRP.Functions.CreateUseableItem('marksmanrifle_extendedclip', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'extendedclip')
 end)
 
-denalifw.Functions.CreateUseableItem('marksmanrifle_scope', function(source, item)
+NADRP.Functions.CreateUseableItem('marksmanrifle_scope', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'scope')
 end)
 
-denalifw.Functions.CreateUseableItem('marksmanrifle_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('marksmanrifle_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)
 
-denalifw.Functions.CreateUseableItem('snspistol_luxuryfinish', function(source, item)
+NADRP.Functions.CreateUseableItem('snspistol_luxuryfinish', function(source, item)
     TriggerClientEvent('weapons:client:EquipAttachment', source, item, 'luxuryfinish')
 end)

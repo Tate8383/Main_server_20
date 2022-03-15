@@ -198,45 +198,45 @@ end
 
 RegisterNetEvent('consumables:client:Eat', function(itemName)
     TriggerEvent('animations:client:EmoteCommandStart', {"eat"})
-    denalifw.Functions.Progressbar("eat_something", "Eating..", 5000, false, true, {
+    NADRP.Functions.Progressbar("eat_something", "Eating..", 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
 		disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items[itemName], "remove")
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items[itemName], "remove")
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-        TriggerServerEvent("denalifw:Server:SetMetaData", "hunger", denalifw.Functions.GetPlayerData().metadata["hunger"] + ConsumeablesEat[itemName])
+        TriggerServerEvent("NADRP:Server:SetMetaData", "hunger", NADRP.Functions.GetPlayerData().metadata["hunger"] + ConsumeablesEat[itemName])
         TriggerServerEvent('hud:server:RelieveStress', math.random(2, 4))
     end)
 end)
 
 RegisterNetEvent('consumables:client:Drink', function(itemName)
     TriggerEvent('animations:client:EmoteCommandStart', {"drink"})
-    denalifw.Functions.Progressbar("drink_something", "Drinking..", 5000, false, true, {
+    NADRP.Functions.Progressbar("drink_something", "Drinking..", 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
 		disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items[itemName], "remove")
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items[itemName], "remove")
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-        TriggerServerEvent("denalifw:Server:SetMetaData", "thirst", denalifw.Functions.GetPlayerData().metadata["thirst"] + ConsumeablesDrink[itemName])
+        TriggerServerEvent("NADRP:Server:SetMetaData", "thirst", NADRP.Functions.GetPlayerData().metadata["thirst"] + ConsumeablesDrink[itemName])
     end)
 end)
 
 RegisterNetEvent('consumables:client:DrinkAlcohol', function(itemName)
     TriggerEvent('animations:client:EmoteCommandStart', {"drink"})
-    denalifw.Functions.Progressbar("snort_coke", "Drinking liquor..", math.random(3000, 6000), false, true, {
+    NADRP.Functions.Progressbar("snort_coke", "Drinking liquor..", math.random(3000, 6000), false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items[itemName], "remove")
-        TriggerServerEvent("denalifw:Server:RemoveItem", itemName, 1)
-        TriggerServerEvent("denalifw:Server:SetMetaData", "thirst", denalifw.Functions.GetPlayerData().metadata["thirst"] + ConsumeablesAlcohol[itemName])
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items[itemName], "remove")
+        TriggerServerEvent("NADRP:Server:RemoveItem", itemName, 1)
+        TriggerServerEvent("NADRP:Server:SetMetaData", "thirst", NADRP.Functions.GetPlayerData().metadata["thirst"] + ConsumeablesAlcohol[itemName])
         alcoholCount = alcoholCount + 1
         if alcoholCount > 1 and alcoholCount < 4 then
             TriggerEvent("evidence:client:SetStatus", "alcohol", 200)
@@ -246,13 +246,13 @@ RegisterNetEvent('consumables:client:DrinkAlcohol', function(itemName)
 
     end, function() -- Cancel
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-        denalifw.Functions.Notify("Cancelled..", "error")
+        NADRP.Functions.Notify("Cancelled..", "error")
     end)
 end)
 
 RegisterNetEvent('consumables:client:Cokebaggy', function()
     local ped = PlayerPedId()
-    denalifw.Functions.Progressbar("snort_coke", "Quick sniff..", math.random(5000, 8000), false, true, {
+    NADRP.Functions.Progressbar("snort_coke", "Quick sniff..", math.random(5000, 8000), false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -263,19 +263,19 @@ RegisterNetEvent('consumables:client:Cokebaggy', function()
         flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 1.0)
-        TriggerServerEvent("denalifw:Server:RemoveItem", "cokebaggy", 1)
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["cokebaggy"], "remove")
+        TriggerServerEvent("NADRP:Server:RemoveItem", "cokebaggy", 1)
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["cokebaggy"], "remove")
         TriggerEvent("evidence:client:SetStatus", "widepupils", 200)
         CokeBaggyEffect()
     end, function() -- Cancel
         StopAnimTask(ped, "switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 1.0)
-        denalifw.Functions.Notify("Canceled..", "error")
+        NADRP.Functions.Notify("Canceled..", "error")
     end)
 end)
 
 RegisterNetEvent('consumables:client:Crackbaggy', function()
     local ped = PlayerPedId()
-    denalifw.Functions.Progressbar("snort_coke", "Smoking crack..", math.random(7000, 10000), false, true, {
+    NADRP.Functions.Progressbar("snort_coke", "Smoking crack..", math.random(7000, 10000), false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -286,18 +286,18 @@ RegisterNetEvent('consumables:client:Crackbaggy', function()
         flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 1.0)
-        TriggerServerEvent("denalifw:Server:RemoveItem", "crack_baggy", 1)
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["crack_baggy"], "remove")
+        TriggerServerEvent("NADRP:Server:RemoveItem", "crack_baggy", 1)
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["crack_baggy"], "remove")
         TriggerEvent("evidence:client:SetStatus", "widepupils", 300)
         CrackBaggyEffect()
     end, function() -- Cancel
         StopAnimTask(ped, "switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 1.0)
-        denalifw.Functions.Notify("Canceled..", "error")
+        NADRP.Functions.Notify("Canceled..", "error")
     end)
 end)
 
 RegisterNetEvent('consumables:client:EcstasyBaggy', function()
-    denalifw.Functions.Progressbar("use_ecstasy", "Pops Pills", 3000, false, true, {
+    NADRP.Functions.Progressbar("use_ecstasy", "Pops Pills", 3000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
@@ -308,17 +308,17 @@ RegisterNetEvent('consumables:client:EcstasyBaggy', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("denalifw:Server:RemoveItem", "xtcbaggy", 1)
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["xtcbaggy"], "remove")
+        TriggerServerEvent("NADRP:Server:RemoveItem", "xtcbaggy", 1)
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["xtcbaggy"], "remove")
         EcstasyEffect()
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), "mp_suicide", "pill", 1.0)
-        denalifw.Functions.Notify("Failed", "error")
+        NADRP.Functions.Notify("Failed", "error")
     end)
 end)
 
 RegisterNetEvent('consumables:client:oxy', function()
-    denalifw.Functions.Progressbar("use_oxy", "Healing", 2000, false, true, {
+    NADRP.Functions.Progressbar("use_oxy", "Healing", 2000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
@@ -329,18 +329,18 @@ RegisterNetEvent('consumables:client:oxy', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("denalifw:Server:RemoveItem", "oxy", 1)
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["oxy"], "remove")
+        TriggerServerEvent("NADRP:Server:RemoveItem", "oxy", 1)
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["oxy"], "remove")
         ClearPedBloodDamage(PlayerPedId())
 		HealOxy()
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), "mp_suicide", "pill", 1.0)
-        denalifw.Functions.Notify("Canceled", "error")
+        NADRP.Functions.Notify("Canceled", "error")
     end)
 end)
 
 RegisterNetEvent('consumables:client:meth', function()
-    denalifw.Functions.Progressbar("snort_meth", "Smoking Ass Meth", 1500, false, true, {
+    NADRP.Functions.Progressbar("snort_meth", "Smoking Ass Meth", 1500, false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -351,25 +351,25 @@ RegisterNetEvent('consumables:client:meth', function()
         flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), "switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 1.0)
-        TriggerServerEvent("denalifw:Server:RemoveItem", "meth", 1)
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["meth"], "remove")
+        TriggerServerEvent("NADRP:Server:RemoveItem", "meth", 1)
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["meth"], "remove")
         TriggerEvent("evidence:client:SetStatus", "widepupils", 300)
 		TriggerEvent("evidence:client:SetStatus", "agitated", 300)
         MethBagEffect()
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), "switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 1.0)
-        denalifw.Functions.Notify("Canceled..", "error")
+        NADRP.Functions.Notify("Canceled..", "error")
 	end)
 end)
 
 RegisterNetEvent('consumables:client:UseJoint', function()
-    denalifw.Functions.Progressbar("smoke_joint", "Lighting joint..", 1500, false, true, {
+    NADRP.Functions.Progressbar("smoke_joint", "Lighting joint..", 1500, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
 		disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["joint"], "remove")
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["joint"], "remove")
         if IsPedInAnyVehicle(PlayerPedId(), false) then
             TriggerEvent('animations:client:EmoteCommandStart', {"smoke3"})
         else
@@ -382,21 +382,21 @@ end)
 
 RegisterNetEvent('consumables:client:UseParachute', function()
     EquipParachuteAnim()
-    denalifw.Functions.Progressbar("use_parachute", "parachute using..", 5000, false, true, {
+    NADRP.Functions.Progressbar("use_parachute", "parachute using..", 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
 		disableCombat = true,
     }, {}, {}, {}, function() -- Done
         local ped = PlayerPedId()
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["parachute"], "remove")
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["parachute"], "remove")
         GiveWeaponToPed(ped, `GADGET_PARACHUTE`, 1, false)
         local ParachuteData = {
             outfitData = {
                 ["bag"]   = { item = 7, texture = 0},  -- Adding Parachute Clothing
             }
         }
-        TriggerEvent('denalifw-clothing:client:loadOutfit', ParachuteData)
+        TriggerEvent('NADRP-clothing:client:loadOutfit', ParachuteData)
         ParachuteEquiped = true
         TaskPlayAnim(ped, "clothingshirt", "exit", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
     end)
@@ -405,49 +405,49 @@ end)
 RegisterNetEvent('consumables:client:ResetParachute', function()
     if ParachuteEquiped then
         EquipParachuteAnim()
-        denalifw.Functions.Progressbar("reset_parachute", "Packing parachute..", 40000, false, true, {
+        NADRP.Functions.Progressbar("reset_parachute", "Packing parachute..", 40000, false, true, {
             disableMovement = false,
             disableCarMovement = false,
             disableMouse = false,
             disableCombat = true,
         }, {}, {}, {}, function() -- Done
             local ped = PlayerPedId()
-            TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["parachute"], "add")
+            TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["parachute"], "add")
             local ParachuteRemoveData = {
                 outfitData = {
                     ["bag"] = { item = 0, texture = 0} -- Removing Parachute Clothing
                 }
             }
-            TriggerEvent('denalifw-clothing:client:loadOutfit', ParachuteRemoveData)
+            TriggerEvent('NADRP-clothing:client:loadOutfit', ParachuteRemoveData)
             TaskPlayAnim(ped, "clothingshirt", "exit", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
-            TriggerServerEvent("denalifw-smallpenis:server:AddParachute")
+            TriggerServerEvent("NADRP-smallpenis:server:AddParachute")
             ParachuteEquiped = false
         end)
     else
-        denalifw.Functions.Notify("You dont have a parachute!", "error")
+        NADRP.Functions.Notify("You dont have a parachute!", "error")
     end
 end)
 
 RegisterNetEvent('consumables:client:UseArmor', function()
-    if GetPedArmour(PlayerPedId()) >= 75 then denalifw.Functions.Notify('You already have enough armor on!', 'error') return end
-    denalifw.Functions.Progressbar("use_armor", "Putting on the body armour..", 5000, false, true, {
+    if GetPedArmour(PlayerPedId()) >= 75 then NADRP.Functions.Notify('You already have enough armor on!', 'error') return end
+    NADRP.Functions.Progressbar("use_armor", "Putting on the body armour..", 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
 		disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["armor"], "remove")
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["armor"], "remove")
         TriggerServerEvent('hospital:server:SetArmor', 75)
-        TriggerServerEvent("denalifw:Server:RemoveItem", "armor", 1)
+        TriggerServerEvent("NADRP:Server:RemoveItem", "armor", 1)
         SetPedArmour(PlayerPedId(), 75)
     end)
 end)
 
 RegisterNetEvent('consumables:client:UseHeavyArmor', function()
-    if GetPedArmour(PlayerPedId()) == 100 then denalifw.Functions.Notify('You already have enough armor on!', 'error') return end
+    if GetPedArmour(PlayerPedId()) == 100 then NADRP.Functions.Notify('You already have enough armor on!', 'error') return end
     local ped = PlayerPedId()
-    local PlayerData = denalifw.Functions.GetPlayerData()
-    denalifw.Functions.Progressbar("use_heavyarmor", "Putting on body armour..", 5000, false, true, {
+    local PlayerData = NADRP.Functions.GetPlayerData()
+    NADRP.Functions.Progressbar("use_heavyarmor", "Putting on body armour..", 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
@@ -466,8 +466,8 @@ RegisterNetEvent('consumables:client:UseHeavyArmor', function()
             currentVestTexture = GetPedTextureVariation(ped, 30)
             SetPedComponentVariation(ped, 9, 30, 0, 2)
         end
-        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["heavyarmor"], "remove")
-        TriggerServerEvent("denalifw:Server:RemoveItem", "heavyarmor", 1)
+        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["heavyarmor"], "remove")
+        TriggerServerEvent("NADRP:Server:RemoveItem", "heavyarmor", 1)
         SetPedArmour(ped, 100)
     end)
 end)
@@ -475,7 +475,7 @@ end)
 RegisterNetEvent('consumables:client:ResetArmor', function()
     local ped = PlayerPedId()
     if currentVest ~= nil and currentVestTexture ~= nil then
-        denalifw.Functions.Progressbar("remove_armor", "Removing the body armour..", 2500, false, true, {
+        NADRP.Functions.Progressbar("remove_armor", "Removing the body armour..", 2500, false, true, {
             disableMovement = false,
             disableCarMovement = false,
             disableMouse = false,
@@ -483,11 +483,11 @@ RegisterNetEvent('consumables:client:ResetArmor', function()
         }, {}, {}, {}, function() -- Done
             SetPedComponentVariation(ped, 9, currentVest, currentVestTexture, 2)
             SetPedArmour(ped, 0)
-            TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["heavyarmor"], "add")
-            TriggerServerEvent("denalifw:Server:AddItem", "heavyarmor", 1)
+            TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["heavyarmor"], "add")
+            TriggerServerEvent("NADRP:Server:AddItem", "heavyarmor", 1)
         end)
     else
-        denalifw.Functions.Notify("You\'re not wearing a vest..", "error")
+        NADRP.Functions.Notify("You\'re not wearing a vest..", "error")
     end
 end)
 
@@ -496,9 +496,9 @@ end)
 --         local ped = PlayerPedId()
 --         SetPlayerParachuteSmokeTrailColor(ped, 255, 0, 0)
 --         SetPlayerCanLeaveParachuteSmokeTrail(ped, true)
---         TriggerEvent("inventory:client:Itembox", denalifw.Shared.Items["smoketrailred"], "remove")
+--         TriggerEvent("inventory:client:Itembox", NADRP.Shared.Items["smoketrailred"], "remove")
 --     else
---         denalifw.Functions.Notify("You need to have a paracute to activate smoke!", "error")
+--         NADRP.Functions.Notify("You need to have a paracute to activate smoke!", "error")
 --     end
 -- end)
 

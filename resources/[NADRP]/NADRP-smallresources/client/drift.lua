@@ -1,5 +1,5 @@
-denalifw = nil
-local denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = nil
+local NADRP = exports['NADRP-core']:GetCoreObject()
 -- https://runtime.fivem.net/doc/natives/?_0x29439776AAA00A62
 local vehicleClassWhitelist = {0, 1, 2, 3, 4, 5, 6, 7, 9}
 
@@ -59,9 +59,9 @@ function ToggleDrift(vehicle)
 	end
 	
 	if driftMode then
-		denalifw.Functions.Notify("standard mode!")
+		NADRP.Functions.Notify("standard mode!")
 	else
-		denalifw.Functions.Notify("drift mode!")
+		NADRP.Functions.Notify("drift mode!")
 	end
 	
 end

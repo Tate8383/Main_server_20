@@ -1,6 +1,6 @@
 -- Variables
 
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local inInventory = false
 local currentWeapon = nil
 local CurrentWeaponData = {}
@@ -59,7 +59,7 @@ local function FormatWeaponAttachments(itemdata)
                         item = value.item
                         attachments[#attachments+1] = {
                             attachment = key,
-                            label = denalifw.Shared.Items[item].label
+                            label = NADRP.Shared.Items[item].label
                             --label = value.label
                         }
                     end
@@ -76,7 +76,7 @@ local function IsBackEngine(vehModel)
 end
 
 local function OpenTrunk()
-    local vehicle = denalifw.Functions.GetClosestVehicle()
+    local vehicle = NADRP.Functions.GetClosestVehicle()
     while (not HasAnimDictLoaded("amb@prop_human_bum_bin@idle_b")) do
         RequestAnimDict("amb@prop_human_bum_bin@idle_b")
         Wait(100)
@@ -90,7 +90,7 @@ local function OpenTrunk()
 end
 
 local function CloseTrunk()
-    local vehicle = denalifw.Functions.GetClosestVehicle()
+    local vehicle = NADRP.Functions.GetClosestVehicle()
     while (not HasAnimDictLoaded("amb@prop_human_bum_bin@idle_b")) do
         RequestAnimDict("amb@prop_human_bum_bin@idle_b")
         Wait(100)
@@ -111,12 +111,12 @@ end
 
 local function ToggleHotbar(toggle)
     local HotbarItems = {
-        [1] = denalifw.Functions.GetPlayerData().items[1],
-        [2] = denalifw.Functions.GetPlayerData().items[2],
-        [3] = denalifw.Functions.GetPlayerData().items[3],
-        [4] = denalifw.Functions.GetPlayerData().items[4],
-        [5] = denalifw.Functions.GetPlayerData().items[5],
-        [41] = denalifw.Functions.GetPlayerData().items[41],
+        [1] = NADRP.Functions.GetPlayerData().items[1],
+        [2] = NADRP.Functions.GetPlayerData().items[2],
+        [3] = NADRP.Functions.GetPlayerData().items[3],
+        [4] = NADRP.Functions.GetPlayerData().items[4],
+        [5] = NADRP.Functions.GetPlayerData().items[5],
+        [41] = NADRP.Functions.GetPlayerData().items[41],
     }
 
     if toggle then
@@ -147,23 +147,23 @@ end
 
 local function ItemsToItemInfo()
 	itemInfos = {
-		[1] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 22x, " ..denalifw.Shared.Items["plastic"]["label"] .. ": 32x."},
-		[2] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 30x, " ..denalifw.Shared.Items["plastic"]["label"] .. ": 42x."},
-		[3] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 30x, " ..denalifw.Shared.Items["plastic"]["label"] .. ": 45x, "..denalifw.Shared.Items["aluminum"]["label"] .. ": 28x."},
-		[4] = {costs = denalifw.Shared.Items["electronickit"]["label"] .. ": 2x, " ..denalifw.Shared.Items["plastic"]["label"] .. ": 52x, "..denalifw.Shared.Items["steel"]["label"] .. ": 40x."},
-		[5] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 10x, " ..denalifw.Shared.Items["plastic"]["label"] .. ": 50x, "..denalifw.Shared.Items["aluminum"]["label"] .. ": 30x, "..denalifw.Shared.Items["iron"]["label"] .. ": 17x, "..denalifw.Shared.Items["electronickit"]["label"] .. ": 1x."},
-		[6] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 36x, " ..denalifw.Shared.Items["steel"]["label"] .. ": 24x, "..denalifw.Shared.Items["aluminum"]["label"] .. ": 28x."},
-		[7] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 32x, " ..denalifw.Shared.Items["steel"]["label"] .. ": 43x, "..denalifw.Shared.Items["plastic"]["label"] .. ": 61x."},
-		[8] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 50x, " ..denalifw.Shared.Items["steel"]["label"] .. ": 37x, "..denalifw.Shared.Items["copper"]["label"] .. ": 26x."},
-		[9] = {costs = denalifw.Shared.Items["iron"]["label"] .. ": 60x, " ..denalifw.Shared.Items["glass"]["label"] .. ": 30x."},
-		[10] = {costs = denalifw.Shared.Items["aluminum"]["label"] .. ": 60x, " ..denalifw.Shared.Items["glass"]["label"] .. ": 30x."},
-		[11] = {costs = denalifw.Shared.Items["iron"]["label"] .. ": 33x, " ..denalifw.Shared.Items["steel"]["label"] .. ": 44x, "..denalifw.Shared.Items["plastic"]["label"] .. ": 55x, "..denalifw.Shared.Items["aluminum"]["label"] .. ": 22x."},
-		[12] = {costs = denalifw.Shared.Items["iron"]["label"] .. ": 50x, " ..denalifw.Shared.Items["steel"]["label"] .. ": 50x, "..denalifw.Shared.Items["screwdriverset"]["label"] .. ": 3x, "..denalifw.Shared.Items["advancedlockpick"]["label"] .. ": 2x."},
+		[1] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 22x, " ..NADRP.Shared.Items["plastic"]["label"] .. ": 32x."},
+		[2] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 30x, " ..NADRP.Shared.Items["plastic"]["label"] .. ": 42x."},
+		[3] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 30x, " ..NADRP.Shared.Items["plastic"]["label"] .. ": 45x, "..NADRP.Shared.Items["aluminum"]["label"] .. ": 28x."},
+		[4] = {costs = NADRP.Shared.Items["electronickit"]["label"] .. ": 2x, " ..NADRP.Shared.Items["plastic"]["label"] .. ": 52x, "..NADRP.Shared.Items["steel"]["label"] .. ": 40x."},
+		[5] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 10x, " ..NADRP.Shared.Items["plastic"]["label"] .. ": 50x, "..NADRP.Shared.Items["aluminum"]["label"] .. ": 30x, "..NADRP.Shared.Items["iron"]["label"] .. ": 17x, "..NADRP.Shared.Items["electronickit"]["label"] .. ": 1x."},
+		[6] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 36x, " ..NADRP.Shared.Items["steel"]["label"] .. ": 24x, "..NADRP.Shared.Items["aluminum"]["label"] .. ": 28x."},
+		[7] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 32x, " ..NADRP.Shared.Items["steel"]["label"] .. ": 43x, "..NADRP.Shared.Items["plastic"]["label"] .. ": 61x."},
+		[8] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 50x, " ..NADRP.Shared.Items["steel"]["label"] .. ": 37x, "..NADRP.Shared.Items["copper"]["label"] .. ": 26x."},
+		[9] = {costs = NADRP.Shared.Items["iron"]["label"] .. ": 60x, " ..NADRP.Shared.Items["glass"]["label"] .. ": 30x."},
+		[10] = {costs = NADRP.Shared.Items["aluminum"]["label"] .. ": 60x, " ..NADRP.Shared.Items["glass"]["label"] .. ": 30x."},
+		[11] = {costs = NADRP.Shared.Items["iron"]["label"] .. ": 33x, " ..NADRP.Shared.Items["steel"]["label"] .. ": 44x, "..NADRP.Shared.Items["plastic"]["label"] .. ": 55x, "..NADRP.Shared.Items["aluminum"]["label"] .. ": 22x."},
+		[12] = {costs = NADRP.Shared.Items["iron"]["label"] .. ": 50x, " ..NADRP.Shared.Items["steel"]["label"] .. ": 50x, "..NADRP.Shared.Items["screwdriverset"]["label"] .. ": 3x, "..NADRP.Shared.Items["advancedlockpick"]["label"] .. ": 2x."},
 	}
 
 	local items = {}
 	for k, item in pairs(Config.CraftingItems) do
-		local itemInfo = denalifw.Shared.Items[item.name:lower()]
+		local itemInfo = NADRP.Shared.Items[item.name:lower()]
 		items[item.slot] = {
 			name = itemInfo["name"],
 			amount = tonumber(item.amount),
@@ -186,19 +186,19 @@ end
 
 local function SetupAttachmentItemsInfo()
 	itemInfos = {
-		[1] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 140x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 250x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 60x"},
-		[2] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 165x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 285x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 75x"},
-		[3] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 190x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 305x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 85x, " .. denalifw.Shared.Items["smg_extendedclip"]["label"] .. ": 1x"},
-		[4] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 205x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 340x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 110x, " .. denalifw.Shared.Items["smg_extendedclip"]["label"] .. ": 2x"},
-		[5] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 230x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 365x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 130x"},
-		[6] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 255x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 390x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 145x"},
-		[7] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 270x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 435x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 155x"},
-		[8] = {costs = denalifw.Shared.Items["metalscrap"]["label"] .. ": 300x, " .. denalifw.Shared.Items["steel"]["label"] .. ": 469x, " .. denalifw.Shared.Items["rubber"]["label"] .. ": 170x"},
+		[1] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 140x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 250x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 60x"},
+		[2] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 165x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 285x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 75x"},
+		[3] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 190x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 305x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 85x, " .. NADRP.Shared.Items["smg_extendedclip"]["label"] .. ": 1x"},
+		[4] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 205x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 340x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 110x, " .. NADRP.Shared.Items["smg_extendedclip"]["label"] .. ": 2x"},
+		[5] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 230x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 365x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 130x"},
+		[6] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 255x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 390x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 145x"},
+		[7] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 270x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 435x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 155x"},
+		[8] = {costs = NADRP.Shared.Items["metalscrap"]["label"] .. ": 300x, " .. NADRP.Shared.Items["steel"]["label"] .. ": 469x, " .. NADRP.Shared.Items["rubber"]["label"] .. ": 170x"},
 	}
 
 	local items = {}
 	for k, item in pairs(Config.AttachmentCrafting["items"]) do
-		local itemInfo = denalifw.Shared.Items[item.name:lower()]
+		local itemInfo = NADRP.Shared.Items[item.name:lower()]
 		items[item.slot] = {
 			name = itemInfo["name"],
 			amount = tonumber(item.amount),
@@ -222,7 +222,7 @@ local function GetThresholdItems()
 	ItemsToItemInfo()
 	local items = {}
 	for k, item in pairs(Config.CraftingItems) do
-		if denalifw.Functions.GetPlayerData().metadata["craftingrep"] >= Config.CraftingItems[k].threshold then
+		if NADRP.Functions.GetPlayerData().metadata["craftingrep"] >= Config.CraftingItems[k].threshold then
 			items[k] = Config.CraftingItems[k]
 		end
 	end
@@ -233,7 +233,7 @@ local function GetAttachmentThresholdItems()
 	SetupAttachmentItemsInfo()
 	local items = {}
 	for k, item in pairs(Config.AttachmentCrafting["items"]) do
-		if denalifw.Functions.GetPlayerData().metadata["attachmentcraftingrep"] >= Config.AttachmentCrafting["items"][k].threshold then
+		if NADRP.Functions.GetPlayerData().metadata["attachmentcraftingrep"] >= Config.AttachmentCrafting["items"][k].threshold then
 			items[k] = Config.AttachmentCrafting["items"][k]
 		end
 	end
@@ -242,16 +242,16 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
     LocalPlayer.state:set("inv_busy", false, true)
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
+RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
     LocalPlayer.state:set("inv_busy", true, true)
 end)
 
 RegisterNetEvent('inventory:client:CheckOpenState', function(type, id, label)
-    local name = denalifw.Shared.SplitStr(label, "-")[2]
+    local name = NADRP.Shared.SplitStr(label, "-")[2]
     if type == "stash" then
         if name ~= CurrentStash or CurrentStash == nil then
             TriggerServerEvent('inventory:server:SetIsOpenState', false, type, id)
@@ -289,7 +289,7 @@ RegisterNetEvent('inventory:client:requiredItems', function(items, bool)
         for k, v in pairs(items) do
             itemTable[#itemTable+1] = {
                 item = items[k].name,
-                label = denalifw.Shared.Items[items[k].name]["label"],
+                label = NADRP.Shared.Items[items[k].name]["label"],
                 image = items[k].image,
             }
         end
@@ -321,7 +321,7 @@ RegisterNetEvent('inventory:client:OpenInventory', function(PlayerAmmo, inventor
             inventory = inventory,
             slots = MaxInventorySlots,
             other = other,
-            maxweight = denalifw.Config.Player.MaxWeight,
+            maxweight = NADRP.Config.Player.MaxWeight,
             Ammo = PlayerAmmo,
             maxammo = Config.MaximumAmmoValues,
         })
@@ -332,8 +332,8 @@ end)
 RegisterNetEvent('inventory:client:UpdatePlayerInventory', function(isError)
     SendNUIMessage({
         action = "update",
-        inventory = denalifw.Functions.GetPlayerData().items,
-        maxweight = denalifw.Config.Player.MaxWeight,
+        inventory = NADRP.Functions.GetPlayerData().items,
+        maxweight = NADRP.Config.Player.MaxWeight,
         slots = MaxInventorySlots,
         error = isError,
     })
@@ -345,7 +345,7 @@ RegisterNetEvent('inventory:client:CraftItems', function(itemName, itemCosts, am
         action = "close",
     })
     isCrafting = true
-    denalifw.Functions.Progressbar("repair_vehicle", "Crafting..", (math.random(2000, 5000) * amount), false, true, {
+    NADRP.Functions.Progressbar("repair_vehicle", "Crafting..", (math.random(2000, 5000) * amount), false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,
@@ -357,11 +357,11 @@ RegisterNetEvent('inventory:client:CraftItems', function(itemName, itemCosts, am
 	}, {}, {}, function() -- Done
 		StopAnimTask(ped, "mini@repair", "fixing_a_player", 1.0)
         TriggerServerEvent("inventory:server:CraftItems", itemName, itemCosts, amount, toSlot, points)
-        TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items[itemName], 'add')
+        TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items[itemName], 'add')
         isCrafting = false
 	end, function() -- Cancel
 		StopAnimTask(ped, "mini@repair", "fixing_a_player", 1.0)
-        denalifw.Functions.Notify("Failed", "error")
+        NADRP.Functions.Notify("Failed", "error")
         isCrafting = false
 	end)
 end)
@@ -372,7 +372,7 @@ RegisterNetEvent('inventory:client:CraftAttachment', function(itemName, itemCost
         action = "close",
     })
     isCrafting = true
-    denalifw.Functions.Progressbar("repair_vehicle", "Crafting..", (math.random(2000, 5000) * amount), false, true, {
+    NADRP.Functions.Progressbar("repair_vehicle", "Crafting..", (math.random(2000, 5000) * amount), false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,
@@ -384,11 +384,11 @@ RegisterNetEvent('inventory:client:CraftAttachment', function(itemName, itemCost
 	}, {}, {}, function() -- Done
 		StopAnimTask(ped, "mini@repair", "fixing_a_player", 1.0)
         TriggerServerEvent("inventory:server:CraftAttachment", itemName, itemCosts, amount, toSlot, points)
-        TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items[itemName], 'add')
+        TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items[itemName], 'add')
         isCrafting = false
 	end, function() -- Cancel
 		StopAnimTask(ped, "mini@repair", "fixing_a_player", 1.0)
-        denalifw.Functions.Notify("Failed", "error")
+        NADRP.Functions.Notify("Failed", "error")
         isCrafting = false
 	end)
 end)
@@ -397,18 +397,18 @@ RegisterNetEvent('inventory:client:PickupSnowballs', function()
     local ped = PlayerPedId()
     LoadAnimDict('anim@mp_snowball')
     TaskPlayAnim(ped, 'anim@mp_snowball', 'pickup_snowball', 3.0, 3.0, -1, 0, 1, 0, 0, 0)
-    denalifw.Functions.Progressbar("pickupsnowball", "Collecting snowballs..", 1500, false, true, {
+    NADRP.Functions.Progressbar("pickupsnowball", "Collecting snowballs..", 1500, false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
         ClearPedTasks(ped)
-        TriggerServerEvent('denalifw:Server:AddItem', "snowball", 1)
-        TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["snowball"], "add")
+        TriggerServerEvent('NADRP:Server:AddItem', "snowball", 1)
+        TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["snowball"], "add")
     end, function() -- Cancel
         ClearPedTasks(ped)
-        denalifw.Functions.Notify("Canceled", "error")
+        NADRP.Functions.Notify("Canceled", "error")
     end)
 end)
 
@@ -431,19 +431,19 @@ RegisterNetEvent('inventory:client:UseWeapon', function(weaponData, shootbool)
         GiveWeaponToPed(ped, GetHashKey(weaponName), 1, false, false)
         SetPedAmmo(ped, GetHashKey(weaponName), 1)
         SetCurrentPedWeapon(ped, GetHashKey(weaponName), true)
---         TriggerServerEvent('denalifw:Server:RemoveItem', weaponName, 1) -- Commented out as denalifw-weapons handles this in a way it deleted after you have thrown it
+--         TriggerServerEvent('NADRP:Server:RemoveItem', weaponName, 1) -- Commented out as NADRP-weapons handles this in a way it deleted after you have thrown it
         TriggerEvent('weapons:client:SetCurrentWeapon', weaponData, shootbool)
         currentWeapon = weaponName
     elseif weaponName == "weapon_snowball" then
         GiveWeaponToPed(ped, GetHashKey(weaponName), 10, false, false)
         SetPedAmmo(ped, GetHashKey(weaponName), 10)
         SetCurrentPedWeapon(ped, GetHashKey(weaponName), true)
-        TriggerServerEvent('denalifw:Server:RemoveItem', weaponName, 1)
+        TriggerServerEvent('NADRP:Server:RemoveItem', weaponName, 1)
         TriggerEvent('weapons:client:SetCurrentWeapon', weaponData, shootbool)
         currentWeapon = weaponName
     else
         TriggerEvent('weapons:client:SetCurrentWeapon', weaponData, shootbool)
-        denalifw.Functions.TriggerCallback("weapon:server:GetWeaponAmmo", function(result)
+        NADRP.Functions.TriggerCallback("weapon:server:GetWeaponAmmo", function(result)
             local ammo = tonumber(result)
             if weaponName == "weapon_petrolcan" or weaponName == "weapon_fireextinguisher" then
                 ammo = 4000
@@ -515,7 +515,7 @@ end, false)
 
 RegisterCommand('inventory', function()
     if not isCrafting and not inInventory then
-        denalifw.Functions.GetPlayerData(function(PlayerData)
+        NADRP.Functions.GetPlayerData(function(PlayerData)
             if not PlayerData.metadata["isdead"] and not PlayerData.metadata["inlaststand"] and not PlayerData.metadata["ishandcuffed"] and not IsPauseMenuActive() then
                 local ped = PlayerPedId()
                 local curVeh = nil
@@ -523,11 +523,11 @@ RegisterCommand('inventory', function()
 
                 if IsPedInAnyVehicle(ped) then -- Is Player In Vehicle
                     local vehicle = GetVehiclePedIsIn(ped, false)
-                    CurrentGlovebox = denalifw.Functions.GetPlate(vehicle)
+                    CurrentGlovebox = NADRP.Functions.GetPlate(vehicle)
                     curVeh = vehicle
                     CurrentVehicle = nil
                 else
-                    local vehicle = denalifw.Functions.GetClosestVehicle()
+                    local vehicle = NADRP.Functions.GetClosestVehicle()
                     if vehicle ~= 0 and vehicle ~= nil then
                         local pos = GetEntityCoords(ped)
                         local trunkpos = GetOffsetFromEntityInWorldCoords(vehicle, 0, -2.5, 0)
@@ -536,11 +536,11 @@ RegisterCommand('inventory', function()
                         end
                         if #(pos - trunkpos) < 2.0 and not IsPedInAnyVehicle(ped) then
                             if GetVehicleDoorLockStatus(vehicle) < 2 then
-                                CurrentVehicle = denalifw.Functions.GetPlate(vehicle)
+                                CurrentVehicle = NADRP.Functions.GetPlate(vehicle)
                                 curVeh = vehicle
                                 CurrentGlovebox = nil
                             else
-                                denalifw.Functions.Notify("Vehicle Locked", "error")
+                                NADRP.Functions.Notify("Vehicle Locked", "error")
                                 return
                             end
                         else
@@ -633,7 +633,7 @@ RegisterKeyMapping('inventory', 'Open Inventory', 'keyboard', 'TAB')
 
 RegisterCommand('hotbar', function()
     isHotbar = not isHotbar
-	denalifw.Functions.GetPlayerData(function(PlayerData)
+	NADRP.Functions.GetPlayerData(function(PlayerData)
         if not PlayerData.metadata["isdead"] and not PlayerData.metadata["inlaststand"] and not PlayerData.metadata["ishandcuffed"] and not IsPauseMenuActive() then
 			ToggleHotbar(isHotbar)
 		end
@@ -644,7 +644,7 @@ RegisterKeyMapping('hotbar', 'Toggles keybind slots', 'keyboard', 'z')
 
 for i=1, 6 do
     RegisterCommand('slot' .. i,function()
-        denalifw.Functions.GetPlayerData(function(PlayerData)
+        NADRP.Functions.GetPlayerData(function(PlayerData)
             if not PlayerData.metadata["isdead"] and not PlayerData.metadata["inlaststand"] and not PlayerData.metadata["ishandcuffed"] and not IsPauseMenuActive() then
                 if i == 6 then
                     i = MaxInventorySlots
@@ -656,7 +656,7 @@ for i=1, 6 do
     RegisterKeyMapping('slot' .. i, 'Uses the item in slot ' .. i, 'keyboard', i)
 end
 
-RegisterNetEvent('denalifw-inventory:client:giveAnim', function()
+RegisterNetEvent('NADRP-inventory:client:giveAnim', function()
     LoadAnimDict('mp_common')
 	TaskPlayAnim(PlayerPedId(), 'mp_common', 'givetake1_b', 8.0, 1.0, -1, 16, 0, 0, 0, 0)
 end)
@@ -668,12 +668,12 @@ RegisterNUICallback('RobMoney', function(data, cb)
 end)
 
 RegisterNUICallback('Notify', function(data, cb)
-    denalifw.Functions.Notify(data.message, data.type)
+    NADRP.Functions.Notify(data.message, data.type)
 end)
 
 RegisterNUICallback('GetWeaponData', function(data, cb)
     local data = {
-        WeaponData = denalifw.Shared.Items[data.weapon],
+        WeaponData = NADRP.Shared.Items[data.weapon],
         AttachmentData = FormatWeaponAttachments(data.ItemData)
     }
     cb(data)
@@ -681,11 +681,11 @@ end)
 
 RegisterNUICallback('RemoveAttachment', function(data, cb)
     local ped = PlayerPedId()
-    local WeaponData = denalifw.Shared.Items[data.WeaponData.name]
-    local label = denalifw.Shared.Items
+    local WeaponData = NADRP.Shared.Items[data.WeaponData.name]
+    local label = NADRP.Shared.Items
     local Attachment = WeaponAttachments[WeaponData.name:upper()][data.AttachmentData.attachment]
 
-    denalifw.Functions.TriggerCallback('weapons:server:RemoveAttachment', function(NewAttachments)
+    NADRP.Functions.TriggerCallback('weapons:server:RemoveAttachment', function(NewAttachments)
         if NewAttachments ~= false then
             local Attachies = {}
             RemoveWeaponComponentFromPed(ped, GetHashKey(data.WeaponData.name), GetHashKey(Attachment.component))
@@ -695,7 +695,7 @@ RegisterNUICallback('RemoveAttachment', function(data, cb)
                         item = pew.item
                         Attachies[#Attachies+1] = {
                             attachment = pew.item,
-                            label = denalifw.Shared.Items[item].label,
+                            label = NADRP.Shared.Items[item].label,
                         }
                     end
                 end
@@ -713,7 +713,7 @@ RegisterNUICallback('RemoveAttachment', function(data, cb)
 end)
 
 RegisterNUICallback('getCombineItem', function(data, cb)
-    cb(denalifw.Shared.Items[data.item])
+    cb(NADRP.Shared.Items[data.item])
 end)
 
 RegisterNUICallback("CloseInventory", function(data, cb)
@@ -761,7 +761,7 @@ RegisterNUICallback('combineWithAnim', function(data)
     local animText = combineData.anim.text
     local animTimeout = combineData.anim.timeOut
 
-    denalifw.Functions.Progressbar("combine_anim", animText, animTimeout, false, true, {
+    NADRP.Functions.Progressbar("combine_anim", animText, animTimeout, false, true, {
         disableMovement = false,
         disableCarMovement = true,
         disableMouse = false,
@@ -775,7 +775,7 @@ RegisterNUICallback('combineWithAnim', function(data)
         TriggerServerEvent('inventory:server:combineItem', combineData.reward, data.requiredItem, data.usedItem)
     end, function() -- Cancel
         StopAnimTask(ped, aDict, aLib, 1.0)
-        denalifw.Functions.Notify("Failed!", "error")
+        NADRP.Functions.Notify("Failed!", "error")
     end)
 end)
 
@@ -792,17 +792,17 @@ RegisterNUICallback("PlayDropFail", function(data, cb)
 end)
 
 RegisterNUICallback("GiveItem", function(data, cb)
-    local player, distance = denalifw.Functions.GetClosestPlayer(GetEntityCoords(PlayerPedId()))
+    local player, distance = NADRP.Functions.GetClosestPlayer(GetEntityCoords(PlayerPedId()))
     if player ~= -1 and distance < 3 then
         if (data.inventory == 'player') then
             local playerId = GetPlayerServerId(player)
             SetCurrentPedWeapon(PlayerPedId(),'WEAPON_UNARMED',true)
             TriggerServerEvent("inventory:server:GiveItem", playerId, data.item.name, data.amount, data.item.slot)
         else
-            denalifw.Functions.Notify("You do not own this item!", "error")
+            NADRP.Functions.Notify("You do not own this item!", "error")
         end
     else
-        denalifw.Functions.Notify("No one nearby!", "error")
+        NADRP.Functions.Notify("No one nearby!", "error")
     end
 end)
 

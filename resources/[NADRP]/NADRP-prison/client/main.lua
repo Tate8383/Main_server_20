@@ -1,4 +1,4 @@
-denalifw = exports['denalifw-core']:GetCoreObject() -- Used Globally
+NADRP = exports['NADRP-core']:GetCoreObject() -- Used Globally
 inJail = false
 jailTime = 0
 currentJob = "electrician"
@@ -70,34 +70,34 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-	denalifw.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+	NADRP.Functions.GetPlayerData(function(PlayerData)
 		if PlayerData.metadata["injail"] > 0 then
 			TriggerEvent("prison:client:Enter", PlayerData.metadata["injail"])
 		end
 	end)
 
-	denalifw.Functions.TriggerCallback('prison:server:IsAlarmActive', function(active)
+	NADRP.Functions.TriggerCallback('prison:server:IsAlarmActive', function(active)
 		if active then
 			TriggerEvent('prison:client:JailAlarm', true)
 		end
 	end)
 
-	PlayerJob = denalifw.Functions.GetPlayerData().job
+	PlayerJob = NADRP.Functions.GetPlayerData().job
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
+RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
 	inJail = false
 	currentJob = nil
 	RemoveBlip(currentBlip)
 end)
 
 RegisterNetEvent('prison:client:Enter', function(time)
-	denalifw.Functions.Notify( Lang:t("error.injail", {Time = time}), "error")
+	NADRP.Functions.Notify( Lang:t("error.injail", {Time = time}), "error")
 
 	TriggerEvent("chatMessage", "SYSTEM", "warning", "Your property has been seized, you'll get everything back when your time is up..")
 	DoScreenFadeOut(500)
@@ -119,12 +119,12 @@ RegisterNetEvent('prison:client:Enter', function(time)
 	CreateCellsBlip()
 	Wait(2000)
 	DoScreenFadeIn(1000)
-	denalifw.Functions.Notify( Lang:t("error.do_some_work", {currentjob = Config.Jobs[currentJob] }), "error")
+	NADRP.Functions.Notify( Lang:t("error.do_some_work", {currentjob = Config.Jobs[currentJob] }), "error")
 end)
 
 RegisterNetEvent('prison:client:Leave', function()
 	if jailTime > 0 then
-		denalifw.Functions.Notify( Lang:t("info.timeleft", {JAILTIME = jailTime}))
+		NADRP.Functions.Notify( Lang:t("info.timeleft", {JAILTIME = jailTime}))
 	else
 		jailTime = 0
 		TriggerServerEvent("prison:server:SetJailStatus", 0)
@@ -138,7 +138,7 @@ RegisterNetEvent('prison:client:Leave', function()
 		TimeBlip = nil
 		RemoveBlip(ShopBlip)
 		ShopBlip = nil
-		denalifw.Functions.Notify(Lang:t("success.free_"))
+		NADRP.Functions.Notify(Lang:t("success.free_"))
 		DoScreenFadeOut(500)
 		while not IsScreenFadedOut() do
 			Wait(10)
@@ -165,7 +165,7 @@ RegisterNetEvent('prison:client:UnjailPerson', function()
 		TimeBlip = nil
 		RemoveBlip(ShopBlip)
 		ShopBlip = nil
-		denalifw.Functions.Notify(Lang:t("success.free_"))
+		NADRP.Functions.Notify(Lang:t("success.free_"))
 		DoScreenFadeOut(500)
 		while not IsScreenFadedOut() do
 			Wait(10)
@@ -189,7 +189,7 @@ CreateThread(function()
 				jailTime = jailTime - 1
 				if jailTime <= 0 then
 					jailTime = 0
-					denalifw.Functions.Notify(Lang:t("success.timesup"), "success", 10000)
+					NADRP.Functions.Notify(Lang:t("success.timesup"), "success", 10000)
 				end
 				TriggerServerEvent("prison:server:SetJailStatus", jailTime)
 			end

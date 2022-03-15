@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local DenaliFW = exports['denalifw-core']:GetCoreObject()
 local pedDisplaying = {}
 local displayTime = 8000
 Citizen.CreateThread(function()

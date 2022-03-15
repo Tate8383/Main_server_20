@@ -1,4 +1,4 @@
-AddEventHandler('denalifw-lockpick:client:openLockpick', function(callback)
+AddEventHandler('NADRP-lockpick:client:openLockpick', function(callback)
     lockpickCallback = callback
     openLockpick(true)
 end)

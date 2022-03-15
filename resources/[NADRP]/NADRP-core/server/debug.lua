@@ -21,8 +21,8 @@ local function tPrint(tbl, indent)
     end
 end
 
-RegisterServerEvent('denalifw:DebugSomething', function(table, indent)
-    local resource = GetInvokingResource() or "denalifw-core"
+RegisterServerEvent('NADRP:DebugSomething', function(table, indent)
+    local resource = GetInvokingResource() or "NADRP-core"
 
     print(('\x1b[4m\x1b[36m[ %s : DEBUG]\x1b[0m'):format(resource))
 
@@ -31,14 +31,14 @@ RegisterServerEvent('denalifw:DebugSomething', function(table, indent)
     print('\x1b[4m\x1b[36m[ END DEBUG ]\x1b[0m')
 end)
 
-function denalifw.Debug(table, indent)
-    TriggerEvent('denalifw:DebugSomething', table, indent)
+function NADRP.Debug(table, indent)
+    TriggerEvent('NADRP:DebugSomething', table, indent)
 end
 
-function denalifw.ShowError(resource, msg)
+function NADRP.ShowError(resource, msg)
     print('\x1b[31m['..resource..':ERROR]\x1b[0m '..msg)
 end
 
-function denalifw.ShowSuccess(resource, msg)
+function NADRP.ShowSuccess(resource, msg)
     print('\x1b[32m['..resource..':LOG]\x1b[0m '..msg)
 end

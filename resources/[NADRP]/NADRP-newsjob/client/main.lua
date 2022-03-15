@@ -1,4 +1,4 @@
-denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = exports['NADRP-core']:GetCoreObject()
 PlayerJob = {}
 
 local function DrawText3D(x, y, z, text)
@@ -16,8 +16,8 @@ local function DrawText3D(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    PlayerJob = denalifw.Functions.GetPlayerData().job
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    PlayerJob = NADRP.Functions.GetPlayerData().job
     if PlayerJob.name == "reporter" then
         local blip = AddBlipForCoord(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)
         SetBlipSprite(blip, 225)
@@ -31,7 +31,7 @@ RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     end
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     if PlayerJob.name == "reporter" then
         local blip = AddBlipForCoord(Config.Locations["vehicle"].coords.x, Config.Locations["vehicle"].coords.y, Config.Locations["vehicle"].coords.z)
@@ -48,15 +48,15 @@ end)
 
 function TakeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"].coords
-    denalifw.Functions.SpawnVehicle(vehicleInfo, function(veh)
+    NADRP.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, "WZNW"..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
         SetVehicleLivery(veh, 2)
-        CurrentPlate = denalifw.Functions.GetPlate(veh)
+        CurrentPlate = NADRP.Functions.GetPlate(veh)
     end, coords, true)
 end
 
@@ -68,13 +68,13 @@ function MenuGarage()
         }
     }
 
-    local Vehicles = Config.Vehicles[denalifw.Functions.GetPlayerData().job.grade.level]
+    local Vehicles = Config.Vehicles[NADRP.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(Vehicles) do
         vehicleMenu[#vehicleMenu+1] = {
             header = label,
             txt = "",
             params = {
-                event = "denalifw-newsjob:client:TakeOutVehicle",
+                event = "NADRP-newsjob:client:TakeOutVehicle",
                 args = {
                     vehicle = veh
                 }
@@ -85,24 +85,24 @@ function MenuGarage()
         header = "⬅ Close Menu",
         txt = "",
         params = {
-            event = "denalifw-menu:client:closeMenu"
+            event = "NADRP-menu:client:closeMenu"
         }
 
     }
-    exports['denalifw-menu']:openMenu(vehicleMenu)
+    exports['NADRP-menu']:openMenu(vehicleMenu)
 end
 
 function TakeOutHelicopters(vehicleInfo)
     local coords = Config.Locations["heli"].coords
-    denalifw.Functions.SpawnVehicle(vehicleInfo, function(veh)
+    NADRP.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, "WZNW"..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
         SetVehicleLivery(veh, 2)
-        CurrentPlate = denalifw.Functions.GetPlate(veh)
+        CurrentPlate = NADRP.Functions.GetPlate(veh)
     end, coords, true)
 end
 
@@ -114,13 +114,13 @@ function MenuHeliGarage()
         }
     }
 
-    local Helicopters = Config.Helicopters[denalifw.Functions.GetPlayerData().job.grade.level]
+    local Helicopters = Config.Helicopters[NADRP.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(Helicopters) do
         vehicleMenu[#vehicleMenu+1] = {
             header = label,
             txt = "",
             params = {
-                event = "denalifw-newsjob:client:TakeOutHelicopters",
+                event = "NADRP-newsjob:client:TakeOutHelicopters",
                 args = {
                     vehicle = veh
                 }
@@ -131,11 +131,11 @@ function MenuHeliGarage()
         header = "⬅ Close Menu",
         txt = "",
         params = {
-            event = "denalifw-menu:client:closeMenu"
+            event = "NADRP-menu:client:closeMenu"
         }
 
     }
-    exports['denalifw-menu']:openMenu(vehicleMenu)
+    exports['NADRP-menu']:openMenu(vehicleMenu)
 end
 
 CreateThread(function()
@@ -241,12 +241,12 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('denalifw-newsjob:client:TakeOutVehicle', function(data)
+RegisterNetEvent('NADRP-newsjob:client:TakeOutVehicle', function(data)
     local vehicle = data.vehicle
     TakeOutVehicle(vehicle)
 end)
 
-RegisterNetEvent('denalifw-newsjob:client:TakeOutHelicopters', function(data)
+RegisterNetEvent('NADRP-newsjob:client:TakeOutHelicopters', function(data)
     local vehicle = data.vehicle
     TakeOutHelicopters(vehicle)
 end)

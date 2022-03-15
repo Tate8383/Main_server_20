@@ -1,37 +1,37 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local PaymentTax = 15
 local Bail = {}
 
-RegisterNetEvent('denalifw-trucker:server:DoBail', function(bool, vehInfo)
+RegisterNetEvent('NADRP-trucker:server:DoBail', function(bool, vehInfo)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
 
     if bool then
         if Player.PlayerData.money.cash >= Config.BailPrice then
             Bail[Player.PlayerData.citizenid] = Config.BailPrice
             Player.Functions.RemoveMoney('cash', Config.BailPrice, "tow-received-bail")
-            TriggerClientEvent('denalifw:Notify', src, '$250 Deposit Paid With Cash', 'success')
-            TriggerClientEvent('denalifw-trucker:client:SpawnVehicle', src, vehInfo)
+            TriggerClientEvent('NADRP:Notify', src, '$250 Deposit Paid With Cash', 'success')
+            TriggerClientEvent('NADRP-trucker:client:SpawnVehicle', src, vehInfo)
         elseif Player.PlayerData.money.bank >= Config.BailPrice then
             Bail[Player.PlayerData.citizenid] = Config.BailPrice
             Player.Functions.RemoveMoney('bank', Config.BailPrice, "tow-received-bail")
-            TriggerClientEvent('denalifw:Notify', src, '$250 Deposit Paid From Bank', 'success')
-            TriggerClientEvent('denalifw-trucker:client:SpawnVehicle', src, vehInfo)
+            TriggerClientEvent('NADRP:Notify', src, '$250 Deposit Paid From Bank', 'success')
+            TriggerClientEvent('NADRP-trucker:client:SpawnVehicle', src, vehInfo)
         else
-            TriggerClientEvent('denalifw:Notify', src, '$250 Deposit Required', 'error')
+            TriggerClientEvent('NADRP:Notify', src, '$250 Deposit Required', 'error')
         end
     else
         if Bail[Player.PlayerData.citizenid] ~= nil then
             Player.Functions.AddMoney('cash', Bail[Player.PlayerData.citizenid], "trucker-bail-paid")
             Bail[Player.PlayerData.citizenid] = nil
-            TriggerClientEvent('denalifw:Notify', src, '$250 Deposit Refunded To Cash', 'success')
+            TriggerClientEvent('NADRP:Notify', src, '$250 Deposit Refunded To Cash', 'success')
         end
     end
 end)
 
-RegisterNetEvent('denalifw-trucker:server:01101110', function(drops)
+RegisterNetEvent('NADRP-trucker:server:01101110', function(drops)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local drops = tonumber(drops)
     local bonus = 0
     local DropPrice = math.random(100, 120)
@@ -51,11 +51,11 @@ RegisterNetEvent('denalifw-trucker:server:01101110', function(drops)
     local payment = price - taxAmount
     Player.Functions.AddJobReputation(drops)
     Player.Functions.AddMoney("bank", payment, "trucker-salary")
-    TriggerClientEvent('denalifw:Notify', src, 'You Earned $'..payment, 'success')
+    TriggerClientEvent('NADRP:Notify', src, 'You Earned $'..payment, 'success')
 end)
 
-RegisterNetEvent('denalifw-trucker:server:nano', function()
-    local xPlayer = denalifw.Functions.GetPlayer(tonumber(source))
+RegisterNetEvent('NADRP-trucker:server:nano', function()
+    local xPlayer = NADRP.Functions.GetPlayer(tonumber(source))
 	xPlayer.Functions.AddItem("cryptostick", 1, false)
-	TriggerClientEvent('inventory:client:ItemBox', source, denalifw.Shared.Items["cryptostick"], "add")
+	TriggerClientEvent('inventory:client:ItemBox', source, NADRP.Shared.Items["cryptostick"], "add")
 end)

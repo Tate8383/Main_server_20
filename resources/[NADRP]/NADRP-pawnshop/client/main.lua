@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local isMelting = false
 local canTake = false
 local inRange = false
@@ -28,24 +28,24 @@ CreateThread(function()
 		end
 		if inRange and not headerOpen then
 			headerOpen = true
-			exports['denalifw-menu']:showHeader({
+			exports['NADRP-menu']:showHeader({
 				{
 					header = Lang:t('info.title'),
 					txt = Lang:t('info.open_pawn'),
 					params = {
-						event = "denalifw-pawnshop:client:openMenu"
+						event = "NADRP-pawnshop:client:openMenu"
 					}
 				}
 			})
 		end
 		if not inRange and headerOpen then
 			headerOpen = false
-			exports['denalifw-menu']:closeMenu()
+			exports['NADRP-menu']:closeMenu()
 		end
     end
 end)
 
-RegisterNetEvent('denalifw-pawnshop:client:openMenu', function()
+RegisterNetEvent('NADRP-pawnshop:client:openMenu', function()
 	if Config.UseTimes then
 		if GetClockHours() >= Config.TimeOpen and GetClockHours() <= Config.TimeClosed then
 			local pawnShop = {
@@ -57,7 +57,7 @@ RegisterNetEvent('denalifw-pawnshop:client:openMenu', function()
 					header = Lang:t('info.sell'),
 					txt = Lang:t('info.sell_pawn'),
 					params = {
-						event = "denalifw-pawnshop:client:openPawn",
+						event = "NADRP-pawnshop:client:openPawn",
 						args = {
 							items = Config.PawnItems
 						}
@@ -70,7 +70,7 @@ RegisterNetEvent('denalifw-pawnshop:client:openMenu', function()
 					header = Lang:t('info.melt'),
 					txt = Lang:t('info.melt_pawn'),
 					params = {
-						event = "denalifw-pawnshop:client:openMelt",
+						event = "NADRP-pawnshop:client:openMelt",
 						args = {
 							items = Config.MeltingItems
 						}
@@ -84,16 +84,16 @@ RegisterNetEvent('denalifw-pawnshop:client:openMenu', function()
 					txt = "",
 					params = {
 						isServer = true,
-						event = "denalifw-pawnshop:server:pickupMelted",
+						event = "NADRP-pawnshop:server:pickupMelted",
 						args = {
 							items = meltedItem
 						}
 					}
 				}
 			end
-			exports['denalifw-menu']:openMenu(pawnShop)
+			exports['NADRP-menu']:openMenu(pawnShop)
 		else
-			denalifw.Functions.Notify(Lang:t('info.pawn_closed', {value = Config.TimeOpen, value2 = Config.TimeClosed}))
+			NADRP.Functions.Notify(Lang:t('info.pawn_closed', {value = Config.TimeOpen, value2 = Config.TimeClosed}))
 		end
 	else
 		local pawnShop = {
@@ -105,7 +105,7 @@ RegisterNetEvent('denalifw-pawnshop:client:openMenu', function()
 				header = Lang:t('info.sell'),
 				txt = Lang:t('info.sell_pawn'),
 				params = {
-					event = "denalifw-pawnshop:client:openPawn",
+					event = "NADRP-pawnshop:client:openPawn",
 					args = {
 						items = Config.PawnItems
 					}
@@ -118,7 +118,7 @@ RegisterNetEvent('denalifw-pawnshop:client:openMenu', function()
 				header = Lang:t('info.melt'),
 				txt = Lang:t('info.melt_pawn'),
 				params = {
-					event = "denalifw-pawnshop:client:openMelt",
+					event = "NADRP-pawnshop:client:openMelt",
 					args = {
 						items = Config.MeltingItems
 					}
@@ -132,19 +132,19 @@ RegisterNetEvent('denalifw-pawnshop:client:openMenu', function()
 				txt = "",
 				params = {
 					isServer = true,
-					event = "denalifw-pawnshop:server:pickupMelted",
+					event = "NADRP-pawnshop:server:pickupMelted",
 					args = {
 						items = meltedItem
 					}
 				}
 			}
 		end
-		exports['denalifw-menu']:openMenu(pawnShop)
+		exports['NADRP-menu']:openMenu(pawnShop)
 	end
 end)
 
-RegisterNetEvent('denalifw-pawnshop:client:openPawn', function(data)
-	denalifw.Functions.TriggerCallback('denalifw-pawnshop:server:getInv', function(inventory)
+RegisterNetEvent('NADRP-pawnshop:client:openPawn', function(data)
+	NADRP.Functions.TriggerCallback('NADRP-pawnshop:server:getInv', function(inventory)
 		local PlyInv = inventory
 		local pawnMenu = {
 			{
@@ -157,12 +157,12 @@ RegisterNetEvent('denalifw-pawnshop:client:openPawn', function(data)
 			for i = 1, #data.items do
 				if v.name == data.items[i].item then
 					pawnMenu[#pawnMenu +1] = {
-						header = denalifw.Shared.Items[v.name].label,
+						header = NADRP.Shared.Items[v.name].label,
 						txt = Lang:t('info.sell_items', {value = data.items[i].price}),
 						params = {
-							event = "denalifw-pawnshop:client:pawnitems",
+							event = "NADRP-pawnshop:client:pawnitems",
 							args = {
-								label = denalifw.Shared.Items[v.name].label,
+								label = NADRP.Shared.Items[v.name].label,
 								price = data.items[i].price,
 								name = v.name,
 								amount = v.amount
@@ -176,15 +176,15 @@ RegisterNetEvent('denalifw-pawnshop:client:openPawn', function(data)
 		pawnMenu[#pawnMenu+1] = {
 			header = Lang:t('info.back'),
 			params = {
-				event = "denalifw-pawnshop:client:openMenu"
+				event = "NADRP-pawnshop:client:openMenu"
 			}
 		}
-		exports['denalifw-menu']:openMenu(pawnMenu)
+		exports['NADRP-menu']:openMenu(pawnMenu)
 	end)
 end)
 
-RegisterNetEvent('denalifw-pawnshop:client:openMelt', function(data)
-	denalifw.Functions.TriggerCallback('denalifw-pawnshop:server:getInv', function(inventory)
+RegisterNetEvent('NADRP-pawnshop:client:openMelt', function(data)
+	NADRP.Functions.TriggerCallback('NADRP-pawnshop:server:getInv', function(inventory)
 		local PlyInv = inventory
 		local meltMenu = {
 			{
@@ -196,12 +196,12 @@ RegisterNetEvent('denalifw-pawnshop:client:openMelt', function(data)
 			for i = 1, #data.items do
 				if v.name == data.items[i].item then
 					meltMenu[#meltMenu +1] = {
-						header = denalifw.Shared.Items[v.name].label,
-						txt = Lang:t('info.melt_item', {value = denalifw.Shared.Items[v.name].label}),
+						header = NADRP.Shared.Items[v.name].label,
+						txt = Lang:t('info.melt_item', {value = NADRP.Shared.Items[v.name].label}),
 						params = {
-							event = "denalifw-pawnshop:client:meltItems",
+							event = "NADRP-pawnshop:client:meltItems",
 							args = {
-								label = denalifw.Shared.Items[v.name].label,
+								label = NADRP.Shared.Items[v.name].label,
 								reward = data.items[i].rewards,
 								name = v.name,
 								amount = v.amount,
@@ -216,15 +216,15 @@ RegisterNetEvent('denalifw-pawnshop:client:openMelt', function(data)
 		meltMenu[#meltMenu+1] = {
 			header = Lang:t('info.back'),
 			params = {
-				event = "denalifw-pawnshop:client:openMenu"
+				event = "NADRP-pawnshop:client:openMenu"
 			}
 		}
-		exports['denalifw-menu']:openMenu(meltMenu)
+		exports['NADRP-menu']:openMenu(meltMenu)
 	end)
 end)
 
-RegisterNetEvent("denalifw-pawnshop:client:pawnitems", function(item)
-	local sellingItem = exports['denalifw-input']:ShowInput({
+RegisterNetEvent("NADRP-pawnshop:client:pawnitems", function(item)
+	local sellingItem = exports['NADRP-input']:ShowInput({
 		header = Lang:t('info.title'),
 		submitText = Lang:t('info.sell'),
 		inputs = {
@@ -243,15 +243,15 @@ RegisterNetEvent("denalifw-pawnshop:client:pawnitems", function(item)
 		end
 
 		if tonumber(sellingItem.amount) > 0 then
-			TriggerServerEvent('denalifw-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
+			TriggerServerEvent('NADRP-pawnshop:server:sellPawnItems', item.name, sellingItem.amount, item.price)
 		else
-			denalifw.Functions.Notify(Lang:t('error.negative'), 'error')
+			NADRP.Functions.Notify(Lang:t('error.negative'), 'error')
 		end
 	end
 end)
 
-RegisterNetEvent('denalifw-pawnshop:client:meltItems', function(item)
-	local meltingItem = exports['denalifw-input']:ShowInput({
+RegisterNetEvent('NADRP-pawnshop:client:meltItems', function(item)
+	local meltingItem = exports['NADRP-input']:ShowInput({
 		header = Lang:t('info.melt'),
 		submitText = Lang:t('info.submit'),
 		inputs = {
@@ -270,18 +270,18 @@ RegisterNetEvent('denalifw-pawnshop:client:meltItems', function(item)
 		end
 		if meltingItem.amount ~= nil then
 			if tonumber(meltingItem.amount) > 0 then
-				TriggerServerEvent('denalifw-pawnshop:server:meltItemRemove', item.name, meltingItem.amount,item)
+				TriggerServerEvent('NADRP-pawnshop:server:meltItemRemove', item.name, meltingItem.amount,item)
 
 			else
-				denalifw.Functions.Notify(Lang:t('error.no_melt'), "error")
+				NADRP.Functions.Notify(Lang:t('error.no_melt'), "error")
 			end
 		else
-			denalifw.Functions.Notify(Lang:t('error.no_melt'), "error")
+			NADRP.Functions.Notify(Lang:t('error.no_melt'), "error")
 		end
 	end
 end)
 
-RegisterNetEvent('denalifw-pawnshop:client:startMelting', function(item, meltingAmount, meltTimees)
+RegisterNetEvent('NADRP-pawnshop:client:startMelting', function(item, meltingAmount, meltTimees)
     if not isMelting then
         isMelting = true
 		meltTime = meltTimees
@@ -296,14 +296,14 @@ RegisterNetEvent('denalifw-pawnshop:client:startMelting', function(item, melting
                         isMelting = false
 						table.insert(meltedItem, {item = item, amount = meltingAmount})
 						if Config.SendMeltingEmail then
-							TriggerServerEvent('denalifw-phone:server:sendNewMail', {
+							TriggerServerEvent('NADRP-phone:server:sendNewMail', {
 								sender = Lang:t('info.title'),
 								subject = Lang:t('info.subject'),
 								message = Lang:t('info.message'),
 								button = {}
 							})
 						else
-							denalifw.Functions.Notify(Lang:t('info.message'), "success")
+							NADRP.Functions.Notify(Lang:t('info.message'), "success")
 						end
                     end
                 else
@@ -315,6 +315,6 @@ RegisterNetEvent('denalifw-pawnshop:client:startMelting', function(item, melting
     end
 end)
 
-RegisterNetEvent('denalifw-pawnshop:client:resetPickup', function()
+RegisterNetEvent('NADRP-pawnshop:client:resetPickup', function()
 	canTake = false
 end)

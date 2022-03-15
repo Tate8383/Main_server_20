@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 Skillbar = {}
 Skillbar.Data = {}
@@ -45,7 +45,7 @@ Skillbar.Start = function(data, success, fail)
         })
         TriggerEvent('progressbar:client:ToggleBusyness', true)
     else
-        denalifw.Functions.Notify('Your already doing something..', 'error')
+        NADRP.Functions.Notify('Your already doing something..', 'error')
     end
 end
 

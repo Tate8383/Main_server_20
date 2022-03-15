@@ -1,12 +1,12 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local ItemList = {
     ["casinochips"] = 1,
 }
 
-RegisterNetEvent('denalifw-casino:server:sell', function()
+RegisterNetEvent('NADRP-casino:server:sell', function()
     local src = source
     local price = 0
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local xItem = Player.Functions.GetItemByName("casinochips")
     if xItem ~= nil then
         for k, v in pairs(Player.PlayerData.items) do
@@ -16,51 +16,51 @@ RegisterNetEvent('denalifw-casino:server:sell', function()
                     Player.Functions.RemoveItem(Player.PlayerData.items[k].name, Player.PlayerData.items[k].amount, k)
 
         Player.Functions.AddMoney("cash", price, "sold-casino-chips")
-            TriggerClientEvent('denalifw:Notify', src, "You sold your chips for $"..price)
-            TriggerEvent("denalifw-log:server:CreateLog", "casino", "Chips", "blue", "**"..GetPlayerName(src) .. "** got $"..price.." for selling the Chips")
+            TriggerClientEvent('NADRP:Notify', src, "You sold your chips for $"..price)
+            TriggerEvent("NADRP-log:server:CreateLog", "casino", "Chips", "blue", "**"..GetPlayerName(src) .. "** got $"..price.." for selling the Chips")
                 end
             end
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, "You have no chips..")
+        TriggerClientEvent('NADRP:Notify', src, "You have no chips..")
     end
 end)
 
 function SetExports()
-exports["denalifw-blackjack"]:SetGetChipsCallback(function(source)
-    local Player = denalifw.Functions.GetPlayer(source)
+exports["NADRP-blackjack"]:SetGetChipsCallback(function(source)
+    local Player = NADRP.Functions.GetPlayer(source)
     local Chips = Player.Functions.GetItemByName("casinochips")
 
     if Chips ~= nil then
         Chips = Chips
     end
 
-    return TriggerClientEvent('denalifw:Notify', src, "You have no chips..")
+    return TriggerClientEvent('NADRP:Notify', src, "You have no chips..")
 end)
 
-    exports["denalifw-blackjack"]:SetTakeChipsCallback(function(source, amount)
-        local Player = denalifw.Functions.GetPlayer(source)
+    exports["NADRP-blackjack"]:SetTakeChipsCallback(function(source, amount)
+        local Player = NADRP.Functions.GetPlayer(source)
 
         if Player ~= nil then
             Player.Functions.RemoveItem("casinochips", amount)
-            TriggerClientEvent('inventory:client:ItemBox', source, denalifw.Shared.Items['casinochips'], "remove")
-            TriggerEvent("denalifw-log:server:CreateLog", "casino", "Chips", "yellow", "**"..GetPlayerName(source) .. "** put $"..amount.." in table")
+            TriggerClientEvent('inventory:client:ItemBox', source, NADRP.Shared.Items['casinochips'], "remove")
+            TriggerEvent("NADRP-log:server:CreateLog", "casino", "Chips", "yellow", "**"..GetPlayerName(source) .. "** put $"..amount.." in table")
         end
     end)
 
-    exports["denalifw-blackjack"]:SetGiveChipsCallback(function(source, amount)
-        local Player = denalifw.Functions.GetPlayer(source)
+    exports["NADRP-blackjack"]:SetGiveChipsCallback(function(source, amount)
+        local Player = NADRP.Functions.GetPlayer(source)
 
         if Player ~= nil then
             Player.Functions.AddItem("casinochips", amount)
-            TriggerClientEvent('inventory:client:ItemBox', source, denalifw.Shared.Items['casinochips'], "add")
-            TriggerEvent("denalifw-log:server:CreateLog", "casino", "Chips", "red", "**"..GetPlayerName(source) .. "** got $"..amount.." from table table and he won the double")
+            TriggerClientEvent('inventory:client:ItemBox', source, NADRP.Shared.Items['casinochips'], "add")
+            TriggerEvent("NADRP-log:server:CreateLog", "casino", "Chips", "red", "**"..GetPlayerName(source) .. "** got $"..amount.." from table table and he won the double")
         end
     end)
 end
 
 AddEventHandler("onResourceStart", function(resourceName)
-	if ("denalifw-blackjack" == resourceName) then
+	if ("NADRP-blackjack" == resourceName) then
         Citizen.Wait(1000)
         SetExports()
     end

@@ -1,25 +1,25 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local ResetStress = false
 
-denalifw.Commands.Add('cash', 'Check Cash Balance', {}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Commands.Add('cash', 'Check Cash Balance', {}, false, function(source, args)
+    local Player = NADRP.Functions.GetPlayer(source)
     local cashamount = Player.PlayerData.money.cash
     TriggerClientEvent('hud:client:ShowAccounts', source, 'cash', cashamount)
 end)
 
-denalifw.Commands.Add('bank', 'Check Bank Balance', {}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Commands.Add('bank', 'Check Bank Balance', {}, false, function(source, args)
+    local Player = NADRP.Functions.GetPlayer(source)
     local bankamount = Player.PlayerData.money.bank
     TriggerClientEvent('hud:client:ShowAccounts', source, 'bank', bankamount)
 end)
 
-denalifw.Commands.Add("dev", "Enable/Disable developer Mode", {}, false, function(source, args)
-    TriggerClientEvent("denalifw-admin:client:ToggleDevmode", source)
+NADRP.Commands.Add("dev", "Enable/Disable developer Mode", {}, false, function(source, args)
+    TriggerClientEvent("NADRP-admin:client:ToggleDevmode", source)
 end, 'admin')
 
 RegisterNetEvent('hud:server:GainStress', function(amount)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local newStress
     if not Player or (Config.DisablePoliceStress and Player.PlayerData.job.name == 'police') then return end
     if not ResetStress then
@@ -36,12 +36,12 @@ RegisterNetEvent('hud:server:GainStress', function(amount)
     end
     Player.Functions.SetMetaData('stress', newStress)
     TriggerClientEvent('hud:client:UpdateStress', src, newStress)
-    TriggerClientEvent('denalifw:Notify', src, Lang:t("notify.stress_gain"), 'error', 1500)
+    TriggerClientEvent('NADRP:Notify', src, Lang:t("notify.stress_gain"), 'error', 1500)
 end)
 
 RegisterNetEvent('hud:server:RelieveStress', function(amount)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local newStress
     if not Player then return end
     if not ResetStress then
@@ -58,11 +58,11 @@ RegisterNetEvent('hud:server:RelieveStress', function(amount)
     end
     Player.Functions.SetMetaData('stress', newStress)
     TriggerClientEvent('hud:client:UpdateStress', src, newStress)
-    TriggerClientEvent('denalifw:Notify', src, Lang:t("notify.stress_removed"))
+    TriggerClientEvent('NADRP:Notify', src, Lang:t("notify.stress_removed"))
 end)
 
-denalifw.Functions.CreateCallback('hud:server:HasHarness', function(source, cb)
-    local Ply = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback('hud:server:HasHarness', function(source, cb)
+    local Ply = NADRP.Functions.GetPlayer(source)
     local Harness = Ply.Functions.GetItemByName("harness")
     if Harness ~= nil then
         cb(true)
@@ -70,6 +70,6 @@ denalifw.Functions.CreateCallback('hud:server:HasHarness', function(source, cb)
         cb(false)
     end
 end)
-denalifw.Functions.CreateCallback('hud:server:getMenu', function(source, cb)
+NADRP.Functions.CreateCallback('hud:server:getMenu', function(source, cb)
     cb(Config.Menu)
 end) 

@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local occasionVehicles = {}
 local inRange
 local vehiclesSpawned = false
@@ -42,7 +42,7 @@ local function spawnOccasionsVehicles(vehicles)
             oSlot[i]["desc"]  = vehicles[i].description
             oSlot[i]["mods"]  = vehicles[i].mods
 
-            denalifw.Functions.SetVehicleProperties(oSlot[i]["occasionid"], json.decode(oSlot[i]["mods"]))
+            NADRP.Functions.SetVehicleProperties(oSlot[i]["occasionid"], json.decode(oSlot[i]["mods"]))
 
             SetModelAsNoLongerNeeded(model)
             SetVehicleOnGroundProperly(oSlot[i]["occasionid"])
@@ -62,13 +62,13 @@ local function despawnOccasionsVehicles()
         local loc = Config.OccasionSlots[i].loc
         local oldVehicle = GetClosestVehicle(loc.x, loc.y, loc.z, 1.3, 0, 70)
         if oldVehicle ~= 0 then
-            denalifw.Functions.DeleteVehicle(oldVehicle)
+            NADRP.Functions.DeleteVehicle(oldVehicle)
         end
     end
 end
 
 local function openSellContract(bool)
-    local pData = denalifw.Functions.GetPlayerData()
+    local pData = NADRP.Functions.GetPlayerData()
 
     SetNuiFocus(bool, bool)
     SendNUIMessage({
@@ -80,7 +80,7 @@ local function openSellContract(bool)
             account = pData.charinfo.account,
             phone = pData.charinfo.phone
         },
-        plate = denalifw.Functions.GetPlate(GetVehiclePedIsUsing(PlayerPedId()))
+        plate = NADRP.Functions.GetPlate(GetVehiclePedIsUsing(PlayerPedId()))
     })
 end
 
@@ -113,8 +113,8 @@ local function SellToDealer(sellVehData, vehicleHash)
             DrawText3Ds(coords.x, coords.y, coords.z + 1.6, Lang:t('info.confirm_cancel'))
 
             if IsDisabledControlJustPressed(0, 246) then
-                TriggerServerEvent('denalifw-occasions:server:sellVehicleBack', sellVehData)
-                denalifw.Functions.DeleteVehicle(vehicleHash)
+                TriggerServerEvent('NADRP-occasions:server:sellVehicleBack', sellVehData)
+                NADRP.Functions.DeleteVehicle(vehicleHash)
 
                 keepGoing = false
             end
@@ -136,22 +136,22 @@ end
 local function sellVehicleWait(price)
     DoScreenFadeOut(250)
     Wait(250)
-    denalifw.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
+    NADRP.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
     Wait(1500)
     DoScreenFadeIn(250)
-    denalifw.Functions.Notify(Lang:t('success.car_up_for_sale', { value = price }), 'success')
+    NADRP.Functions.Notify(Lang:t('success.car_up_for_sale', { value = price }), 'success')
     PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
 end
 
 local function SellData(data,model)
-    denalifw.Functions.TriggerCallback("denalifw-vehiclesales:server:CheckModelName",function(DataReturning)
+    NADRP.Functions.TriggerCallback("NADRP-vehiclesales:server:CheckModelName",function(DataReturning)
         local vehicleData = {}
         vehicleData.ent = GetVehiclePedIsUsing(PlayerPedId())
         vehicleData.model = DataReturning
         vehicleData.plate = model
-        vehicleData.mods = denalifw.Functions.GetVehicleProperties(vehicleData.ent)
+        vehicleData.mods = NADRP.Functions.GetVehicleProperties(vehicleData.ent)
         vehicleData.desc = data.desc
-        TriggerServerEvent('denalifw-occasions:server:sellVehicle', data.price, vehicleData)
+        TriggerServerEvent('NADRP-occasions:server:sellVehicle', data.price, vehicleData)
         sellVehicleWait(data.price)
     end, model)
 end
@@ -159,7 +159,7 @@ end
 -- NUI Callbacks
 
 RegisterNUICallback('sellVehicle', function(data, cb)
-    local plate = denalifw.Functions.GetPlate(GetVehiclePedIsUsing(PlayerPedId())) --Getting the plate and sending to the function
+    local plate = NADRP.Functions.GetPlate(GetVehiclePedIsUsing(PlayerPedId())) --Getting the plate and sending to the function
     SellData(data,plate)
     cb('ok')
 end)
@@ -171,56 +171,56 @@ end)
 
 RegisterNUICallback('buyVehicle', function(data, cb)
     local vehData = Config.OccasionSlots[currentVehicle]
-    TriggerServerEvent('denalifw-occasions:server:buyVehicle', vehData)
+    TriggerServerEvent('NADRP-occasions:server:buyVehicle', vehData)
     cb('ok')
 end)
 
 -- Events
 
-RegisterNetEvent('denalifw-occasions:client:BuyFinished', function(vehdata)
+RegisterNetEvent('NADRP-occasions:client:BuyFinished', function(vehdata)
     local vehmods = json.decode(vehdata.mods)
 
     DoScreenFadeOut(250)
     Wait(500)
-    denalifw.Functions.SpawnVehicle(vehdata.model, function(veh)
+    NADRP.Functions.SpawnVehicle(vehdata.model, function(veh)
         SetVehicleNumberPlateText(veh, vehdata.plate)
         SetEntityHeading(veh, Config.BuyVehicle.w)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         SetVehicleFuelLevel(veh, 100)
-        denalifw.Functions.Notify(Lang:t('success.vehicle_bought'), "success", 2500)
+        NADRP.Functions.Notify(Lang:t('success.vehicle_bought'), "success", 2500)
         TriggerEvent("vehiclekeys:client:SetOwner", vehdata.plate)
         SetVehicleEngineOn(veh, true, true)
         Wait(500)
-        denalifw.Functions.SetVehicleProperties(veh, vehmods)
+        NADRP.Functions.SetVehicleProperties(veh, vehmods)
     end, Config.BuyVehicle, true)
     Wait(500)
     DoScreenFadeIn(250)
     currentVehicle = nil
 end)
 
-RegisterNetEvent('denalifw-occasions:client:ReturnOwnedVehicle', function(vehdata)
+RegisterNetEvent('NADRP-occasions:client:ReturnOwnedVehicle', function(vehdata)
     local vehmods = json.decode(vehdata.mods)
     DoScreenFadeOut(250)
     Wait(500)
-    denalifw.Functions.SpawnVehicle(vehdata.model, function(veh)
+    NADRP.Functions.SpawnVehicle(vehdata.model, function(veh)
         SetVehicleNumberPlateText(veh, vehdata.plate)
         SetEntityHeading(veh, Config.BuyVehicle.w)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         SetVehicleFuelLevel(veh, 100)
-        denalifw.Functions.Notify(Lang:t('info.vehicle_returned'))
+        NADRP.Functions.Notify(Lang:t('info.vehicle_returned'))
         TriggerEvent("vehiclekeys:client:SetOwner", vehdata.plate)
         SetVehicleEngineOn(veh, true, true)
         Wait(500)
-        denalifw.Functions.SetVehicleProperties(veh, vehmods)
+        NADRP.Functions.SetVehicleProperties(veh, vehmods)
     end, Config.BuyVehicle, true)
     Wait(500)
     DoScreenFadeIn(250)
     currentVehicle = nil
 end)
 
-RegisterNetEvent('denalifw-occasion:client:refreshVehicles', function()
+RegisterNetEvent('NADRP-occasion:client:refreshVehicles', function()
     if inRange then
-        denalifw.Functions.TriggerCallback('denalifw-occasions:server:getVehicles', function(vehicles)
+        NADRP.Functions.TriggerCallback('NADRP-occasions:server:getVehicles', function(vehicles)
             occasionVehicles = vehicles
             despawnOccasionsVehicles()
             spawnOccasionsVehicles(vehicles)
@@ -247,7 +247,7 @@ CreateThread(function()
         inRange = false
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
-        if denalifw ~= nil then
+        if NADRP ~= nil then
             for _,slot in pairs(Config.OccasionSlots) do
                 local dist = #(pos - slot.loc)
 
@@ -256,7 +256,7 @@ CreateThread(function()
                     if not vehiclesSpawned then
                         vehiclesSpawned = true
 
-                        denalifw.Functions.TriggerCallback('denalifw-occasions:server:getVehicles', function(vehicles)
+                        NADRP.Functions.TriggerCallback('NADRP-occasions:server:getVehicles', function(vehicles)
                             occasionVehicles = vehicles
                             despawnOccasionsVehicles()
                             spawnOccasionsVehicles(vehicles)
@@ -272,24 +272,24 @@ CreateThread(function()
                 if sellBackDist <= 3.5 and IsPedInAnyVehicle(ped) then
                     local price
                     local sellVehData = {}
-                    sellVehData.plate = denalifw.Functions.GetPlate(GetVehiclePedIsIn(ped))
+                    sellVehData.plate = NADRP.Functions.GetPlate(GetVehiclePedIsIn(ped))
                     sellVehData.model = GetEntityModel(GetVehiclePedIsIn(ped))
-                        for k, v in pairs(denalifw.Shared.Vehicles) do
+                        for k, v in pairs(NADRP.Shared.Vehicles) do
                             if tonumber(v["hash"]) == sellVehData.model then
                                 sellVehData.price = tonumber(v["price"])
                             end
                         end
                     DrawText3Ds(Config.SellVehicleBack.x, Config.SellVehicleBack.y, Config.SellVehicleBack.z, Lang:t('info.sell_vehicle_to_dealer', { value = math.floor(sellVehData.price / 2) }))
                     if IsControlJustPressed(0, 38) then
-                        denalifw.Functions.TriggerCallback('denalifw-garage:server:checkVehicleOwner', function(owned, balance)
+                        NADRP.Functions.TriggerCallback('NADRP-garage:server:checkVehicleOwner', function(owned, balance)
                             if owned then
                                 if balance < 1 then
                                     SellToDealer(sellVehData, GetVehiclePedIsIn(ped))
                                 else
-                                    denalifw.Functions.Notify(Lang:t('error.finish_payments'), 'error', 3500)
+                                    NADRP.Functions.Notify(Lang:t('error.finish_payments'), 'error', 3500)
                                 end
                             else
-                                denalifw.Functions.Notify(Lang:t('error.not_your_vehicle'), 'error', 3500)
+                                NADRP.Functions.Notify(Lang:t('error.not_your_vehicle'), 'error', 3500)
                             end
                         end, sellVehData.plate)
                     end
@@ -305,8 +305,8 @@ CreateThread(function()
                         if not IsPedInAnyVehicle(ped) then
                             if not isConfirming then
                                 DrawText3Ds(vehPos.x, vehPos.y, vehPos.z + 1.45, Lang:t('info.view_contract'))
-                                DrawText3Ds(vehPos.x, vehPos.y, vehPos.z + 1.25, Lang:t('info.model_price', { value = denalifw.Shared.Vehicles[Config.OccasionSlots[i]["model"]]["name"], value2 = Config.OccasionSlots[i]["price"] }))
-                                if Config.OccasionSlots[i]["owner"] == denalifw.Functions.GetPlayerData().citizenid then
+                                DrawText3Ds(vehPos.x, vehPos.y, vehPos.z + 1.25, Lang:t('info.model_price', { value = NADRP.Shared.Vehicles[Config.OccasionSlots[i]["model"]]["name"], value2 = Config.OccasionSlots[i]["price"] }))
+                                if Config.OccasionSlots[i]["owner"] == NADRP.Functions.GetPlayerData().citizenid then
                                     DrawText3Ds(vehPos.x, vehPos.y, vehPos.z + 1.05, Lang:t('info.cancel_sale'))
                                     if IsControlJustPressed(0, 47) then
                                         isConfirming = true
@@ -315,7 +315,7 @@ CreateThread(function()
                                 if IsControlJustPressed(0, 38) then
                                     currentVehicle = i
 
-                                    denalifw.Functions.TriggerCallback('denalifw-occasions:server:getSellerInformation', function(info)
+                                    NADRP.Functions.TriggerCallback('NADRP-occasions:server:getSellerInformation', function(info)
                                         if info ~= nil then
                                             info.charinfo = json.decode(info.charinfo)
                                         else
@@ -337,7 +337,7 @@ CreateThread(function()
                                 if IsDisabledControlJustPressed(0, 161) then
                                     isConfirming = false
                                     currentVehicle = i
-                                    TriggerServerEvent("denalifw-occasions:server:ReturnVehicle", Config.OccasionSlots[i])
+                                    TriggerServerEvent("NADRP-occasions:server:ReturnVehicle", Config.OccasionSlots[i])
                                 end
                                 if IsDisabledControlJustPressed(0, 162) then
                                     isConfirming = false
@@ -354,22 +354,22 @@ CreateThread(function()
                     if sellDist <= 3.5 and IsPedInAnyVehicle(ped) then
                         DrawText3Ds(Config.SellVehicle.x, Config.SellVehicle.y, Config.SellVehicle.z, Lang:t('info.place_vehicle_for_sale'))
                         if IsControlJustPressed(0, 38) then
-                            local VehiclePlate = denalifw.Functions.GetPlate(GetVehiclePedIsIn(ped))
-                            denalifw.Functions.TriggerCallback('denalifw-garage:server:checkVehicleOwner', function(owned, balance)
+                            local VehiclePlate = NADRP.Functions.GetPlate(GetVehiclePedIsIn(ped))
+                            NADRP.Functions.TriggerCallback('NADRP-garage:server:checkVehicleOwner', function(owned, balance)
                                 if owned then
                                     if balance < 1 then 
-                                        denalifw.Functions.TriggerCallback('denalifw-occasions:server:getVehicles', function(vehicles)
+                                        NADRP.Functions.TriggerCallback('NADRP-occasions:server:getVehicles', function(vehicles)
                                             if vehicles == nil or #vehicles < #Config.OccasionSlots then
                                                 openSellContract(true)
                                             else
-                                                denalifw.Functions.Notify(Lang:t('error.no_space_on_lot'), 'error', 3500)
+                                                NADRP.Functions.Notify(Lang:t('error.no_space_on_lot'), 'error', 3500)
                                             end
                                     end)
                                     else
-                                        denalifw.Functions.Notify(Lang:t('error.finish_payments'), 'error', 3500)
+                                        NADRP.Functions.Notify(Lang:t('error.finish_payments'), 'error', 3500)
                                     end
                                 else
-                                    denalifw.Functions.Notify(Lang:t('error.not_your_vehicle'), 'error', 3500)
+                                    NADRP.Functions.Notify(Lang:t('error.not_your_vehicle'), 'error', 3500)
                                 end
                             end, VehiclePlate)
                         end

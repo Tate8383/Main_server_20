@@ -1,12 +1,12 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-Shops'
+description 'NADRP-Shops'
 version '1.0.0'
 
 
 shared_scripts {
-    '@denalifw-core/shared/locale.lua',
+    '@NADRP-core/shared/locale.lua',
     'locale/en.lua', -- replace with desired language
     'config.lua'
 }

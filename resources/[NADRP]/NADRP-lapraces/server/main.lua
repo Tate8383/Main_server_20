@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local Races = {}
 local AvailableRaces = {}
 local LastRaces = {}
@@ -28,8 +28,8 @@ local function IsWhitelisted(CitizenId)
             break
         end
     end
-    local Player = denalifw.Functions.GetPlayerByCitizenId(CitizenId)
-    local Perms = denalifw.Functions.GetPermission(Player.PlayerData.source)
+    local Player = NADRP.Functions.GetPlayerByCitizenId(CitizenId)
+    local Perms = NADRP.Functions.GetPermission(Player.PlayerData.source)
     if Perms == "admin" or Perms == "god" then
         retval = true
     end
@@ -102,9 +102,9 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-lapraces:server:FinishPlayer', function(RaceData, TotalTime, TotalLaps, BestLap)
+RegisterNetEvent('NADRP-lapraces:server:FinishPlayer', function(RaceData, TotalTime, TotalLaps, BestLap)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local AvailableKey = GetOpenedRaceKey(RaceData.RaceId)
     local PlayersFinished = 0
     local AmountOfRacers = 0
@@ -151,7 +151,7 @@ RegisterNetEvent('denalifw-lapraces:server:FinishPlayer', function(RaceData, Tot
             }
             MySQL.Async.execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
                 {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
-            TriggerClientEvent('denalifw-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
+            TriggerClientEvent('NADRP-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
                 ' disconnected with a time of: ' .. SecondsToClock(BLap) .. '!')
         end
     else
@@ -164,11 +164,11 @@ RegisterNetEvent('denalifw-lapraces:server:FinishPlayer', function(RaceData, Tot
         }
         MySQL.Async.execute('UPDATE lapraces SET records = ? WHERE raceid = ?',
             {json.encode(Races[RaceData.RaceId].Records), RaceData.RaceId})
-        TriggerClientEvent('denalifw-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
+        TriggerClientEvent('NADRP-phone:client:RaceNotify', src, 'You have won the WR from ' .. RaceData.RaceName ..
             ' put down with a time of: ' .. SecondsToClock(BLap) .. '!')
     end
     AvailableRaces[AvailableKey].RaceData = Races[RaceData.RaceId]
-    TriggerClientEvent('denalifw-lapraces:client:PlayerFinishs', -1, RaceData.RaceId, PlayersFinished, Player)
+    TriggerClientEvent('NADRP-lapraces:client:PlayerFinishs', -1, RaceData.RaceId, PlayersFinished, Player)
     if PlayersFinished == AmountOfRacers then
         if NotFinished ~= nil and next(NotFinished) ~= nil and NotFinished[RaceData.RaceId] ~= nil and
             next(NotFinished[RaceData.RaceId]) ~= nil then
@@ -191,27 +191,27 @@ RegisterNetEvent('denalifw-lapraces:server:FinishPlayer', function(RaceData, Tot
         LastRaces[RaceData.RaceId] = nil
         NotFinished[RaceData.RaceId] = nil
     end
-    TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
+    TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:CreateLapRace', function(RaceName)
+RegisterNetEvent('NADRP-lapraces:server:CreateLapRace', function(RaceName)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
 
     if IsWhitelisted(Player.PlayerData.citizenid) then
         if IsNameAvailable(RaceName) then
-            TriggerClientEvent('denalifw-lapraces:client:StartRaceEditor', source, RaceName)
+            TriggerClientEvent('NADRP-lapraces:client:StartRaceEditor', source, RaceName)
         else
-            TriggerClientEvent('denalifw:Notify', source, 'There is already a race with this name.', 'error')
+            TriggerClientEvent('NADRP:Notify', source, 'There is already a race with this name.', 'error')
         end
     else
-        TriggerClientEvent('denalifw:Notify', source, 'You have not been authorized to race\'s to create.', 'error')
+        TriggerClientEvent('NADRP:Notify', source, 'You have not been authorized to race\'s to create.', 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:JoinRace', function(RaceData)
+RegisterNetEvent('NADRP-lapraces:server:JoinRace', function(RaceData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local RaceName = RaceData.RaceData.RaceName
     local RaceId = GetRaceId(RaceName)
     local AvailableKey = GetOpenedRaceKey(RaceData.RaceId)
@@ -228,13 +228,13 @@ RegisterNetEvent('denalifw-lapraces:server:JoinRace', function(RaceData)
             Races[CurrentRace].Started = false
             Races[CurrentRace].Waiting = false
             table.remove(AvailableRaces, PreviousRaceKey)
-            TriggerClientEvent('denalifw:Notify', src, 'You were the only one in the race, the race had ended', 'error')
-            TriggerClientEvent('denalifw-lapraces:client:LeaveRace', src, Races[CurrentRace])
+            TriggerClientEvent('NADRP:Notify', src, 'You were the only one in the race, the race had ended', 'error')
+            TriggerClientEvent('NADRP-lapraces:client:LeaveRace', src, Races[CurrentRace])
         else
             AvailableRaces[PreviousRaceKey].RaceData = Races[CurrentRace]
-            TriggerClientEvent('denalifw-lapraces:client:LeaveRace', src, Races[CurrentRace])
+            TriggerClientEvent('NADRP-lapraces:client:LeaveRace', src, Races[CurrentRace])
         end
-        TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
+        TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
     end
     Races[RaceId].Waiting = true
     Races[RaceId].Racers[Player.PlayerData.citizenid] = {
@@ -243,20 +243,20 @@ RegisterNetEvent('denalifw-lapraces:server:JoinRace', function(RaceData)
         Finished = false
     }
     AvailableRaces[AvailableKey].RaceData = Races[RaceId]
-    TriggerClientEvent('denalifw-lapraces:client:JoinRace', src, Races[RaceId], RaceData.Laps)
-    TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
-    local creatorsource = denalifw.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData
+    TriggerClientEvent('NADRP-lapraces:client:JoinRace', src, Races[RaceId], RaceData.Laps)
+    TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
+    local creatorsource = NADRP.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData
                               .source
     if creatorsource ~= Player.PlayerData.source then
-        TriggerClientEvent('denalifw-phone:client:RaceNotify', creatorsource,
+        TriggerClientEvent('NADRP-phone:client:RaceNotify', creatorsource,
             string.sub(Player.PlayerData.charinfo.firstname, 1, 1) .. '. ' .. Player.PlayerData.charinfo.lastname ..
                 ' the race has been joined!')
     end
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:LeaveRace', function(RaceData)
+RegisterNetEvent('NADRP-lapraces:server:LeaveRace', function(RaceData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local RaceName
     if RaceData.RaceData ~= nil then
         RaceName = RaceData.RaceData.RaceName
@@ -265,10 +265,10 @@ RegisterNetEvent('denalifw-lapraces:server:LeaveRace', function(RaceData)
     end
     local RaceId = GetRaceId(RaceName)
     local AvailableKey = GetOpenedRaceKey(RaceData.RaceId)
-    local creatorsource = denalifw.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData
+    local creatorsource = NADRP.Functions.GetPlayerByCitizenId(AvailableRaces[AvailableKey].SetupCitizenId).PlayerData
                               .source
     if creatorsource ~= Player.PlayerData.source then
-        TriggerClientEvent('denalifw-phone:client:RaceNotify', creatorsource,
+        TriggerClientEvent('NADRP-phone:client:RaceNotify', creatorsource,
             string.sub(Player.PlayerData.charinfo.firstname, 1, 1) .. '. ' .. Player.PlayerData.charinfo.lastname ..
                 ' the race has been delivered!')
     end
@@ -328,19 +328,19 @@ RegisterNetEvent('denalifw-lapraces:server:LeaveRace', function(RaceData)
         Races[RaceId].Started = false
         Races[RaceId].Waiting = false
         table.remove(AvailableRaces, AvailableKey)
-        TriggerClientEvent('denalifw:Notify', src, 'You were the only one in the race.The race had ended.', 'error')
-        TriggerClientEvent('denalifw-lapraces:client:LeaveRace', src, Races[RaceId])
+        TriggerClientEvent('NADRP:Notify', src, 'You were the only one in the race.The race had ended.', 'error')
+        TriggerClientEvent('NADRP-lapraces:client:LeaveRace', src, Races[RaceId])
         LastRaces[RaceId] = nil
         NotFinished[RaceId] = nil
     else
         AvailableRaces[AvailableKey].RaceData = Races[RaceId]
-        TriggerClientEvent('denalifw-lapraces:client:LeaveRace', src, Races[RaceId])
+        TriggerClientEvent('NADRP-lapraces:client:LeaveRace', src, Races[RaceId])
     end
-    TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
+    TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:SetupRace', function(RaceId, Laps)
-    local Player = denalifw.Functions.GetPlayer(source)
+RegisterNetEvent('NADRP-lapraces:server:SetupRace', function(RaceId, Laps)
+    local Player = NADRP.Functions.GetPlayer(source)
     if Races[RaceId] ~= nil then
         if not Races[RaceId].Waiting then
             if not Races[RaceId].Started then
@@ -351,14 +351,14 @@ RegisterNetEvent('denalifw-lapraces:server:SetupRace', function(RaceId, Laps)
                     RaceId = RaceId,
                     SetupCitizenId = Player.PlayerData.citizenid
                 }
-                TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
+                TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
                 SetTimeout(5 * 60 * 1000, function()
                     if Races[RaceId].Waiting then
                         local AvailableKey = GetOpenedRaceKey(RaceId)
                         for cid, _ in pairs(Races[RaceId].Racers) do
-                            local RacerData = denalifw.Functions.GetPlayerByCitizenId(cid)
+                            local RacerData = NADRP.Functions.GetPlayerByCitizenId(cid)
                             if RacerData ~= nil then
-                                TriggerClientEvent('denalifw-lapraces:client:LeaveRace', RacerData.PlayerData.source,
+                                TriggerClientEvent('NADRP-lapraces:client:LeaveRace', RacerData.PlayerData.source,
                                     Races[RaceId])
                             end
                         end
@@ -368,40 +368,40 @@ RegisterNetEvent('denalifw-lapraces:server:SetupRace', function(RaceId, Laps)
                         Races[RaceId].Started = false
                         Races[RaceId].Waiting = false
                         LastRaces[RaceId] = nil
-                        TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
+                        TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
                     end
                 end)
             else
-                TriggerClientEvent('denalifw:Notify', source, 'The race is already running', 'error')
+                TriggerClientEvent('NADRP:Notify', source, 'The race is already running', 'error')
             end
         else
-            TriggerClientEvent('denalifw:Notify', source, 'The race is already running', 'error')
+            TriggerClientEvent('NADRP:Notify', source, 'The race is already running', 'error')
         end
     else
-        TriggerClientEvent('denalifw:Notify', source, 'This race does not exist :(', 'error')
+        TriggerClientEvent('NADRP:Notify', source, 'This race does not exist :(', 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:UpdateRaceState', function(RaceId, Started, Waiting)
+RegisterNetEvent('NADRP-lapraces:server:UpdateRaceState', function(RaceId, Started, Waiting)
     Races[RaceId].Waiting = Waiting
     Races[RaceId].Started = Started
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:UpdateRacerData', function(RaceId, Checkpoint, Lap, Finished)
+RegisterNetEvent('NADRP-lapraces:server:UpdateRacerData', function(RaceId, Checkpoint, Lap, Finished)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local CitizenId = Player.PlayerData.citizenid
 
     Races[RaceId].Racers[CitizenId].Checkpoint = Checkpoint
     Races[RaceId].Racers[CitizenId].Lap = Lap
     Races[RaceId].Racers[CitizenId].Finished = Finished
 
-    TriggerClientEvent('denalifw-lapraces:client:UpdateRaceRacerData', -1, RaceId, Races[RaceId])
+    TriggerClientEvent('NADRP-lapraces:client:UpdateRaceRacerData', -1, RaceId, Races[RaceId])
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:StartRace', function(RaceId)
+RegisterNetEvent('NADRP-lapraces:server:StartRace', function(RaceId)
     local src = source
-    local MyPlayer = denalifw.Functions.GetPlayer(src)
+    local MyPlayer = NADRP.Functions.GetPlayer(src)
     local AvailableKey = GetOpenedRaceKey(RaceId)
 
     if RaceId ~= nil then
@@ -409,23 +409,23 @@ RegisterNetEvent('denalifw-lapraces:server:StartRace', function(RaceId)
             AvailableRaces[AvailableKey].RaceData.Started = true
             AvailableRaces[AvailableKey].RaceData.Waiting = false
             for CitizenId, _ in pairs(Races[RaceId].Racers) do
-                local Player = denalifw.Functions.GetPlayerByCitizenId(CitizenId)
+                local Player = NADRP.Functions.GetPlayerByCitizenId(CitizenId)
                 if Player ~= nil then
-                    TriggerClientEvent('denalifw-lapraces:client:RaceCountdown', Player.PlayerData.source)
+                    TriggerClientEvent('NADRP-lapraces:client:RaceCountdown', Player.PlayerData.source)
                 end
             end
-            TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
+            TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
         else
-            TriggerClientEvent('denalifw:Notify', src, 'You are not the creator of the race..', 'error')
+            TriggerClientEvent('NADRP:Notify', src, 'You are not the creator of the race..', 'error')
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, 'You are not in a race..', 'error')
+        TriggerClientEvent('NADRP:Notify', src, 'You are not in a race..', 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-lapraces:server:SaveRace', function(RaceData)
+RegisterNetEvent('NADRP-lapraces:server:SaveRace', function(RaceData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local RaceId = GenerateRaceId()
     local Checkpoints = {}
     for k, v in pairs(RaceData.Checkpoints) do
@@ -453,35 +453,35 @@ end)
 
 -- Callbacks
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:GetRacingLeaderboards', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:GetRacingLeaderboards', function(source, cb)
     cb(Races)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:GetRaces', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:GetRaces', function(source, cb)
     cb(AvailableRaces)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:GetListedRaces', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:GetListedRaces', function(source, cb)
     cb(Races)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:GetRacingData', function(source, cb, RaceId)
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:GetRacingData', function(source, cb, RaceId)
     cb(Races[RaceId])
 end)
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:HasCreatedRace', function(source, cb)
-    cb(HasOpenedRace(denalifw.Functions.GetPlayer(source).PlayerData.citizenid))
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:HasCreatedRace', function(source, cb)
+    cb(HasOpenedRace(NADRP.Functions.GetPlayer(source).PlayerData.citizenid))
 end)
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:IsAuthorizedToCreateRaces', function(source, cb, TrackName)
-    cb(IsWhitelisted(denalifw.Functions.GetPlayer(source).PlayerData.citizenid), IsNameAvailable(TrackName))
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:IsAuthorizedToCreateRaces', function(source, cb, TrackName)
+    cb(IsWhitelisted(NADRP.Functions.GetPlayer(source).PlayerData.citizenid), IsNameAvailable(TrackName))
 end)
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:CanRaceSetup', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:CanRaceSetup', function(source, cb)
     cb(Config.RaceSetupAllowed)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-lapraces:server:GetTrackData', function(source, cb, RaceId)
+NADRP.Functions.CreateCallback('NADRP-lapraces:server:GetTrackData', function(source, cb, RaceId)
     local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {Races[RaceId].Creator})
     if result[1] ~= nil then
         result[1].charinfo = json.decode(result[1].charinfo)
@@ -498,8 +498,8 @@ end)
 
 -- Commands
 
-denalifw.Commands.Add("cancelrace", "Cancel going race..", {}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Commands.Add("cancelrace", "Cancel going race..", {}, false, function(source, args)
+    local Player = NADRP.Functions.GetPlayer(source)
 
     if IsWhitelisted(Player.PlayerData.citizenid) then
         local RaceName = table.concat(args, " ")
@@ -508,9 +508,9 @@ denalifw.Commands.Add("cancelrace", "Cancel going race..", {}, false, function(s
             if Races[RaceId].Started then
                 local AvailableKey = GetOpenedRaceKey(RaceId)
                 for cid, _ in pairs(Races[RaceId].Racers) do
-                    local RacerData = denalifw.Functions.GetPlayerByCitizenId(cid)
+                    local RacerData = NADRP.Functions.GetPlayerByCitizenId(cid)
                     if RacerData ~= nil then
-                        TriggerClientEvent('denalifw-lapraces:client:LeaveRace', RacerData.PlayerData.source, Races[RaceId])
+                        TriggerClientEvent('NADRP-lapraces:client:LeaveRace', RacerData.PlayerData.source, Races[RaceId])
                     end
                 end
                 table.remove(AvailableRaces, AvailableKey)
@@ -519,28 +519,28 @@ denalifw.Commands.Add("cancelrace", "Cancel going race..", {}, false, function(s
                 Races[RaceId].Started = false
                 Races[RaceId].Waiting = false
                 LastRaces[RaceId] = nil
-                TriggerClientEvent('denalifw-phone:client:UpdateLapraces', -1)
+                TriggerClientEvent('NADRP-phone:client:UpdateLapraces', -1)
             else
-                TriggerClientEvent('denalifw:Notify', source, 'This race has not started yet.', 'error')
+                TriggerClientEvent('NADRP:Notify', source, 'This race has not started yet.', 'error')
             end
         end
     else
-        TriggerClientEvent('denalifw:Notify', source, 'You have not been authorized to do this.', 'error')
+        TriggerClientEvent('NADRP:Notify', source, 'You have not been authorized to do this.', 'error')
     end
 end)
 
-denalifw.Commands.Add("togglesetup", "Turn on / off racing setup", {}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Commands.Add("togglesetup", "Turn on / off racing setup", {}, false, function(source, args)
+    local Player = NADRP.Functions.GetPlayer(source)
 
     if IsWhitelisted(Player.PlayerData.citizenid) then
         Config.RaceSetupAllowed = not Config.RaceSetupAllowed
         if not Config.RaceSetupAllowed then
-            TriggerClientEvent('denalifw:Notify', source, 'No more races can be created!', 'error')
+            TriggerClientEvent('NADRP:Notify', source, 'No more races can be created!', 'error')
         else
-            TriggerClientEvent('denalifw:Notify', source, 'Races can be created again!', 'success')
+            TriggerClientEvent('NADRP:Notify', source, 'Races can be created again!', 'success')
         end
     else
-        TriggerClientEvent('denalifw:Notify', source, 'You have not been authorized to do this.', 'error')
+        TriggerClientEvent('NADRP:Notify', source, 'You have not been authorized to do this.', 'error')
     end
 end)
 

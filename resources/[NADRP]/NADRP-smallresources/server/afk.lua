@@ -1,12 +1,12 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 RegisterNetEvent('KickForAFK', function()
     local src = source
 	DropPlayer(src, 'You Have Been Kicked For Being AFK')
 end)
 
-denalifw.Functions.CreateCallback('denalifw-afkkick:server:GetPermissions', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-afkkick:server:GetPermissions', function(source, cb)
     local src = source
-    local group = denalifw.Functions.GetPermission(src)
+    local group = NADRP.Functions.GetPermission(src)
     cb(group)
 end)

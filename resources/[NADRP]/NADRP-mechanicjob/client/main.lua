@@ -1,4 +1,4 @@
-denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = exports['NADRP-core']:GetCoreObject()
 
 --local ModdedVehicles = {}
 VehicleStatus = {}
@@ -94,7 +94,7 @@ local function ScrapAnim(time)
 end
 
 local function ApplyEffects(vehicle)
-    local plate = denalifw.Functions.GetPlate(vehicle)
+    local plate = NADRP.Functions.GetPlate(vehicle)
     if GetVehicleClass(vehicle) ~= 13 and GetVehicleClass(vehicle) ~= 21 and GetVehicleClass(vehicle) ~= 16 and GetVehicleClass(vehicle) ~= 15 and GetVehicleClass(vehicle) ~= 14 then
         if VehicleStatus[plate] ~= nil then
             local chance = math.random(1, 100)
@@ -261,7 +261,7 @@ local function SendStatusMessage(statusList)
     if statusList ~= nil then
         TriggerEvent('chat:addMessage', {
             template = '<div class="chat-message normal"><div class="chat-message-body"><strong>{0}:</strong><br><br> <strong>'.. Config.ValuesLabels["engine"] ..' (engine):</strong> {1} <br><strong>'.. Config.ValuesLabels["body"] ..' (body):</strong> {2} <br><strong>'.. Config.ValuesLabels["radiator"] ..' (radiator):</strong> {3} <br><strong>'.. Config.ValuesLabels["axle"] ..' (axle):</strong> {4}<br><strong>'.. Config.ValuesLabels["brakes"] ..' (brakes):</strong> {5}<br><strong>'.. Config.ValuesLabels["clutch"] ..' (clutch):</strong> {6}<br><strong>'.. Config.ValuesLabels["fuel"] ..' (fuel):</strong> {7}</div></div>',
-            args = {'Vehicle Status', round(statusList["engine"]) .. "/" .. Config.MaxStatusValues["engine"] .. " ("..denalifw.Shared.Items["advancedrepairkit"]["label"]..")", round(statusList["body"]) .. "/" .. Config.MaxStatusValues["body"] .. " ("..denalifw.Shared.Items[Config.RepairCost["body"]]["label"]..")", round(statusList["radiator"]) .. "/" .. Config.MaxStatusValues["radiator"] .. ".0 ("..denalifw.Shared.Items[Config.RepairCost["radiator"]]["label"]..")", round(statusList["axle"]) .. "/" .. Config.MaxStatusValues["axle"] .. ".0 ("..denalifw.Shared.Items[Config.RepairCost["axle"]]["label"]..")", round(statusList["brakes"]) .. "/" .. Config.MaxStatusValues["brakes"] .. ".0 ("..denalifw.Shared.Items[Config.RepairCost["brakes"]]["label"]..")", round(statusList["clutch"]) .. "/" .. Config.MaxStatusValues["clutch"] .. ".0 ("..denalifw.Shared.Items[Config.RepairCost["clutch"]]["label"]..")", round(statusList["fuel"]) .. "/" .. Config.MaxStatusValues["fuel"] .. ".0 ("..denalifw.Shared.Items[Config.RepairCost["fuel"]]["label"]..")"}
+            args = {'Vehicle Status', round(statusList["engine"]) .. "/" .. Config.MaxStatusValues["engine"] .. " ("..NADRP.Shared.Items["advancedrepairkit"]["label"]..")", round(statusList["body"]) .. "/" .. Config.MaxStatusValues["body"] .. " ("..NADRP.Shared.Items[Config.RepairCost["body"]]["label"]..")", round(statusList["radiator"]) .. "/" .. Config.MaxStatusValues["radiator"] .. ".0 ("..NADRP.Shared.Items[Config.RepairCost["radiator"]]["label"]..")", round(statusList["axle"]) .. "/" .. Config.MaxStatusValues["axle"] .. ".0 ("..NADRP.Shared.Items[Config.RepairCost["axle"]]["label"]..")", round(statusList["brakes"]) .. "/" .. Config.MaxStatusValues["brakes"] .. ".0 ("..NADRP.Shared.Items[Config.RepairCost["brakes"]]["label"]..")", round(statusList["clutch"]) .. "/" .. Config.MaxStatusValues["clutch"] .. ".0 ("..NADRP.Shared.Items[Config.RepairCost["clutch"]]["label"]..")", round(statusList["fuel"]) .. "/" .. Config.MaxStatusValues["fuel"] .. ".0 ("..NADRP.Shared.Items[Config.RepairCost["fuel"]]["label"]..")"}
         })
     end
 end
@@ -276,14 +276,14 @@ local function OpenMenu()
             header = "Disconnect Vehicle",
             txt = "Unattach Vehicle in Lift",
             params = {
-                event = "denalifw-mechanicjob:client:UnattachVehicle",
+                event = "NADRP-mechanicjob:client:UnattachVehicle",
             }
         },
         {
             header = "Check Status",
             txt = "Check Vehicle Status",
             params = {
-                event = "denalifw-mechanicjob:client:CheckStatus",
+                event = "NADRP-mechanicjob:client:CheckStatus",
                 args = {
                     number = 1,
                 }
@@ -293,7 +293,7 @@ local function OpenMenu()
             header = "Vehicle Parts",
             txt = "Repair Vehicle Parts",
             params = {
-                event = "denalifw-mechanicjob:client:PartsMenu",
+                event = "NADRP-mechanicjob:client:PartsMenu",
                 args = {
                     number = 1,
                 }
@@ -304,17 +304,17 @@ local function OpenMenu()
             header = "⬅ Close Menu",
             txt = "",
             params = {
-                event = "denalifw-menu:client:closeMenu",
+                event = "NADRP-menu:client:closeMenu",
             }
         },
         
     }
 
-    exports['denalifw-menu']:openMenu(OpenMenu)
+    exports['NADRP-menu']:openMenu(OpenMenu)
 end
 
 local function PartsMenu()
-    local plate = denalifw.Functions.GetPlate(Config.Plates[ClosestPlate].AttachedVehicle)
+    local plate = NADRP.Functions.GetPlate(Config.Plates[ClosestPlate].AttachedVehicle)
     if VehicleStatus[plate] ~= nil then
         local vehicleMenu = {
             {
@@ -332,7 +332,7 @@ local function PartsMenu()
                     header = v,
                     txt = "Status: " .. percentage .. ".0% / 100.0%",
                     params = {
-                        event = "denalifw-mechanicjob:client:PartMenu",
+                        event = "NADRP-mechanicjob:client:PartMenu",
                         args = {
                             name = v,
                             parts = k
@@ -348,7 +348,7 @@ local function PartsMenu()
                     header = v,
                     txt = "Status: " .. percentage .. ".0% / 100.0%",
                     params = {
-                        event = "denalifw-mechanicjob:client:NoDamage",
+                        event = "NADRP-mechanicjob:client:NoDamage",
                     }
                 }
             end                               
@@ -357,11 +357,11 @@ local function PartsMenu()
             header = "⬅ Close Menu",
             txt = "",
             params = {
-                event = "denalifw-menu:client:closeMenu"
+                event = "NADRP-menu:client:closeMenu"
             }
     
         }
-        exports['denalifw-menu']:openMenu(vehicleMenu)
+        exports['NADRP-menu']:openMenu(vehicleMenu)
     end
 
 end
@@ -376,9 +376,9 @@ local function PartMenu(data)
         },
         {
             header = ""..partName.."",
-            txt = "Repair : "..denalifw.Shared.Items[Config.RepairCostAmount[part].item]["label"].." "..Config.RepairCostAmount[part].costs.."x", 
+            txt = "Repair : "..NADRP.Shared.Items[Config.RepairCostAmount[part].item]["label"].." "..Config.RepairCostAmount[part].costs.."x", 
             params = {
-                event = "denalifw-mechanicjob:client:RepairPart",
+                event = "NADRP-mechanicjob:client:RepairPart",
                 args = {
                     part = part,
                 }
@@ -388,20 +388,20 @@ local function PartMenu(data)
             header = "⬅ Back Menu",
             txt = "Back to parts menu",
             params = {
-                event = "denalifw-mechanicjob:client:PartsMenu",
+                event = "NADRP-mechanicjob:client:PartsMenu",
             }
         },
         {
             header = "⬅ Close Menu",
             txt = "",
             params = {
-                event = "denalifw-menu:client:closeMenu",
+                event = "NADRP-menu:client:closeMenu",
             }
         },
         
     }
 
-    exports['denalifw-menu']:openMenu(TestMenu1)
+    exports['NADRP-menu']:openMenu(TestMenu1)
 end
 
 local function NoDamage()
@@ -414,19 +414,19 @@ local function NoDamage()
             header = "Back Menu",
             txt = "There Is No Damage To This Part!",
             params = {
-                event = "denalifw-mechanicjob:client:PartsMenu",
+                event = "NADRP-mechanicjob:client:PartsMenu",
             }
         },
         {
             header = "⬅ Close Menu",
             txt = "",
             params = {
-                event = "denalifw-menu:client:closeMenu",
+                event = "NADRP-menu:client:closeMenu",
             }
         },
         
     }
-    exports['denalifw-menu']:openMenu(NoDamage)
+    exports['NADRP-menu']:openMenu(NoDamage)
 end
 
 local function UnattachVehicle()
@@ -440,7 +440,7 @@ local function UnattachVehicle()
     Wait(500)
     DoScreenFadeIn(250)
     Config.Plates[ClosestPlate].AttachedVehicle = nil
-    TriggerServerEvent('denalifw-vehicletuning:server:SetAttachedVehicle', false, ClosestPlate)
+    TriggerServerEvent('NADRP-vehicletuning:server:SetAttachedVehicle', false, ClosestPlate)
 end
 
 local function SpawnListVehicle(model)
@@ -451,12 +451,12 @@ local function SpawnListVehicle(model)
         w = Config.Locations["vehicle"].w,
     }
 
-    denalifw.Functions.SpawnVehicle(model, function(veh)
+    NADRP.Functions.SpawnVehicle(model, function(veh)
         SetVehicleNumberPlateText(veh, "ACBV"..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
     end, coords, true)
 end
@@ -473,7 +473,7 @@ local function VehicleList()
             header = v,
             txt = "Vehicle: "..v.."",
             params = {
-                event = "denalifw-mechanicjob:client:SpawnListVehicle",
+                event = "NADRP-mechanicjob:client:SpawnListVehicle",
                 args = {
                     headername = v,
                     spawnName = k
@@ -485,15 +485,15 @@ local function VehicleList()
         header = "⬅ Close Menu",
         txt = "",
         params = {
-            event = "denalifw-menu:client:closeMenu"
+            event = "NADRP-menu:client:closeMenu"
         }
 
     }
-    exports['denalifw-menu']:openMenu(vehicleMenu)
+    exports['NADRP-menu']:openMenu(vehicleMenu)
 end
 
 local function CheckStatus()
-    local plate = denalifw.Functions.GetPlate(Config.Plates[ClosestPlate].AttachedVehicle)
+    local plate = NADRP.Functions.GetPlate(Config.Plates[ClosestPlate].AttachedVehicle)
     SendStatusMessage(VehicleStatus[plate])
 end
 
@@ -502,7 +502,7 @@ local function RepairPart(part)
     local hasitem = false
     local indx = 0
     local countitem = 0
-    denalifw.Functions.TriggerCallback('denalifw-inventory:server:GetStashItems', function(StashItems)
+    NADRP.Functions.TriggerCallback('NADRP-inventory:server:GetStashItems', function(StashItems)
         for k,v in pairs(StashItems) do
             if v.name == PartData.item then
                 hasitem = true
@@ -514,7 +514,7 @@ local function RepairPart(part)
         end
         if hasitem and countitem >= PartData.costs then
             TriggerEvent('animations:client:EmoteCommandStart', {"mechanic"})
-            denalifw.Functions.Progressbar("repair_part", "Repairing " ..Config.ValuesLabels[part], math.random(5000, 10000), false, true, {
+            NADRP.Functions.Progressbar("repair_part", "Repairing " ..Config.ValuesLabels[part], math.random(5000, 10000), false, true, {
                 disableMovement = true,
                 disableCarMovement = true,
                 disableMouse = false,
@@ -527,16 +527,16 @@ local function RepairPart(part)
                     countitem = (countitem - PartData.costs)
                     StashItems[indx].amount = countitem
                 end
-                TriggerEvent('denalifw-vehicletuning:client:RepaireeePart', part)
-                TriggerServerEvent('denalifw-inventory:server:SaveStashItems', "mechanicstash", StashItems)
+                TriggerEvent('NADRP-vehicletuning:client:RepaireeePart', part)
+                TriggerServerEvent('NADRP-inventory:server:SaveStashItems', "mechanicstash", StashItems)
                 SetTimeout(250, function()
                     PartsMenu()
                 end)
             end, function()
-                denalifw.Functions.Notify("Repair Cancelled", "error")
+                NADRP.Functions.Notify("Repair Cancelled", "error")
             end)
         else
-            denalifw.Functions.Notify('There Are Not Enough Materials In The Safe', 'error')
+            NADRP.Functions.Notify('There Are Not Enough Materials In The Safe', 'error')
         end
     end, "mechanicstash")
 end
@@ -544,66 +544,66 @@ end
 
 
 -- Events
-RegisterNetEvent("denalifw-mechanicjob:client:UnattachVehicle",function(data)
+RegisterNetEvent("NADRP-mechanicjob:client:UnattachVehicle",function(data)
     UnattachVehicle()
 end)
 
-RegisterNetEvent("denalifw-mechanicjob:client:PartsMenu",function(data)
+RegisterNetEvent("NADRP-mechanicjob:client:PartsMenu",function(data)
     PartsMenu()
 end)
 
-RegisterNetEvent("denalifw-mechanicjob:client:PartMenu",function(data)
+RegisterNetEvent("NADRP-mechanicjob:client:PartMenu",function(data)
     PartMenu(data)
 end)
 
-RegisterNetEvent("denalifw-mechanicjob:client:NoDamage",function(data)
+RegisterNetEvent("NADRP-mechanicjob:client:NoDamage",function(data)
     NoDamage()
 end)
 
-RegisterNetEvent("denalifw-mechanicjob:client:CheckStatus",function(data)
+RegisterNetEvent("NADRP-mechanicjob:client:CheckStatus",function(data)
     CheckStatus()
 end)
 
-RegisterNetEvent("denalifw-mechanicjob:client:SpawnListVehicle",function(data)
+RegisterNetEvent("NADRP-mechanicjob:client:SpawnListVehicle",function(data)
     local vehicleSpawnName=data.spawnName
     SpawnListVehicle(vehicleSpawnName)
 end)
 
-RegisterNetEvent("denalifw-mechanicjob:client:RepairPart",function(data)
+RegisterNetEvent("NADRP-mechanicjob:client:RepairPart",function(data)
     local partData = data.part
     RepairPart(partData)
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    denalifw.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    NADRP.Functions.GetPlayerData(function(PlayerData)
         PlayerJob = PlayerData.job
         if PlayerData.job.onduty then
             if PlayerData.job.name == "mechanic" then
-                TriggerServerEvent("denalifw:ToggleDuty")
+                TriggerServerEvent("NADRP:ToggleDuty")
             end
         end
     end)
-    denalifw.Functions.TriggerCallback('denalifw-vehicletuning:server:GetAttachedVehicle', function(plates)
+    NADRP.Functions.TriggerCallback('NADRP-vehicletuning:server:GetAttachedVehicle', function(plates)
         for k, v in pairs(plates) do
             Config.Plates[k].AttachedVehicle = v.AttachedVehicle
         end
     end)
 
-    denalifw.Functions.TriggerCallback('denalifw-vehicletuning:server:GetDrivingDistances', function(retval)
+    NADRP.Functions.TriggerCallback('NADRP-vehicletuning:server:GetDrivingDistances', function(retval)
         DrivingDistance = retval
     end)
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     onDuty = PlayerJob.onduty
 end)
 
-RegisterNetEvent('denalifw:Client:SetDuty', function(duty)
+RegisterNetEvent('NADRP:Client:SetDuty', function(duty)
     onDuty = duty
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:client:SetAttachedVehicle', function(veh, key)
+RegisterNetEvent('NADRP-vehicletuning:client:SetAttachedVehicle', function(veh, key)
     if veh ~= false then
         Config.Plates[key].AttachedVehicle = veh
     else
@@ -611,9 +611,9 @@ RegisterNetEvent('denalifw-vehicletuning:client:SetAttachedVehicle', function(ve
     end
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:client:RepaireeePart', function(part)
+RegisterNetEvent('NADRP-vehicletuning:client:RepaireeePart', function(part)
     local veh = Config.Plates[ClosestPlate].AttachedVehicle
-    local plate = denalifw.Functions.GetPlate(veh)
+    local plate = NADRP.Functions.GetPlate(veh)
     if part == "engine" then
         SetVehicleEngineHealth(veh, Config.MaxStatusValues[part])
         TriggerServerEvent("vehiclemod:server:updatePart", plate, "engine", Config.MaxStatusValues[part])
@@ -626,7 +626,7 @@ RegisterNetEvent('denalifw-vehicletuning:client:RepaireeePart', function(part)
     else
         TriggerServerEvent("vehiclemod:server:updatePart", plate, part, Config.MaxStatusValues[part])
     end
-    denalifw.Functions.Notify("The "..Config.ValuesLabels[part].." Is Repaired!")
+    NADRP.Functions.Notify("The "..Config.ValuesLabels[part].." Is Repaired!")
 end)
 
 RegisterNetEvent('vehiclemod:client:setVehicleStatus', function(plate, status)
@@ -641,23 +641,23 @@ RegisterNetEvent('vehiclemod:client:getVehicleStatus', function(plate, status)
             local pos = GetEntityCoords(PlayerPedId())
             if #(pos - vehpos) < 5.0 then
                 if not IsThisModelABicycle(GetEntityModel(veh)) then
-                    local plate = denalifw.Functions.GetPlate(veh)
+                    local plate = NADRP.Functions.GetPlate(veh)
                     if VehicleStatus[plate] ~= nil then
                         SendStatusMessage(VehicleStatus[plate])
                     else
-                        denalifw.Functions.Notify("Status Unknown", "error")
+                        NADRP.Functions.Notify("Status Unknown", "error")
                     end
                 else
-                    denalifw.Functions.Notify("Not A Valid Vehicle", "error")
+                    NADRP.Functions.Notify("Not A Valid Vehicle", "error")
                 end
             else
-                denalifw.Functions.Notify("You Are Not Close Enough To The Vehicle", "error")
+                NADRP.Functions.Notify("You Are Not Close Enough To The Vehicle", "error")
             end
         else
-            denalifw.Functions.Notify("You Must Be In The Vehicle First", "error")
+            NADRP.Functions.Notify("You Must Be In The Vehicle First", "error")
         end
     else
-        denalifw.Functions.Notify("You Must Be Outside The Vehicle", "error")
+        NADRP.Functions.Notify("You Must Be Outside The Vehicle", "error")
     end
 end)
 
@@ -665,13 +665,13 @@ RegisterNetEvent('vehiclemod:client:fixEverything', function()
     if (IsPedInAnyVehicle(PlayerPedId(), false)) then
         local veh = GetVehiclePedIsIn(PlayerPedId(),false)
         if not IsThisModelABicycle(GetEntityModel(veh)) and GetPedInVehicleSeat(veh, -1) == PlayerPedId() then
-            local plate = denalifw.Functions.GetPlate(veh)
+            local plate = NADRP.Functions.GetPlate(veh)
             TriggerServerEvent("vehiclemod:server:fixEverything", plate)
         else
-            denalifw.Functions.Notify("You Are Not The Driver Or On A Bicycle", "error")
+            NADRP.Functions.Notify("You Are Not The Driver Or On A Bicycle", "error")
         end
     else
-        denalifw.Functions.Notify("You Are Not In A Vehicle", "error")
+        NADRP.Functions.Notify("You Are Not In A Vehicle", "error")
     end
 end)
 
@@ -679,7 +679,7 @@ RegisterNetEvent('vehiclemod:client:setPartLevel', function(part, level)
     if (IsPedInAnyVehicle(PlayerPedId(), false)) then
         local veh = GetVehiclePedIsIn(PlayerPedId(),false)
         if not IsThisModelABicycle(GetEntityModel(veh)) and GetPedInVehicleSeat(veh, -1) == PlayerPedId() then
-            local plate = denalifw.Functions.GetPlate(veh)
+            local plate = NADRP.Functions.GetPlate(veh)
             if part == "engine" then
                 SetVehicleEngineHealth(veh, level)
                 TriggerServerEvent("vehiclemod:server:updatePart", plate, "engine", GetVehicleEngineHealth(veh))
@@ -690,10 +690,10 @@ RegisterNetEvent('vehiclemod:client:setPartLevel', function(part, level)
                 TriggerServerEvent("vehiclemod:server:updatePart", plate, part, level)
             end
         else
-            denalifw.Functions.Notify("You Are Not The Driver Or On A Bicycle", "error")
+            NADRP.Functions.Notify("You Are Not The Driver Or On A Bicycle", "error")
         end
     else
-        denalifw.Functions.Notify("You Are Not The Driver Or On A Bicycle", "error")
+        NADRP.Functions.Notify("You Are Not The Driver Or On A Bicycle", "error")
     end
 end)
 local openingDoor = false
@@ -706,14 +706,14 @@ RegisterNetEvent('vehiclemod:client:repairPart', function(part, level, needAmoun
             local pos = GetEntityCoords(PlayerPedId())
             if #(pos - vehpos) < 5.0 then
                 if not IsThisModelABicycle(GetEntityModel(veh)) then
-                    local plate = denalifw.Functions.GetPlate(veh)
+                    local plate = NADRP.Functions.GetPlate(veh)
                     if VehicleStatus[plate] ~= nil and VehicleStatus[plate][part] ~= nil then
                         local lockpickTime = (1000 * level)
                         if part == "body" then
                             lockpickTime = lockpickTime / 10
                         end
                         ScrapAnim(lockpickTime)
-                        denalifw.Functions.Progressbar("repair_advanced", "Repair Vehicle", lockpickTime, false, true, {
+                        NADRP.Functions.Progressbar("repair_advanced", "Repair Vehicle", lockpickTime, false, true, {
                             disableMovement = true,
                             disableCarMovement = true,
                             disableMouse = false,
@@ -731,32 +731,32 @@ RegisterNetEvent('vehiclemod:client:repairPart', function(part, level, needAmoun
                                 SetVehicleFixed(veh)
                                 SetVehicleEngineHealth(veh, enhealth)
                                 TriggerServerEvent("vehiclemod:server:updatePart", plate, part, GetVehicleBodyHealth(veh))
-                                TriggerServerEvent("denalifw:Server:RemoveItem", Config.RepairCost[part], needAmount)
-                                TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items[Config.RepairCost[part]], "remove")
+                                TriggerServerEvent("NADRP:Server:RemoveItem", Config.RepairCost[part], needAmount)
+                                TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items[Config.RepairCost[part]], "remove")
                             elseif part ~= "engine" then
                                 TriggerServerEvent("vehiclemod:server:updatePart", plate, part, GetVehicleStatus(plate, part) + level)
-                                TriggerServerEvent("denalifw:Server:RemoveItem", Config.RepairCost[part], level)
-                                TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items[Config.RepairCost[part]], "remove")
+                                TriggerServerEvent("NADRP:Server:RemoveItem", Config.RepairCost[part], level)
+                                TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items[Config.RepairCost[part]], "remove")
                             end
                         end, function() -- Cancel
                             openingDoor = false
                             ClearPedTasks(PlayerPedId())
-                            denalifw.Functions.Notify("Process Canceled", "error")
+                            NADRP.Functions.Notify("Process Canceled", "error")
                         end)
                     else
-                        denalifw.Functions.Notify("Not A Valid Part", "error")
+                        NADRP.Functions.Notify("Not A Valid Part", "error")
                     end
                 else
-                    denalifw.Functions.Notify("Not A Valid Vehicle", "error")
+                    NADRP.Functions.Notify("Not A Valid Vehicle", "error")
                 end
             else
-                denalifw.Functions.Notify("You Are Not Close Enough To The Vehicle", "error")
+                NADRP.Functions.Notify("You Are Not Close Enough To The Vehicle", "error")
             end
         else
-            denalifw.Functions.Notify("You Must Be In The Vehicle First", "error")
+            NADRP.Functions.Notify("You Must Be In The Vehicle First", "error")
         end
     else
-        denalifw.Functions.Notify("Youre Not In a Vehicle", "error")
+        NADRP.Functions.Notify("Youre Not In a Vehicle", "error")
     end
 end)
 
@@ -848,7 +848,7 @@ CreateThread(function()
                             DrawText3Ds(Config.Locations["duty"].x, Config.Locations["duty"].y, Config.Locations["duty"].z, "[E] On Duty")
                         end
                         if IsControlJustReleased(0, 38) then
-                            TriggerServerEvent("denalifw:ToggleDuty")
+                            TriggerServerEvent("NADRP:ToggleDuty")
                         end
                     end
                 end
@@ -874,10 +874,10 @@ CreateThread(function()
                                                 FreezeEntityPosition(veh, true)
                                                 Wait(500)
                                                 DoScreenFadeIn(250)
-                                                TriggerServerEvent('denalifw-vehicletuning:server:SetAttachedVehicle', veh, k)
+                                                TriggerServerEvent('NADRP-vehicletuning:server:SetAttachedVehicle', veh, k)
                                             end
                                         else
-                                            denalifw.Functions.Notify("You Cannot Put Bicycles On The Platform!", "error")
+                                            NADRP.Functions.Notify("You Cannot Put Bicycles On The Platform!", "error")
                                         end
                                     end
                                 end
@@ -1001,7 +1001,7 @@ CreateThread(function()
             if not IsThisModelABicycle(GetEntityModel(veh)) and GetPedInVehicleSeat(veh, -1) == PlayerPedId() then
                 local engineHealth = GetVehicleEngineHealth(veh)
                 local bodyHealth = GetVehicleBodyHealth(veh)
-                local plate = denalifw.Functions.GetPlate(veh)
+                local plate = NADRP.Functions.GetPlate(veh)
                 if VehicleStatus[plate] == nil then
                     TriggerServerEvent("vehiclemod:server:setupVehicleStatus", plate, engineHealth, bodyHealth)
                 else

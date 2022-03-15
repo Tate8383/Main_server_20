@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local pedInSameVehicleLast=false
 local vehicle
 local lastVehicle
@@ -44,29 +44,29 @@ local function DamageRandomComponent()
 	local dmgFctr = math.random() + math.random(0, 2)
 	local randomComponent = DamageComponents[math.random(1, #DamageComponents)]
 	local randomDamage = (math.random() + math.random(0, 1)) * dmgFctr
-	--exports['denalifw-vehicletuning']:SetVehicleStatus(denalifw.Functions.GetPlate(vehicle), randomComponent, exports['denalifw-vehicletuning']:GetVehicleStatus(denalifw.Functions.GetPlate(vehicle), randomComponent) - randomDamage)
+	--exports['NADRP-vehicletuning']:SetVehicleStatus(NADRP.Functions.GetPlate(vehicle), randomComponent, exports['NADRP-vehicletuning']:GetVehicleStatus(NADRP.Functions.GetPlate(vehicle), randomComponent) - randomDamage)
 end
 
 local function CleanVehicle(vehicle)
 	local ped = PlayerPedId()
 	local pos = GetEntityCoords(ped)
 	TaskStartScenarioInPlace(ped, "WORLD_HUMAN_MAID_CLEAN", 0, true)
-	denalifw.Functions.Progressbar("cleaning_vehicle", Lang:t("progress.clean_veh"), math.random(10000, 20000), false, true, {
+	NADRP.Functions.Progressbar("cleaning_vehicle", Lang:t("progress.clean_veh"), math.random(10000, 20000), false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,
 		disableCombat = true,
 	}, {}, {}, {}, function() -- Done
-		denalifw.Functions.Notify(Lang:t("success.cleaned_veh"))
+		NADRP.Functions.Notify(Lang:t("success.cleaned_veh"))
 		SetVehicleDirtLevel(vehicle, 0.1)
         SetVehicleUndriveable(vehicle, false)
 		WashDecalsFromVehicle(vehicle, 1.0)
-		TriggerServerEvent('denalifw-vehiclefailure:server:removewashingkit', vehicle)
-		TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["cleaningkit"], "remove")
+		TriggerServerEvent('NADRP-vehiclefailure:server:removewashingkit', vehicle)
+		TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["cleaningkit"], "remove")
 		ClearAllPedProps(ped)
 		ClearPedTasks(ped)
 	end, function() -- Cancel
-		denalifw.Functions.Notify(Lang:t("error.failed_notification"), "error")
+		NADRP.Functions.Notify(Lang:t("error.failed_notification"), "error")
 		ClearAllPedProps(ped)
 		ClearPedTasks(ped)
 	end)
@@ -83,7 +83,7 @@ local function RepairVehicleFull(vehicle)
         SetVehicleDoorOpen(vehicle, 4, false, false)
     end
 	
-	denalifw.Functions.Progressbar("repair_vehicle", Lang:t("progress.repair_veh"), math.random(20000, 30000), false, true, {
+	NADRP.Functions.Progressbar("repair_vehicle", Lang:t("progress.repair_veh"), math.random(20000, 30000), false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,
@@ -94,7 +94,7 @@ local function RepairVehicleFull(vehicle)
 		flags = 16,
 	}, {}, {}, function() -- Done
 		StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_player", 1.0)
-		denalifw.Functions.Notify(Lang:t("success.repaired_veh"))
+		NADRP.Functions.Notify(Lang:t("success.repaired_veh"))
 		SetVehicleEngineHealth(vehicle, 1000.0)
 		SetVehicleEngineOn(vehicle, true, false)
 		SetVehicleTyreFixed(vehicle, 0)
@@ -107,10 +107,10 @@ local function RepairVehicleFull(vehicle)
 		else
 			SetVehicleDoorShut(vehicle, 4, false)
 		end
-		TriggerServerEvent('denalifw-vehiclefailure:removeItem', "advancedrepairkit")
+		TriggerServerEvent('NADRP-vehiclefailure:removeItem', "advancedrepairkit")
 	end, function() -- Cancel
 		StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_player", 1.0)
-		denalifw.Functions.Notify(Lang:t("error.failed_notification"), "error")
+		NADRP.Functions.Notify(Lang:t("error.failed_notification"), "error")
 		if (IsBackEngine(GetEntityModel(vehicle))) then
 			SetVehicleDoorShut(vehicle, 5, false)
 		else
@@ -125,7 +125,7 @@ local function RepairVehicle(vehicle)
     else
         SetVehicleDoorOpen(vehicle, 4, false, false)
     end
-	denalifw.Functions.Progressbar("repair_vehicle", Lang:t("progress.repair_veh"), math.random(10000, 20000), false, true, {
+	NADRP.Functions.Progressbar("repair_vehicle", Lang:t("progress.repair_veh"), math.random(10000, 20000), false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,
@@ -136,7 +136,7 @@ local function RepairVehicle(vehicle)
 		flags = 16,
 	}, {}, {}, function() -- Done
 		StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_player", 1.0)
-		denalifw.Functions.Notify(Lang:t("success.repaired_veh"))
+		NADRP.Functions.Notify(Lang:t("success.repaired_veh"))
 		SetVehicleEngineHealth(vehicle, 500.0)
 		SetVehicleEngineOn(vehicle, true, false)
 		SetVehicleTyreFixed(vehicle, 0)
@@ -149,10 +149,10 @@ local function RepairVehicle(vehicle)
 		else
 			SetVehicleDoorShut(vehicle, 4, false)
 		end
-		TriggerServerEvent('denalifw-vehiclefailure:removeItem', "repairkit")
+		TriggerServerEvent('NADRP-vehiclefailure:removeItem', "repairkit")
 	end, function() -- Cancel
 		StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_player", 1.0)
-		denalifw.Functions.Notify(Lang:t("error.failed_notification"), "error")
+		NADRP.Functions.Notify(Lang:t("error.failed_notification"), "error")
 		if (IsBackEngine(GetEntityModel(vehicle))) then
 			SetVehicleDoorShut(vehicle, 5, false)
 		else
@@ -258,8 +258,8 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-vehiclefailure:client:RepairVehicle', function()
-	local vehicle = denalifw.Functions.GetClosestVehicle()
+RegisterNetEvent('NADRP-vehiclefailure:client:RepairVehicle', function()
+	local vehicle = NADRP.Functions.GetClosestVehicle()
 	local engineHealth = GetVehicleEngineHealth(vehicle) --This is to prevent people from "repairing" a vehicle and setting engine health lower than what the vehicles engine health was before repairing.
 	if vehicle ~= nil and vehicle ~= 0 and engineHealth < 500 then
 		local ped = PlayerPedId()
@@ -277,28 +277,28 @@ RegisterNetEvent('denalifw-vehiclefailure:client:RepairVehicle', function()
 			end
     	else
       		if #(pos - vehpos) > 4.9 then
-       			denalifw.Functions.Notify(Lang:t("error.out_range_veh"), "error")
+       			NADRP.Functions.Notify(Lang:t("error.out_range_veh"), "error")
       		else
-       			denalifw.Functions.Notify(Lang:t("error.inside_veh"), "error")
+       			NADRP.Functions.Notify(Lang:t("error.inside_veh"), "error")
       		end
 		end
   	else
 		if vehicle == nil or vehicle == 0 then
-			denalifw.Functions.Notify(Lang:t("error.not_near_veh"), "error")
+			NADRP.Functions.Notify(Lang:t("error.not_near_veh"), "error")
 		else
-			denalifw.Functions.Notify(Lang:t("error.healthy_veh"), "error")
+			NADRP.Functions.Notify(Lang:t("error.healthy_veh"), "error")
 		end
 	end
 end)
 
-RegisterNetEvent('denalifw-vehiclefailure:client:SyncWash', function(veh)
+RegisterNetEvent('NADRP-vehiclefailure:client:SyncWash', function(veh)
 	SetVehicleDirtLevel(veh, 0.1)
 	SetVehicleUndriveable(veh, false)
 	WashDecalsFromVehicle(veh, 1.0)
 end)
 
-RegisterNetEvent('denalifw-vehiclefailure:client:CleanVehicle', function()
-	local vehicle = denalifw.Functions.GetClosestVehicle()
+RegisterNetEvent('NADRP-vehiclefailure:client:CleanVehicle', function()
+	local vehicle = NADRP.Functions.GetClosestVehicle()
 	if vehicle ~= nil and vehicle ~= 0 then
 		local ped = PlayerPedId()
 		local pos = GetEntityCoords(ped)
@@ -309,8 +309,8 @@ RegisterNetEvent('denalifw-vehiclefailure:client:CleanVehicle', function()
 	end
 end)
 
-RegisterNetEvent('denalifw-vehiclefailure:client:RepairVehicleFull', function()
-	local vehicle = denalifw.Functions.GetClosestVehicle()
+RegisterNetEvent('NADRP-vehiclefailure:client:RepairVehicleFull', function()
+	local vehicle = NADRP.Functions.GetClosestVehicle()
 	if vehicle ~= nil and vehicle ~= 0 then
 		local ped = PlayerPedId()
 		local pos = GetEntityCoords(ped)
@@ -327,13 +327,13 @@ RegisterNetEvent('denalifw-vehiclefailure:client:RepairVehicleFull', function()
 			end
     	else
       		if #(pos - vehpos) > 4.9 then
-        		denalifw.Functions.Notify(Lang:t("error.out_range_veh"), "error")
+        		NADRP.Functions.Notify(Lang:t("error.out_range_veh"), "error")
       		else
-        		denalifw.Functions.Notify(Lang:t("error.inside_veh"), "error")
+        		NADRP.Functions.Notify(Lang:t("error.inside_veh"), "error")
       		end
 		end
   	else
-    	denalifw.Functions.Notify(Lang:t("error.not_near_veh"), "error")
+    	NADRP.Functions.Notify(Lang:t("error.not_near_veh"), "error")
 	end
 end)
 
@@ -344,7 +344,7 @@ RegisterNetEvent('iens:repaira', function()
 		SetVehicleDirtLevel(vehicle)
 		SetVehicleUndriveable(vehicle, false)
 		WashDecalsFromVehicle(vehicle, 1.0)
-		denalifw.Functions.Notify(Lang:t("success.repaired_veh"))
+		NADRP.Functions.Notify(Lang:t("success.repaired_veh"))
 		SetVehicleFixed(vehicle)
 		healthBodyLast=1000.0
 		healthEngineLast=1000.0
@@ -352,16 +352,16 @@ RegisterNetEvent('iens:repaira', function()
 		SetVehicleEngineOn(vehicle, true, false )
 		return
 	else
-		denalifw.Functions.Notify(Lang:t("error.inside_veh_req"))
+		NADRP.Functions.Notify(Lang:t("error.inside_veh_req"))
 	end
 end)
 
 RegisterNetEvent('iens:besked', function()
-	denalifw.Functions.Notify(Lang:t("error.roadside_avail"))
+	NADRP.Functions.Notify(Lang:t("error.roadside_avail"))
 end)
 
 RegisterNetEvent('iens:notAllowed', function()
-	denalifw.Functions.Notify(Lang:t("error.no_permission"))
+	NADRP.Functions.Notify(Lang:t("error.no_permission"))
 end)
 
 RegisterNetEvent('iens:repair', function()
@@ -380,19 +380,19 @@ RegisterNetEvent('iens:repair', function()
 				healthPetrolTankLast=750.0
 				SetVehicleEngineOn(vehicle, true, false )
 				SetVehicleOilLevel(vehicle,(GetVehicleOilLevel(vehicle)/3)-0.5)
-				denalifw.Functions.Notify(Lang:t(('fix_message_%s'):format(fixMessagePos)))
+				NADRP.Functions.Notify(Lang:t(('fix_message_%s'):format(fixMessagePos)))
 				fixMessagePos = fixMessagePos + 1
 				if fixMessagePos > repairCfg.fixMessageCount then fixMessagePos = 1 end
 			else 
-				denalifw.Functions.Notify(Lang:t("error.veh_damaged"))
+				NADRP.Functions.Notify(Lang:t("error.veh_damaged"))
 			end
 		else
-			denalifw.Functions.Notify(Lang:t(('nofix_message_%s'):format(noFixMessagePos)))
+			NADRP.Functions.Notify(Lang:t(('nofix_message_%s'):format(noFixMessagePos)))
 			noFixMessagePos = noFixMessagePos + 1
 			if noFixMessagePos > repairCfg.noFixMessageCount then noFixMessagePos = 1 end
 		end
 	else
-		denalifw.Functions.Notify(Lang:t("error.inside_veh_req"))
+		NADRP.Functions.Notify(Lang:t("error.inside_veh_req"))
 	end
 end)
 
@@ -439,7 +439,7 @@ if cfg.torqueMultiplierEnabled or cfg.preventVehicleFlip or cfg.limpMode then
 								-- Forward and braking
 								isBrakingForward = true
 								brk = fscale(brake, 127.0, 254.0, 0.01, fBrakeForce, 10.0-(cfg.sundayDriverBrakeCurve*2.0))
-								--exports['denalifw-vehicletuning']:SetVehicleStatus(denalifw.Functions.GetPlate(vehicle), "brakes", exports['denalifw-vehicletuning']:GetVehicleStatus(denalifw.Functions.GetPlate(vehicle), "brakes") - 0.01)
+								--exports['NADRP-vehicletuning']:SetVehicleStatus(NADRP.Functions.GetPlate(vehicle), "brakes", exports['NADRP-vehicletuning']:GetVehicleStatus(NADRP.Functions.GetPlate(vehicle), "brakes") - 0.01)
 							end
 						elseif speed <= -1.0 then
 							-- Going reverse
@@ -447,7 +447,7 @@ if cfg.torqueMultiplierEnabled or cfg.preventVehicleFlip or cfg.limpMode then
 								-- Reversing and accelerating (using the brake)
 								local rev = fscale(brake, 127.0, 254.0, 0.1, 1.0, 10.0-(cfg.sundayDriverAcceleratorCurve*2.0))
 								factor = factor * rev
-								--exports['denalifw-vehicletuning']:SetVehicleStatus(denalifw.Functions.GetPlate(vehicle), "brakes", exports['denalifw-vehicletuning']:GetVehicleStatus(denalifw.Functions.GetPlate(vehicle), "brakes") - 0.01)
+								--exports['NADRP-vehicletuning']:SetVehicleStatus(NADRP.Functions.GetPlate(vehicle), "brakes", exports['NADRP-vehicletuning']:GetVehicleStatus(NADRP.Functions.GetPlate(vehicle), "brakes") - 0.01)
 							end
 							if accelerator > 127 then
 								-- Reversing and braking (Using the accelerator)

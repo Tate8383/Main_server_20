@@ -1,10 +1,10 @@
 
-denalifw = nil
-local denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = nil
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 Citizen.CreateThread(function()
 	while true do
 		Wait(60*30000) -- change time of payment
-		TriggerServerEvent('denalifw-taxes')
+		TriggerServerEvent('NADRP-taxes')
 	end
 end)

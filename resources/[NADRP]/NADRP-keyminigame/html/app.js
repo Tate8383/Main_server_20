@@ -194,7 +194,7 @@ async function StartMinigame() {
 
         if ((CurrentKey + 1) == TotalPresses) {
             $(".minigame-container").find("[data-key='"+Keys[Key]+"']").css({"background-color":"white"});
-            $.post('https://denalifw-keyminigame/callback', JSON.stringify({
+            $.post('https://NADRP-keyminigame/callback', JSON.stringify({
                 faults: WrongKeyCount,
             }), function(status){
                 if (status == "ok") {

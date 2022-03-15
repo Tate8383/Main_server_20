@@ -1,12 +1,12 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local tunedVehicles = {}
 local VehicleNitrous = {}
 
-denalifw.Functions.CreateUseableItem("tunerlaptop", function(source, item)
-    TriggerClientEvent('denalifw-tunerchip:client:openChip', source)
+NADRP.Functions.CreateUseableItem("tunerlaptop", function(source, item)
+    TriggerClientEvent('NADRP-tunerchip:client:openChip', source)
 end)
 
-RegisterNetEvent('denalifw-tunerchip:server:TuneStatus', function(plate, bool)
+RegisterNetEvent('NADRP-tunerchip:server:TuneStatus', function(plate, bool)
     if bool then
         tunedVehicles[plate] = bool
     else
@@ -14,9 +14,9 @@ RegisterNetEvent('denalifw-tunerchip:server:TuneStatus', function(plate, bool)
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-tunerchip:server:HasChip', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-tunerchip:server:HasChip', function(source, cb)
     local src = source
-    local Ply = denalifw.Functions.GetPlayer(src)
+    local Ply = NADRP.Functions.GetPlayer(src)
     local Chip = Ply.Functions.GetItemByName('tunerlaptop')
 
     if Chip ~= nil then
@@ -27,11 +27,11 @@ denalifw.Functions.CreateCallback('denalifw-tunerchip:server:HasChip', function(
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-tunerchip:server:GetStatus', function(source, cb, plate)
+NADRP.Functions.CreateCallback('NADRP-tunerchip:server:GetStatus', function(source, cb, plate)
     cb(tunedVehicles[plate])
 end)
 
-denalifw.Functions.CreateUseableItem("nitrous", function(source, item)
+NADRP.Functions.CreateUseableItem("nitrous", function(source, item)
     TriggerClientEvent('smallresource:client:LoadNitrous', source)
 end)
 

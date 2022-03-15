@@ -35,7 +35,7 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-vehicletuning:client:UpdateDrivingDistance', function(amount, plate)
+RegisterNetEvent('NADRP-vehicletuning:client:UpdateDrivingDistance', function(amount, plate)
     DrivingDistance[plate] = amount
 end)
 
@@ -56,7 +56,7 @@ CreateThread(function()
                     if not CheckDone then
                         if vehiclemeters == -1 then
                             CheckDone = true
-                            denalifw.Functions.TriggerCallback('denalifw-vehicletuning:server:IsVehicleOwned', function(IsOwned)
+                            NADRP.Functions.TriggerCallback('NADRP-vehicletuning:server:IsVehicleOwned', function(IsOwned)
                                 if IsOwned then
                                     if DrivingDistance[plate] ~= nil then
                                         vehiclemeters = DrivingDistance[plate]
@@ -106,7 +106,7 @@ CreateThread(function()
                                         else
                                             newDamage = 0
                                         end
-                                        TriggerServerEvent('denalifw-vehicletuning:server:SetPartLevel', plate, k, newDamage)
+                                        TriggerServerEvent('NADRP-vehicletuning:server:SetPartLevel', plate, k, newDamage)
                                     end
                                 end
                             end
@@ -114,7 +114,7 @@ CreateThread(function()
                             local amount = round(DrivingDistance[plate] / 1000, -2)
 
                             TriggerEvent('hud:client:UpdateDrivingMeters', true, amount)
-                            TriggerServerEvent('denalifw-vehicletuning:server:UpdateDrivingDistance', DrivingDistance[plate], plate)
+                            TriggerServerEvent('NADRP-vehicletuning:server:UpdateDrivingDistance', DrivingDistance[plate], plate)
                         end
                     else
                         if invehicle then

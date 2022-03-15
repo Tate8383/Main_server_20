@@ -1,5 +1,5 @@
-denalifw = nil
-local denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = nil
+local NADRP = exports['NADRP-core']:GetCoreObject()
 -- To Set This Up visit https://forum.cfx.re/t/how-to-updated-discord-rich-presence-custom-image/157686
 local sv_maxClients = 64
 local sv_players = 0
@@ -24,7 +24,7 @@ CreateThread(function()
         -- Here you can add hover text for the "small" icon.
         SetDiscordRichPresenceAssetSmallText('DRP')
 
-        denalifw.Functions.TriggerCallback('smallresources:server:GetCurrentPlayers', function(result)
+        NADRP.Functions.TriggerCallback('smallresources:server:GetCurrentPlayers', function(result)
             SetRichPresence('Players: '..result..'/64')
         end)
 

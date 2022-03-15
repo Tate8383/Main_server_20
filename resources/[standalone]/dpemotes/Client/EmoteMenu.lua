@@ -3,23 +3,23 @@ TriggerServerEvent("dp:CheckVersion")
 rightPosition = {x = 1450, y = 100}
 leftPosition = {x = 0, y = 100}
 menuPosition = {x = 0, y = 200}
-PlayerData = denalifw.Functions.GetPlayerData()
+PlayerData = DenaliFW.Functions.GetPlayerData()
 isLoggedIn = false
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded')
-AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
-    PlayerData = denalifw.Functions.GetPlayerData()
+RegisterNetEvent('DenaliFW:Client:OnPlayerLoaded')
+AddEventHandler('DenaliFW:Client:OnPlayerLoaded', function()
+    PlayerData = DenaliFW.Functions.GetPlayerData()
     isLoggedIn = true
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerUnload')
-AddEventHandler('denalifw:Client:OnPlayerUnload', function()
+RegisterNetEvent('DenaliFW:Client:OnPlayerUnload')
+AddEventHandler('DenaliFW:Client:OnPlayerUnload', function()
     PlayerData = {}
     isLoggedIn = false
 end)
 
-RegisterNetEvent('denalifw:Player:SetPlayerData')
-AddEventHandler('denalifw:Player:SetPlayerData', function(val)
+RegisterNetEvent('DenaliFW:Player:SetPlayerData')
+AddEventHandler('DenaliFW:Player:SetPlayerData', function(val)
     PlayerData = val
 end)
 
@@ -335,7 +335,7 @@ end)
 AddEventHandler('onResourceStart', function(resource)
   if resource == GetCurrentResourceName() then
       Wait(200)
-      PlayerData = denalifw.Functions.GetPlayerData()
+      PlayerData = DenaliFW.Functions.GetPlayerData()
       isLoggedIn = true
   end
 end)

@@ -19,7 +19,7 @@ local menu12 = MenuV:CreateMenu(false, Lang:t("menu.vehicle_options"), menuLocat
 local menu13 = MenuV:CreateMenu(false, Lang:t("menu.vehicle_categories"), menuLocation, 220, 20, 60, 'size-125', 'none', 'menuv', 'test12')
 local menu14 = MenuV:CreateMenu(false, Lang:t("menu.vehicle_models"), menuLocation, 220, 20, 60, 'size-125', 'none', 'menuv', 'test13')
 
-RegisterNetEvent('denalifw-admin:client:openMenu', function()
+RegisterNetEvent('NADRP-admin:client:openMenu', function()
     MenuV:OpenMenu(menu)
 end)
 
@@ -296,8 +296,8 @@ menu_button11:On("select",function()
     for k,v in ipairs(elements) do
         local menu_button14 = menu6:AddButton({icon = v.icon,label = v.label,value = v,description = v.description,select = function(btn)
             local selection = btn.Value
-            TriggerServerEvent('denalifw-weathersync:server:setWeather', selection.value)
-            denalifw.Functions.Notify(Lang:t("weather.weather_changed", {value = selection.label}))
+            TriggerServerEvent('NADRP-weathersync:server:setWeather', selection.value)
+            NADRP.Functions.Notify(Lang:t("weather.weather_changed", {value = selection.label}))
         end})
     end
 end)
@@ -389,7 +389,7 @@ local menu12_button4 = menu12:AddButton({
 local dev = false
 menu_dev_button:On('change', function(item, newValue, oldValue)
     dev = not dev
-    TriggerEvent('denalifw-admin:client:ToggleDevmode')
+    TriggerEvent('NADRP-admin:client:ToggleDevmode')
     if dev then
         while dev do
             Wait(200)
@@ -418,7 +418,7 @@ local function CopyToClipboard(dataType)
         SendNUIMessage({
             string = string.format('vector3(%s, %s, %s)', x, y, z)
         })
-        denalifw.Functions.Notify(Lang:t("success.coords_copied"), "success")
+        NADRP.Functions.Notify(Lang:t("success.coords_copied"), "success")
     elseif dataType == 'coords4' then
         local coords = GetEntityCoords(ped)
         local x = round(coords.x, 2)
@@ -429,14 +429,14 @@ local function CopyToClipboard(dataType)
         SendNUIMessage({
             string = string.format('vector4(%s, %s, %s, %s)', x, y, z, h)
         })
-        denalifw.Functions.Notify(Lang:t("success.coords_copied"), "success")
+        NADRP.Functions.Notify(Lang:t("success.coords_copied"), "success")
     elseif dataType == 'heading' then
         local heading = GetEntityHeading(ped)
         local h = round(heading, 2)
         SendNUIMessage({
             string = h
         })
-        denalifw.Functions.Notify(Lang:t("success.heading_copied"), "success")
+        NADRP.Functions.Notify(Lang:t("success.heading_copied"), "success")
     end
 end
 
@@ -472,7 +472,7 @@ local function ToggleShowCoordinates()
     end)
 end
 
-RegisterNetEvent('denalifw-admin:client:ToggleCoords', function()
+RegisterNetEvent('NADRP-admin:client:ToggleCoords', function()
     ToggleShowCoordinates()
 end)
 
@@ -525,7 +525,7 @@ togglecoords_button:On('change', function()
 end)
 
 local vehicles = {}
-for k, v in pairs(denalifw.Shared.Vehicles) do
+for k, v in pairs(NADRP.Shared.Vehicles) do
     local category = v["category"]
     if vehicles[category] == nil then
         vehicles[category] = { }
@@ -544,7 +544,7 @@ local function OpenCarModelsMenu(category)
              value = k,
              description = 'Spawn ' .. v["name"],
              select = function(btn)
-                 TriggerServerEvent('denalifw:CallCommand', "car", { k })
+                 TriggerServerEvent('NADRP:CallCommand', "car", { k })
              end
         })
     end
@@ -566,22 +566,22 @@ menu12_button1:On('Select', function(item)
 end)
 
 menu12_button2:On('Select', function(item)
-    TriggerServerEvent('denalifw:CallCommand', "fix", {})
+    TriggerServerEvent('NADRP:CallCommand', "fix", {})
 end)
 
 menu12_button3:On('Select', function(item)
-    TriggerServerEvent('denalifw:CallCommand', "admincar", {})
+    TriggerServerEvent('NADRP:CallCommand', "admincar", {})
 end)
 
 menu12_button4:On('Select', function(item)
-    TriggerServerEvent('denalifw:CallCommand', "dv", {})
+    TriggerServerEvent('NADRP:CallCommand', "dv", {})
 end)
 
 names_button:On('change', function()
-    TriggerEvent('denalifw-admin:client:toggleNames')
+    TriggerEvent('NADRP-admin:client:toggleNames')
 end)
 blips_button:On('change', function()
-    TriggerEvent('denalifw-admin:client:toggleBlips')
+    TriggerEvent('NADRP-admin:client:toggleBlips')
 end)
 
 -- Dealer List
@@ -613,9 +613,9 @@ local function OpenDealerMenu(dealer)
             select = function(btn)
                 local values = btn.Value
                 if values == "goto" then
-                    TriggerServerEvent('denalifw:CallCommand', "dealergoto", { dealer["name"] })
+                    TriggerServerEvent('NADRP:CallCommand', "dealergoto", { dealer["name"] })
                 elseif values == "remove" then
-                    TriggerServerEvent('denalifw:CallCommand', "deletedealer", { dealer["name"] })
+                    TriggerServerEvent('NADRP:CallCommand', "deletedealer", { dealer["name"] })
                     EditDealer:Close()
                     menu7:Close()
                 end
@@ -626,7 +626,7 @@ end
 
 menu_button4:On('Select', function(item)
     menu7:ClearItems()
-    denalifw.Functions.TriggerCallback('test:getdealers', function(dealers)
+    NADRP.Functions.TriggerCallback('test:getdealers', function(dealers)
         for k, v in pairs(dealers) do
             local menu_button10 = menu7:AddButton({
                 label = v["name"],
@@ -644,7 +644,7 @@ end)
 -- Player List
 
 local function OpenPermsMenu(permsply)
-    denalifw.Functions.TriggerCallback('denalifw-admin:server:getrank', function(rank)
+    NADRP.Functions.TriggerCallback('NADRP-admin:server:getrank', function(rank)
         if rank then
             local selectedgroup = 'Unknown'
             MenuV:OpenMenu(menu10)
@@ -688,11 +688,11 @@ local function OpenPermsMenu(permsply)
                 description = 'Give the permission group',
                 select = function(btn)
                     if selectedgroup ~= 'Unknown' then
-                        TriggerServerEvent('denalifw-admin:server:setPermissions', permsply.id, selectedgroup)
-			            denalifw.Functions.Notify(Lang:t("success.changed_perm"), 'success')
+                        TriggerServerEvent('NADRP-admin:server:setPermissions', permsply.id, selectedgroup)
+			            NADRP.Functions.Notify(Lang:t("success.changed_perm"), 'success')
                         selectedgroup = 'Unknown'
                     else
-                        denalifw.Functions.Notify(Lang:t("error.changed_perm_failed"), 'error')
+                        NADRP.Functions.Notify(Lang:t("error.changed_perm_failed"), 'error')
                     end
                 end
             })
@@ -749,10 +749,10 @@ local function OpenKickMenu(kickplayer)
         description = Lang:t("desc.confirm_kick"),
         select = function(btn)
             if kickreason ~= 'Unknown' then
-                TriggerServerEvent('denalifw-admin:server:kick', kickplayer, kickreason)
+                TriggerServerEvent('NADRP-admin:server:kick', kickplayer, kickreason)
                 kickreason = 'Unknown'
             else
-                denalifw.Functions.Notify(Lang:t("error.missing_reason"), 'error')
+                NADRP.Functions.Notify(Lang:t("error.missing_reason"), 'error')
             end
         end
     })
@@ -840,11 +840,11 @@ local function OpenBanMenu(banplayer)
         description = Lang:t("desc.confirm_ban"),
         select = function(btn)
             if banreason ~= 'Unknown' and banlength ~= nil then
-                TriggerServerEvent('denalifw-admin:server:ban', banplayer, banlength, banreason)
+                TriggerServerEvent('NADRP-admin:server:ban', banplayer, banlength, banreason)
                 banreason = 'Unknown'
                 banlength = nil
             else
-                denalifw.Functions.Notify(Lang:t("error.invalid_reason_length_ban"), 'error')
+                NADRP.Functions.Notify(Lang:t("error.invalid_reason_length_ban"), 'error')
             end
         end
     })
@@ -937,7 +937,7 @@ local function OpenPlayerMenus(player)
             select = function(btn)
                 local values = btn.Value
                 if values ~= "ban" and values ~= "kick" and values ~= "perms" then
-                    TriggerServerEvent('denalifw-admin:server:'..values, player)
+                    TriggerServerEvent('NADRP-admin:server:'..values, player)
                 elseif values == "ban" then
                     OpenBanMenu(player)
                 elseif values == "kick" then
@@ -952,7 +952,7 @@ end
 
 menu_button2:On('select', function(item)
     menu4:ClearItems()
-    denalifw.Functions.TriggerCallback('test:getplayers', function(players)
+    NADRP.Functions.TriggerCallback('test:getplayers', function(players)
         for k, v in pairs(players) do
             local menu_button10 = menu4:AddButton({
                 label = Lang:t("info.id") .. v["id"] .. ' | ' .. v["name"],
@@ -968,8 +968,8 @@ menu_button2:On('select', function(item)
 end)
 
 menu_button13:On("select", function(item, value)
-    TriggerServerEvent("denalifw-weathersync:server:setTime", value, value)
-    denalifw.Functions.Notify(Lang:t("time.changed", {time = value}))
+    TriggerServerEvent("NADRP-weathersync:server:setTime", value, value)
+    NADRP.Functions.Notify(Lang:t("time.changed", {time = value}))
 end)
 
 -- Toggle NoClip

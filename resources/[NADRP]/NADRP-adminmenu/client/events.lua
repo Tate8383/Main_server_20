@@ -19,11 +19,11 @@ local isSpectating = false
 
 -- Events
 
-RegisterNetEvent('denalifw-admin:client:inventory', function(targetPed)
+RegisterNetEvent('NADRP-admin:client:inventory', function(targetPed)
     TriggerServerEvent("inventory:server:OpenInventory", "otherplayer", targetPed)
 end)
 
-RegisterNetEvent('denalifw-admin:client:spectate', function(targetPed, coords)
+RegisterNetEvent('NADRP-admin:client:spectate', function(targetPed, coords)
     local myPed = PlayerPedId()
     local targetplayer = GetPlayerFromServerId(targetPed)
     local target = GetPlayerPed(targetplayer)
@@ -44,30 +44,30 @@ RegisterNetEvent('denalifw-admin:client:spectate', function(targetPed, coords)
     end
 end)
 
-RegisterNetEvent('denalifw-admin:client:SendReport', function(name, src, msg)
-    TriggerServerEvent('denalifw-admin:server:SendReport', name, src, msg)
+RegisterNetEvent('NADRP-admin:client:SendReport', function(name, src, msg)
+    TriggerServerEvent('NADRP-admin:server:SendReport', name, src, msg)
 end)
 
-RegisterNetEvent('denalifw-admin:client:SendStaffChat', function(name, msg)
-    TriggerServerEvent('denalifw-admin:server:Staffchat:addMessage', name, msg)
+RegisterNetEvent('NADRP-admin:client:SendStaffChat', function(name, msg)
+    TriggerServerEvent('NADRP-admin:server:Staffchat:addMessage', name, msg)
 end)
 
-RegisterNetEvent('denalifw-admin:client:SaveCar', function()
+RegisterNetEvent('NADRP-admin:client:SaveCar', function()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped)
 
     if veh ~= nil and veh ~= 0 then
-        local plate = denalifw.Functions.GetPlate(veh)
-        local props = denalifw.Functions.GetVehicleProperties(veh)
+        local plate = NADRP.Functions.GetPlate(veh)
+        local props = NADRP.Functions.GetVehicleProperties(veh)
         local hash = props.model
         local vehname = GetDisplayNameFromVehicleModel(hash):lower()
-        if denalifw.Shared.Vehicles[vehname] ~= nil and next(denalifw.Shared.Vehicles[vehname]) ~= nil then
-            TriggerServerEvent('denalifw-admin:server:SaveCar', props, denalifw.Shared.Vehicles[vehname], GetHashKey(veh), plate)
+        if NADRP.Shared.Vehicles[vehname] ~= nil and next(NADRP.Shared.Vehicles[vehname]) ~= nil then
+            TriggerServerEvent('NADRP-admin:server:SaveCar', props, NADRP.Shared.Vehicles[vehname], GetHashKey(veh), plate)
         else
-            denalifw.Functions.Notify(Lang:t("error.no_store_vehicle_garage"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.no_store_vehicle_garage"), 'error')
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.no_vehicle"), 'error')
+        NADRP.Functions.Notify(Lang:t("error.no_vehicle"), 'error')
     end
 end)
 
@@ -88,7 +88,7 @@ local function isPedAllowedRandom(skin)
     return retval
 end
 
-RegisterNetEvent('denalifw-admin:client:SetModel', function(skin)
+RegisterNetEvent('NADRP-admin:client:SetModel', function(skin)
     local ped = PlayerPedId()
     local model = GetHashKey(skin)
     SetEntityInvincible(ped, true)
@@ -106,7 +106,7 @@ RegisterNetEvent('denalifw-admin:client:SetModel', function(skin)
 	SetEntityInvincible(ped, false)
 end)
 
-RegisterNetEvent('denalifw-admin:client:SetSpeed', function(speed)
+RegisterNetEvent('NADRP-admin:client:SetSpeed', function(speed)
     local ped = PlayerId()
     if speed == "fast" then
         SetRunSprintMultiplierForPlayer(ped, 1.49)
@@ -117,23 +117,23 @@ RegisterNetEvent('denalifw-admin:client:SetSpeed', function(speed)
     end
 end)
 
-RegisterNetEvent('denalifw-weapons:client:SetWeaponAmmoManual', function(weapon, ammo)
+RegisterNetEvent('NADRP-weapons:client:SetWeaponAmmoManual', function(weapon, ammo)
     local ped = PlayerPedId()
     if weapon ~= "current" then
         local weapon = weapon:upper()
         SetPedAmmo(ped, GetHashKey(weapon), ammo)
-        denalifw.Functions.Notify(Lang:t("info.ammoforthe", {value = ammo, weapon = denalifw.Shared.Weapons[weapon]["label"]}), 'success')
+        NADRP.Functions.Notify(Lang:t("info.ammoforthe", {value = ammo, weapon = NADRP.Shared.Weapons[weapon]["label"]}), 'success')
     else
         local weapon = GetSelectedPedWeapon(ped)
         if weapon ~= nil then
             SetPedAmmo(ped, weapon, ammo)
-            denalifw.Functions.Notify(Lang:t("info.ammoforthe", {value = ammo, weapon = denalifw.Shared.Weapons[weapon]["label"]}), 'success')
+            NADRP.Functions.Notify(Lang:t("info.ammoforthe", {value = ammo, weapon = NADRP.Shared.Weapons[weapon]["label"]}), 'success')
         else
-            denalifw.Functions.Notify(Lang:t("error.no_weapon"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.no_weapon"), 'error')
         end
     end
 end)
 
-RegisterNetEvent('denalifw-admin:client:GiveNuiFocus', function(focus, mouse)
+RegisterNetEvent('NADRP-admin:client:GiveNuiFocus', function(focus, mouse)
     SetNuiFocus(focus, mouse)
 end)

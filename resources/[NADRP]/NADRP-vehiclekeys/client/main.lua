@@ -1,6 +1,6 @@
 -- Variables
 
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local HasVehicleKey = false
 local IsRobbing = false
 local IsHotwiring = false
@@ -19,7 +19,7 @@ local function loadAnimDict(dict)
 end
 
 local function HasVehicleKey(plate)
-	denalifw.Functions.TriggerCallback('vehiclekeys:server:CheckHasKey', function(result)
+	NADRP.Functions.TriggerCallback('vehiclekeys:server:CheckHasKey', function(result)
 		if result then
 			HasVehicleKey = true
 		else
@@ -32,14 +32,14 @@ end
 local function LockVehicle()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local veh = denalifw.Functions.GetClosestVehicle(pos)
-    local plate = denalifw.Functions.GetPlate(veh)
+    local veh = NADRP.Functions.GetClosestVehicle(pos)
+    local plate = NADRP.Functions.GetPlate(veh)
     local vehpos = GetEntityCoords(veh)
     if IsPedInAnyVehicle(ped) then
         veh = GetVehiclePedIsIn(ped)
     end
     if veh ~= nil and #(pos - vehpos) < 7.5 then
-        denalifw.Functions.TriggerCallback('vehiclekeys:server:CheckHasKey', function(result)
+        NADRP.Functions.TriggerCallback('vehiclekeys:server:CheckHasKey', function(result)
             if result then
                 local vehLockStatus = GetVehicleDoorLockStatus(veh)
                 loadAnimDict("anim@mp_player_intmenu@key_fob@")
@@ -57,9 +57,9 @@ local function LockVehicle()
                         SetVehicleLights(veh, 1)
                         Wait(200)
                         SetVehicleLights(veh, 0)
-                        denalifw.Functions.Notify("Vehicle locked!")
+                        NADRP.Functions.Notify("Vehicle locked!")
                     else
-                        denalifw.Functions.Notify("Something went wrong with the locking system!")
+                        NADRP.Functions.Notify("Something went wrong with the locking system!")
                     end
                 else
                     Wait(750)
@@ -72,13 +72,13 @@ local function LockVehicle()
                         SetVehicleLights(veh, 1)
                         Wait(200)
                         SetVehicleLights(veh, 0)
-                        denalifw.Functions.Notify("Vehicle unlocked!")
+                        NADRP.Functions.Notify("Vehicle unlocked!")
                     else
-                        denalifw.Functions.Notify("Something went wrong with the locking system!")
+                        NADRP.Functions.Notify("Something went wrong with the locking system!")
                     end
                 end
             else
-                denalifw.Functions.Notify('You don\'t have the keys of the vehicle..', 'error')
+                NADRP.Functions.Notify('You don\'t have the keys of the vehicle..', 'error')
             end
         end, plate)
     end
@@ -93,7 +93,7 @@ local function GetNearbyPed()
     end
     local player = PlayerPedId()
     local coords = GetEntityCoords(player)
-    local closestPed, closestDistance = denalifw.Functions.GetClosestPed(coords, PlayerPeds)
+    local closestPed, closestDistance = NADRP.Functions.GetClosestPed(coords, PlayerPeds)
     if not IsEntityDead(closestPed) and closestDistance < 30.0 then
         retval = closestPed
     end
@@ -122,21 +122,21 @@ local function PoliceCall()
                 if IsPedInAnyVehicle(ped) then
                     local vehicle = GetVehiclePedIsIn(ped, false)
                     local modelName = GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)):lower()
-                    if denalifw.Shared.Vehicles[modelName] ~= nil then
-                        Name = denalifw.Shared.Vehicles[modelName]["brand"] .. ' ' .. denalifw.Shared.Vehicles[modelName]["name"]
+                    if NADRP.Shared.Vehicles[modelName] ~= nil then
+                        Name = NADRP.Shared.Vehicles[modelName]["brand"] .. ' ' .. NADRP.Shared.Vehicles[modelName]["name"]
                     else
                         Name = "Unknown"
                     end
-                    local modelPlate = denalifw.Functions.GetPlate(vehicle)
+                    local modelPlate = NADRP.Functions.GetPlate(vehicle)
                     local msg = "Vehicle theft attempt at " .. streetLabel .. ". Vehicle: " .. Name .. ", Licenseplate: " .. modelPlate
                     local alertTitle = "Vehicle theft attempt at"
                     TriggerServerEvent("police:server:VehicleCall", pos, msg, alertTitle, streetLabel, modelPlate, Name)
                 else
-                    local vehicle = denalifw.Functions.GetClosestVehicle()
+                    local vehicle = NADRP.Functions.GetClosestVehicle()
                     local modelName = GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)):lower()
-                    local modelPlate = denalifw.Functions.GetPlate(vehicle)
-                    if denalifw.Shared.Vehicles[modelName] ~= nil then
-                        Name = denalifw.Shared.Vehicles[modelName]["brand"] .. ' ' .. denalifw.Shared.Vehicles[modelName]["name"]
+                    local modelPlate = NADRP.Functions.GetPlate(vehicle)
+                    if NADRP.Shared.Vehicles[modelName] ~= nil then
+                        Name = NADRP.Shared.Vehicles[modelName]["brand"] .. ' ' .. NADRP.Shared.Vehicles[modelName]["name"]
                     else
                         Name = "Unknown"
                     end
@@ -156,28 +156,28 @@ end
 local function lockpickFinish(success)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local vehicle = denalifw.Functions.GetClosestVehicle(pos)
+    local vehicle = NADRP.Functions.GetClosestVehicle(pos)
     local chance = math.random()
     if success then
         TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
-        denalifw.Functions.Notify('Opened Door!', 'success')
+        NADRP.Functions.Notify('Opened Door!', 'success')
         SetVehicleDoorsLocked(vehicle, 1)
         lockpicked = true
-        lockpickedPlate = denalifw.Functions.GetPlate(vehicle)
+        lockpickedPlate = NADRP.Functions.GetPlate(vehicle)
     else
         PoliceCall()
         TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
-        denalifw.Functions.Notify('Someone Called The Police!', 'error')
+        NADRP.Functions.Notify('Someone Called The Police!', 'error')
     end
     if usingAdvanced then
         if chance <= Config.RemoveLockpickAdvanced then
-            TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["advancedlockpick"], "remove")
-            TriggerServerEvent("denalifw:Server:RemoveItem", "advancedlockpick", 1)
+            TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["advancedlockpick"], "remove")
+            TriggerServerEvent("NADRP:Server:RemoveItem", "advancedlockpick", 1)
         end
     else
         if chance <= Config.RemoveLockpickNormal then
-            TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["lockpick"], "remove")
-            TriggerServerEvent("denalifw:Server:RemoveItem", "lockpick", 1)
+            TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["lockpick"], "remove")
+            TriggerServerEvent("NADRP:Server:RemoveItem", "lockpick", 1)
         end
     end
 end
@@ -185,14 +185,14 @@ end
 local function LockpickDoor(isAdvanced)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local vehicle = denalifw.Functions.GetClosestVehicle(pos)
+    local vehicle = NADRP.Functions.GetClosestVehicle(pos)
     if vehicle ~= nil and vehicle ~= 0 then
         local vehpos = GetEntityCoords(vehicle)
         if #(pos - vehpos) < 2.5 then
             local vehLockStatus = GetVehicleDoorLockStatus(vehicle)
             if (vehLockStatus > 0) then
                 usingAdvanced = isAdvanced
-                TriggerEvent('denalifw-lockpick:client:openLockpick', lockpickFinish)
+                TriggerEvent('NADRP-lockpick:client:openLockpick', lockpickFinish)
             end
         end
     end
@@ -208,7 +208,7 @@ local function Hotwire()
         SetVehicleAlarm(vehicle, true)
         SetVehicleAlarmTimeLeft(vehicle, hotwireTime)
         PoliceCall()
-        denalifw.Functions.Progressbar("hotwire_vehicle", "Engaging the ignition switch", hotwireTime, false, true, {
+        NADRP.Functions.Progressbar("hotwire_vehicle", "Engaging the ignition switch", hotwireTime, false, true, {
             disableMovement = true,
             disableCarMovement = true,
             disableMouse = false,
@@ -222,18 +222,18 @@ local function Hotwire()
             if (math.random() <= Config.HotwireChance) then
                 lockpicked = false
                 TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
-                TriggerEvent('vehiclekeys:client:SetOwner', denalifw.Functions.GetPlate(vehicle))
-                denalifw.Functions.Notify("Hotwire succeeded!")
+                TriggerEvent('vehiclekeys:client:SetOwner', NADRP.Functions.GetPlate(vehicle))
+                NADRP.Functions.Notify("Hotwire succeeded!")
             else
                 SetVehicleEngineOn(veh, false, false, true)
                 TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
-                denalifw.Functions.Notify("Hotwire failed!", "error")
+                NADRP.Functions.Notify("Hotwire failed!", "error")
             end
             IsHotwiring = false
         end, function() -- Cancel
             StopAnimTask(ped, "anim@amb@clubhouse@tutorial@bkr_tut_ig3@", "machinic_loop_mechandplayer", 1.0)
             SetVehicleEngineOn(veh, false, false, true)
-            denalifw.Functions.Notify("Hotwire failed!", "error")
+            NADRP.Functions.Notify("Hotwire failed!", "error")
             IsHotwiring = false
         end)
     end
@@ -243,7 +243,7 @@ local function RobVehicle(target)
     IsRobbing = true
     loadAnimDict('mp_am_hold_up')
     TaskPlayAnim(target, "mp_am_hold_up", "holdup_victim_20s", 8.0, -8.0, -1, 2, 0, false, false, false)
-    denalifw.Functions.Progressbar("rob_keys", "Attempting Robbery..", 6000, false, true, {}, {}, {}, {}, function()
+    NADRP.Functions.Progressbar("rob_keys", "Attempting Robbery..", 6000, false, true, {}, {}, {}, {}, function()
         local chance = math.random()
         if chance <= Config.RobberyChance then
             veh = GetVehiclePedIsUsing(target)
@@ -251,10 +251,10 @@ local function RobVehicle(target)
             Wait(500)
             ClearPedTasksImmediately(target)
             TaskReactAndFleePed(target, PlayerPedId())
-            local plate = denalifw.Functions.GetPlate(GetVehiclePedIsIn(target, true))
+            local plate = NADRP.Functions.GetPlate(GetVehiclePedIsIn(target, true))
             TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
             TriggerEvent('vehiclekeys:client:SetOwner', plate)
-            denalifw.Functions.Notify('You Got The Keys!', 'success')
+            NADRP.Functions.Notify('You Got The Keys!', 'success')
             Wait(10000)
             IsRobbing = false
         else
@@ -262,7 +262,7 @@ local function RobVehicle(target)
             ClearPedTasks(target)
             TaskReactAndFleePed(target, PlayerPedId())
             TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
-            denalifw.Functions.Notify('They Called The Cops!', 'error')
+            NADRP.Functions.Notify('They Called The Cops!', 'error')
             Wait(10000)
             IsRobbing = false
         end
@@ -304,7 +304,7 @@ end)
 
 RegisterNetEvent('vehiclekeys:client:SetOwner', function(plate)
     local VehPlate = plate
-    local CurrentVehPlate = denalifw.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), true))
+    local CurrentVehPlate = NADRP.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), true))
     if VehPlate == nil then
         VehPlate = CurrentVehPlate
     end
@@ -318,10 +318,10 @@ end)
 RegisterNetEvent('vehiclekeys:client:GiveKeys', function(target)
     local vehicles = IsPedInAnyVehicle(PlayerPedId())
     if vehicles then
-        local plate = denalifw.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), true))
+        local plate = NADRP.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), true))
         TriggerServerEvent('vehiclekeys:server:GiveVehicleKeys', plate, target)
     else
-        denalifw.Functions.Notify('you need to be in a vehicle to give key', 'error')
+        NADRP.Functions.Notify('you need to be in a vehicle to give key', 'error')
     end
 end)
 
@@ -354,8 +354,8 @@ CreateThread(function()
             local entering = GetVehiclePedIsTryingToEnter(ped)
             if entering ~= 0 and not Entity(entering).state.ignoreLocks then
                 sleep = 2000
-                local plate = denalifw.Functions.GetPlate(entering)
-                denalifw.Functions.TriggerCallback('vehiclekeys:server:CheckOwnership', function(result)
+                local plate = NADRP.Functions.GetPlate(entering)
+                NADRP.Functions.TriggerCallback('vehiclekeys:server:CheckOwnership', function(result)
                     if not result then -- if not player owned
                         local driver = GetPedInVehicleSeat(entering, -1)
                         if driver ~= 0 and not IsPedAPlayer(driver) then
@@ -373,7 +373,7 @@ CreateThread(function()
                                 HasVehicleKey = true
                             end
                         else
-                            denalifw.Functions.TriggerCallback('vehiclekeys:server:CheckHasKey', function(result)
+                            NADRP.Functions.TriggerCallback('vehiclekeys:server:CheckHasKey', function(result)
                                 if not lockpicked and lockpickedPlate ~= plate then
                                     if result == false then
                                         SetVehicleDoorsLocked(entering, 2)

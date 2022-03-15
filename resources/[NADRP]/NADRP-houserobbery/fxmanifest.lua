@@ -1,12 +1,12 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-HouseRobbery'
+description 'NADRP-HouseRobbery'
 version '1.0.0'
 
 shared_scripts {
  'config.lua',
- '@denalifw-core/shared/locale.lua',
+ '@NADRP-core/shared/locale.lua',
  'locales/en.lua'
 
 }

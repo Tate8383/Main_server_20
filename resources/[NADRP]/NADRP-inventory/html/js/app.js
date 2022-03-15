@@ -35,7 +35,7 @@ $(document).on("dblclick", ".item-slot", function(e) {
     if (ItemData) {
         Inventory.Close();
         $.post(
-            "https://denalifw-inventory/UseItem",
+            "https://NADRP-inventory/UseItem",
             JSON.stringify({
                 inventory: ItemInventory,
                 item: ItemData,
@@ -184,8 +184,8 @@ $(document).on("click", "#inv-close", function(e) {
 
 $(document).on("click", ".weapon-attachments-back", function(e) {
     e.preventDefault();
-    $("#denalifw-inventory").css({ display: "block" });
-    $("#denalifw-inventory").animate({
+    $("#NADRP-inventory").css({ display: "block" });
+    $("#NADRP-inventory").animate({
             left: 0 + "vw",
         },
         200
@@ -203,7 +203,7 @@ $(document).on("click", ".weapon-attachments-back", function(e) {
 
 function FormatAttachmentInfo(data) {
     $.post(
-        "https://denalifw-inventory/GetWeaponData",
+        "https://NADRP-inventory/GetWeaponData",
         JSON.stringify({
             weapon: data.name,
             ItemData: ClickedItemData,
@@ -304,7 +304,7 @@ function handleAttachmentDrag() {
         hoverClass: "weapon-attachments-remove-hover",
         drop: function(event, ui) {
             $.post(
-                "https://denalifw-inventory/RemoveAttachment",
+                "https://NADRP-inventory/RemoveAttachment",
                 JSON.stringify({
                     AttachmentData: AttachmentDraggingData,
                     WeaponData: ClickedItemData,
@@ -355,12 +355,12 @@ $(document).on("click", "#weapon-attachments", function(e) {
     e.preventDefault();
     if (!Inventory.IsWeaponBlocked(ClickedItemData.name)) {
         $(".weapon-attachments-container").css({ display: "block" });
-        $("#denalifw-inventory").animate({
+        $("#NADRP-inventory").animate({
                 left: 100 + "vw",
             },
             200,
             function() {
-                $("#denalifw-inventory").css({ display: "none" });
+                $("#NADRP-inventory").css({ display: "none" });
             }
         );
         $(".weapon-attachments-container").animate({
@@ -372,7 +372,7 @@ $(document).on("click", "#weapon-attachments", function(e) {
         FormatAttachmentInfo(ClickedItemData);
     } else {
         $.post(
-            "https://denalifw-inventory/Notify",
+            "https://NADRP-inventory/Notify",
             JSON.stringify({
                 message: "Attachments are unavailable for this gun.",
                 type: "error",
@@ -739,7 +739,7 @@ function handleDragDrop() {
                     Inventory.Close();
                 }
                 $.post(
-                    "https://denalifw-inventory/UseItem",
+                    "https://NADRP-inventory/UseItem",
                     JSON.stringify({
                         inventory: fromInventory,
                         item: fromData,
@@ -763,7 +763,7 @@ function handleDragDrop() {
             }
             $(this).css("background", "rgba(35,35,35, 0.7");
             $.post(
-                "https://denalifw-inventory/DropItem",
+                "https://NADRP-inventory/DropItem",
                 JSON.stringify({
                     inventory: fromInventory,
                     item: fromData,
@@ -1006,7 +1006,7 @@ $(document).on("click", ".CombineItem", function(e) {
     e.preventDefault();
     if (combineslotData.toData.combinable.anim != null) {
         $.post(
-            "https://denalifw-inventory/combineWithAnim",
+            "https://NADRP-inventory/combineWithAnim",
             JSON.stringify({
                 combineData: combineslotData.toData.combinable,
                 usedItem: combineslotData.toData.name,
@@ -1015,7 +1015,7 @@ $(document).on("click", ".CombineItem", function(e) {
         );
     } else {
         $.post(
-            "https://denalifw-inventory/combineItem",
+            "https://NADRP-inventory/combineItem",
             JSON.stringify({
                 reward: combineslotData.toData.combinable.reward,
                 toItem: combineslotData.toData.name,
@@ -1137,7 +1137,7 @@ function optionSwitch(
     }
 
     $.post(
-        "https://denalifw-inventory/SetInventoryData",
+        "https://NADRP-inventory/SetInventoryData",
         JSON.stringify({
             fromInventory: $fromInv.attr("data-inventory"),
             toInventory: $toInv.attr("data-inventory"),
@@ -1560,9 +1560,9 @@ function swap($fromSlot, $toSlot, $fromInv, $toInv, $toAmount) {
                     }
                 }
             }
-            $.post("https://denalifw-inventory/PlayDropSound", JSON.stringify({}));
+            $.post("https://NADRP-inventory/PlayDropSound", JSON.stringify({}));
             $.post(
-                "https://denalifw-inventory/SetInventoryData",
+                "https://NADRP-inventory/SetInventoryData",
                 JSON.stringify({
                     fromInventory: $fromInv.attr("data-inventory"),
                     toInventory: $toInv.attr("data-inventory"),
@@ -1579,7 +1579,7 @@ function swap($fromSlot, $toSlot, $fromInv, $toInv, $toAmount) {
                     isItemAllowed(fromData.name, toData.combinable.accept)
                 ) {
                     $.post(
-                        "https://denalifw-inventory/getCombineItem",
+                        "https://NADRP-inventory/getCombineItem",
                         JSON.stringify({ item: toData.combinable.reward }),
                         function(item) {
                             $(".combine-option-text").html(
@@ -1811,7 +1811,7 @@ function swap($fromSlot, $toSlot, $fromInv, $toInv, $toAmount) {
                     }
 
                     $.post(
-                        "https://denalifw-inventory/SetInventoryData",
+                        "https://NADRP-inventory/SetInventoryData",
                         JSON.stringify({
                             fromInventory: $fromInv.attr("data-inventory"),
                             toInventory: $toInv.attr("data-inventory"),
@@ -1857,7 +1857,7 @@ function swap($fromSlot, $toSlot, $fromInv, $toInv, $toAmount) {
                     }
 
                     $.post(
-                        "https://denalifw-inventory/SetInventoryData",
+                        "https://NADRP-inventory/SetInventoryData",
                         JSON.stringify({
                             fromInventory: $fromInv.attr("data-inventory"),
                             toInventory: $toInv.attr("data-inventory"),
@@ -1867,7 +1867,7 @@ function swap($fromSlot, $toSlot, $fromInv, $toInv, $toAmount) {
                         })
                     );
                 }
-                $.post("https://denalifw-inventory/PlayDropSound", JSON.stringify({}));
+                $.post("https://NADRP-inventory/PlayDropSound", JSON.stringify({}));
             } else if (
                 fromData.amount > $toAmount &&
                 (toData == undefined || toData == null)
@@ -2133,9 +2133,9 @@ function swap($fromSlot, $toSlot, $fromInv, $toInv, $toAmount) {
                         }
                     }
                 }
-                $.post("https://denalifw-inventory/PlayDropSound", JSON.stringify({}));
+                $.post("https://NADRP-inventory/PlayDropSound", JSON.stringify({}));
                 $.post(
-                    "https://denalifw-inventory/SetInventoryData",
+                    "https://NADRP-inventory/SetInventoryData",
                     JSON.stringify({
                         fromInventory: $fromInv.attr("data-inventory"),
                         toInventory: $toInv.attr("data-inventory"),
@@ -2173,7 +2173,7 @@ function InventoryError($elinv, $elslot) {
             .find("[data-slot=" + $elslot + "]")
             .css("background", "rgba(255, 255, 255, 0.3)");
     }, 500);
-    $.post("https://denalifw-inventory/PlayDropFail", JSON.stringify({}));
+    $.post("https://NADRP-inventory/PlayDropFail", JSON.stringify({}));
 }
 
 var requiredItemOpen = false;
@@ -2188,7 +2188,7 @@ var requiredItemOpen = false;
     Inventory.dropmaxweight = 100000;
 
     Inventory.Error = function() {
-        $.post("https://denalifw-inventory/PlayDropFail", JSON.stringify({}));
+        $.post("https://NADRP-inventory/PlayDropFail", JSON.stringify({}));
     };
 
     Inventory.IsWeaponBlocked = function(WeaponName) {
@@ -2310,7 +2310,7 @@ var requiredItemOpen = false;
             requiredItemOpen = false;
         }
 
-        $("#denalifw-inventory").fadeIn(300);
+        $("#NADRP-inventory").fadeIn(300);
         if (data.other != null && data.other != "") {
             $(".other-inventory").attr("data-inventory", data.other.name);
         } else {
@@ -2575,16 +2575,16 @@ var requiredItemOpen = false;
         $(".item-slot").css("border", "1px solid rgba(255, 255, 255, 0.1)");
         $(".ply-hotbar-inventory").css("display", "block");
         $(".ply-iteminfo-container").css("display", "none");
-        $("#denalifw-inventory").fadeOut(300);
+        $("#NADRP-inventory").fadeOut(300);
         $(".combine-option-container").hide();
         $(".item-slot").remove();
         if ($("#rob-money").length) {
             $("#rob-money").remove();
         }
-        $.post("https://denalifw-inventory/CloseInventory", JSON.stringify({}));
+        $.post("https://NADRP-inventory/CloseInventory", JSON.stringify({}));
 
         if (AttachmentScreenActive) {
-            $("#denalifw-inventory").css({ left: "0vw" });
+            $("#NADRP-inventory").css({ left: "0vw" });
             $(".weapon-attachments-container").css({ left: "-100vw" });
             AttachmentScreenActive = false;
         }
@@ -2897,7 +2897,7 @@ $(document).on("click", "#rob-money", function(e) {
     e.preventDefault();
     var TargetId = $(this).data("TargetId");
     $.post(
-        "https://denalifw-inventory/RobMoney",
+        "https://NADRP-inventory/RobMoney",
         JSON.stringify({
             TargetId: TargetId,
         })
@@ -2918,7 +2918,7 @@ $("#item-give").droppable({
             amount = fromData.amount;
         }
         $.post(
-            "https://denalifw-inventory/GiveItem",
+            "https://NADRP-inventory/GiveItem",
             JSON.stringify({
                 inventory: fromInventory,
                 item: fromData,

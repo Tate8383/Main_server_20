@@ -35,7 +35,7 @@ $(document).on('click', '.location', function(evt){
         $("#submit-spawn").attr("data-location", location);
         $("#submit-spawn").attr("data-type", type);
         $("#submit-spawn").fadeIn(100)
-        $.post('https://denalifw-spawn/setCam', JSON.stringify({
+        $.post('https://NADRP-spawn/setCam', JSON.stringify({
             posname: location,
             type: type,
         }));
@@ -56,12 +56,12 @@ $(document).on('click', '#submit-spawn', function(evt){
         $(".hideContainer").removeClass("hideContainer");
     }, 900);
     if (spawnType !== "appartment") {
-        $.post('https://denalifw-spawn/spawnplayer', JSON.stringify({
+        $.post('https://NADRP-spawn/spawnplayer', JSON.stringify({
             spawnloc: location,
             typeLoc: spawnType
         }));
     } else {
-        $.post('https://denalifw-spawn/chooseAppa', JSON.stringify({
+        $.post('https://NADRP-spawn/chooseAppa', JSON.stringify({
             appType: location,
         }));
     }

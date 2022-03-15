@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local uiOpen = false
 local currentRegister   = 0
 local currentSafe = 0
@@ -10,8 +10,8 @@ local usingAdvanced = false
 
 CreateThread(function()
     Wait(1000)
-    if denalifw.Functions.GetPlayerData().job ~= nil and next(denalifw.Functions.GetPlayerData().job) then
-        PlayerJob = denalifw.Functions.GetPlayerData().job
+    if NADRP.Functions.GetPlayerData().job ~= nil and next(NADRP.Functions.GetPlayerData().job) then
+        PlayerJob = NADRP.Functions.GetPlayerData().job
     end
 end)
 
@@ -50,7 +50,7 @@ CreateThread(function()
     while true do
         Wait(1)
         local inRange = false
-        if denalifw ~= nil then
+        if NADRP ~= nil then
             local pos = GetEntityCoords(PlayerPedId())
             for safe,_ in pairs(Config.Safes) do
                 local dist = #(pos - Config.Safes[safe][1].xyz)
@@ -74,7 +74,7 @@ CreateThread(function()
                                         })
                                         SetNuiFocus(true, true)
                                     else
-                                        denalifw.Functions.TriggerCallback('denalifw-storerobbery:server:getPadlockCombination', function(combination)
+                                        NADRP.Functions.TriggerCallback('NADRP-storerobbery:server:getPadlockCombination', function(combination)
                                             TriggerEvent("SafeCracker:StartMinigame", combination)
                                         end, safe)
                                     end
@@ -88,11 +88,11 @@ CreateThread(function()
                                         if street2 ~= nil then
                                             streetLabel = streetLabel .. " " .. street2
                                         end
-                                        TriggerServerEvent("denalifw-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
+                                        TriggerServerEvent("NADRP-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
                                         copsCalled = true
                                     end
                                 else
-                                    denalifw.Functions.Notify("Not Enough Police (".. Config.MinimumStoreRobberyPolice .." Required)", "error")
+                                    NADRP.Functions.Notify("Not Enough Police (".. Config.MinimumStoreRobberyPolice .." Required)", "error")
                                 end
                             end
                         else
@@ -109,16 +109,16 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    PlayerJob = denalifw.Functions.GetPlayerData().job
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    PlayerJob = NADRP.Functions.GetPlayerData().job
     onDuty = true
 end)
 
-RegisterNetEvent('denalifw:Client:SetDuty', function(duty)
+RegisterNetEvent('NADRP:Client:SetDuty', function(duty)
     onDuty = duty
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     onDuty = true
 end)
@@ -150,7 +150,7 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                         if street2 ~= nil then
                             streetLabel = streetLabel .. " " .. street2
                         end
-                        TriggerServerEvent("denalifw-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
+                        TriggerServerEvent("NADRP-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
                         copsCalled = true
                     end
                 else
@@ -168,14 +168,14 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                         if street2 ~= nil then
                             streetLabel = streetLabel .. " " .. street2
                         end
-                        TriggerServerEvent("denalifw-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
+                        TriggerServerEvent("NADRP-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
                         copsCalled = true
                     end
 
                 end
 
             else
-                denalifw.Functions.Notify("Not Enough Police (2 Required)", "error")
+                NADRP.Functions.Notify("Not Enough Police (2 Required)", "error")
             end
         end
     end
@@ -199,7 +199,7 @@ function IsWearingHandshoes()
 end
 
 function setupRegister()
-    denalifw.Functions.TriggerCallback('denalifw-storerobbery:server:getRegisterStatus', function(Registers)
+    NADRP.Functions.TriggerCallback('NADRP-storerobbery:server:getRegisterStatus', function(Registers)
         for k, v in pairs(Registers) do
             Config.Registers[k].robbed = Registers[k].robbed
         end
@@ -207,7 +207,7 @@ function setupRegister()
 end
 
 function setupSafes()
-    denalifw.Functions.TriggerCallback('denalifw-storerobbery:server:getSafeStatus', function(Safes)
+    NADRP.Functions.TriggerCallback('NADRP-storerobbery:server:getSafeStatus', function(Safes)
         for k, v in pairs(Safes) do
             Config.Safes[k].robbed = Safes[k].robbed
         end
@@ -262,10 +262,10 @@ local openingDoor = false
 RegisterNUICallback('success', function()
     if currentRegister ~= 0 then
         lockpick(false)
-        TriggerServerEvent('denalifw-storerobbery:server:setRegisterStatus', currentRegister)
+        TriggerServerEvent('NADRP-storerobbery:server:setRegisterStatus', currentRegister)
         local lockpickTime = 25000
         LockpickDoorAnim(lockpickTime)
-        denalifw.Functions.Progressbar("search_register", "Emptying The Register..", lockpickTime, false, true, {
+        NADRP.Functions.Progressbar("search_register", "Emptying The Register..", lockpickTime, false, true, {
             disableMovement = true,
             disableCarMovement = true,
             disableMouse = false,
@@ -277,12 +277,12 @@ RegisterNUICallback('success', function()
         }, {}, {}, function() -- Done
             openingDoor = false
             ClearPedTasks(PlayerPedId())
-            TriggerServerEvent('denalifw-storerobbery:server:takeMoney', currentRegister, true)
+            TriggerServerEvent('NADRP-storerobbery:server:takeMoney', currentRegister, true)
             currentRegister = 0
         end, function() -- Cancel
             openingDoor = false
             ClearPedTasks(PlayerPedId())
-            denalifw.Functions.Notify("Process canceled..", "error")
+            NADRP.Functions.Notify("Process canceled..", "error")
             currentRegister = 0
         end)
         CreateThread(function()
@@ -308,7 +308,7 @@ function LockpickDoorAnim(time)
             TaskPlayAnim(PlayerPedId(), "veh@break_in@0h@p_m_one@", "low_force_entry_ds", 3.0, 3.0, -1, 16, 0, 0, 0, 0)
             Wait(2000)
             time = time - 2
-            TriggerServerEvent('denalifw-storerobbery:server:takeMoney', currentRegister, false)
+            TriggerServerEvent('NADRP-storerobbery:server:takeMoney', currentRegister, false)
             if time <= 0 then
                 openingDoor = false
                 StopAnimTask(PlayerPedId(), "veh@break_in@0h@p_m_one@", "low_force_entry_ds", 1.0)
@@ -327,8 +327,8 @@ RegisterNetEvent('SafeCracker:EndMinigame', function(won)
             if currentSafe ~= 0 then
                 if not Config.Safes[currentSafe].robbed then
                     SetNuiFocus(false, false)
-                    TriggerServerEvent("denalifw-storerobbery:server:SafeReward", currentSafe)
-                    TriggerServerEvent("denalifw-storerobbery:server:setSafeStatus", currentSafe)
+                    TriggerServerEvent("NADRP-storerobbery:server:SafeReward", currentSafe)
+                    TriggerServerEvent("NADRP-storerobbery:server:setSafeStatus", currentSafe)
                     currentSafe = 0
                     takeAnim()
                 end
@@ -368,19 +368,19 @@ end)
 RegisterNUICallback('fail', function()
     if usingAdvanced then
         if math.random(1, 100) < 20 then
-            TriggerServerEvent("denalifw:Server:RemoveItem", "advancedlockpick", 1)
-            TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["advancedlockpick"], "remove")
+            TriggerServerEvent("NADRP:Server:RemoveItem", "advancedlockpick", 1)
+            TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["advancedlockpick"], "remove")
         end
     else
         if math.random(1, 100) < 40 then
-            TriggerServerEvent("denalifw:Server:RemoveItem", "lockpick", 1)
-            TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["lockpick"], "remove")
+            TriggerServerEvent("NADRP:Server:RemoveItem", "lockpick", 1)
+            TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["lockpick"], "remove")
         end
     end
     if (IsWearingHandshoes() and math.random(1, 100) <= 25) then
         local pos = GetEntityCoords(PlayerPedId())
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-        denalifw.Functions.Notify("You Broke The Lock Pick")
+        NADRP.Functions.Notify("You Broke The Lock Pick")
     end
     lockpick(false)
 end)
@@ -390,11 +390,11 @@ RegisterNUICallback('exit', function()
 end)
 
 RegisterNUICallback('TryCombination', function(data, cb)
-    denalifw.Functions.TriggerCallback('denalifw-storerobbery:server:isCombinationRight', function(combination)
+    NADRP.Functions.TriggerCallback('NADRP-storerobbery:server:isCombinationRight', function(combination)
         if tonumber(data.combination) ~= nil then
             if tonumber(data.combination) == combination then
-                TriggerServerEvent("denalifw-storerobbery:server:SafeReward", currentSafe)
-                TriggerServerEvent("denalifw-storerobbery:server:setSafeStatus", currentSafe)
+                TriggerServerEvent("NADRP-storerobbery:server:SafeReward", currentSafe)
+                TriggerServerEvent("NADRP-storerobbery:server:setSafeStatus", currentSafe)
                 SetNuiFocus(false, false)
                 SendNUIMessage({
                     action = "closeKeypad",
@@ -415,7 +415,7 @@ RegisterNUICallback('TryCombination', function(data, cb)
     end, currentSafe)
 end)
 
-RegisterNetEvent('denalifw-storerobbery:client:setRegisterStatus', function(batch, val)
+RegisterNetEvent('NADRP-storerobbery:client:setRegisterStatus', function(batch, val)
     -- Has to be a better way maybe like adding a unique id to identify the register
     if(type(batch) ~= "table") then
         Config.Registers[batch] = val
@@ -426,11 +426,11 @@ RegisterNetEvent('denalifw-storerobbery:client:setRegisterStatus', function(batc
     end
 end)
 
-RegisterNetEvent('denalifw-storerobbery:client:setSafeStatus', function(safe, bool)
+RegisterNetEvent('NADRP-storerobbery:client:setSafeStatus', function(safe, bool)
     Config.Safes[safe].robbed = bool
 end)
 
-RegisterNetEvent('denalifw-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
+RegisterNetEvent('NADRP-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
     if PlayerJob.name == "police" and onDuty then
         local cameraId = 4
         if type == "safe" then
@@ -439,7 +439,7 @@ RegisterNetEvent('denalifw-storerobbery:client:robberyCall', function(type, key,
             cameraId = Config.Registers[key].camId
         end
         PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-        TriggerEvent('denalifw-policealerts:client:AddPoliceAlert', {
+        TriggerEvent('NADRP-policealerts:client:AddPoliceAlert', {
             timeOut = 5000,
             alertTitle = "10-31 | Shop Robbery",
             coords = {
@@ -457,7 +457,7 @@ RegisterNetEvent('denalifw-storerobbery:client:robberyCall', function(type, key,
                     detail = streetLabel,
                 },
             },
-            callSign = denalifw.Functions.GetPlayerData().metadata["callsign"],
+            callSign = NADRP.Functions.GetPlayerData().metadata["callsign"],
         })
 
         local transG = 250

@@ -1,26 +1,26 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
-RegisterNetEvent('denalifw-shops:server:UpdateShopItems', function(shop, itemData, amount)
+RegisterNetEvent('NADRP-shops:server:UpdateShopItems', function(shop, itemData, amount)
     Config.Locations[shop]["products"][itemData.slot].amount =  Config.Locations[shop]["products"][itemData.slot].amount - amount
     if Config.Locations[shop]["products"][itemData.slot].amount <= 0 then 
         Config.Locations[shop]["products"][itemData.slot].amount = 0
     end
-    TriggerClientEvent('denalifw-shops:client:SetShopItems', -1, shop, Config.Locations[shop]["products"])
+    TriggerClientEvent('NADRP-shops:client:SetShopItems', -1, shop, Config.Locations[shop]["products"])
 end)
 
-RegisterNetEvent('denalifw-shops:server:RestockShopItems', function(shop)
+RegisterNetEvent('NADRP-shops:server:RestockShopItems', function(shop)
     if Config.Locations[shop]["products"] ~= nil then 
         local randAmount = math.random(10, 50)
         for k, v in pairs(Config.Locations[shop]["products"]) do 
             Config.Locations[shop]["products"][k].amount = Config.Locations[shop]["products"][k].amount + randAmount
         end
-        TriggerClientEvent('denalifw-shops:client:RestockShopItems', -1, shop, randAmount)
+        TriggerClientEvent('NADRP-shops:client:RestockShopItems', -1, shop, randAmount)
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-shops:server:getLicenseStatus', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-shops:server:getLicenseStatus', function(source, cb)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local licenseTable = Player.PlayerData.metadata["licences"]
     local licenseItem = Player.Functions.GetItemByName("weaponlicense")
     cb(licenseTable.weapon, licenseItem)

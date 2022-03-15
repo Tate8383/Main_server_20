@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for denalifw
+about: Suggest an idea for NADRP
 title: "[SUGGESTION]"
 labels: enhancement
 assignees: ''

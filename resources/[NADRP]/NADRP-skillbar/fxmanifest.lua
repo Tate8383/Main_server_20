@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-Skillbar'
+description 'NADRP-Skillbar'
 version '1.0.0'
 
 ui_page "html/index.html"
@@ -20,7 +20,7 @@ exports {
 }
 
 dependencies {
-    'denalifw-core'
+    'NADRP-core'
 }
 
 lua54 'yes'

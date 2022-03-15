@@ -51,7 +51,7 @@ local function EnableEditMode()
 	SetEntityCollision(PlayerPedId(), false, false)
 	CreateEditCamera()
 	DecoMode = true
-	TriggerEvent('denalifw-anticheat:client:ToggleDecorate', true)
+	TriggerEvent('NADRP-anticheat:client:ToggleDecorate', true)
 end
 
 local function SaveDecorations()
@@ -71,7 +71,7 @@ local function SaveDecorations()
 				DeleteObject(v.object)
 			end
 		end
-		TriggerServerEvent("denalifw-houses:server:savedecorations", ClosestHouse, ObjectList)
+		TriggerServerEvent("NADRP-houses:server:savedecorations", ClosestHouse, ObjectList)
 	end
 end
 
@@ -93,7 +93,7 @@ local function DisableEditMode()
 	SelectedObj = nil
 	peanut = false
 	DecoMode = false
-	TriggerEvent('denalifw-anticheat:client:ToggleDecorate', false)
+	TriggerEvent('NADRP-anticheat:client:ToggleDecorate', false)
 end
 
 local function CheckObjMovementInput()
@@ -191,7 +191,7 @@ local function CheckMovementInput()
 		if curSpeed > getTableLength(speeds) then
 			curSpeed = 1
 		end
-		denalifw.Functions.Notify(Lang:t("info.speed").. tostring(speeds[curSpeed]))
+		NADRP.Functions.Notify(Lang:t("info.speed").. tostring(speeds[curSpeed]))
 	end
 
 	local xVect = speeds[curSpeed] * math.sin( degToRad( rotation.z ) ) * -1.0
@@ -215,7 +215,7 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-houses:client:decorate', function()
+RegisterNetEvent('NADRP-houses:client:decorate', function()
 	Wait(500)
 	if IsInside then
 		if HasHouseKey then
@@ -224,10 +224,10 @@ RegisterNetEvent('denalifw-houses:client:decorate', function()
 				openDecorateUI()
 			end
 		else
-			denalifw.Functions.Notify(Lang:t("error.no_keys"), "error")
+			NADRP.Functions.Notify(Lang:t("error.no_keys"), "error")
 		end
 	else
-		denalifw.Functions.Notify(Lang:t("error.not_in_house"), "error")
+		NADRP.Functions.Notify(Lang:t("error.not_in_house"), "error")
 	end
 end)
 
@@ -260,7 +260,7 @@ RegisterNUICallback("cancelSelectedObject", function(data, cb)
 end)
 
 RegisterNUICallback("buySelectedObject", function(data, cb)
-    denalifw.Functions.TriggerCallback('denalifw-houses:server:buyFurniture', function(isSuccess)
+    NADRP.Functions.TriggerCallback('NADRP-houses:server:buyFurniture', function(isSuccess)
         if isSuccess then
             SetNuiFocus(false, false)
             cursorEnabled = false
@@ -493,7 +493,7 @@ CreateThread(function()
 			if dist > 50.0 then
 				DisableEditMode()
 				closeDecorateUI()
-				denalifw.Functions.Notify(Lang:t("error.out_range"), 'error')
+				NADRP.Functions.Notify(Lang:t("error.out_range"), 'error')
 			end
 		end
 	end

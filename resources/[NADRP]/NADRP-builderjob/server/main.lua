@@ -1,6 +1,6 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
-denalifw.Functions.CreateCallback('denalifw-builderjob:server:GetCurrentProject', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-builderjob:server:GetCurrentProject', function(source, cb)
     local CurProject = nil
     for k, v in pairs(Config.Projects) do
         if v.IsActive then
@@ -17,13 +17,13 @@ denalifw.Functions.CreateCallback('denalifw-builderjob:server:GetCurrentProject'
     cb(Config)
 end)
 
-RegisterServerEvent('denalifw-builderjob:server:SetTaskState', function(Task, IsBusy, IsCompleted)
+RegisterServerEvent('NADRP-builderjob:server:SetTaskState', function(Task, IsBusy, IsCompleted)
     Config.Projects[Config.CurrentProject].ProjectLocations["tasks"][Task].IsBusy = IsBusy
     Config.Projects[Config.CurrentProject].ProjectLocations["tasks"][Task].completed = IsCompleted
-    TriggerClientEvent('denalifw-builderjob:client:SetTaskState', -1, Task, IsBusy, IsCompleted)
+    TriggerClientEvent('NADRP-builderjob:client:SetTaskState', -1, Task, IsBusy, IsCompleted)
 end)
 
-RegisterServerEvent('denalifw-builderjob:server:FinishProject', function()
+RegisterServerEvent('NADRP-builderjob:server:FinishProject', function()
     Config.Projects[Config.CurrentProject].IsActive = false
     for k, v in pairs(Config.Projects[Config.CurrentProject].ProjectLocations["tasks"]) do
         v.completed = false
@@ -32,5 +32,5 @@ RegisterServerEvent('denalifw-builderjob:server:FinishProject', function()
     local NewProject = math.random(1, #Config.Projects)
     Config.CurrentProject = NewProject
     Config.Projects[NewProject].IsActive = true
-    TriggerClientEvent('denalifw-builderjob:client:FinishProject', -1, Config)
+    TriggerClientEvent('NADRP-builderjob:client:FinishProject', -1, Config)
 end)

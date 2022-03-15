@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is. A stranger to denalifw should be able to read your bug report and understand how to reproduce it themselves and understand how the feature should work normally.
+A clear and concise description of what the bug is. A stranger to NADRP should be able to read your bug report and understand how to reproduce it themselves and understand how the feature should work normally.
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -25,8 +25,8 @@ If applicable, add screenshots to help explain your problem.
 
 **Questions (please complete the following information):**
  - When you last updated: [e.g. last week]
- - Are you using custom resource? which ones? [e.g. zdiscord, denalifw-target]
- - Have you renamed `denalifw-` to something custom? [e.g. yes/no]
+ - Are you using custom resource? which ones? [e.g. zdiscord, NADRP-target]
+ - Have you renamed `NADRP-` to something custom? [e.g. yes/no]
 
 **Additional context**
 Add any other context about the problem here.

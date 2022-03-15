@@ -100,10 +100,10 @@ function Process(action, start, tick, finish)
                 end
             end)
         else
-            TriggerEvent("denalifw:Notify", "You are already doing something!", "error")
+            TriggerEvent("DenaliFW:Notify", "You are already doing something!", "error")
         end
     else
-        TriggerEvent("denalifw:Notify", "Cant do that action!", "error")
+        TriggerEvent("DenaliFW:Notify", "Cant do that action!", "error")
     end
 end
 

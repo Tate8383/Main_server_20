@@ -1,11 +1,11 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-BusJob'
+description 'NADRP-BusJob'
 version '1.0.0'
 
 shared_scripts {
-    '@denalifw-core/shared/locale.lua',
+    '@NADRP-core/shared/locale.lua',
 	'locales/en.lua',
     'config.lua'
 }

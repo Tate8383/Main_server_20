@@ -13,7 +13,7 @@ local function loadAnimDict(dict)
 end
 
 local function GetClosestPlayer()
-    local closestPlayers = denalifw.Functions.GetPlayersFromCoords()
+    local closestPlayers = NADRP.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -49,15 +49,15 @@ end
 
 function TakeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
-    denalifw.Functions.SpawnVehicle(vehicleInfo, function(veh)
+    NADRP.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, Lang:t('info.amb_plate')..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         if Config.VehicleSettings[vehicleInfo] ~= nil then
-            denalifw.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
+            NADRP.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
         end
-        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
     end, coords, true)
 end
@@ -70,7 +70,7 @@ function MenuGarage()
         }
     }
 
-    local authorizedVehicles = Config.AuthorizedVehicles[denalifw.Functions.GetPlayerData().job.grade.level]
+    local authorizedVehicles = Config.AuthorizedVehicles[NADRP.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(authorizedVehicles) do
         vehicleMenu[#vehicleMenu+1] = {
             header = label,
@@ -87,11 +87,11 @@ function MenuGarage()
         header = Lang:t('menu.close'),
         txt = "",
         params = {
-            event = "denalifw-menu:client:closeMenu"
+            event = "NADRP-menu:client:closeMenu"
         }
 
     }
-    exports['denalifw-menu']:openMenu(vehicleMenu)
+    exports['NADRP-menu']:openMenu(vehicleMenu)
 end
 
 -- Events
@@ -101,12 +101,12 @@ RegisterNetEvent('ambulance:client:TakeOutVehicle', function(data)
     TakeOutVehicle(vehicle)
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     TriggerServerEvent("hospital:server:SetDoctor")
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
     exports.spawnmanager:setAutoSpawn(false)
     local ped = PlayerPedId()
     local player = PlayerId()
@@ -120,7 +120,7 @@ RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     end)
     CreateThread(function()
         Wait(1000)
-        denalifw.Functions.GetPlayerData(function(PlayerData)
+        NADRP.Functions.GetPlayerData(function(PlayerData)
             PlayerJob = PlayerData.job
             onDuty = PlayerData.job.onduty
             SetPedArmour(PlayerPedId(), PlayerData.metadata["armor"])
@@ -138,7 +138,7 @@ RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     end)
 end)
 
-RegisterNetEvent('denalifw:Client:SetDuty', function(duty)
+RegisterNetEvent('NADRP:Client:SetDuty', function(duty)
     onDuty = duty
     TriggerServerEvent("hospital:server:SetDoctor")
 end)
@@ -148,7 +148,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
     if player ~= -1 and distance < 5.0 then
         local playerId = GetPlayerServerId(player)
         statusCheckPed = GetPlayerPed(player)
-        denalifw.Functions.TriggerCallback('hospital:GetPlayerStatus', function(result)
+        NADRP.Functions.TriggerCallback('hospital:GetPlayerStatus', function(result)
             if result then
                 for k, v in pairs(result) do
                     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
@@ -168,7 +168,7 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
                             args = {Lang:t('info.status'), Lang:t('info.is_status', {status = Config.BleedingStates[v].label})}
                         })
                     else
-                        denalifw.Functions.Notify(Lang:t('success.healthy_player'), 'success')
+                        NADRP.Functions.Notify(Lang:t('success.healthy_player'), 'success')
                     end
                 end
                 isStatusChecking = true
@@ -176,18 +176,18 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
             end
         end, playerId)
     else
-        denalifw.Functions.Notify(Lang:t('error.no_player'), 'error')
+        NADRP.Functions.Notify(Lang:t('error.no_player'), 'error')
     end
 end)
 
 RegisterNetEvent('hospital:client:RevivePlayer', function()
-    denalifw.Functions.TriggerCallback('denalifw:HasItem', function(hasItem)
+    NADRP.Functions.TriggerCallback('NADRP:HasItem', function(hasItem)
         if hasItem then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
                 isHealingPerson = true
-                denalifw.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), 5000, false, true, {
+                NADRP.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), 5000, false, true, {
                     disableMovement = false,
                     disableCarMovement = false,
                     disableMouse = false,
@@ -199,30 +199,30 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                 }, {}, {}, function() -- Done
                     isHealingPerson = false
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    denalifw.Functions.Notify(Lang:t('success.revived'), 'success')
+                    NADRP.Functions.Notify(Lang:t('success.revived'), 'success')
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
                 end, function() -- Cancel
                     isHealingPerson = false
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    denalifw.Functions.Notify(Lang:t('error.cancled'), "error")
+                    NADRP.Functions.Notify(Lang:t('error.cancled'), "error")
                 end)
             else
-                denalifw.Functions.Notify(Lang:t('error.no_player'), "error")
+                NADRP.Functions.Notify(Lang:t('error.no_player'), "error")
             end
         else
-            denalifw.Functions.Notify(Lang:t('error.no_firstaid'), "error")
+            NADRP.Functions.Notify(Lang:t('error.no_firstaid'), "error")
         end
     end, 'firstaid')
 end)
 
 RegisterNetEvent('hospital:client:TreatWounds', function()
-    denalifw.Functions.TriggerCallback('denalifw:HasItem', function(hasItem)
+    NADRP.Functions.TriggerCallback('NADRP:HasItem', function(hasItem)
         if hasItem then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
                 isHealingPerson = true
-                denalifw.Functions.Progressbar("hospital_healwounds", Lang:t('progress.healing'), 5000, false, true, {
+                NADRP.Functions.Progressbar("hospital_healwounds", Lang:t('progress.healing'), 5000, false, true, {
                     disableMovement = false,
                     disableCarMovement = false,
                     disableMouse = false,
@@ -234,18 +234,18 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
                 }, {}, {}, function() -- Done
                     isHealingPerson = false
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    denalifw.Functions.Notify(Lang:t('success.helped_player'), 'success')
+                    NADRP.Functions.Notify(Lang:t('success.helped_player'), 'success')
                     TriggerServerEvent("hospital:server:TreatWounds", playerId)
                 end, function() -- Cancel
                     isHealingPerson = false
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    denalifw.Functions.Notify(Lang:t('error.canceled'), "error")
+                    NADRP.Functions.Notify(Lang:t('error.canceled'), "error")
                 end)
             else
-                denalifw.Functions.Notify(Lang:t('error.no_player'), "error")
+                NADRP.Functions.Notify(Lang:t('error.no_player'), "error")
             end
         else
-            denalifw.Functions.Notify(Lang:t('error.no_bandage'), "error")
+            NADRP.Functions.Notify(Lang:t('error.no_bandage'), "error")
         end
     end, 'bandage')
 end)
@@ -266,8 +266,8 @@ CreateThread(function()
                         if #(pos - v) < 1.5 then
                             DrawText3D(v.x, v.y, v.z, Lang:t('text.pstash_button'))
                             if IsControlJustReleased(0, 38) then
-                                TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_"..denalifw.Functions.GetPlayerData().citizenid)
-                                TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_"..denalifw.Functions.GetPlayerData().citizenid)
+                                TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_"..NADRP.Functions.GetPlayerData().citizenid)
+                                TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_"..NADRP.Functions.GetPlayerData().citizenid)
                             end
                         elseif #(pos - v) < 2.5 then
                             DrawText3D(v.x, v.y, v.z, Lang:t('text.pstash'))
@@ -318,7 +318,7 @@ CreateThread(function()
                             end
                             if IsControlJustReleased(0, 38) then
                                 onDuty = not onDuty
-                                TriggerServerEvent("denalifw:ToggleDuty")
+                                TriggerServerEvent("NADRP:ToggleDuty")
                                 TriggerServerEvent("police:server:UpdateBlips")
                             end
                         elseif dist < 4.5 then
@@ -357,7 +357,7 @@ CreateThread(function()
                             end
                             if IsControlJustReleased(0, 38) then
                                 if IsPedInAnyVehicle(ped, false) then
-                                    denalifw.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+                                    NADRP.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
                                 else
                                     MenuGarage()
                                     currentGarage = k
@@ -381,16 +381,16 @@ CreateThread(function()
                                 end
                                 if IsControlJustReleased(0, 38) then
                                     if IsPedInAnyVehicle(ped, false) then
-                                        denalifw.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+                                        NADRP.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
                                     else
                                         local coords = Config.Locations["helicopter"][k]
-                                        denalifw.Functions.SpawnVehicle(Config.Helicopter, function(veh)
+                                        NADRP.Functions.SpawnVehicle(Config.Helicopter, function(veh)
                                             SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
                                             SetEntityHeading(veh, coords.w)
                                             SetVehicleLivery(veh, 1) -- Ambulance Livery
                                             exports['LegacyFuel']:SetFuel(veh, 100.0)
                                             TaskWarpPedIntoVehicle(ped, veh, -1)
-                                            TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+                                            TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
                                             SetVehicleEngineOn(veh, true, true)
                                         end, coords, true)
                                     end

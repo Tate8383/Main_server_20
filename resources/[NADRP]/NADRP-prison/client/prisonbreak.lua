@@ -27,7 +27,7 @@ local Gates = {
 local function OnHackDone(success)
     if success then
         TriggerServerEvent("prison:server:SetGateHit", currentGate)
-		TriggerServerEvent('denalifw-doorlock:server:updateState', Gates[currentGate].gatekey, false)
+		TriggerServerEvent('NADRP-doorlock:server:updateState', Gates[currentGate].gatekey, false)
 		TriggerEvent('mhacking:hide')
     else
         TriggerServerEvent("prison:server:SecurityLockdown")
@@ -39,10 +39,10 @@ end
 
 RegisterNetEvent('electronickit:UseElectronickit', function()
     if currentGate ~= 0 and not securityLockdown and not Gates[currentGate].hit then
-        denalifw.Functions.TriggerCallback('denalifw:HasItem', function(result)
+        NADRP.Functions.TriggerCallback('NADRP:HasItem', function(result)
             if result then
                 TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                denalifw.Functions.Progressbar("hack_gate", "Electronic kit plug in..", math.random(5000, 10000), false, true, {
+                NADRP.Functions.Progressbar("hack_gate", "Electronic kit plug in..", math.random(5000, 10000), false, true, {
                     disableMovement = true,
                     disableCarMovement = true,
                     disableMouse = false,
@@ -57,10 +57,10 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                     TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 18), OnHackDone)
                 end, function() -- Cancel
                     StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                    denalifw.Functions.Notify(Lang:t("error.cancelled"), "error")
+                    NADRP.Functions.Notify(Lang:t("error.cancelled"), "error")
                 end)
             else
-                denalifw.Functions.Notify(Lang:t("error.item_missing"), "error")
+                NADRP.Functions.Notify(Lang:t("error.item_missing"), "error")
             end
         end, "gatecrack")
     end
@@ -75,7 +75,7 @@ end)
 
 RegisterNetEvent('prison:client:PrisonBreakAlert', function()
     -- TriggerEvent("chatMessage", "ALERT", "error", "Attentie alle eenheden! Poging tot uitbraak in de gevangenis!")
-    TriggerEvent('denalifw-policealerts:client:AddPoliceAlert', {
+    TriggerEvent('NADRP-policealerts:client:AddPoliceAlert', {
         timeOut = 10000,
         alertTitle = "Prison outbreak",
         details = {
@@ -88,7 +88,7 @@ RegisterNetEvent('prison:client:PrisonBreakAlert', function()
                 detail = "Route 68",
             },
         },
-        callSign = denalifw.Functions.GetPlayerData().metadata["callsign"],
+        callSign = NADRP.Functions.GetPlayerData().metadata["callsign"],
     })
 
     local BreakBlip = AddBlipForCoord(Config.Locations["middle"].coords.x, Config.Locations["middle"].coords.y, Config.Locations["middle"].coords.z)
@@ -145,8 +145,8 @@ end)
 CreateThread(function()
     Wait(500)
     requiredItems = {
-        [1] = {name = denalifw.Shared.Items["electronickit"]["name"], image = denalifw.Shared.Items["electronickit"]["image"]},
-        [2] = {name = denalifw.Shared.Items["gatecrack"]["name"], image = denalifw.Shared.Items["gatecrack"]["image"]},
+        [1] = {name = NADRP.Shared.Items["electronickit"]["name"], image = NADRP.Shared.Items["electronickit"]["image"]},
+        [2] = {name = NADRP.Shared.Items["gatecrack"]["name"], image = NADRP.Shared.Items["gatecrack"]["image"]},
     }
     while true do
         Wait(5)
@@ -204,8 +204,8 @@ CreateThread(function()
             TriggerServerEvent("prison:server:SecurityLockdown")
             TriggerEvent('prison:client:PrisonBreakAlert')
             TriggerServerEvent("prison:server:SetJailStatus", 0)
-            TriggerServerEvent("denalifw:Server:SetMetaData", "jailitems", {})
-            denalifw.Functions.Notify(Lang:t("error.escaped"), "error")
+            TriggerServerEvent("NADRP:Server:SetMetaData", "jailitems", {})
+            NADRP.Functions.Notify(Lang:t("error.escaped"), "error")
         else
             Wait(1000)
 		end

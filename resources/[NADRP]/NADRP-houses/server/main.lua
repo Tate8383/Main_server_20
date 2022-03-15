@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local houseowneridentifier = {}
 local houseownercid = {}
 local housekeyholders = {}
@@ -32,8 +32,8 @@ CreateThread(function()
             }
         end
     end
-    TriggerClientEvent("denalifw-garages:client:houseGarageConfig", -1, HouseGarages)
-    TriggerClientEvent("denalifw-houses:client:setHouseConfig", -1, Config.Houses)
+    TriggerClientEvent("NADRP-garages:client:houseGarageConfig", -1, HouseGarages)
+    TriggerClientEvent("NADRP-houses:client:setHouseConfig", -1, Config.Houses)
 end)
 
 CreateThread(function()
@@ -56,46 +56,46 @@ end)
 
 -- Commands
 
-denalifw.Commands.Add("decorate", Lang:t("info.decorate_interior"), {}, false, function(source)
+NADRP.Commands.Add("decorate", Lang:t("info.decorate_interior"), {}, false, function(source)
     local src = source
-    TriggerClientEvent("denalifw-houses:client:decorate", src)
+    TriggerClientEvent("NADRP-houses:client:decorate", src)
 end)
 
-denalifw.Commands.Add("createhouse", Lang:t("info.create_house"), {{name = "price", help = Lang:t("info.price_of_house")}, {name = "tier", help = Lang:t("info.tier_number")}}, true, function(source, args)
+NADRP.Commands.Add("createhouse", Lang:t("info.create_house"), {{name = "price", help = Lang:t("info.price_of_house")}, {name = "tier", help = Lang:t("info.tier_number")}}, true, function(source, args)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local price = tonumber(args[1])
     local tier = tonumber(args[2])
     if Player.PlayerData.job.name == "realestate" then
-        TriggerClientEvent("denalifw-houses:client:createHouses", src, price, tier)
+        TriggerClientEvent("NADRP-houses:client:createHouses", src, price, tier)
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.realestate_only"), "error")
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.realestate_only"), "error")
     end
 end)
 
-denalifw.Commands.Add("addgarage", Lang:t('info.add_garage'), {}, false, function(source)
+NADRP.Commands.Add("addgarage", Lang:t('info.add_garage'), {}, false, function(source)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "realestate" then
-        TriggerClientEvent("denalifw-houses:client:addGarage", src)
+        TriggerClientEvent("NADRP-houses:client:addGarage", src)
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.realestate_only"), "error")
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.realestate_only"), "error")
     end
 end)
 
-denalifw.Commands.Add("ring", Lang:t("info.ring_doorbell"), {}, false, function(source)
+NADRP.Commands.Add("ring", Lang:t("info.ring_doorbell"), {}, false, function(source)
     local src = source
-    TriggerClientEvent('denalifw-houses:client:RequestRing', src)
+    TriggerClientEvent('NADRP-houses:client:RequestRing', src)
 end)
 
 -- Item
 
-denalifw.Functions.CreateUseableItem("police_stormram", function(source, item)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateUseableItem("police_stormram", function(source, item)
+    local Player = NADRP.Functions.GetPlayer(source)
     if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
-        TriggerClientEvent("denalifw-houses:client:HomeInvasion", source)
+        TriggerClientEvent("NADRP-houses:client:HomeInvasion", source)
     else
-        TriggerClientEvent('denalifw:Notify', source, Lang:t("error.emergency_services"), "error")
+        TriggerClientEvent('NADRP:Notify', source, Lang:t("error.emergency_services"), "error")
     end
 end)
 
@@ -152,19 +152,19 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-houses:server:setHouses', function()
+RegisterNetEvent('NADRP-houses:server:setHouses', function()
     local src = source
-    TriggerClientEvent("denalifw-houses:client:setHouseConfig", src, Config.Houses)
+    TriggerClientEvent("NADRP-houses:client:setHouseConfig", src, Config.Houses)
 end)
 
-RegisterNetEvent('denalifw-houses:server:createBlip', function()
+RegisterNetEvent('NADRP-houses:server:createBlip', function()
     local src = source
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
-    TriggerClientEvent("denalifw-houses:client:createBlip", -1, coords)
+    TriggerClientEvent("NADRP-houses:client:createBlip", -1, coords)
 end)
 
-RegisterNetEvent('denalifw-houses:server:addNewHouse', function(street, coords, price, tier)
+RegisterNetEvent('NADRP-houses:server:addNewHouse', function(street, coords, price, tier)
     local src = source
     local street = street:gsub("%'", "")
     local price = tonumber(price)
@@ -184,45 +184,45 @@ RegisterNetEvent('denalifw-houses:server:addNewHouse', function(street, coords, 
         garage = {},
         decorations = {}
     }
-    TriggerClientEvent("denalifw-houses:client:setHouseConfig", -1, Config.Houses)
-    TriggerClientEvent('denalifw:Notify', src, Lang:t("info.added_house", {value = label}))
-    TriggerEvent('denalifw-log:server:CreateLog', 'house', Lang:t("log.house_created"), 'green', Lang:t("log.house_address", {label = label, price = price, tier = tier, agent = GetPlayerName(src)}))
+    TriggerClientEvent("NADRP-houses:client:setHouseConfig", -1, Config.Houses)
+    TriggerClientEvent('NADRP:Notify', src, Lang:t("info.added_house", {value = label}))
+    TriggerEvent('NADRP-log:server:CreateLog', 'house', Lang:t("log.house_created"), 'green', Lang:t("log.house_address", {label = label, price = price, tier = tier, agent = GetPlayerName(src)}))
 end)
 
-RegisterNetEvent('denalifw-houses:server:addGarage', function(house, coords)
+RegisterNetEvent('NADRP-houses:server:addGarage', function(house, coords)
     local src = source
     MySQL.Async.execute('UPDATE houselocations SET garage = ? WHERE name = ?', {json.encode(coords), house})
     local garageInfo = {
         label = Config.Houses[house].adress,
         takeVehicle = coords
     }
-    TriggerClientEvent("denalifw-garages:client:addHouseGarage", -1, house, garageInfo)
-    TriggerClientEvent('denalifw:Notify', src, Lang:t("info.added_garage", {value = garageInfo.label}))
+    TriggerClientEvent("NADRP-garages:client:addHouseGarage", -1, house, garageInfo)
+    TriggerClientEvent('NADRP:Notify', src, Lang:t("info.added_garage", {value = garageInfo.label}))
 end)
 
-RegisterNetEvent('denalifw-houses:server:viewHouse', function(house)
+RegisterNetEvent('NADRP-houses:server:viewHouse', function(house)
     local src = source
-    local pData = denalifw.Functions.GetPlayer(src)
+    local pData = NADRP.Functions.GetPlayer(src)
 
     local houseprice = Config.Houses[house].price
     local brokerfee = (houseprice / 100 * 5)
     local bankfee = (houseprice / 100 * 10)
     local taxes = (houseprice / 100 * 6)
 
-    TriggerClientEvent('denalifw-houses:client:viewHouse', src, houseprice, brokerfee, bankfee, taxes,
+    TriggerClientEvent('NADRP-houses:client:viewHouse', src, houseprice, brokerfee, bankfee, taxes,
         pData.PlayerData.charinfo.firstname, pData.PlayerData.charinfo.lastname)
 end)
 
-RegisterNetEvent('denalifw-houses:server:buyHouse', function(house)
+RegisterNetEvent('NADRP-houses:server:buyHouse', function(house)
     local src = source
-    local pData = denalifw.Functions.GetPlayer(src)
+    local pData = NADRP.Functions.GetPlayer(src)
     local price = Config.Houses[house].price
     local HousePrice = math.ceil(price * 1.21)
     local bankBalance = pData.PlayerData.money["bank"]
 
     local isOwned = isHouseOwned(house)
     if isOwned then
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.already_owned"), "error")
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.already_owned"), "error")
         CancelEvent()
         return
     end
@@ -235,32 +235,32 @@ RegisterNetEvent('denalifw-houses:server:buyHouse', function(house)
         }
         MySQL.Async.insert('INSERT INTO player_houses (house, identifier, citizenid, keyholders) VALUES (?, ?, ?, ?)',{house, pData.PlayerData.license, pData.PlayerData.citizenid, json.encode(housekeyholders[house])})
         MySQL.Async.execute('UPDATE houselocations SET owned = ? WHERE name = ?', {1, house})
-        TriggerClientEvent('denalifw-houses:client:SetClosestHouse', src)
+        TriggerClientEvent('NADRP-houses:client:SetClosestHouse', src)
         pData.Functions.RemoveMoney('bank', HousePrice, "bought-house") -- 21% Extra house costs
-        TriggerEvent('denalifw-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))
-        TriggerEvent('denalifw-log:server:CreateLog', 'house', Lang:t("log.house_purchased"), 'green', Lang:t("log.house_purchased_by", {house = house:upper(), price = HousePrice, firstname = pData.PlayerData.charinfo.firstname, lastname = pData.PlayerData.charinfo.lastname}))
+        TriggerEvent('NADRP-bossmenu:server:addAccountMoney', "realestate", (HousePrice / 100) * math.random(18, 25))
+        TriggerEvent('NADRP-log:server:CreateLog', 'house', Lang:t("log.house_purchased"), 'green', Lang:t("log.house_purchased_by", {house = house:upper(), price = HousePrice, firstname = pData.PlayerData.charinfo.firstname, lastname = pData.PlayerData.charinfo.lastname}))
     else
-        TriggerClientEvent('denalifw:Notify', source, Lang:t("error.not_enough_money"), "error")
+        TriggerClientEvent('NADRP:Notify', source, Lang:t("error.not_enough_money"), "error")
     end
 end)
 
-RegisterNetEvent('denalifw-houses:server:lockHouse', function(bool, house)
-    TriggerClientEvent('denalifw-houses:client:lockHouse', -1, bool, house)
+RegisterNetEvent('NADRP-houses:server:lockHouse', function(bool, house)
+    TriggerClientEvent('NADRP-houses:client:lockHouse', -1, bool, house)
 end)
 
-RegisterNetEvent('denalifw-houses:server:SetRamState', function(bool, house)
+RegisterNetEvent('NADRP-houses:server:SetRamState', function(bool, house)
     Config.Houses[house].IsRaming = bool
-    TriggerClientEvent('denalifw-houses:server:SetRamState', -1, bool, house)
+    TriggerClientEvent('NADRP-houses:server:SetRamState', -1, bool, house)
 end)
 
-RegisterNetEvent('denalifw-houses:server:giveKey', function(house, target)
-    local pData = denalifw.Functions.GetPlayer(target)
+RegisterNetEvent('NADRP-houses:server:giveKey', function(house, target)
+    local pData = NADRP.Functions.GetPlayer(target)
     housekeyholders[house][#housekeyholders[house]+1] = pData.PlayerData.citizenid
     MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?',
         {json.encode(housekeyholders[house]), house})
 end)
 
-RegisterNetEvent('denalifw-houses:server:removeHouseKey', function(house, citizenData)
+RegisterNetEvent('NADRP-houses:server:removeHouseKey', function(house, citizenData)
     local src = source
     local newHolders = {}
     if housekeyholders[house] then
@@ -271,69 +271,69 @@ RegisterNetEvent('denalifw-houses:server:removeHouseKey', function(house, citize
         end
     end
     housekeyholders[house] = newHolders
-    TriggerClientEvent('denalifw:Notify', src, Lang:t("error.remove_key_from", {firstname = citizenData.firstname, lastname = citizenData.lastname}), 'error')
+    TriggerClientEvent('NADRP:Notify', src, Lang:t("error.remove_key_from", {firstname = citizenData.firstname, lastname = citizenData.lastname}), 'error')
     MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
 end)
 
-RegisterNetEvent('denalifw-houses:server:OpenDoor', function(target, house)
-    local OtherPlayer = denalifw.Functions.GetPlayer(target)
+RegisterNetEvent('NADRP-houses:server:OpenDoor', function(target, house)
+    local OtherPlayer = NADRP.Functions.GetPlayer(target)
     if OtherPlayer then
-        TriggerClientEvent('denalifw-houses:client:SpawnInApartment', OtherPlayer.PlayerData.source, house)
+        TriggerClientEvent('NADRP-houses:client:SpawnInApartment', OtherPlayer.PlayerData.source, house)
     end
 end)
 
-RegisterNetEvent('denalifw-houses:server:RingDoor', function(house)
+RegisterNetEvent('NADRP-houses:server:RingDoor', function(house)
     local src = source
-    TriggerClientEvent('denalifw-houses:client:RingDoor', -1, src, house)
+    TriggerClientEvent('NADRP-houses:client:RingDoor', -1, src, house)
 end)
 
-RegisterNetEvent('denalifw-houses:server:savedecorations', function(house, decorations)
+RegisterNetEvent('NADRP-houses:server:savedecorations', function(house, decorations)
     MySQL.Async.execute('UPDATE player_houses SET decorations = ? WHERE house = ?', {json.encode(decorations), house})
-    TriggerClientEvent("denalifw-houses:server:sethousedecorations", -1, house, decorations)
+    TriggerClientEvent("NADRP-houses:server:sethousedecorations", -1, house, decorations)
 end)
 
-RegisterNetEvent('denalifw-houses:server:LogoutLocation', function()
+RegisterNetEvent('NADRP-houses:server:LogoutLocation', function()
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local MyItems = Player.PlayerData.items
     MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?',
         {json.encode(MyItems), Player.PlayerData.citizenid})
-    denalifw.Player.Logout(src)
-    TriggerClientEvent('denalifw-multicharacter:client:chooseChar', src)
+    NADRP.Player.Logout(src)
+    TriggerClientEvent('NADRP-multicharacter:client:chooseChar', src)
 end)
 
-RegisterNetEvent('denalifw-houses:server:giveHouseKey', function(target, house)
+RegisterNetEvent('NADRP-houses:server:giveHouseKey', function(target, house)
     local src = source
-    local tPlayer = denalifw.Functions.GetPlayer(target)
+    local tPlayer = NADRP.Functions.GetPlayer(target)
     if tPlayer then
         if housekeyholders[house] then
             for _, cid in pairs(housekeyholders[house]) do
                 if cid == tPlayer.PlayerData.citizenid then
-                    TriggerClientEvent('denalifw:Notify', src, Lang:t("error.already_keys"), 'error', 3500)
+                    TriggerClientEvent('NADRP:Notify', src, Lang:t("error.already_keys"), 'error', 3500)
                     return
                 end
             end
             housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
             MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
-            TriggerClientEvent('denalifw-houses:client:refreshHouse', tPlayer.PlayerData.source)
+            TriggerClientEvent('NADRP-houses:client:refreshHouse', tPlayer.PlayerData.source)
 
-            TriggerClientEvent('denalifw:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
+            TriggerClientEvent('NADRP:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
         else
-            local sourceTarget = denalifw.Functions.GetPlayer(src)
+            local sourceTarget = NADRP.Functions.GetPlayer(src)
             housekeyholders[house] = {
                 [1] = sourceTarget.PlayerData.citizenid
             }
             housekeyholders[house][#housekeyholders[house]+1] = tPlayer.PlayerData.citizenid
             MySQL.Async.execute('UPDATE player_houses SET keyholders = ? WHERE house = ?', {json.encode(housekeyholders[house]), house})
-            TriggerClientEvent('denalifw-houses:client:refreshHouse', tPlayer.PlayerData.source)
-            TriggerClientEvent('denalifw:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
+            TriggerClientEvent('NADRP-houses:client:refreshHouse', tPlayer.PlayerData.source)
+            TriggerClientEvent('NADRP:Notify', tPlayer.PlayerData.source, Lang:t("success.recieved_key", {value = Config.Houses[house].adress}), 'success', 2500)
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.something_wrong"), 'error', 2500)
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.something_wrong"), 'error', 2500)
     end
 end)
 
-RegisterNetEvent('denalifw-houses:server:setLocation', function(coords, house, type)
+RegisterNetEvent('NADRP-houses:server:setLocation', function(coords, house, type)
     if type == 1 then
         MySQL.Async.execute('UPDATE player_houses SET stash = ? WHERE house = ?', {json.encode(coords), house})
     elseif type == 2 then
@@ -341,17 +341,17 @@ RegisterNetEvent('denalifw-houses:server:setLocation', function(coords, house, t
     elseif type == 3 then
         MySQL.Async.execute('UPDATE player_houses SET logout = ? WHERE house = ?', {json.encode(coords), house})
     end
-    TriggerClientEvent('denalifw-houses:client:refreshLocations', -1, house, json.encode(coords), type)
+    TriggerClientEvent('NADRP-houses:client:refreshLocations', -1, house, json.encode(coords), type)
 end)
 
-RegisterNetEvent('denalifw-houses:server:SetHouseRammed', function(bool, house)
+RegisterNetEvent('NADRP-houses:server:SetHouseRammed', function(bool, house)
     Config.Houses[house].IsRammed = bool
-    TriggerClientEvent('denalifw-houses:client:SetHouseRammed', -1, bool, house)
+    TriggerClientEvent('NADRP-houses:client:SetHouseRammed', -1, bool, house)
 end)
 
-RegisterNetEvent('denalifw-houses:server:SetInsideMeta', function(insideId, bool)
+RegisterNetEvent('NADRP-houses:server:SetInsideMeta', function(insideId, bool)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local insideMeta = Player.PlayerData.metadata["inside"]
     if bool then
         insideMeta.apartment.apartmentType = nil
@@ -368,23 +368,23 @@ end)
 
 -- Callbacks
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:buyFurniture', function(source, cb, price)
+NADRP.Functions.CreateCallback('NADRP-houses:server:buyFurniture', function(source, cb, price)
     local src = source
-    local pData = denalifw.Functions.GetPlayer(src)
+    local pData = NADRP.Functions.GetPlayer(src)
     local bankBalance = pData.PlayerData.money["bank"]
 
     if bankBalance >= price then
         pData.Functions.RemoveMoney('bank', price, "bought-furniture")
         cb(true)
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.not_enough_money"), "error")
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.not_enough_money"), "error")
         cb(false)
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:ProximityKO', function(source, cb, house)
+NADRP.Functions.CreateCallback('NADRP-houses:server:ProximityKO', function(source, cb, house)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local retvalK = false
     local retvalO = false
 
@@ -409,9 +409,9 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:ProximityKO', function
     cb(retvalK, retvalO)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:hasKey', function(source, cb, house)
+NADRP.Functions.CreateCallback('NADRP-houses:server:hasKey', function(source, cb, house)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local retval = false
     if Player then
         local identifier = Player.PlayerData.license
@@ -428,7 +428,7 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:hasKey', function(sour
     cb(retval)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:isOwned', function(source, cb, house)
+NADRP.Functions.CreateCallback('NADRP-houses:server:isOwned', function(source, cb, house)
     if houseowneridentifier[house] and houseownercid[house] then
         cb(true)
     else
@@ -436,14 +436,14 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:isOwned', function(sou
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseOwner', function(source, cb, house)
+NADRP.Functions.CreateCallback('NADRP-houses:server:getHouseOwner', function(source, cb, house)
     cb(houseownercid[house])
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseKeyHolders', function(source, cb, house)
+NADRP.Functions.CreateCallback('NADRP-houses:server:getHouseKeyHolders', function(source, cb, house)
     local retval = {}
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if housekeyholders[house] then
         for i = 1, #housekeyholders[house], 1 do
             if Player.PlayerData.citizenid ~= housekeyholders[house][i] then
@@ -464,7 +464,7 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseKeyHolders', f
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:TransferCid', function(source, cb, NewCid, house)
+NADRP.Functions.CreateCallback('NADRP-phone:server:TransferCid', function(source, cb, NewCid, house)
     local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {NewCid})
     if result[1] then
         local HouseName = house.name
@@ -481,7 +481,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:TransferCid', function(
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseDecorations', function(source, cb, house)
+NADRP.Functions.CreateCallback('NADRP-houses:server:getHouseDecorations', function(source, cb, house)
     local retval = nil
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
@@ -492,7 +492,7 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseDecorations', 
     cb(retval)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseLocations', function(source, cb, house)
+NADRP.Functions.CreateCallback('NADRP-houses:server:getHouseLocations', function(source, cb, house)
     local retval = nil
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE house = ?', {house})
     if result[1] then
@@ -501,15 +501,15 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseLocations', fu
     cb(retval)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:getHouseKeys', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-houses:server:getHouseKeys', function(source, cb)
     local src = source
-    local pData = denalifw.Functions.GetPlayer(src)
+    local pData = NADRP.Functions.GetPlayer(src)
     local cid = pData.PlayerData.citizenid
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:getOwnedHouses', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-houses:server:getOwnedHouses', function(source, cb)
     local src = source
-    local pData = denalifw.Functions.GetPlayer(src)
+    local pData = NADRP.Functions.GetPlayer(src)
     if pData then
         MySQL.Async.fetchAll('SELECT * FROM player_houses WHERE identifier = ? AND citizenid = ?', {pData.PlayerData.license, pData.PlayerData.citizenid}, function(houses)
             local ownedHouses = {}
@@ -525,9 +525,9 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:getOwnedHouses', funct
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-houses:server:getSavedOutfits', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-houses:server:getSavedOutfits', function(source, cb)
     local src = source
-    local pData = denalifw.Functions.GetPlayer(src)
+    local pData = NADRP.Functions.GetPlayer(src)
 
     if pData then
         MySQL.Async.fetchAll('SELECT * FROM player_outfits WHERE citizenid = ?', {pData.PlayerData.citizenid},
@@ -541,9 +541,9 @@ denalifw.Functions.CreateCallback('denalifw-houses:server:getSavedOutfits', func
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetPlayerHouses', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetPlayerHouses', function(source, cb)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local MyHouses = {}
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE citizenid = ?',
         {Player.PlayerData.citizenid})
@@ -609,9 +609,9 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetPlayerHouses', funct
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetHouseKeys', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetHouseKeys', function(source, cb)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local MyKeys = {}
 
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_houses', {})
@@ -636,7 +636,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetHouseKeys', function
     cb(MyKeys)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:MeosGetPlayerHouses', function(source, cb, input)
+NADRP.Functions.CreateCallback('NADRP-phone:server:MeosGetPlayerHouses', function(source, cb, input)
     if input then
         local search = escape_sqli(input)
         local searchData = {}

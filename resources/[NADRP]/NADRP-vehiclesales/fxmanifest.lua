@@ -1,14 +1,14 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-VehicleSales'
+description 'NADRP-VehicleSales'
 version '1.0.0'
 
 ui_page 'html/ui.html'
 
 shared_scripts {
 	'config.lua',
-	'@denalifw-core/shared/locale.lua',
+	'@NADRP-core/shared/locale.lua',
 	'locales/en.lua'
 }
 

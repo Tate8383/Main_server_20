@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local inside = false
 local currentHouse = nil
 local closestHouse
@@ -51,7 +51,7 @@ local function enterRobberyHouse(house)
     Wait(250)
     local coords = { x = Config.Houses[house]["coords"]["x"], y = Config.Houses[house]["coords"]["y"], z= Config.Houses[house]["coords"]["z"] - Config.MinZOffset}
     if Config.Houses[house]["tier"] == 1 then
-        data = exports['denalifw-interior']:CreateHouseRobbery(coords)
+        data = exports['NADRP-interior']:CreateHouseRobbery(coords)
     end
     Wait(100)
     houseObj = data[1]
@@ -59,7 +59,7 @@ local function enterRobberyHouse(house)
     inside = true
     currentHouse = house
     Wait(500)
-    TriggerEvent('denalifw-weathersync:client:DisableSync')
+    TriggerEvent('NADRP-weathersync:client:DisableSync')
 end
 
 local function leaveRobberyHouse(house)
@@ -69,8 +69,8 @@ local function leaveRobberyHouse(house)
     Wait(250)
     DoScreenFadeOut(250)
     Wait(500)
-    exports['denalifw-interior']:DespawnInterior(houseObj, function()
-        TriggerEvent('denalifw-weathersync:client:EnableSync')
+    exports['NADRP-interior']:DespawnInterior(houseObj, function()
+        TriggerEvent('NADRP-weathersync:client:EnableSync')
         Wait(250)
         DoScreenFadeIn(250)
         SetEntityCoords(ped, Config.Houses[house]["coords"]["x"], Config.Houses[house]["coords"]["y"], Config.Houses[house]["coords"]["z"] + 0.5)
@@ -92,25 +92,25 @@ end
 
 local function lockpickFinish(success)
     if success then
-        TriggerServerEvent('denalifw-houserobbery:server:enterHouse', closestHouse)
-        denalifw.Functions.Notify(Lang:t("success.worked"), "success", 2500)
+        TriggerServerEvent('NADRP-houserobbery:server:enterHouse', closestHouse)
+        NADRP.Functions.Notify(Lang:t("success.worked"), "success", 2500)
     else
         if usingAdvanced then
-            local itemInfo = denalifw.Shared.Items["advancedlockpick"]
+            local itemInfo = NADRP.Shared.Items["advancedlockpick"]
             if math.random(1, 100) < 20 then
-                TriggerServerEvent("denalifw:Server:RemoveItem", "advancedlockpick", 1)
+                TriggerServerEvent("NADRP:Server:RemoveItem", "advancedlockpick", 1)
                 TriggerEvent('inventory:client:ItemBox', itemInfo, "remove")
             end
         else
-            local itemInfo = denalifw.Shared.Items["advancedlockpick"]
+            local itemInfo = NADRP.Shared.Items["advancedlockpick"]
             if math.random(1, 100) < 40 then
-                TriggerServerEvent("denalifw:Server:RemoveItem", "advancedlockpick", 1)
+                TriggerServerEvent("NADRP:Server:RemoveItem", "advancedlockpick", 1)
                 TriggerEvent('inventory:client:ItemBox', itemInfo, "remove")
             end
         end
 
 
-        denalifw.Functions.Notify(Lang:t("error.didnt_work"), "error", 2500)
+        NADRP.Functions.Notify(Lang:t("error.didnt_work"), "error", 2500)
     end
 end
 
@@ -147,13 +147,13 @@ end
 
 local function searchCabin(cabin)
     local ped = PlayerPedId()
-    local Skillbar = exports['denalifw-skillbar']:GetSkillbarObject()
+    local Skillbar = exports['NADRP-skillbar']:GetSkillbarObject()
     if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
         local pos = GetEntityCoords(PlayerPedId())
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
     end
     LockpickDoorAnim()
-    TriggerServerEvent('denalifw-houserobbery:server:SetBusyState', cabin, currentHouse, true)
+    TriggerServerEvent('NADRP-houserobbery:server:SetBusyState', cabin, currentHouse, true)
     FreezeEntityPosition(ped, true)
     IsLockpicking = true
     Skillbar.Start({
@@ -164,9 +164,9 @@ local function searchCabin(cabin)
         if SucceededAttempts + 1 >= NeededAttempts then
             openingDoor = false
             ClearPedTasks(PlayerPedId())
-            TriggerServerEvent('denalifw-houserobbery:server:searchCabin', cabin, currentHouse)
+            TriggerServerEvent('NADRP-houserobbery:server:searchCabin', cabin, currentHouse)
             Config.Houses[currentHouse]["furniture"][cabin]["searched"] = true
-            TriggerServerEvent('denalifw-houserobbery:server:SetBusyState', cabin, currentHouse, false)
+            TriggerServerEvent('NADRP-houserobbery:server:SetBusyState', cabin, currentHouse, false)
             SucceededAttempts = 0
             FreezeEntityPosition(ped, false)
             SetTimeout(500, function()
@@ -183,8 +183,8 @@ local function searchCabin(cabin)
     end, function()
         openingDoor = false
         ClearPedTasks(PlayerPedId())
-        TriggerServerEvent('denalifw-houserobbery:server:SetBusyState', cabin, currentHouse, false)
-        denalifw.Functions.Notify(Lang:t("error.process_cancelled"), "error", 3500)
+        TriggerServerEvent('NADRP-houserobbery:server:SetBusyState', cabin, currentHouse, false)
+        NADRP.Functions.Notify(Lang:t("error.process_cancelled"), "error", 3500)
         SucceededAttempts = 0
         FreezeEntityPosition(ped, false)
         SetTimeout(500, function()
@@ -195,13 +195,13 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    denalifw.Functions.TriggerCallback('denalifw-houserobbery:server:GetHouseConfig', function(HouseConfig)
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    NADRP.Functions.TriggerCallback('NADRP-houserobbery:server:GetHouseConfig', function(HouseConfig)
         Config.Houses = HouseConfig
     end)
 end)
 
-RegisterNetEvent('denalifw-houserobbery:client:ResetHouseState', function(house)
+RegisterNetEvent('NADRP-houserobbery:client:ResetHouseState', function(house)
     Config.Houses[house]["opened"] = false
     for k, v in pairs(Config.Houses[house]["furniture"]) do
         v["searched"] = false
@@ -212,19 +212,19 @@ RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
 
-RegisterNetEvent('denalifw-houserobbery:client:enterHouse', function(house)
+RegisterNetEvent('NADRP-houserobbery:client:enterHouse', function(house)
     enterRobberyHouse(house)
 end)
 
-RegisterNetEvent('denalifw-houserobbery:client:setHouseState', function(house, state)
+RegisterNetEvent('NADRP-houserobbery:client:setHouseState', function(house, state)
     Config.Houses[house]["opened"] = state
 end)
 
-RegisterNetEvent('denalifw-houserobbery:client:setCabinState', function(house, cabin, state)
+RegisterNetEvent('NADRP-houserobbery:client:setCabinState', function(house, cabin, state)
     Config.Houses[house]["furniture"][cabin]["searched"] = state
 end)
 
-RegisterNetEvent('denalifw-houserobbery:client:SetBusyState', function(cabin, house, bool)
+RegisterNetEvent('NADRP-houserobbery:client:SetBusyState', function(cabin, house, bool)
     Config.Houses[house]["furniture"][cabin]["isBusy"] = bool
 end)
 
@@ -237,38 +237,38 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                 if CurrentCops >= Config.MinimumHouseRobberyPolice then
                     if not Config.Houses[closestHouse]["opened"] then
                         PoliceCall()
-                        TriggerEvent('denalifw-lockpick:client:openLockpick', lockpickFinish)
+                        TriggerEvent('NADRP-lockpick:client:openLockpick', lockpickFinish)
                         if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
                             local pos = GetEntityCoords(PlayerPedId())
                             TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
                         end
                     else
-                        denalifw.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
+                        NADRP.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
                     end
                 else
-                    denalifw.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
+                    NADRP.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
                 end
             end
         else
-            denalifw.Functions.TriggerCallback('denalifw:HasItem', function(result)
+            NADRP.Functions.TriggerCallback('NADRP:HasItem', function(result)
                 if closestHouse ~= nil then
                     if result then
                         if CurrentCops >= Config.MinimumHouseRobberyPolice then
                             if not Config.Houses[closestHouse]["opened"] then
                                 PoliceCall()
-                                TriggerEvent('denalifw-lockpick:client:openLockpick', lockpickFinish)
+                                TriggerEvent('NADRP-lockpick:client:openLockpick', lockpickFinish)
                                 if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
                                     local pos = GetEntityCoords(PlayerPedId())
                                     TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
                                 end
                             else
-                                denalifw.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
+                                NADRP.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
                             end
                         else
-                            denalifw.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
+                            NADRP.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
                         end
                     else
-                        denalifw.Functions.Notify(Lang:t("error.missing_something"), "error", 3500)
+                        NADRP.Functions.Notify(Lang:t("error.missing_something"), "error", 3500)
                     end
                 end
             end, "screwdriverset")
@@ -281,15 +281,15 @@ end)
 CreateThread(function()
     Wait(500)
     requiredItems = {
-        [1] = {name = denalifw.Shared.Items["advancedlockpick"]["name"], image = denalifw.Shared.Items["advancedlockpick"]["image"]},
-        [2] = {name = denalifw.Shared.Items["screwdriverset"]["name"], image = denalifw.Shared.Items["screwdriverset"]["image"]},
+        [1] = {name = NADRP.Shared.Items["advancedlockpick"]["name"], image = NADRP.Shared.Items["advancedlockpick"]["image"]},
+        [2] = {name = NADRP.Shared.Items["screwdriverset"]["name"], image = NADRP.Shared.Items["screwdriverset"]["image"]},
     }
     while true do
         inRange = false
         local PlayerPed = PlayerPedId()
         local PlayerPos = GetEntityCoords(PlayerPed)
         closestHouse = nil
-        if denalifw ~= nil then
+        if NADRP ~= nil then
             local hours = GetClockHours()
             if hours >= Config.MinimumTime or hours <= Config.MaximumTime then
                 if not inside then

@@ -11,7 +11,7 @@ RegisterCommand('hu', function()
 		Wait(100)
 	end
     handsup = not handsup
-    if exports['denalifw-policejob']:IsHandcuffed() then return end
+    if exports['NADRP-policejob']:IsHandcuffed() then return end
     if handsup then
         TaskPlayAnim(ped, animDict, anim, 8.0, 8.0, -1, 50, 0, false, false, false)
         if IsPedInAnyVehicle(ped, false) then

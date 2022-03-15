@@ -1,6 +1,6 @@
 -- Variables
 
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local meterIsOpen = false
 local meterActive = false
 local lastLocation = nil
@@ -136,12 +136,12 @@ local function GetDeliveryLocation()
                         SendNUIMessage({
                             action = "toggleMeter"
                         })
-                        TriggerServerEvent('denalifw-taxi:server:NpcPay', meterData.currentFare)
+                        TriggerServerEvent('NADRP-taxi:server:NpcPay', meterData.currentFare)
                         meterActive = false
                         SendNUIMessage({
                             action = "resetMeter"
                         })
-                        denalifw.Functions.Notify(Lang:t("info.person_was_dropped_off"), 'success')
+                        NADRP.Functions.Notify(Lang:t("info.person_was_dropped_off"), 'success')
                         if NpcData.DeliveryBlip ~= nil then
                             RemoveBlip(NpcData.DeliveryBlip)
                         end
@@ -161,7 +161,7 @@ local function GetDeliveryLocation()
     end)
 end
 
--- denalifw-menu
+-- NADRP-menu
 
 function TaxiGarage()
     local vehicleMenu = {
@@ -174,7 +174,7 @@ function TaxiGarage()
         vehicleMenu[#vehicleMenu+1] = {
             header = v.label,
             params = {
-                event = "denalifw-taxi:client:TakeVehicle",
+                event = "NADRP-taxi:client:TakeVehicle",
                 args = {
                     model = v.model
                 }
@@ -185,31 +185,31 @@ function TaxiGarage()
         header = Lang:t("menu.close_menu"),
         txt = "",
         params = {
-            event = "denalifw-menu:client:closeMenu"
+            event = "NADRP-menu:client:closeMenu"
         }
     }
-    exports['denalifw-menu']:openMenu(vehicleMenu)
+    exports['NADRP-menu']:openMenu(vehicleMenu)
 end
 
-RegisterNetEvent("denalifw-taxi:client:TakeVehicle", function(data)
+RegisterNetEvent("NADRP-taxi:client:TakeVehicle", function(data)
     local coords = Config.Location
-    denalifw.Functions.SpawnVehicle(data.model, function(veh)
+    NADRP.Functions.SpawnVehicle(data.model, function(veh)
         SetVehicleNumberPlateText(veh, "TAXI"..tostring(math.random(1000, 9999)))
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         closeMenuFull()
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
     end, coords, true)
 end)
 
 function closeMenuFull()
-    exports['denalifw-menu']:closeMenu()
+    exports['NADRP-menu']:closeMenu()
 end
 
 -- Events
 
-RegisterNetEvent('denalifw-taxi:client:DoTaxiNpc', function()
+RegisterNetEvent('NADRP-taxi:client:DoTaxiNpc', function()
     if whitelistedVehicle() then
         if not NpcData.Active then
             NpcData.CurrentNpc = math.random(1, #Config.NPCLocations.TakeLocations)
@@ -232,7 +232,7 @@ RegisterNetEvent('denalifw-taxi:client:DoTaxiNpc', function()
             if NpcData.NpcBlip ~= nil then
                 RemoveBlip(NpcData.NpcBlip)
             end
-            denalifw.Functions.Notify(Lang:t("info.npc_on_gps"), 'success')
+            NADRP.Functions.Notify(Lang:t("info.npc_on_gps"), 'success')
             NpcData.NpcBlip = AddBlipForCoord(Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].x, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].y, Config.NPCLocations.TakeLocations[NpcData.CurrentNpc].z)
             SetBlipColour(NpcData.NpcBlip, 3)
             SetBlipRoute(NpcData.NpcBlip, true)
@@ -277,7 +277,7 @@ RegisterNetEvent('denalifw-taxi:client:DoTaxiNpc', function()
                                 ClearPedTasksImmediately(NpcData.Npc)
                                 FreezeEntityPosition(NpcData.Npc, false)
                                 TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
-                                denalifw.Functions.Notify(Lang:t("info.go_to_location"))
+                                NADRP.Functions.Notify(Lang:t("info.go_to_location"))
                                 if NpcData.NpcBlip ~= nil then
                                     RemoveBlip(NpcData.NpcBlip)
                                 end
@@ -291,14 +291,14 @@ RegisterNetEvent('denalifw-taxi:client:DoTaxiNpc', function()
                 end
             end)
         else
-            denalifw.Functions.Notify(Lang:t("error.already_mission"))
+            NADRP.Functions.Notify(Lang:t("error.already_mission"))
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.not_in_taxi"))
+        NADRP.Functions.Notify(Lang:t("error.not_in_taxi"))
     end
 end)
 
-RegisterNetEvent('denalifw-taxi:client:toggleMeter', function()
+RegisterNetEvent('NADRP-taxi:client:toggleMeter', function()
     local ped = PlayerPedId()
     if IsPedInAnyVehicle(ped, false) then
         if whitelistedVehicle() then
@@ -317,24 +317,24 @@ RegisterNetEvent('denalifw-taxi:client:toggleMeter', function()
                 meterIsOpen = false
             end
         else
-            denalifw.Functions.Notify(Lang:t("error.missing_meter"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.missing_meter"), 'error')
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.no_vehicle"), 'error')
+        NADRP.Functions.Notify(Lang:t("error.no_vehicle"), 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-taxi:client:enableMeter', function()
+RegisterNetEvent('NADRP-taxi:client:enableMeter', function()
     if meterIsOpen then
         SendNUIMessage({
             action = "toggleMeter"
         })
     else
-        denalifw.Functions.Notify(Lang:t("error.not_active_meter"), 'error')
+        NADRP.Functions.Notify(Lang:t("error.not_active_meter"), 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-taxi:client:toggleMuis', function()
+RegisterNetEvent('NADRP-taxi:client:toggleMuis', function()
     Wait(400)
     if meterIsOpen then
         if not mouseActive then
@@ -342,7 +342,7 @@ RegisterNetEvent('denalifw-taxi:client:toggleMuis', function()
             mouseActive = true
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.no_meter_sight"), 'error')
+        NADRP.Functions.Notify(Lang:t("error.no_meter_sight"), 'error')
     end
 end)
 
@@ -389,7 +389,7 @@ CreateThread(function()
     while true do
         inRange = false
         if LocalPlayer.state.isLoggedIn then
-            local Player = denalifw.Functions.GetPlayerData()
+            local Player = NADRP.Functions.GetPlayerData()
             if Player.job.name == "taxi" then
                 local ped = PlayerPedId()
                 local pos = GetEntityCoords(ped)

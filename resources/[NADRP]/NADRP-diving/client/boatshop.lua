@@ -6,7 +6,7 @@ local Buying = false
 local function SpawnBerthBoats()
     for loc,_ in pairs(QBBoatshop.Locations["berths"]) do
         if SpawnedBoats[loc] ~= nil then
-            denalifw.Functions.DeleteVehicle(SpawnedBoats[loc])
+            NADRP.Functions.DeleteVehicle(SpawnedBoats[loc])
         end
 		local model = GetHashKey(QBBoatshop.Locations["berths"][loc]["boatModel"])
 		RequestModel(model)
@@ -50,15 +50,15 @@ local function SetClosestBerthBoat()
 end
 
 -- Events
-RegisterNetEvent('denalifw-diving:client:BuyBoat', function(boatModel, plate)
+RegisterNetEvent('NADRP-diving:client:BuyBoat', function(boatModel, plate)
     DoScreenFadeOut(250)
     Wait(250)
-    denalifw.Functions.SpawnVehicle(boatModel, function(veh)
+    NADRP.Functions.SpawnVehicle(boatModel, function(veh)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         exports['LegacyFuel']:SetFuel(veh, 100)
         SetVehicleNumberPlateText(veh, plate)
         SetEntityHeading(veh, QBBoatshop.SpawnVehicle.w)
-        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
     end, QBBoatshop.SpawnVehicle, false)
         SetTimeout(1000, function()
         DoScreenFadeIn(250)
@@ -118,7 +118,7 @@ CreateThread(function()
                 else
                     DrawText3D(BuyLocation.x, BuyLocation.y, BuyLocation.z + 0.3, 'Are you sure ~g~7~w~ Yes / ~r~8~w~ No ~b~($'..QBBoatshop.ShopBoats[currentBoat]["price"]..',-)')
                     if IsControlJustPressed(0, 161) or IsDisabledControlJustReleased(0, 161) then
-                        TriggerServerEvent('denalifw-diving:server:BuyBoat', QBBoatshop.Locations["berths"][ClosestBerth]["boatModel"], ClosestBerth)
+                        TriggerServerEvent('NADRP-diving:server:BuyBoat', QBBoatshop.Locations["berths"][ClosestBerth]["boatModel"], ClosestBerth)
                         Buying = false
                     elseif IsControlJustPressed(0, 162) or IsDisabledControlJustReleased(0, 162) then
                         Buying = false

@@ -68,10 +68,10 @@ RegisterNetEvent('thermite:UseThermite', function()
                     })
                     currentStation = closestStation
                 else
-                    denalifw.Functions.Notify("It seems that the fuses have blown.", "error")
+                    NADRP.Functions.Notify("It seems that the fuses have blown.", "error")
                 end
             else
-                denalifw.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
+                NADRP.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
             end
         end
     elseif currentThermiteGate ~= 0 then
@@ -89,12 +89,12 @@ RegisterNetEvent('thermite:UseThermite', function()
                 amount = math.random(5, 10),
             })
         else
-            denalifw.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
+            NADRP.Functions.Notify('Minimum Of '..Config.MinimumThermitePolice..' Police Needed', "error")
         end
     end
 end)
 
-RegisterNetEvent('denalifw-bankrobbery:client:SetStationStatus', function(key, isHit)
+RegisterNetEvent('NADRP-bankrobbery:client:SetStationStatus', function(key, isHit)
     Config.PowerStations[key].hit = isHit
 end)
 
@@ -105,7 +105,7 @@ RegisterNUICallback('thermiteclick', function()
 end)
 
 RegisterNUICallback('thermitefailed', function()
-    denalifw.Functions.TriggerCallback("thermite:server:check", function(success)
+    NADRP.Functions.TriggerCallback("thermite:server:check", function(success)
         if success then
             PlaySound(-1, "Place_Prop_Fail", "DLC_Dmod_Prop_Editor_Sounds", 0, 0, 1)
             ClearPedTasks(PlayerPedId())
@@ -117,24 +117,24 @@ RegisterNUICallback('thermitefailed', function()
 end)
 
 RegisterNUICallback('thermitesuccess', function()
-    denalifw.Functions.TriggerCallback("thermite:server:check", function(success)
+    NADRP.Functions.TriggerCallback("thermite:server:check", function(success)
         if success then
             ClearPedTasks(PlayerPedId())
             local time = 3
             local coords = GetEntityCoords(PlayerPedId())
             while time > 0 do
-                denalifw.Functions.Notify("Thermite is going off in " .. time .. "..")
+                NADRP.Functions.Notify("Thermite is going off in " .. time .. "..")
                 Wait(1000)
                 time = time - 1
             end
             local randTime = math.random(10000, 15000)
             CreateFire(coords, randTime)
             if currentStation ~= 0 then
-                denalifw.Functions.Notify("The fuses are broken", "success")
-                TriggerServerEvent("denalifw-bankrobbery:server:SetStationStatus", currentStation, true)
+                NADRP.Functions.Notify("The fuses are broken", "success")
+                TriggerServerEvent("NADRP-bankrobbery:server:SetStationStatus", currentStation, true)
             elseif currentGate ~= 0 then
-                denalifw.Functions.Notify("The door is open", "success")
-                TriggerServerEvent('denalifw-doorlock:server:updateState', currentGate, false)
+                NADRP.Functions.Notify("The door is open", "success")
+                TriggerServerEvent('NADRP-doorlock:server:updateState', currentGate, false)
                 currentGate = 0
             end
         end
@@ -152,7 +152,7 @@ CreateThread(function()
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local dist
-        if denalifw ~= nil then
+        if NADRP ~= nil then
             local inRange = false
             for k, v in pairs(Config.PowerStations) do
                 dist = #(pos - Config.PowerStations[k].coords)
@@ -175,7 +175,7 @@ CreateThread(function()
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local dist
-        if denalifw ~= nil then
+        if NADRP ~= nil then
             local inRange = false
             for k, v in pairs(Config.PowerStations) do
                 dist = #(pos - Config.PowerStations[k].coords)
@@ -195,11 +195,11 @@ end)
 
 CreateThread(function()
     Wait(2000)
-    requiredItems = {[1] = {name = denalifw.Shared.Items["thermite"]["name"], image = denalifw.Shared.Items["thermite"]["image"]}}
+    requiredItems = {[1] = {name = NADRP.Shared.Items["thermite"]["name"], image = NADRP.Shared.Items["thermite"]["image"]}}
     while true do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
-        if denalifw ~= nil then
+        if NADRP ~= nil then
             if closestStation ~= 0 then
                 if not Config.PowerStations[closestStation].hit then
                     DrawMarker(2, Config.PowerStations[closestStation].coords.x, Config.PowerStations[closestStation].coords.y, Config.PowerStations[closestStation].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.1, 255, 255, 255, 155, 0, 0, 0, 1, 0, 0, 0)

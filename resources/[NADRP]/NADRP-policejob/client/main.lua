@@ -1,5 +1,5 @@
 -- Variables
-denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = exports['NADRP-core']:GetCoreObject()
 isHandcuffed = false
 cuffType = 1
 isEscorted = false
@@ -41,12 +41,12 @@ local function CreateDutyBlips(playerId, playerLabel, playerJob, playerLocation)
 end
 
 -- Events
-AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
-    local player = denalifw.Functions.GetPlayerData()
+AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
+    local player = NADRP.Functions.GetPlayerData()
     PlayerJob = player.job
     onDuty = player.job.onduty
     isHandcuffed = false
-    TriggerServerEvent("denalifw:Server:SetMetaData", "ishandcuffed", false)
+    TriggerServerEvent("NADRP:Server:SetMetaData", "ishandcuffed", false)
     TriggerServerEvent("police:server:SetHandcuffStatus", false)
     TriggerServerEvent("police:server:UpdateBlips")
     TriggerServerEvent("police:server:UpdateCurrentCops")
@@ -60,7 +60,7 @@ AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
                 }
             }
         }
-        TriggerEvent('denalifw-clothing:client:loadOutfit', trackerClothingData)
+        TriggerEvent('NADRP-clothing:client:loadOutfit', trackerClothingData)
     else
         local trackerClothingData = {
             outfitData = {
@@ -70,7 +70,7 @@ AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
                 }
             }
         }
-        TriggerEvent('denalifw-clothing:client:loadOutfit', trackerClothingData)
+        TriggerEvent('NADRP-clothing:client:loadOutfit', trackerClothingData)
     end
 
     if PlayerJob and PlayerJob.name ~= "police" then
@@ -83,7 +83,7 @@ AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
     end
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
+RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
     TriggerServerEvent('police:server:UpdateBlips')
     TriggerServerEvent("police:server:SetHandcuffStatus", false)
     TriggerServerEvent("police:server:UpdateCurrentCops")
@@ -100,12 +100,12 @@ RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     end
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     TriggerServerEvent("police:server:UpdateBlips")
     if JobInfo.name == "police" then
         if PlayerJob.onduty then
-            TriggerServerEvent("denalifw:ToggleDuty")
+            TriggerServerEvent("NADRP:ToggleDuty")
             onDuty = false
         end
     end
@@ -123,11 +123,11 @@ end)
 RegisterNetEvent('police:client:sendBillingMail', function(amount)
     SetTimeout(math.random(2500, 4000), function()
         local gender = Lang:t('info.mr')
-        if denalifw.Functions.GetPlayerData().charinfo.gender == 1 then
+        if NADRP.Functions.GetPlayerData().charinfo.gender == 1 then
             gender = Lang:t('info.mrs')
         end
-        local charinfo = denalifw.Functions.GetPlayerData().charinfo
-        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
+        local charinfo = NADRP.Functions.GetPlayerData().charinfo
+        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
             sender = Lang:t('email.sender'),
             subject = Lang:t('email.subject'),
             message = Lang:t('email.message', {value = gender, value2 = charinfo.lastname, value3 = amount}),
@@ -159,7 +159,7 @@ RegisterNetEvent('police:client:policeAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
-    denalifw.Functions.Notify({text = text, caption = street1name.. ' ' ..street2name}, 'police')
+    NADRP.Functions.Notify({text = text, caption = street1name.. ' ' ..street2name}, 'police')
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
@@ -203,7 +203,7 @@ RegisterNetEvent('police:client:SendToJail', function(time)
 end)
 
 RegisterNetEvent('police:client:SendPoliceEmergencyAlert', function()
-    local Player = denalifw.Functions.GetPlayerData()
+    local Player = NADRP.Functions.GetPlayerData()
     TriggerServerEvent('police:server:policeAlert', Lang:t('info.officer_down', {lastname = Player.charinfo.lastname, callsign = Player.metadata.callsign}))
     TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.officer_down', {lastname = Player.charinfo.lastname, callsign = Player.metadata.callsign}))
 end)

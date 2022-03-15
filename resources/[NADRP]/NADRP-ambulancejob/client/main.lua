@@ -1,4 +1,4 @@
-denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = exports['NADRP-core']:GetCoreObject()
 
 local getOutDict = 'switch@franklin@bed'
 local getOutAnim = 'sleep_getup_rubeyes'
@@ -100,14 +100,14 @@ local function DoLimbAlert()
             else
                 limbDamageMsg = Lang:t('info.many_places')
             end
-            denalifw.Functions.Notify(limbDamageMsg, "primary")
+            NADRP.Functions.Notify(limbDamageMsg, "primary")
         end
     end
 end
 
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
-        denalifw.Functions.Notify(Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(isBleeding)].label}), "error")
+        NADRP.Functions.Notify(Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(isBleeding)].label}), "error")
     end
 end
 
@@ -234,8 +234,8 @@ local function ResetAll()
         limbs = BodyParts,
         isBleeding = tonumber(isBleeding)
     })
-    TriggerServerEvent("denalifw:Server:SetMetaData", "hunger", 100)
-    TriggerServerEvent("denalifw:Server:SetMetaData", "thirst", 100)
+    TriggerServerEvent("NADRP:Server:SetMetaData", "hunger", 100)
+    TriggerServerEvent("NADRP:Server:SetMetaData", "thirst", 100)
 end
 
 local function loadAnimDict(dict)
@@ -343,7 +343,7 @@ end
 
 local function CheckWeaponDamage(ped)
     local detected = false
-    for k, v in pairs(denalifw.Shared.Weapons) do
+    for k, v in pairs(NADRP.Shared.Weapons) do
         if HasPedBeenDamagedByWeapon(ped, GetHashKey(k), 0) then
             detected = true
             if not IsInDamageList(k) then
@@ -540,7 +540,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
-    denalifw.Functions.Notify({text = text, caption = street1name.. ' ' ..street2name}, 'ambulance')
+    NADRP.Functions.Notify({text = text, caption = street1name.. ' ' ..street2name}, 'ambulance')
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
@@ -603,7 +603,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
     emsNotified = false
-    denalifw.Functions.Notify(Lang:t('info.healthy'))
+    NADRP.Functions.Notify(Lang:t('info.healthy'))
 end)
 
 RegisterNetEvent('hospital:client:SetPain', function()
@@ -645,7 +645,7 @@ RegisterNetEvent('hospital:client:HealInjuries', function(type)
         ResetPartial()
     end
     TriggerServerEvent("hospital:server:RestoreWeaponDamage")
-    denalifw.Functions.Notify(Lang:t('success.wounds_healed'), 'success')
+    NADRP.Functions.Notify(Lang:t('success.wounds_healed'), 'success')
 end)
 
 RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
@@ -655,7 +655,7 @@ RegisterNetEvent('hospital:client:SendToBed', function(id, data, isRevive)
     CreateThread(function ()
         Wait(5)
         if isRevive then
-            denalifw.Functions.Notify(Lang:t('success.being_helped'), 'success')
+            NADRP.Functions.Notify(Lang:t('success.being_helped'), 'success')
             Wait(Config.AIHealTimer * 1000)
             TriggerEvent("hospital:client:Revive")
         else
@@ -670,7 +670,7 @@ end)
 
 RegisterNetEvent('hospital:client:RespawnAtHospital', function()
     TriggerServerEvent("hospital:server:RespawnAtHospital")
-    if exports["denalifw-policejob"]:IsHandcuffed() then
+    if exports["NADRP-policejob"]:IsHandcuffed() then
         TriggerEvent("police:client:GetCuffed", -1)
     end
     TriggerEvent("police:client:DeEscort")
@@ -679,11 +679,11 @@ end)
 RegisterNetEvent('hospital:client:SendBillEmail', function(amount)
     SetTimeout(math.random(2500, 4000), function()
         local gender = Lang:t('info.mr')
-        if denalifw.Functions.GetPlayerData().charinfo.gender == 1 then
+        if NADRP.Functions.GetPlayerData().charinfo.gender == 1 then
             gender = Lang:t('info.mrs')
         end
-        local charinfo = denalifw.Functions.GetPlayerData().charinfo
-        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
+        local charinfo = NADRP.Functions.GetPlayerData().charinfo
+        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
             sender = Lang:t('mail.sender'),
             subject = Lang:t('mail.subject'),
             message = Lang:t('mail.message', {gender = gender, lastname = charinfo.lastname, costs = amount}),
@@ -699,11 +699,11 @@ end)
 RegisterNetEvent('hospital:client:adminHeal', function()
     local ped = PlayerPedId()
     SetEntityHealth(ped, 200)
-    TriggerServerEvent("denalifw:Server:SetMetaData", "hunger", 100)
-    TriggerServerEvent("denalifw:Server:SetMetaData", "thirst", 100)
+    TriggerServerEvent("NADRP:Server:SetMetaData", "hunger", 100)
+    TriggerServerEvent("NADRP:Server:SetMetaData", "thirst", 100)
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
+RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
     local ped = PlayerPedId()
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent('hospital:server:SetLaststandStatus', false)
@@ -851,7 +851,7 @@ CreateThread(function()
                             TriggerServerEvent("hospital:server:SendDoctorAlert")
                         else
                             TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
-                            denalifw.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
+                            NADRP.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
                                 disableMovement = true,
                                 disableCarMovement = true,
                                 disableMouse = false,
@@ -862,11 +862,11 @@ CreateThread(function()
                                 if bedId then
                                     TriggerServerEvent("hospital:server:SendToBed", bedId, true)
                                 else
-                                    denalifw.Functions.Notify(Lang:t('error.beds_taken'), "error")
+                                    NADRP.Functions.Notify(Lang:t('error.beds_taken'), "error")
                                 end
                             end, function() -- Cancel
                                 TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                                denalifw.Functions.Notify(Lang:t('error.canceled'), "error")
+                                NADRP.Functions.Notify(Lang:t('error.canceled'), "error")
                             end)
                         end
                     end
@@ -888,7 +888,7 @@ CreateThread(function()
                         if GetAvailableBed(closestBed) then
                             TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
                         else
-                            denalifw.Functions.Notify(Lang:t('error.beds_taken'), "error")
+                            NADRP.Functions.Notify(Lang:t('error.beds_taken'), "error")
                         end
                     end
                 end

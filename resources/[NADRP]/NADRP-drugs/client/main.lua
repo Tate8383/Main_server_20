@@ -1,12 +1,12 @@
-denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = exports['NADRP-core']:GetCoreObject()
 
-RegisterNetEvent('denalifw-drugs:AddWeapons', function()
+RegisterNetEvent('NADRP-drugs:AddWeapons', function()
     Config.Dealers[2]["products"][#Config.Dealers[2]["products"]+1] = {
         name = "weapon_snspistol",
         price = 5000,
         amount = 1,
         info = {
-            serie = tostring(denalifw.Shared.RandomInt(2) .. denalifw.Shared.RandomStr(3) .. denalifw.Shared.RandomInt(1) .. denalifw.Shared.RandomStr(2) .. denalifw.Shared.RandomInt(3) .. denalifw.Shared.RandomStr(4))
+            serie = tostring(NADRP.Shared.RandomInt(2) .. NADRP.Shared.RandomStr(3) .. NADRP.Shared.RandomInt(1) .. NADRP.Shared.RandomStr(2) .. NADRP.Shared.RandomInt(3) .. NADRP.Shared.RandomStr(4))
         },
         type = "item",
         slot = 5,
@@ -17,7 +17,7 @@ RegisterNetEvent('denalifw-drugs:AddWeapons', function()
         price = 5000,
         amount = 1,
         info = {
-            serie = tostring(denalifw.Shared.RandomInt(2) .. denalifw.Shared.RandomStr(3) .. denalifw.Shared.RandomInt(1) .. denalifw.Shared.RandomStr(2) .. denalifw.Shared.RandomInt(3) .. denalifw.Shared.RandomStr(4))
+            serie = tostring(NADRP.Shared.RandomInt(2) .. NADRP.Shared.RandomStr(3) .. NADRP.Shared.RandomInt(1) .. NADRP.Shared.RandomStr(2) .. NADRP.Shared.RandomInt(3) .. NADRP.Shared.RandomStr(4))
         },
         type = "item",
         slot = 5,

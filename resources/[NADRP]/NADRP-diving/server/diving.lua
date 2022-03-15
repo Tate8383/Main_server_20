@@ -1,15 +1,15 @@
 local CurrentDivingArea = math.random(1, #QBDiving.Locations)
 
-denalifw.Functions.CreateCallback('denalifw-diving:server:GetDivingConfig', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-diving:server:GetDivingConfig', function(source, cb)
     cb(QBDiving.Locations, CurrentDivingArea)
 end)
 
-RegisterNetEvent('denalifw-diving:server:TakeCoral', function(Area, Coral, Bool)
+RegisterNetEvent('NADRP-diving:server:TakeCoral', function(Area, Coral, Bool)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local CoralType = math.random(1, #QBDiving.CoralTypes)
     local Amount = math.random(1, QBDiving.CoralTypes[CoralType].maxAmount)
-    local ItemData = denalifw.Shared.Items[QBDiving.CoralTypes[CoralType].item]
+    local ItemData = NADRP.Shared.Items[QBDiving.CoralTypes[CoralType].item]
 
     if Amount > 1 then
         for i = 1, Amount, 1 do
@@ -35,27 +35,27 @@ RegisterNetEvent('denalifw-diving:server:TakeCoral', function(Area, Coral, Bool)
         end
         CurrentDivingArea = newLocation
 
-        TriggerClientEvent('denalifw-diving:client:NewLocations', -1)
+        TriggerClientEvent('NADRP-diving:client:NewLocations', -1)
     else
         QBDiving.Locations[Area].coords.Coral[Coral].PickedUp = Bool
         QBDiving.Locations[Area].TotalCoral = QBDiving.Locations[Area].TotalCoral - 1
     end
 
-    TriggerClientEvent('denalifw-diving:server:UpdateCoral', -1, Area, Coral, Bool)
+    TriggerClientEvent('NADRP-diving:server:UpdateCoral', -1, Area, Coral, Bool)
 end)
 
-RegisterNetEvent('denalifw-diving:server:RemoveGear', function()
+RegisterNetEvent('NADRP-diving:server:RemoveGear', function()
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
 
     Player.Functions.RemoveItem("diving_gear", 1)
-    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["diving_gear"], "remove")
+    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["diving_gear"], "remove")
 end)
 
-RegisterNetEvent('denalifw-diving:server:GiveBackGear', function()
+RegisterNetEvent('NADRP-diving:server:GiveBackGear', function()
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
 
     Player.Functions.AddItem("diving_gear", 1)
-    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["diving_gear"], "add")
+    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["diving_gear"], "add")
 end)

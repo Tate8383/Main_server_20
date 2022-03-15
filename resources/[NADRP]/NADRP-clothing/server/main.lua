@@ -1,9 +1,9 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
-RegisterServerEvent("denalifw-clothing:saveSkin")
-AddEventHandler('denalifw-clothing:saveSkin', function(model, skin)
+RegisterServerEvent("NADRP-clothing:saveSkin")
+AddEventHandler('NADRP-clothing:saveSkin', function(model, skin)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if model ~= nil and skin ~= nil then
         -- TODO: Update primary key to be citizenid so this can be an insert on duplicate update query
         MySQL.Async.execute('DELETE FROM playerskins WHERE citizenid = ?', { Player.PlayerData.citizenid }, function()
@@ -17,22 +17,22 @@ AddEventHandler('denalifw-clothing:saveSkin', function(model, skin)
     end
 end)
 
-RegisterServerEvent("denalifw-clothes:loadPlayerSkin")
-AddEventHandler('denalifw-clothes:loadPlayerSkin', function()
+RegisterServerEvent("NADRP-clothes:loadPlayerSkin")
+AddEventHandler('NADRP-clothes:loadPlayerSkin', function()
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM playerskins WHERE citizenid = ? AND active = ?', { Player.PlayerData.citizenid, 1 })
     if result[1] ~= nil then
-        TriggerClientEvent("denalifw-clothes:loadSkin", src, false, result[1].model, result[1].skin)
+        TriggerClientEvent("NADRP-clothes:loadSkin", src, false, result[1].model, result[1].skin)
     else
-        TriggerClientEvent("denalifw-clothes:loadSkin", src, true)
+        TriggerClientEvent("NADRP-clothes:loadSkin", src, true)
     end
 end)
 
-RegisterServerEvent("denalifw-clothes:saveOutfit")
-AddEventHandler("denalifw-clothes:saveOutfit", function(outfitName, model, skinData)
+RegisterServerEvent("NADRP-clothes:saveOutfit")
+AddEventHandler("NADRP-clothes:saveOutfit", function(outfitName, model, skinData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if model ~= nil and skinData ~= nil then
         local outfitId = "outfit-"..math.random(1, 10).."-"..math.random(1111, 9999)
         MySQL.Async.insert('INSERT INTO player_outfits (citizenid, outfitname, model, skin, outfitId) VALUES (?, ?, ?, ?, ?)', {
@@ -44,18 +44,18 @@ AddEventHandler("denalifw-clothes:saveOutfit", function(outfitName, model, skinD
         }, function()
             local result = MySQL.Sync.fetchAll('SELECT * FROM player_outfits WHERE citizenid = ?', { Player.PlayerData.citizenid })
             if result[1] ~= nil then
-                TriggerClientEvent('denalifw-clothing:client:reloadOutfits', src, result)
+                TriggerClientEvent('NADRP-clothing:client:reloadOutfits', src, result)
             else
-                TriggerClientEvent('denalifw-clothing:client:reloadOutfits', src, nil)
+                TriggerClientEvent('NADRP-clothing:client:reloadOutfits', src, nil)
             end
         end)
     end
 end)
 
-RegisterServerEvent("denalifw-clothing:server:removeOutfit")
-AddEventHandler("denalifw-clothing:server:removeOutfit", function(outfitName, outfitId)
+RegisterServerEvent("NADRP-clothing:server:removeOutfit")
+AddEventHandler("NADRP-clothing:server:removeOutfit", function(outfitName, outfitId)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.execute('DELETE FROM player_outfits WHERE citizenid = ? AND outfitname = ? AND outfitId = ?', {
         Player.PlayerData.citizenid,
         outfitName,
@@ -63,16 +63,16 @@ AddEventHandler("denalifw-clothing:server:removeOutfit", function(outfitName, ou
     }, function()
         local result = MySQL.Sync.fetchAll('SELECT * FROM player_outfits WHERE citizenid = ?', { Player.PlayerData.citizenid })
         if result[1] ~= nil then
-            TriggerClientEvent('denalifw-clothing:client:reloadOutfits', src, result)
+            TriggerClientEvent('NADRP-clothing:client:reloadOutfits', src, result)
         else
-            TriggerClientEvent('denalifw-clothing:client:reloadOutfits', src, nil)
+            TriggerClientEvent('NADRP-clothing:client:reloadOutfits', src, nil)
         end
     end)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-clothing:server:getOutfits', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-clothing:server:getOutfits', function(source, cb)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local anusVal = {}
 
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_outfits WHERE citizenid = ?', { Player.PlayerData.citizenid })

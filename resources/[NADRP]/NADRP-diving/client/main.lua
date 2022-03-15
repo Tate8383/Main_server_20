@@ -1,4 +1,4 @@
-denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = exports['NADRP-core']:GetCoreObject()
 PlayerJob = {}
 local policeThreadRunning = false
 
@@ -35,15 +35,15 @@ local function RunPoliceThread()
                     inRange = true
                     DrawMarker(2, QBBoatshop.PoliceBoat.x, QBBoatshop.PoliceBoat.y, QBBoatshop.PoliceBoat.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                     if #(pos - vector3(QBBoatshop.PoliceBoat.x, QBBoatshop.PoliceBoat.y, QBBoatshop.PoliceBoat.z)) < 1.5 then
-                        denalifw.Functions.DrawText3D(QBBoatshop.PoliceBoat.x, QBBoatshop.PoliceBoat.y, QBBoatshop.PoliceBoat.z, "~g~E~w~ - Take Boat")
+                        NADRP.Functions.DrawText3D(QBBoatshop.PoliceBoat.x, QBBoatshop.PoliceBoat.y, QBBoatshop.PoliceBoat.z, "~g~E~w~ - Take Boat")
                         if IsControlJustReleased(0, 38) then
                             local coords = QBBoatshop.PoliceBoatSpawn
-                            denalifw.Functions.SpawnVehicle("predator", function(veh)
+                            NADRP.Functions.SpawnVehicle("predator", function(veh)
                                 SetVehicleNumberPlateText(veh, "PBOA"..tostring(math.random(1000, 9999)))
                                 SetEntityHeading(veh, coords.w)
                                 exports['LegacyFuel']:SetFuel(veh, 100.0)
                                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+                                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
                                 SetVehicleEngineOn(veh, true, true)
                             end, coords, true)
                         end
@@ -56,15 +56,15 @@ local function RunPoliceThread()
                     inRange = true
                     DrawMarker(2, QBBoatshop.PoliceBoat2.x, QBBoatshop.PoliceBoat2.y, QBBoatshop.PoliceBoat2.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                     if #(pos - vector3(QBBoatshop.PoliceBoat2.x, QBBoatshop.PoliceBoat2.y, QBBoatshop.PoliceBoat2.z)) < 1.5 then
-                        denalifw.Functions.DrawText3D(QBBoatshop.PoliceBoat2.x, QBBoatshop.PoliceBoat2.y, QBBoatshop.PoliceBoat2.z, "~g~E~w~ - Take Boat")
+                        NADRP.Functions.DrawText3D(QBBoatshop.PoliceBoat2.x, QBBoatshop.PoliceBoat2.y, QBBoatshop.PoliceBoat2.z, "~g~E~w~ - Take Boat")
                         if IsControlJustReleased(0, 38) then
                             local coords = QBBoatshop.PoliceBoatSpawn2
-                            denalifw.Functions.SpawnVehicle("predator", function(veh)
+                            NADRP.Functions.SpawnVehicle("predator", function(veh)
                                 SetVehicleNumberPlateText(veh, "PBOA"..tostring(math.random(1000, 9999)))
                                 SetEntityHeading(veh, coords.w)
                                 exports['LegacyFuel']:SetFuel(veh, 100.0)
                                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+                                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
                                 SetVehicleEngineOn(veh, true, true)
                             end, coords, true)
                         end
@@ -84,17 +84,17 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    denalifw.Functions.TriggerCallback('denalifw-diving:server:GetBusyDocks', function(Docks)
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    NADRP.Functions.TriggerCallback('NADRP-diving:server:GetBusyDocks', function(Docks)
         QBBoatshop.Locations["berths"] = Docks
     end)
 
-    denalifw.Functions.TriggerCallback('denalifw-diving:server:GetDivingConfig', function(Config, Area)
+    NADRP.Functions.TriggerCallback('NADRP-diving:server:GetDivingConfig', function(Config, Area)
         QBDiving.Locations = Config
-        TriggerEvent('denalifw-diving:client:SetDivingLocation', Area)
+        TriggerEvent('NADRP-diving:client:SetDivingLocation', Area)
     end)
 
-    PlayerJob = denalifw.Functions.GetPlayerData().job
+    PlayerJob = NADRP.Functions.GetPlayerData().job
 
     if PlayerJob.name == "police" then
         if PoliceBlip ~= nil then
@@ -125,7 +125,7 @@ RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     end
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 
     if JobInfo.name == "police" then
@@ -157,25 +157,25 @@ RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
     end
 end)
 
-RegisterNetEvent('denalifw-diving:client:UseJerrycan', function()
+RegisterNetEvent('NADRP-diving:client:UseJerrycan', function()
     local ped = PlayerPedId()
     local boat = IsPedInAnyBoat(ped)
     if boat then
         local curVeh = GetVehiclePedIsIn(ped, false)
-        denalifw.Functions.Progressbar("reful_boat", "Refueling boat ..", 20000, false, true, {
+        NADRP.Functions.Progressbar("reful_boat", "Refueling boat ..", 20000, false, true, {
             disableMovement = true,
             disableCarMovement = true,
             disableMouse = false,
             disableCombat = true,
         }, {}, {}, {}, function() -- Done
             exports['LegacyFuel']:SetFuel(curVeh, 100)
-            denalifw.Functions.Notify('The boat has been refueled', 'success')
-            TriggerServerEvent('denalifw-diving:server:RemoveItem', 'jerry_can', 1)
-            TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items['jerry_can'], "remove")
+            NADRP.Functions.Notify('The boat has been refueled', 'success')
+            TriggerServerEvent('NADRP-diving:server:RemoveItem', 'jerry_can', 1)
+            TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items['jerry_can'], "remove")
         end, function() -- Cancel
-            denalifw.Functions.Notify('Refueling has been canceled!', 'error')
+            NADRP.Functions.Notify('Refueling has been canceled!', 'error')
         end)
     else
-        denalifw.Functions.Notify('You are not in a boat', 'error')
+        NADRP.Functions.Notify('You are not in a boat', 'error')
     end
 end)

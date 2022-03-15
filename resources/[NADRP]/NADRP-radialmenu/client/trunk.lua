@@ -71,12 +71,12 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-kidnapping:client:SetKidnapping', function(bool)
+RegisterNetEvent('NADRP-kidnapping:client:SetKidnapping', function(bool)
     isKidnapping = bool
 end)
 
-RegisterNetEvent('denalifw-trunk:client:KidnapTrunk', function()
-    local closestPlayer, distance = denalifw.Functions.GetClosestPlayer()
+RegisterNetEvent('NADRP-trunk:client:KidnapTrunk', function()
+    local closestPlayer, distance = NADRP.Functions.GetClosestPlayer()
     if distance ~= -1 and distance < 2 then
         if isKidnapping then
             local closestVehicle = getNearestVeh()
@@ -84,21 +84,21 @@ RegisterNetEvent('denalifw-trunk:client:KidnapTrunk', function()
                 TriggerEvent('police:client:KidnapPlayer')
                 TriggerServerEvent("police:server:CuffPlayer", GetPlayerServerId(closestPlayer), false)
                 Wait(50)
-                TriggerServerEvent("denalifw-trunk:server:KidnapTrunk", GetPlayerServerId(closestPlayer), closestVehicle)
+                TriggerServerEvent("NADRP-trunk:server:KidnapTrunk", GetPlayerServerId(closestPlayer), closestVehicle)
             end
         else
-            denalifw.Functions.Notify(Lang:t("error.not_kidnapped"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.not_kidnapped"), 'error')
         end
     end
 end)
 
-RegisterNetEvent('denalifw-trunk:client:KidnapGetIn', function(veh)
+RegisterNetEvent('NADRP-trunk:client:KidnapGetIn', function(veh)
     local ped = PlayerPedId()
     local closestVehicle = veh
     local vehClass = GetVehicleClass(closestVehicle)
-    local plate = denalifw.Functions.GetPlate(closestVehicle)
+    local plate = NADRP.Functions.GetPlate(closestVehicle)
     if Config.TrunkClasses[vehClass].allowed then
-        denalifw.Functions.TriggerCallback('denalifw-trunk:server:getTrunkBusy', function(isBusy)
+        NADRP.Functions.TriggerCallback('NADRP-trunk:server:getTrunkBusy', function(isBusy)
             if not disabledTrunk[GetEntityModel(closestVehicle)] then
                 if not inTrunk then
                     if not isBusy then
@@ -115,55 +115,55 @@ RegisterNetEvent('denalifw-trunk:client:KidnapGetIn', function(veh)
                                 end
                                 TaskPlayAnim(ped, "fin_ext_p1-7", "cs_devin_dual-7", 8.0, 8.0, -1, 1, 999.0, 0, 0, 0)
                                 AttachEntityToEntity(ped, closestVehicle, 0, offset.x, offset.y, offset.z, 0, 0, 40.0, 1, 1, 1, 1, 1, 1)
-                                TriggerServerEvent('denalifw-trunk:server:setTrunkBusy', plate, true)
+                                TriggerServerEvent('NADRP-trunk:server:setTrunkBusy', plate, true)
                                 inTrunk = true
                                 Wait(500)
                                 SetVehicleDoorShut(closestVehicle, 5, false)
-                                denalifw.Functions.Notify(Lang:t("success.entered_trunk"), 'success', 4000)
+                                NADRP.Functions.Notify(Lang:t("success.entered_trunk"), 'success', 4000)
                                 TrunkCam(true)
                                 isKidnapped = true
                             else
-                                denalifw.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
+                                NADRP.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
                             end
                         else
                             local vehicle = GetEntityAttachedTo(ped)
-                            plate = denalifw.Functions.GetPlate(vehicle)
+                            plate = NADRP.Functions.GetPlate(vehicle)
                             if GetVehicleDoorAngleRatio(vehicle, 5) > 0 then
                                 local vehCoords = GetOffsetFromEntityInWorldCoords(vehicle, 0, -5.0, 0)
                                 DetachEntity(ped, true, true)
                                 ClearPedTasks(ped)
                                 inTrunk = false
-                                TriggerServerEvent('denalifw-smallresources:trunk:server:setTrunkBusy', plate, nil)
+                                TriggerServerEvent('NADRP-smallresources:trunk:server:setTrunkBusy', plate, nil)
                                 SetEntityCoords(ped, vehCoords.x, vehCoords.y, vehCoords.z)
                                 SetEntityCollision(PlayerPedId(), true, true)
                                 TrunkCam(false)
                             else
-                                denalifw.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
+                                NADRP.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
                             end
                         end
                     else
-                        denalifw.Functions.Notify(Lang:t("error.someone_in_trunk"), 'error', 2500)
+                        NADRP.Functions.Notify(Lang:t("error.someone_in_trunk"), 'error', 2500)
                     end
                 else
-                    denalifw.Functions.Notify(Lang:t("error.already_in_trunk"), 'error', 2500)
+                    NADRP.Functions.Notify(Lang:t("error.already_in_trunk"), 'error', 2500)
                 end
             else
-                denalifw.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
+                NADRP.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
             end
         end, plate)
     else
-        denalifw.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
+        NADRP.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
     end
 end)
 
-RegisterNetEvent('denalifw-trunk:client:GetIn', function()
+RegisterNetEvent('NADRP-trunk:client:GetIn', function()
     local ped = PlayerPedId()
     local closestVehicle = getNearestVeh()
     if closestVehicle ~= 0 then
         local vehClass = GetVehicleClass(closestVehicle)
-        local plate = denalifw.Functions.GetPlate(closestVehicle)
+        local plate = NADRP.Functions.GetPlate(closestVehicle)
         if Config.TrunkClasses[vehClass].allowed then
-            denalifw.Functions.TriggerCallback('denalifw-trunk:server:getTrunkBusy', function(isBusy)
+            NADRP.Functions.TriggerCallback('NADRP-trunk:server:getTrunkBusy', function(isBusy)
                 if not disabledTrunk[GetEntityModel(closestVehicle)] then
                     if not inTrunk then
                         if not isBusy then
@@ -179,30 +179,30 @@ RegisterNetEvent('denalifw-trunk:client:GetIn', function()
                                 end
                                 TaskPlayAnim(ped, "fin_ext_p1-7", "cs_devin_dual-7", 8.0, 8.0, -1, 1, 999.0, 0, 0, 0)
                                 AttachEntityToEntity(ped, closestVehicle, 0, offset.x, offset.y, offset.z, 0, 0, 40.0, 1, 1, 1, 1, 1, 1)
-                                TriggerServerEvent('denalifw-trunk:server:setTrunkBusy', plate, true)
+                                TriggerServerEvent('NADRP-trunk:server:setTrunkBusy', plate, true)
                                 inTrunk = true
                                 Wait(500)
                                 SetVehicleDoorShut(closestVehicle, 5, false)
-                                denalifw.Functions.Notify(Lang:t("success.entered_trunk"), 'success', 4000)
+                                NADRP.Functions.Notify(Lang:t("success.entered_trunk"), 'success', 4000)
                                 TrunkCam(true)
                             else
-                                denalifw.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
+                                NADRP.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
                             end
                         else
-                            denalifw.Functions.Notify(Lang:t("error.someone_in_trunk"), 'error', 2500)
+                            NADRP.Functions.Notify(Lang:t("error.someone_in_trunk"), 'error', 2500)
                         end
                     else
-                        denalifw.Functions.Notify(Lang:t("error.already_in_trunk"), 'error', 2500)
+                        NADRP.Functions.Notify(Lang:t("error.already_in_trunk"), 'error', 2500)
                     end
                 else
-                    denalifw.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
+                    NADRP.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
                 end
             end, plate)
         else
-            denalifw.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
+            NADRP.Functions.Notify(Lang:t("error.cant_enter_trunk"), 'error', 2500)
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.no_vehicle_found"), 'error', 2500)
+        NADRP.Functions.Notify(Lang:t("error.no_vehicle_found"), 'error', 2500)
     end
 end)
 
@@ -231,7 +231,7 @@ CreateThread(function()
                 local ped = PlayerPedId()
                 local vehicle = GetEntityAttachedTo(ped)
                 local drawPos = GetOffsetFromEntityInWorldCoords(vehicle, 0, -2.5, 0)
-                local plate = denalifw.Functions.GetPlate(vehicle)
+                local plate = NADRP.Functions.GetPlate(vehicle)
                 if DoesEntityExist(vehicle) then
                     sleep = 0
                     DrawText3Ds(drawPos.x, drawPos.y, drawPos.z + 0.75, Lang:t("general.get_out_trunk_button"))
@@ -241,12 +241,12 @@ CreateThread(function()
                             DetachEntity(ped, true, true)
                             ClearPedTasks(ped)
                             inTrunk = false
-                            TriggerServerEvent('denalifw-trunk:server:setTrunkBusy', plate, false)
+                            TriggerServerEvent('NADRP-trunk:server:setTrunkBusy', plate, false)
                             SetEntityCoords(ped, vehCoords.x, vehCoords.y, vehCoords.z)
                             SetEntityCollision(ped, true, true)
                             TrunkCam(false)
                         else
-                            denalifw.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
+                            NADRP.Functions.Notify(Lang:t("error.trunk_closed"), 'error', 2500)
                         end
                         sleep = 100
                     end
@@ -255,7 +255,7 @@ CreateThread(function()
                         DrawText3Ds(drawPos.x, drawPos.y, drawPos.z + 0.5, Lang:t("general.close_trunk_button"))
                         if IsControlJustPressed(0, 47) then
                             if not IsVehicleSeatFree(vehicle, -1) then
-                                TriggerServerEvent('denalifw-radialmenu:trunk:server:Door', false, plate, 5)
+                                TriggerServerEvent('NADRP-radialmenu:trunk:server:Door', false, plate, 5)
                             else
                                 SetVehicleDoorShut(vehicle, 5, false)
                             end
@@ -266,7 +266,7 @@ CreateThread(function()
                         DrawText3Ds(drawPos.x, drawPos.y, drawPos.z + 0.5, Lang:t("general.open_trunk_button"))
                         if IsControlJustPressed(0, 47) then
                             if not IsVehicleSeatFree(vehicle, -1) then
-                                TriggerServerEvent('denalifw-radialmenu:trunk:server:Door', true, plate, 5)
+                                TriggerServerEvent('NADRP-radialmenu:trunk:server:Door', true, plate, 5)
                             else
                                 SetVehicleDoorOpen(vehicle, 5, false, false)
                             end

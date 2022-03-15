@@ -1,13 +1,13 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-TaxiJob'
+description 'NADRP-TaxiJob'
 version '1.0.0'
 
 ui_page 'html/meter.html'
 
 shared_scripts {
-    '@denalifw-core/shared/locale.lua',
+    '@NADRP-core/shared/locale.lua',
     'locales/en.lua', -- Change to the language you want to use
     'config.lua',
 }

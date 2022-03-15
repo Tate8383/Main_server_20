@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-TruckerJob'
+description 'NADRP-TruckerJob'
 version '1.0.0'
 
 shared_script 'config.lua'

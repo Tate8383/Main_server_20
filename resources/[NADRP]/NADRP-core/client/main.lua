@@ -1,13 +1,13 @@
-denalifw = {}
-denalifw.PlayerData = {}
-denalifw.Config = QBConfig
-denalifw.Shared = QBShared
-denalifw.ServerCallbacks = {}
+NADRP = {}
+NADRP.PlayerData = {}
+NADRP.Config = QBConfig
+NADRP.Shared = QBShared
+NADRP.ServerCallbacks = {}
 
 exports('GetCoreObject', function()
-    return denalifw
+    return NADRP
 end)
 
 -- To use this export in a script instead of manifest method
 -- Just put this line of code below at the very top of the script
--- local denalifw = exports['denalifw-core']:GetCoreObject()
+-- local NADRP = exports['NADRP-core']:GetCoreObject()

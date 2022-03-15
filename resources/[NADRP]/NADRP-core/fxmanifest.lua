@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'denalifw-core'
+description 'NADRP-core'
 version '1.0.0'
 
 shared_scripts {

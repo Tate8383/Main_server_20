@@ -82,7 +82,7 @@ RegisterNetEvent('evidence:client:SetStatus', function(statusId, time)
                 text = StatusList[statusId],
                 time = time
             }
-            denalifw.Functions.Notify(CurrentStatusList[statusId].text, 'error')
+            NADRP.Functions.Notify(CurrentStatusList[statusId].text, 'error')
         end
     elseif StatusList[statusId] then
         CurrentStatusList[statusId] = nil
@@ -126,7 +126,7 @@ end)
 RegisterNetEvent('evidence:client:ClearBlooddropsInArea', function()
     local pos = GetEntityCoords(PlayerPedId())
     local blooddropList = {}
-    denalifw.Functions.Progressbar('clear_blooddrops', Lang:t("progressbar.blood_clear"), 5000, false, true, {
+    NADRP.Functions.Progressbar('clear_blooddrops', Lang:t("progressbar.blood_clear"), 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -141,10 +141,10 @@ RegisterNetEvent('evidence:client:ClearBlooddropsInArea', function()
                 end
             end
             TriggerServerEvent('evidence:server:ClearBlooddrops', blooddropList)
-            denalifw.Functions.Notify(Lang:t("success.blood_clear"), "success")
+            NADRP.Functions.Notify(Lang:t("success.blood_clear"), "success")
         end
     end, function() -- Cancel
-        denalifw.Functions.Notify(Lang:t("error.blood_not_cleared"), "error")
+        NADRP.Functions.Notify(Lang:t("error.blood_not_cleared"), "error")
     end)
 end)
 
@@ -168,7 +168,7 @@ end)
 RegisterNetEvent('evidence:client:ClearCasingsInArea', function()
     local pos = GetEntityCoords(PlayerPedId())
     local casingList = {}
-    denalifw.Functions.Progressbar('clear_casings', Lang:t("progressbar.bullet_casing"), 5000, false, true, {
+    NADRP.Functions.Progressbar('clear_casings', Lang:t("progressbar.bullet_casing"), 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -182,11 +182,11 @@ RegisterNetEvent('evidence:client:ClearCasingsInArea', function()
                 end
             end
             TriggerServerEvent('evidence:server:ClearCasings', casingList)
-            denalifw.Functions.Notify(Lang:t("success.bullet_casing_removed"), "success")
+            NADRP.Functions.Notify(Lang:t("success.bullet_casing_removed"), "success")
             
         end
     end, function() -- Cancel
-        denalifw.Functions.Notify(Lang:t("error.bullet_casing_not_removed"), "error")
+        NADRP.Functions.Notify(Lang:t("error.bullet_casing_not_removed"), "error")
     end)
 end)
 
@@ -251,7 +251,7 @@ CreateThread(function()
                         label = Lang:t('info.casing'),
                         type = 'casing',
                         street = streetLabel:gsub("%'", ""),
-                        ammolabel = Config.AmmoLabels[denalifw.Shared.Weapons[Casings[CurrentCasing].type]['ammotype']],
+                        ammolabel = Config.AmmoLabels[NADRP.Shared.Weapons[Casings[CurrentCasing].type]['ammotype']],
                         ammotype = Casings[CurrentCasing].type,
                         serie = Casings[CurrentCasing].serie
                     }

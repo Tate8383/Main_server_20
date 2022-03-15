@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local DenaliFW = exports['denalifw-core']:GetCoreObject()
 local isNearPump = false
 local isFueling = false
 local currentFuel = 0.0
@@ -74,7 +74,7 @@ CreateThread(function()
 
 		if pumpDistance < 2.5 then
 			isNearPump = pumpObject
-			currentCash = denalifw.Functions.GetPlayerData().money['cash']
+			currentCash = DenaliFW.Functions.GetPlayerData().money['cash']
 		else
 			isNearPump = false
 
@@ -225,8 +225,8 @@ CreateThread(function()
 							DrawText3Ds(stringCoords.x, stringCoords.y, stringCoords.z + 1.2, Config.Strings.PurchaseJerryCan)
 
 							if IsControlJustReleased(0, 38) then
-								TriggerServerEvent('denalifw:Server:AddItem', "weapon_petrolcan", 1)
-								TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["weapon_petrolcan"], "add")
+								TriggerServerEvent('DenaliFW:Server:AddItem', "weapon_petrolcan", 1)
+								TriggerEvent("inventory:client:ItemBox", DenaliFW.Shared.Items["weapon_petrolcan"], "add")
 								TriggerServerEvent('fuel:pay', Config.JerryCanCost, GetPlayerServerId(PlayerId()))
 							end
 						else

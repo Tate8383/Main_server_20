@@ -125,75 +125,75 @@ $(document).on('click', '.phone-application', function(e){
 
                 if (PressedApplication == "settings") {
                     $("#myPhoneNumber").text(QB.Phone.Data.PlayerData.charinfo.phone);
-                    $("#mySerialNumber").text("denalifw-" + QB.Phone.Data.PlayerData.metadata["phonedata"].SerialNumber);
+                    $("#mySerialNumber").text("NADRP-" + QB.Phone.Data.PlayerData.metadata["phonedata"].SerialNumber);
                 } else if (PressedApplication == "twitter") {
-                    $.post('https://denalifw-phone/GetMentionedTweets', JSON.stringify({}), function(MentionedTweets){
+                    $.post('https://NADRP-phone/GetMentionedTweets', JSON.stringify({}), function(MentionedTweets){
                         QB.Phone.Notifications.LoadMentionedTweets(MentionedTweets)
                     })
-                    $.post('https://denalifw-phone/GetHashtags', JSON.stringify({}), function(Hashtags){
+                    $.post('https://NADRP-phone/GetHashtags', JSON.stringify({}), function(Hashtags){
                         QB.Phone.Notifications.LoadHashtags(Hashtags)
                     })
                     if (QB.Phone.Data.IsOpen) {
-                        $.post('https://denalifw-phone/GetTweets', JSON.stringify({}), function(Tweets){
+                        $.post('https://NADRP-phone/GetTweets', JSON.stringify({}), function(Tweets){
                             QB.Phone.Notifications.LoadTweets(Tweets);
                         });
                     }
                 } else if (PressedApplication == "bank") {
                     QB.Phone.Functions.DoBankOpen();
-                    $.post('https://denalifw-phone/GetBankContacts', JSON.stringify({}), function(contacts){
+                    $.post('https://NADRP-phone/GetBankContacts', JSON.stringify({}), function(contacts){
                         QB.Phone.Functions.LoadContactsWithNumber(contacts);
                     });
-                    $.post('https://denalifw-phone/GetInvoices', JSON.stringify({}), function(invoices){
+                    $.post('https://NADRP-phone/GetInvoices', JSON.stringify({}), function(invoices){
                         QB.Phone.Functions.LoadBankInvoices(invoices);
                     });
                 } else if (PressedApplication == "whatsapp") {
-                    $.post('https://denalifw-phone/GetWhatsappChats', JSON.stringify({}), function(chats){
+                    $.post('https://NADRP-phone/GetWhatsappChats', JSON.stringify({}), function(chats){
                         QB.Phone.Functions.LoadWhatsappChats(chats);
                     });
                 } else if (PressedApplication == "phone") {
-                    $.post('https://denalifw-phone/GetMissedCalls', JSON.stringify({}), function(recent){
+                    $.post('https://NADRP-phone/GetMissedCalls', JSON.stringify({}), function(recent){
                         QB.Phone.Functions.SetupRecentCalls(recent);
                     });
-                    $.post('https://denalifw-phone/GetSuggestedContacts', JSON.stringify({}), function(suggested){
+                    $.post('https://NADRP-phone/GetSuggestedContacts', JSON.stringify({}), function(suggested){
                         QB.Phone.Functions.SetupSuggestedContacts(suggested);
                     });
-                    $.post('https://denalifw-phone/ClearGeneralAlerts', JSON.stringify({
+                    $.post('https://NADRP-phone/ClearGeneralAlerts', JSON.stringify({
                         app: "phone"
                     }));
                 } else if (PressedApplication == "mail") {
-                    $.post('https://denalifw-phone/GetMails', JSON.stringify({}), function(mails){
+                    $.post('https://NADRP-phone/GetMails', JSON.stringify({}), function(mails){
                         QB.Phone.Functions.SetupMails(mails);
                     });
-                    $.post('https://denalifw-phone/ClearGeneralAlerts', JSON.stringify({
+                    $.post('https://NADRP-phone/ClearGeneralAlerts', JSON.stringify({
                         app: "mail"
                     }));
                 } else if (PressedApplication == "advert") {
-                    $.post('https://denalifw-phone/LoadAdverts', JSON.stringify({}), function(Adverts){
+                    $.post('https://NADRP-phone/LoadAdverts', JSON.stringify({}), function(Adverts){
                         QB.Phone.Functions.RefreshAdverts(Adverts);
                     })
                 } else if (PressedApplication == "garage") {
-                    $.post('https://denalifw-phone/SetupGarageVehicles', JSON.stringify({}), function(Vehicles){
+                    $.post('https://NADRP-phone/SetupGarageVehicles', JSON.stringify({}), function(Vehicles){
                         SetupGarageVehicles(Vehicles);
                     })
                 } else if (PressedApplication == "crypto") {
-                    $.post('https://denalifw-phone/GetCryptoData', JSON.stringify({
+                    $.post('https://NADRP-phone/GetCryptoData', JSON.stringify({
                         crypto: "qbit",
                     }), function(CryptoData){
                         SetupCryptoData(CryptoData);
                     })
 
-                    $.post('https://denalifw-phone/GetCryptoTransactions', JSON.stringify({}), function(data){
+                    $.post('https://NADRP-phone/GetCryptoTransactions', JSON.stringify({}), function(data){
                         RefreshCryptoTransactions(data);
                     })
                 } else if (PressedApplication == "racing") {
-                    $.post('https://denalifw-phone/GetAvailableRaces', JSON.stringify({}), function(Races){
+                    $.post('https://NADRP-phone/GetAvailableRaces', JSON.stringify({}), function(Races){
                         SetupRaces(Races);
                     });
                 } else if (PressedApplication == "houses") {
-                    $.post('https://denalifw-phone/GetPlayerHouses', JSON.stringify({}), function(Houses){
+                    $.post('https://NADRP-phone/GetPlayerHouses', JSON.stringify({}), function(Houses){
                         SetupPlayerHouses(Houses);
                     });
-                    $.post('https://denalifw-phone/GetPlayerKeys', JSON.stringify({}), function(Keys){
+                    $.post('https://NADRP-phone/GetPlayerKeys', JSON.stringify({}), function(Keys){
                         $(".house-app-mykeys-container").html("");
                         if (Keys.length > 0) {
                             $.each(Keys, function(i, key){
@@ -206,25 +206,25 @@ $(document).on('click', '.phone-application', function(e){
                 } else if (PressedApplication == "meos") {
                     SetupMeosHome();
                 } else if (PressedApplication == "lawyers") {
-                    $.post('https://denalifw-phone/GetCurrentLawyers', JSON.stringify({}), function(data){
+                    $.post('https://NADRP-phone/GetCurrentLawyers', JSON.stringify({}), function(data){
                         SetupLawyers(data);
                     });
                 } else if (PressedApplication == "store") {
-                    $.post('https://denalifw-phone/SetupStoreApps', JSON.stringify({}), function(data){
+                    $.post('https://NADRP-phone/SetupStoreApps', JSON.stringify({}), function(data){
                         SetupAppstore(data);
                     });
                 } else if (PressedApplication == "trucker") {
-                    $.post('https://denalifw-phone/GetTruckerData', JSON.stringify({}), function(data){
+                    $.post('https://NADRP-phone/GetTruckerData', JSON.stringify({}), function(data){
                         SetupTruckerInfo(data);
                     });
                 }
                 else if (PressedApplication == "gallery") {
-                    $.post('https://denalifw-phone/GetGalleryData', JSON.stringify({}), function(data){
+                    $.post('https://NADRP-phone/GetGalleryData', JSON.stringify({}), function(data){
                         setUpGalleryData(data);
                     });
                 }
                 else if (PressedApplication == "camera") {
-                    $.post('https://denalifw-phone/TakePhoto', JSON.stringify({}),function(url){
+                    $.post('https://NADRP-phone/TakePhoto', JSON.stringify({}),function(url){
                         setUpCameraApp(url)
                     })
                     QB.Phone.Functions.Close();
@@ -245,7 +245,7 @@ $(document).on('click', '.mykeys-key', function(e){
 
     var KeyData = $(this).data('KeyData');
 
-    $.post('https://denalifw-phone/SetHouseLocation', JSON.stringify({
+    $.post('https://NADRP-phone/SetHouseLocation', JSON.stringify({
         HouseData: KeyData
     }))
 });
@@ -353,7 +353,7 @@ QB.Phone.Functions.Close = function() {
     }
 
     QB.Phone.Animations.BottomSlideDown('.container', 300, -70);
-    $.post('https://denalifw-phone/Close');
+    $.post('https://NADRP-phone/Close');
     QB.Phone.Data.IsOpen = false;
 }
 
@@ -390,7 +390,7 @@ QB.Phone.Animations.TopSlideUp = function(Object, Timeout, Percentage, cb) {
 }
 
 QB.Phone.Notifications.Add = function(icon, title, text, color, timeout) {
-    $.post('https://denalifw-phone/HasPhone', JSON.stringify({}), function(HasPhone){
+    $.post('https://NADRP-phone/HasPhone', JSON.stringify({}), function(HasPhone){
         if (HasPhone) {
             if (timeout == null && timeout == undefined) {
                 timeout = 1500;
@@ -484,7 +484,7 @@ QB.Phone.Functions.UpdateTime = function(data) {
 var NotificationTimeout = null;
 
 QB.Screen.Notification = function(title, content, icon, timeout, color) {
-    $.post('https://denalifw-phone/HasPhone', JSON.stringify({}), function(HasPhone){
+    $.post('https://NADRP-phone/HasPhone', JSON.stringify({}), function(HasPhone){
         if (HasPhone) {
             if (color != null && color != undefined) {
                 $(".screen-notifications-container").css({"background-color":color});
@@ -593,14 +593,14 @@ $(document).ready(function(){
                 QB.Phone.Functions.ReloadWhatsappAlerts(event.data.Chats);
                 break;
             case "CancelOutgoingCall":
-                $.post('https://denalifw-phone/HasPhone', JSON.stringify({}), function(HasPhone){
+                $.post('https://NADRP-phone/HasPhone', JSON.stringify({}), function(HasPhone){
                     if (HasPhone) {
                         CancelOutgoingCall();
                     }
                 });
                 break;
             case "IncomingCallAlert":
-                $.post('https://denalifw-phone/HasPhone', JSON.stringify({}), function(HasPhone){
+                $.post('https://NADRP-phone/HasPhone', JSON.stringify({}), function(HasPhone){
                     if (HasPhone) {
                         IncomingCallAlert(event.data.CallData, event.data.Canceled, event.data.AnonymousCall);
                     }
@@ -676,7 +676,7 @@ $(document).ready(function(){
                 RefreshCryptoTransactions(event.data);
                 break;
             case "UpdateRacingApp":
-                $.post('https://denalifw-phone/GetAvailableRaces', JSON.stringify({}), function(Races){
+                $.post('https://NADRP-phone/GetAvailableRaces', JSON.stringify({}), function(Races){
                     SetupRaces(Races);
                 });
                 break;

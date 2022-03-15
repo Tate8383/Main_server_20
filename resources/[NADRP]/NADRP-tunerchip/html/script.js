@@ -27,7 +27,7 @@ $(document).on('keydown', function() {
 });
 
 $(document).on('click', '#save', function(){
-    $.post('https://denalifw-tunerchip/save', JSON.stringify({
+    $.post('https://NADRP-tunerchip/save', JSON.stringify({
         boost: $("#boost-slider").val(),
         acceleration: $("#acceleration-slider").val(),
         gearchange: $("#gear-slider").val(),
@@ -37,7 +37,7 @@ $(document).on('click', '#save', function(){
 });
 
 $(document).on('click', '#reset', function(){
-    $.post('https://denalifw-tunerchip/reset');
+    $.post('https://NADRP-tunerchip/reset');
 });
 
 $(document).on('click', '#cancel', function(){
@@ -74,7 +74,7 @@ $(document).on('click', "#stancer", function(){
 
 $(document).on('click', "#save-neon", function(){
     if (RainbowNeon) {
-        $.post('https://denalifw-tunerchip/saveNeon', JSON.stringify({
+        $.post('https://NADRP-tunerchip/saveNeon', JSON.stringify({
             neonEnabled: $("#neon-slider").val(),
             r: $("#color-r").val(),
             g: $("#color-g").val(),
@@ -82,7 +82,7 @@ $(document).on('click', "#save-neon", function(){
             rainbowEnabled: true,
         }));
     } else {
-        $.post('https://denalifw-tunerchip/saveNeon', JSON.stringify({
+        $.post('https://NADRP-tunerchip/saveNeon', JSON.stringify({
             neonEnabled: $("#neon-slider").val(),
             r: $("#color-r").val(),
             g: $("#color-g").val(),
@@ -93,7 +93,7 @@ $(document).on('click', "#save-neon", function(){
 })
 
 $(document).on('click', '#save-headlights', function(){
-    $.post('https://denalifw-tunerchip/saveHeadlights', JSON.stringify({
+    $.post('https://NADRP-tunerchip/saveHeadlights', JSON.stringify({
         value: headlightVal,
         rainbowEnabled: RainbowHeadlight,
     }))
@@ -105,7 +105,7 @@ $(document).on('click', '#save-stancer', function(){
     var rear_offset = $("#rear-offset").val();
     var rear_rotation = $("#rear-rotation").val();
 
-    $.post('https://denalifw-tunerchip/SetStancer', JSON.stringify({
+    $.post('https://NADRP-tunerchip/SetStancer', JSON.stringify({
         fOffset: front_offset,
         fRotation: front_rotation,
         rOffset: rear_offset,
@@ -144,7 +144,7 @@ $(document).on('click', ".neon-software-color-pallete-color", function(){
 });
 
 QBTuner.Open = function() {
-    $.post('https://denalifw-tunerchip/checkItem', JSON.stringify({item: "tunerlaptop"}), function(hasItem){
+    $.post('https://NADRP-tunerchip/checkItem', JSON.stringify({item: "tunerlaptop"}), function(hasItem){
         if (hasItem) {
             $('.container').fadeIn(250);
         }
@@ -153,5 +153,5 @@ QBTuner.Open = function() {
 
 QBTuner.Close = function() {
     $('.container').fadeOut(250);
-    $.post('https://denalifw-tunerchip/exit');
+    $.post('https://NADRP-tunerchip/exit');
 }

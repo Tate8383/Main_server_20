@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 local isPlyInBennys = false
 local plyFirstJoin = false
@@ -56,7 +56,7 @@ end
 local function saveVehicle()
     local plyPed = PlayerPedId()
     local veh = GetVehiclePedIsIn(plyPed, false)
-    local myCar = denalifw.Functions.GetVehicleProperties(veh)
+    local myCar = NADRP.Functions.GetVehicleProperties(veh)
     TriggerServerEvent('updateVehicle',myCar)
 end
 
@@ -66,7 +66,7 @@ function AttemptPurchase(type, upgradeLevel)
     if upgradeLevel ~= nil then
         upgradeLevel = upgradeLevel + 2
     end
-    TriggerServerEvent("denalifw-customs:attemptPurchase", type, upgradeLevel)
+    TriggerServerEvent("NADRP-customs:attemptPurchase", type, upgradeLevel)
 
     attemptingPurchase = true
 
@@ -793,10 +793,10 @@ CreateThread(function()
                             Draw3DText(v.coords.x, v.coords.y, v.coords.z + 0.5, "[Press ~p~E~w~ - Enter Benny's Motorworks]", 255, 255, 255, 255, 4, 0.45, true, true, true, true, 0, 0, 0, 0, 55)
                             if IsControlJustReleased(1, 38) then
 				if GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId()), -1) == PlayerPedId() then
-					if (v.useJob and isAuthorized((denalifw.Functions.GetPlayerData().job.name), k)) or not v.useJob then
+					if (v.useJob and isAuthorized((NADRP.Functions.GetPlayerData().job.name), k)) or not v.useJob then
 					    TriggerEvent('event:control:bennys', k)
 					else
-					    denalifw.Functions.Notify("You are not authorized", "error")
+					    NADRP.Functions.Notify("You are not authorized", "error")
 					end
 				end
                             end
@@ -815,16 +815,16 @@ CreateThread(function()
 end)
 
 --#[Event Handlers]#--
-RegisterNetEvent("denalifw-customs:purchaseSuccessful", function()
+RegisterNetEvent("NADRP-customs:purchaseSuccessful", function()
     isPurchaseSuccessful = true
     attemptingPurchase = false
-    denalifw.Functions.Notify("Purchase Successful")
+    NADRP.Functions.Notify("Purchase Successful")
 end)
 
-RegisterNetEvent("denalifw-customs:purchaseFailed", function()
+RegisterNetEvent("NADRP-customs:purchaseFailed", function()
     isPurchaseSuccessful = false
     attemptingPurchase = false
-    denalifw.Functions.Notify("Not enough money", "error")
+    NADRP.Functions.Notify("Not enough money", "error")
 end)
 
 

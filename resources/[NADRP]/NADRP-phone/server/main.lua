@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local QBPhone = {}
 local Tweets = {}
 local AppAlerts = {}
@@ -7,13 +7,13 @@ local Hashtags = {}
 local Calls = {}
 local Adverts = {}
 local GeneratedPlates = {}
-local WebHook = "https://discord.com/api/webhooks/953239515902906388/r3pxmooaAXvLq91CD2RT0T6gdXuNeDh9IGCflAhbh1sauC5ocbChhJspV-gFC6tmNGVf"
+local WebHook = ""
 local bannedCharacters = {'%','$',';'}
 
 -- Functions
 
 local function GetOnlineStatus(number)
-    local Target = denalifw.Functions.GetPlayerByPhone(number)
+    local Target = NADRP.Functions.GetPlayerByPhone(number)
     local retval = false
     if Target ~= nil then
         retval = true
@@ -126,8 +126,8 @@ end
 
 -- Callbacks
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetCallState', function(source, cb, ContactData)
-    local Target = denalifw.Functions.GetPlayerByPhone(ContactData.number)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetCallState', function(source, cb, ContactData)
+    local Target = NADRP.Functions.GetPlayerByPhone(ContactData.number)
     if Target ~= nil then
         if Calls[Target.PlayerData.citizenid] ~= nil then
             if Calls[Target.PlayerData.citizenid].inCall then
@@ -143,9 +143,9 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetCallState', function
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetPhoneData', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetPhoneData', function(source, cb)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if Player ~= nil then
         local PhoneData = {
             Applications = {},
@@ -177,7 +177,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetPhoneData', function
         local invoices = MySQL.Sync.fetchAll('SELECT * FROM phone_invoices WHERE citizenid = ?', {Player.PlayerData.citizenid})
         if invoices[1] ~= nil then
             for k, v in pairs(invoices) do
-                local Ply = denalifw.Functions.GetPlayerByCitizenId(v.sender)
+                local Ply = NADRP.Functions.GetPlayerByCitizenId(v.sender)
                 if Ply ~= nil then
                     v.number = Ply.PlayerData.charinfo.phone
                 else
@@ -197,10 +197,10 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetPhoneData', function
         if garageresult[1] ~= nil then
             for k, v in pairs(garageresult) do
                 local vehicleModel = v.vehicle
-                if (denalifw.Shared.Vehicles[vehicleModel] ~= nil) and (Garages[v.garage] ~= nil) then
+                if (NADRP.Shared.Vehicles[vehicleModel] ~= nil) and (Garages[v.garage] ~= nil) then
                     v.garage = Garages[v.garage].label
-                    v.vehicle = denalifw.Shared.Vehicles[vehicleModel].name
-                    v.brand = denalifw.Shared.Vehicles[vehicleModel].brand
+                    v.vehicle = NADRP.Shared.Vehicles[vehicleModel].name
+                    v.brand = NADRP.Shared.Vehicles[vehicleModel].brand
                 end
 
             end
@@ -258,10 +258,10 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetPhoneData', function
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:PayInvoice', function(source, cb, society, amount, invoiceId, sendercitizenid)
+NADRP.Functions.CreateCallback('NADRP-phone:server:PayInvoice', function(source, cb, society, amount, invoiceId, sendercitizenid)
     local Invoices = {}
-    local Ply = denalifw.Functions.GetPlayer(source)
-    local SenderPly = denalifw.Functions.GetPlayerByCitizenId(sendercitizenid)
+    local Ply = NADRP.Functions.GetPlayer(source)
+    local SenderPly = NADRP.Functions.GetPlayerByCitizenId(sendercitizenid)
     local invoiceMailData = {}
     if SenderPly and Config.BillingCommissions[society] then
         local commission = round(amount * Config.BillingCommissions[society])
@@ -279,8 +279,8 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:PayInvoice', function(s
         }
     end
     Ply.Functions.RemoveMoney('bank', amount, "paid-invoice")
-    TriggerEvent('denalifw-phone:server:sendNewMailToOffline', sendercitizenid, invoiceMailData)
-    TriggerEvent("denalifw-bossmenu:server:addAccountMoney", society, amount)
+    TriggerEvent('NADRP-phone:server:sendNewMailToOffline', sendercitizenid, invoiceMailData)
+    TriggerEvent("NADRP-bossmenu:server:addAccountMoney", society, amount)
     MySQL.Async.execute('DELETE FROM phone_invoices WHERE id = ?', {invoiceId})
     local invoices = MySQL.Sync.fetchAll('SELECT * FROM phone_invoices WHERE citizenid = ?', {Ply.PlayerData.citizenid})
     if invoices[1] ~= nil then
@@ -289,9 +289,9 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:PayInvoice', function(s
     cb(true, Invoices)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:DeclineInvoice', function(source, cb, sender, amount, invoiceId)
+NADRP.Functions.CreateCallback('NADRP-phone:server:DeclineInvoice', function(source, cb, sender, amount, invoiceId)
     local Invoices = {}
-    local Ply = denalifw.Functions.GetPlayer(source)
+    local Ply = NADRP.Functions.GetPlayer(source)
     MySQL.Async.execute('DELETE FROM phone_invoices WHERE id = ?', {invoiceId})
     local invoices = MySQL.Sync.fetchAll('SELECT * FROM phone_invoices WHERE citizenid = ?', {Ply.PlayerData.citizenid})
     if invoices[1] ~= nil then
@@ -300,9 +300,9 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:DeclineInvoice', functi
     cb(true, Invoices)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetContactPictures', function(source, cb, Chats)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetContactPictures', function(source, cb, Chats)
     for k, v in pairs(Chats) do
-        local Player = denalifw.Functions.GetPlayerByPhone(v.number)
+        local Player = NADRP.Functions.GetPlayerByPhone(v.number)
 
         local query = '%' .. v.number .. '%'
         local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE charinfo LIKE ?', {query})
@@ -321,7 +321,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetContactPictures', fu
     end)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetContactPicture', function(source, cb, Chat)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetContactPicture', function(source, cb, Chat)
     local query = '%' .. Chat.number .. '%'
     local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE charinfo LIKE ?', {query})
     local MetaData = json.decode(result[1].metadata)
@@ -335,7 +335,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetContactPicture', fun
     end)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetPicture', function(source, cb, number)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetPicture', function(source, cb, number)
     local Picture = nil
     local query = '%' .. number .. '%'
     local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE charinfo LIKE ?', {query})
@@ -352,7 +352,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetPicture', function(s
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:FetchResult', function(source, cb, search)
+NADRP.Functions.CreateCallback('NADRP-phone:server:FetchResult', function(source, cb, search)
     local search = escape_sqli(search)
     local searchData = {}
     local ApaData = {}
@@ -400,7 +400,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:FetchResult', function(
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetVehicleSearchResults', function(source, cb, search)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetVehicleSearchResults', function(source, cb, search)
     local search = escape_sqli(search)
     local searchData = {}
     local query = '%' .. search .. '%'
@@ -411,7 +411,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetVehicleSearchResults
             local player = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {result[k].citizenid})
             if player[1] ~= nil then
                 local charinfo = json.decode(player[1].charinfo)
-                local vehicleInfo = denalifw.Shared.Vehicles[result[k].vehicle]
+                local vehicleInfo = NADRP.Shared.Vehicles[result[k].vehicle]
                 if vehicleInfo ~= nil then
                     searchData[#searchData+1] = {
                         plate = result[k].plate,
@@ -460,7 +460,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetVehicleSearchResults
     cb(searchData)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:ScanPlate', function(source, cb, plate)
+NADRP.Functions.CreateCallback('NADRP-phone:server:ScanPlate', function(source, cb, plate)
     local src = source
     local vehicleData = {}
     if plate ~= nil then
@@ -493,20 +493,20 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:ScanPlate', function(so
         end
         cb(vehicleData)
     else
-        TriggerClientEvent('denalifw:Notify', src, 'No Vehicle Nearby', 'error')
+        TriggerClientEvent('NADRP:Notify', src, 'No Vehicle Nearby', 'error')
         cb(nil)
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetGarageVehicles', function(source, cb)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetGarageVehicles', function(source, cb)
+    local Player = NADRP.Functions.GetPlayer(source)
     local Vehicles = {}
 
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ?',
         {Player.PlayerData.citizenid})
     if result[1] ~= nil then
         for k, v in pairs(result) do
-            local VehicleData = denalifw.Shared.Vehicles[v.vehicle]
+            local VehicleData = NADRP.Shared.Vehicles[v.vehicle]
 
             local VehicleGarage = "None"
             if v.garage ~= nil then
@@ -561,8 +561,8 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetGarageVehicles', fun
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:HasPhone', function(source, cb)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback('NADRP-phone:server:HasPhone', function(source, cb)
+    local Player = NADRP.Functions.GetPlayer(source)
     if Player ~= nil then
         local HasPhone = Player.Functions.GetItemByName("phone")
         if HasPhone ~= nil then
@@ -573,7 +573,7 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:HasPhone', function(sou
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:CanTransferMoney', function(source, cb, amount, iban)
+NADRP.Functions.CreateCallback('NADRP-phone:server:CanTransferMoney', function(source, cb, amount, iban)
     -- strip bad characters from bank transfers
     local newAmount = tostring(amount)
     local newiban = tostring(iban)
@@ -584,12 +584,12 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:CanTransferMoney', func
     iban = newiban
     amount = tonumber(newAmount)
     
-    local Player = denalifw.Functions.GetPlayer(source)
+    local Player = NADRP.Functions.GetPlayer(source)
     if (Player.PlayerData.money.bank - amount) >= 0 then
         local query = '%"account":"' .. iban .. '"%'
         local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE charinfo LIKE ?', {query})
         if result[1] ~= nil then
-            local Reciever = denalifw.Functions.GetPlayerByCitizenId(result[1].citizenid)
+            local Reciever = NADRP.Functions.GetPlayerByCitizenId(result[1].citizenid)
             Player.Functions.RemoveMoney('bank', amount)
             if Reciever ~= nil then
                 Reciever.Functions.AddMoney('bank', amount)
@@ -605,10 +605,10 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:CanTransferMoney', func
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-phone:server:GetCurrentLawyers', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-phone:server:GetCurrentLawyers', function(source, cb)
     local Lawyers = {}
-    for k, v in pairs(denalifw.Functions.GetPlayers()) do
-        local Player = denalifw.Functions.GetPlayer(v)
+    for k, v in pairs(NADRP.Functions.GetPlayers()) do
+        local Player = NADRP.Functions.GetPlayer(v)
         if Player ~= nil then
             if (Player.PlayerData.job.name == "lawyer" or Player.PlayerData.job.name == "realestate" or
                 Player.PlayerData.job.name == "mechanic" or Player.PlayerData.job.name == "taxi" or
@@ -625,8 +625,8 @@ denalifw.Functions.CreateCallback('denalifw-phone:server:GetCurrentLawyers', fun
     cb(Lawyers)
 end)
 
-denalifw.Functions.CreateCallback("denalifw-phone:server:GetWebhook",function(source,cb)
-	if WebHook ~= "https://discord.com/api/webhooks/953239515902906388/r3pxmooaAXvLq91CD2RT0T6gdXuNeDh9IGCflAhbh1sauC5ocbChhJspV-gFC6tmNGVf" then
+NADRP.Functions.CreateCallback("NADRP-phone:server:GetWebhook",function(source,cb)
+	if WebHook ~= "" then
 		cb(WebHook)
 	else
 		print('Set your webhook to ensure that your camera will work!!!!!! Set this on line 10 of the server sided script!!!!!')
@@ -636,9 +636,9 @@ end)
 
 -- Events
 
-RegisterNetEvent('denalifw-phone:server:AddAdvert', function(msg, url)
+RegisterNetEvent('NADRP-phone:server:AddAdvert', function(msg, url)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local CitizenId = Player.PlayerData.citizenid
     if Adverts[CitizenId] ~= nil then
         Adverts[CitizenId].message = msg
@@ -653,19 +653,19 @@ RegisterNetEvent('denalifw-phone:server:AddAdvert', function(msg, url)
             url = url
         }
     end
-    TriggerClientEvent('denalifw-phone:client:UpdateAdverts', -1, Adverts, "@" .. Player.PlayerData.charinfo.firstname .. "" .. Player.PlayerData.charinfo.lastname)
+    TriggerClientEvent('NADRP-phone:client:UpdateAdverts', -1, Adverts, "@" .. Player.PlayerData.charinfo.firstname .. "" .. Player.PlayerData.charinfo.lastname)
 end)
 
-RegisterNetEvent('denalifw-phone:server:DeleteAdvert', function()
-    local Player = denalifw.Functions.GetPlayer(source)
+RegisterNetEvent('NADRP-phone:server:DeleteAdvert', function()
+    local Player = NADRP.Functions.GetPlayer(source)
     local citizenid = Player.PlayerData.citizenid
     Adverts[citizenid] = nil
-    TriggerClientEvent('denalifw-phone:client:UpdateAdvertsDel', -1, Adverts)
+    TriggerClientEvent('NADRP-phone:client:UpdateAdvertsDel', -1, Adverts)
 end)
 
-RegisterNetEvent('denalifw-phone:server:SetCallState', function(bool)
+RegisterNetEvent('NADRP-phone:server:SetCallState', function(bool)
     local src = source
-    local Ply = denalifw.Functions.GetPlayer(src)
+    local Ply = NADRP.Functions.GetPlayer(src)
     if Calls[Ply.PlayerData.citizenid] ~= nil then
         Calls[Ply.PlayerData.citizenid].inCall = bool
     else
@@ -674,9 +674,9 @@ RegisterNetEvent('denalifw-phone:server:SetCallState', function(bool)
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:RemoveMail', function(MailId)
+RegisterNetEvent('NADRP-phone:server:RemoveMail', function(MailId)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.execute('DELETE FROM player_mails WHERE mailid = ? AND citizenid = ?', {MailId, Player.PlayerData.citizenid})
     SetTimeout(100, function()
         local mails = MySQL.Sync.fetchAll('SELECT * FROM player_mails WHERE citizenid = ? ORDER BY `date` ASC', {Player.PlayerData.citizenid})
@@ -687,19 +687,19 @@ RegisterNetEvent('denalifw-phone:server:RemoveMail', function(MailId)
                 end
             end
         end
-        TriggerClientEvent('denalifw-phone:client:UpdateMails', src, mails)
+        TriggerClientEvent('NADRP-phone:client:UpdateMails', src, mails)
     end)
 end)
 
-RegisterNetEvent('denalifw-phone:server:sendNewMail', function(mailData)
+RegisterNetEvent('NADRP-phone:server:sendNewMail', function(mailData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if mailData.button == nil then
         MySQL.Async.insert('INSERT INTO player_mails (`citizenid`, `sender`, `subject`, `message`, `mailid`, `read`) VALUES (?, ?, ?, ?, ?, ?)', {Player.PlayerData.citizenid, mailData.sender, mailData.subject, mailData.message, GenerateMailId(), 0})
     else
         MySQL.Async.insert('INSERT INTO player_mails (`citizenid`, `sender`, `subject`, `message`, `mailid`, `read`, `button`) VALUES (?, ?, ?, ?, ?, ?, ?)', {Player.PlayerData.citizenid, mailData.sender, mailData.subject, mailData.message, GenerateMailId(), 0, json.encode(mailData.button)})
     end
-    TriggerClientEvent('denalifw-phone:client:NewMailNotify', src, mailData)
+    TriggerClientEvent('NADRP-phone:client:NewMailNotify', src, mailData)
     SetTimeout(200, function()
         local mails = MySQL.Sync.fetchAll('SELECT * FROM player_mails WHERE citizenid = ? ORDER BY `date` DESC',
             {Player.PlayerData.citizenid})
@@ -711,20 +711,20 @@ RegisterNetEvent('denalifw-phone:server:sendNewMail', function(mailData)
             end
         end
 
-        TriggerClientEvent('denalifw-phone:client:UpdateMails', src, mails)
+        TriggerClientEvent('NADRP-phone:client:UpdateMails', src, mails)
     end)
 end)
 
-RegisterNetEvent('denalifw-phone:server:sendNewMailToOffline', function(citizenid, mailData)
-    local Player = denalifw.Functions.GetPlayerByCitizenId(citizenid)
+RegisterNetEvent('NADRP-phone:server:sendNewMailToOffline', function(citizenid, mailData)
+    local Player = NADRP.Functions.GetPlayerByCitizenId(citizenid)
     if Player then
         local src = Player.PlayerData.source
         if mailData.button == nil then
             MySQL.Async.insert('INSERT INTO player_mails (`citizenid`, `sender`, `subject`, `message`, `mailid`, `read`) VALUES (?, ?, ?, ?, ?, ?)', {Player.PlayerData.citizenid, mailData.sender, mailData.subject, mailData.message, GenerateMailId(), 0})
-            TriggerClientEvent('denalifw-phone:client:NewMailNotify', src, mailData)
+            TriggerClientEvent('NADRP-phone:client:NewMailNotify', src, mailData)
         else
             MySQL.Async.insert('INSERT INTO player_mails (`citizenid`, `sender`, `subject`, `message`, `mailid`, `read`, `button`) VALUES (?, ?, ?, ?, ?, ?, ?)', {Player.PlayerData.citizenid, mailData.sender, mailData.subject, mailData.message, GenerateMailId(), 0, json.encode(mailData.button)})
-            TriggerClientEvent('denalifw-phone:client:NewMailNotify', src, mailData)
+            TriggerClientEvent('NADRP-phone:client:NewMailNotify', src, mailData)
         end
         SetTimeout(200, function()
             local mails = MySQL.Sync.fetchAll(
@@ -737,7 +737,7 @@ RegisterNetEvent('denalifw-phone:server:sendNewMailToOffline', function(citizeni
                 end
             end
 
-            TriggerClientEvent('denalifw-phone:client:UpdateMails', src, mails)
+            TriggerClientEvent('NADRP-phone:client:UpdateMails', src, mails)
         end)
     else
         if mailData.button == nil then
@@ -748,8 +748,8 @@ RegisterNetEvent('denalifw-phone:server:sendNewMailToOffline', function(citizeni
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:sendNewEventMail', function(citizenid, mailData)
-    local Player = denalifw.Functions.GetPlayerByCitizenId(citizenid)
+RegisterNetEvent('NADRP-phone:server:sendNewEventMail', function(citizenid, mailData)
+    local Player = NADRP.Functions.GetPlayerByCitizenId(citizenid)
     if mailData.button == nil then
         MySQL.Async.insert('INSERT INTO player_mails (`citizenid`, `sender`, `subject`, `message`, `mailid`, `read`) VALUES (?, ?, ?, ?, ?, ?)', {citizenid, mailData.sender, mailData.subject, mailData.message, GenerateMailId(), 0})
     else
@@ -764,13 +764,13 @@ RegisterNetEvent('denalifw-phone:server:sendNewEventMail', function(citizenid, m
                 end
             end
         end
-        TriggerClientEvent('denalifw-phone:client:UpdateMails', Player.PlayerData.source, mails)
+        TriggerClientEvent('NADRP-phone:client:UpdateMails', Player.PlayerData.source, mails)
     end)
 end)
 
-RegisterNetEvent('denalifw-phone:server:ClearButtonData', function(mailId)
+RegisterNetEvent('NADRP-phone:server:ClearButtonData', function(mailId)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.execute('UPDATE player_mails SET button = ? WHERE mailid = ? AND citizenid = ?', {'', mailId, Player.PlayerData.citizenid})
     SetTimeout(200, function()
         local mails = MySQL.Sync.fetchAll('SELECT * FROM player_mails WHERE citizenid = ? ORDER BY `date` ASC', {Player.PlayerData.citizenid})
@@ -781,18 +781,18 @@ RegisterNetEvent('denalifw-phone:server:ClearButtonData', function(mailId)
                 end
             end
         end
-        TriggerClientEvent('denalifw-phone:client:UpdateMails', src, mails)
+        TriggerClientEvent('NADRP-phone:client:UpdateMails', src, mails)
     end)
 end)
 
-RegisterNetEvent('denalifw-phone:server:MentionedPlayer', function(firstName, lastName, TweetMessage)
-    for k, v in pairs(denalifw.Functions.GetPlayers()) do
-        local Player = denalifw.Functions.GetPlayer(v)
+RegisterNetEvent('NADRP-phone:server:MentionedPlayer', function(firstName, lastName, TweetMessage)
+    for k, v in pairs(NADRP.Functions.GetPlayers()) do
+        local Player = NADRP.Functions.GetPlayer(v)
         if Player ~= nil then
             if (Player.PlayerData.charinfo.firstname == firstName and Player.PlayerData.charinfo.lastname == lastName) then
                 QBPhone.SetPhoneAlerts(Player.PlayerData.citizenid, "twitter")
                 QBPhone.AddMentionedTweet(Player.PlayerData.citizenid, TweetMessage)
-                TriggerClientEvent('denalifw-phone:client:GetMentioned', Player.PlayerData.source, TweetMessage, AppAlerts[Player.PlayerData.citizenid]["twitter"])
+                TriggerClientEvent('NADRP-phone:client:GetMentioned', Player.PlayerData.source, TweetMessage, AppAlerts[Player.PlayerData.citizenid]["twitter"])
             else
                 local query1 = '%' .. firstName .. '%'
                 local query2 = '%' .. lastName .. '%'
@@ -807,31 +807,31 @@ RegisterNetEvent('denalifw-phone:server:MentionedPlayer', function(firstName, la
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:CallContact', function(TargetData, CallId, AnonymousCall)
+RegisterNetEvent('NADRP-phone:server:CallContact', function(TargetData, CallId, AnonymousCall)
     local src = source
-    local Ply = denalifw.Functions.GetPlayer(src)
-    local Target = denalifw.Functions.GetPlayerByPhone(TargetData.number)
+    local Ply = NADRP.Functions.GetPlayer(src)
+    local Target = NADRP.Functions.GetPlayerByPhone(TargetData.number)
     if Target ~= nil then
-        TriggerClientEvent('denalifw-phone:client:GetCalled', Target.PlayerData.source, Ply.PlayerData.charinfo.phone, CallId, AnonymousCall)
+        TriggerClientEvent('NADRP-phone:client:GetCalled', Target.PlayerData.source, Ply.PlayerData.charinfo.phone, CallId, AnonymousCall)
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:BillingEmail', function(data, paid)
-    for k, v in pairs(denalifw.Functions.GetPlayers()) do
-        local target = denalifw.Functions.GetPlayer(v)
+RegisterNetEvent('NADRP-phone:server:BillingEmail', function(data, paid)
+    for k, v in pairs(NADRP.Functions.GetPlayers()) do
+        local target = NADRP.Functions.GetPlayer(v)
         if target.PlayerData.job.name == data.society then
             if paid then
-                local name = '' .. denalifw.Functions.GetPlayer(source).PlayerData.charinfo.firstname .. ' ' .. denalifw.Functions.GetPlayer(source).PlayerData.charinfo.lastname .. ''
-                TriggerClientEvent('denalifw-phone:client:BillingEmail', target.PlayerData.source, data, true, name)
+                local name = '' .. NADRP.Functions.GetPlayer(source).PlayerData.charinfo.firstname .. ' ' .. NADRP.Functions.GetPlayer(source).PlayerData.charinfo.lastname .. ''
+                TriggerClientEvent('NADRP-phone:client:BillingEmail', target.PlayerData.source, data, true, name)
             else
-                local name = '' .. denalifw.Functions.GetPlayer(source).PlayerData.charinfo.firstname .. ' ' .. denalifw.Functions.GetPlayer(source).PlayerData.charinfo.lastname .. ''
-                TriggerClientEvent('denalifw-phone:client:BillingEmail', target.PlayerData.source, data, false, name)
+                local name = '' .. NADRP.Functions.GetPlayer(source).PlayerData.charinfo.firstname .. ' ' .. NADRP.Functions.GetPlayer(source).PlayerData.charinfo.lastname .. ''
+                TriggerClientEvent('NADRP-phone:client:BillingEmail', target.PlayerData.source, data, false, name)
             end
         end
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:UpdateHashtags', function(Handle, messageData)
+RegisterNetEvent('NADRP-phone:server:UpdateHashtags', function(Handle, messageData)
     if Hashtags[Handle] ~= nil and next(Hashtags[Handle]) ~= nil then
         Hashtags[Handle].messages[#Hashtags[Handle].messages+1] = messageData
     else
@@ -841,17 +841,17 @@ RegisterNetEvent('denalifw-phone:server:UpdateHashtags', function(Handle, messag
         }
         Hashtags[Handle].messages[#Hashtags[Handle].messages+1] = messageData
     end
-    TriggerClientEvent('denalifw-phone:client:UpdateHashtags', -1, Handle, messageData)
+    TriggerClientEvent('NADRP-phone:client:UpdateHashtags', -1, Handle, messageData)
 end)
 
-RegisterNetEvent('denalifw-phone:server:SetPhoneAlerts', function(app, alerts)
+RegisterNetEvent('NADRP-phone:server:SetPhoneAlerts', function(app, alerts)
     local src = source
-    local CitizenId = denalifw.Functions.GetPlayer(src).citizenid
+    local CitizenId = NADRP.Functions.GetPlayer(src).citizenid
     QBPhone.SetPhoneAlerts(CitizenId, app, alerts)
 end)
 
-RegisterNetEvent('denalifw-phone:server:DeleteTweet', function(tweetId)
-    local Player = denalifw.Functions.GetPlayer(source)
+RegisterNetEvent('NADRP-phone:server:DeleteTweet', function(tweetId)
+    local Player = NADRP.Functions.GetPlayer(source)
     local delete = false
     local TID = tweetId
     local Data = MySQL.Sync.fetchScalar('SELECT citizenid FROM phone_tweets WHERE tweetId = ?', {id})
@@ -867,11 +867,11 @@ RegisterNetEvent('denalifw-phone:server:DeleteTweet', function(tweetId)
                 TWData = nil
             end
         end
-        TriggerClientEvent('denalifw-phone:client:UpdateTweets', -1, TWData)
+        TriggerClientEvent('NADRP-phone:client:UpdateTweets', -1, TWData)
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:UpdateTweets', function(NewTweets, TweetData)
+RegisterNetEvent('NADRP-phone:server:UpdateTweets', function(NewTweets, TweetData)
     local src = source
     if Config.Linux then
 	local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
@@ -884,7 +884,7 @@ RegisterNetEvent('denalifw-phone:server:UpdateTweets', function(NewTweets, Tweet
 	TweetData.picture,
 	TweetData.tweetId
 	})
-	TriggerClientEvent('denalifw-phone:client:UpdateTweets', -1, src, NewTweets, TweetData, false)
+	TriggerClientEvent('NADRP-phone:client:UpdateTweets', -1, src, NewTweets, TweetData, false)
     else
 	local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
 	TweetData.citizenid,
@@ -896,18 +896,18 @@ RegisterNetEvent('denalifw-phone:server:UpdateTweets', function(NewTweets, Tweet
 	TweetData.picture,
 	TweetData.tweetId
 	})
-	TriggerClientEvent('denalifw-phone:client:UpdateTweets', -1, src, NewTweets, TweetData, false)		
+	TriggerClientEvent('NADRP-phone:client:UpdateTweets', -1, src, NewTweets, TweetData, false)		
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:TransferMoney', function(iban, amount)
+RegisterNetEvent('NADRP-phone:server:TransferMoney', function(iban, amount)
     local src = source
-    local sender = denalifw.Functions.GetPlayer(src)
+    local sender = NADRP.Functions.GetPlayer(src)
 
     local query = '%' .. iban .. '%'
     local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE charinfo LIKE ?', {query})
     if result[1] ~= nil then
-        local reciever = denalifw.Functions.GetPlayerByCitizenId(result[1].citizenid)
+        local reciever = NADRP.Functions.GetPlayerByCitizenId(result[1].citizenid)
 
         if reciever ~= nil then
             local PhoneItem = reciever.Functions.GetItemByName("phone")
@@ -915,7 +915,7 @@ RegisterNetEvent('denalifw-phone:server:TransferMoney', function(iban, amount)
             sender.Functions.RemoveMoney('bank', amount, "phone-transfered-to-" .. reciever.PlayerData.citizenid)
 
             if PhoneItem ~= nil then
-                TriggerClientEvent('denalifw-phone:client:TransferMoney', reciever.PlayerData.source, amount,
+                TriggerClientEvent('NADRP-phone:client:TransferMoney', reciever.PlayerData.source, amount,
                     reciever.PlayerData.money.bank)
             end
         else
@@ -926,38 +926,38 @@ RegisterNetEvent('denalifw-phone:server:TransferMoney', function(iban, amount)
             sender.Functions.RemoveMoney('bank', amount, "phone-transfered")
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, "This account number doesn't exist!", "error")
+        TriggerClientEvent('NADRP:Notify', src, "This account number doesn't exist!", "error")
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:EditContact', function(newName, newNumber, newIban, oldName, oldNumber, oldIban)
+RegisterNetEvent('NADRP-phone:server:EditContact', function(newName, newNumber, newIban, oldName, oldNumber, oldIban)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.execute(
         'UPDATE player_contacts SET name = ?, number = ?, iban = ? WHERE citizenid = ? AND name = ? AND number = ?',
         {newName, newNumber, newIban, Player.PlayerData.citizenid, oldName, oldNumber})
 end)
 
-RegisterNetEvent('denalifw-phone:server:RemoveContact', function(Name, Number)
+RegisterNetEvent('NADRP-phone:server:RemoveContact', function(Name, Number)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.execute('DELETE FROM player_contacts WHERE name = ? AND number = ? AND citizenid = ?',
         {Name, Number, Player.PlayerData.citizenid})
 end)
 
-RegisterNetEvent('denalifw-phone:server:AddNewContact', function(name, number, iban)
+RegisterNetEvent('NADRP-phone:server:AddNewContact', function(name, number, iban)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.insert('INSERT INTO player_contacts (citizenid, name, number, iban) VALUES (?, ?, ?, ?)', {Player.PlayerData.citizenid, tostring(name), tostring(number), tostring(iban)})
 end)
 
-RegisterNetEvent('denalifw-phone:server:UpdateMessages', function(ChatMessages, ChatNumber, New)
+RegisterNetEvent('NADRP-phone:server:UpdateMessages', function(ChatMessages, ChatNumber, New)
     local src = source
-    local SenderData = denalifw.Functions.GetPlayer(src)
+    local SenderData = NADRP.Functions.GetPlayer(src)
     local query = '%' .. ChatNumber .. '%'
     local Player = MySQL.Sync.fetchAll('SELECT * FROM players WHERE charinfo LIKE ?', {query})
     if Player[1] ~= nil then
-        local TargetData = denalifw.Functions.GetPlayerByCitizenId(Player[1].citizenid)
+        local TargetData = NADRP.Functions.GetPlayerByCitizenId(Player[1].citizenid)
         if TargetData ~= nil then
             local Chat = MySQL.Sync.fetchAll('SELECT * FROM phone_messages WHERE citizenid = ? AND number = ?', {SenderData.PlayerData.citizenid, ChatNumber})
             if Chat[1] ~= nil then
@@ -966,14 +966,14 @@ RegisterNetEvent('denalifw-phone:server:UpdateMessages', function(ChatMessages, 
                 -- Update for sender
                 MySQL.Async.execute('UPDATE phone_messages SET messages = ? WHERE citizenid = ? AND number = ?', {json.encode(ChatMessages), SenderData.PlayerData.citizenid, TargetData.PlayerData.charinfo.phone})
                 -- Send notification & Update messages for target
-                TriggerClientEvent('denalifw-phone:client:UpdateMessages', TargetData.PlayerData.source, ChatMessages, SenderData.PlayerData.charinfo.phone, false)
+                TriggerClientEvent('NADRP-phone:client:UpdateMessages', TargetData.PlayerData.source, ChatMessages, SenderData.PlayerData.charinfo.phone, false)
             else
                 -- Insert for target
                 MySQL.Async.insert('INSERT INTO phone_messages (citizenid, number, messages) VALUES (?, ?, ?)', {TargetData.PlayerData.citizenid, SenderData.PlayerData.charinfo.phone, json.encode(ChatMessages)})
                 -- Insert for sender
                 MySQL.Async.insert('INSERT INTO phone_messages (citizenid, number, messages) VALUES (?, ?, ?)', {SenderData.PlayerData.citizenid, TargetData.PlayerData.charinfo.phone, json.encode(ChatMessages)})
                 -- Send notification & Update messages for target
-                TriggerClientEvent('denalifw-phone:client:UpdateMessages', TargetData.PlayerData.source, ChatMessages, SenderData.PlayerData.charinfo.phone, true)
+                TriggerClientEvent('NADRP-phone:client:UpdateMessages', TargetData.PlayerData.source, ChatMessages, SenderData.PlayerData.charinfo.phone, true)
             end
         else
             local Chat = MySQL.Sync.fetchAll('SELECT * FROM phone_messages WHERE citizenid = ? AND number = ?', {SenderData.PlayerData.citizenid, ChatNumber})
@@ -994,16 +994,16 @@ RegisterNetEvent('denalifw-phone:server:UpdateMessages', function(ChatMessages, 
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:AddRecentCall', function(type, data)
+RegisterNetEvent('NADRP-phone:server:AddRecentCall', function(type, data)
     local src = source
-    local Ply = denalifw.Functions.GetPlayer(src)
+    local Ply = NADRP.Functions.GetPlayer(src)
     local Hour = os.date("%H")
     local Minute = os.date("%M")
     local label = Hour .. ":" .. Minute
-    TriggerClientEvent('denalifw-phone:client:AddRecentCall', src, data, label, type)
-    local Trgt = denalifw.Functions.GetPlayerByPhone(data.number)
+    TriggerClientEvent('NADRP-phone:client:AddRecentCall', src, data, label, type)
+    local Trgt = NADRP.Functions.GetPlayerByPhone(data.number)
     if Trgt ~= nil then
-        TriggerClientEvent('denalifw-phone:client:AddRecentCall', Trgt.PlayerData.source, {
+        TriggerClientEvent('NADRP-phone:client:AddRecentCall', Trgt.PlayerData.source, {
             name = Ply.PlayerData.charinfo.firstname .. " " .. Ply.PlayerData.charinfo.lastname,
             number = Ply.PlayerData.charinfo.phone,
             anonymous = data.anonymous
@@ -1011,23 +1011,23 @@ RegisterNetEvent('denalifw-phone:server:AddRecentCall', function(type, data)
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:CancelCall', function(ContactData)
-    local Ply = denalifw.Functions.GetPlayerByPhone(ContactData.TargetData.number)
+RegisterNetEvent('NADRP-phone:server:CancelCall', function(ContactData)
+    local Ply = NADRP.Functions.GetPlayerByPhone(ContactData.TargetData.number)
     if Ply ~= nil then
-        TriggerClientEvent('denalifw-phone:client:CancelCall', Ply.PlayerData.source)
+        TriggerClientEvent('NADRP-phone:client:CancelCall', Ply.PlayerData.source)
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:AnswerCall', function(CallData)
-    local Ply = denalifw.Functions.GetPlayerByPhone(CallData.TargetData.number)
+RegisterNetEvent('NADRP-phone:server:AnswerCall', function(CallData)
+    local Ply = NADRP.Functions.GetPlayerByPhone(CallData.TargetData.number)
     if Ply ~= nil then
-        TriggerClientEvent('denalifw-phone:client:AnswerCall', Ply.PlayerData.source)
+        TriggerClientEvent('NADRP-phone:client:AnswerCall', Ply.PlayerData.source)
     end
 end)
 
-RegisterNetEvent('denalifw-phone:server:SaveMetaData', function(MData)
+RegisterNetEvent('NADRP-phone:server:SaveMetaData', function(MData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ?', {Player.PlayerData.citizenid})
     local MetaData = json.decode(result[1].metadata)
     MetaData.phone = MData
@@ -1036,9 +1036,9 @@ RegisterNetEvent('denalifw-phone:server:SaveMetaData', function(MData)
     Player.Functions.SetMetaData("phone", MData)
 end)
 
-RegisterNetEvent('denalifw-phone:server:GiveContactDetails', function(PlayerId)
+RegisterNetEvent('NADRP-phone:server:GiveContactDetails', function(PlayerId)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local SuggestionData = {
         name = {
             [1] = Player.PlayerData.charinfo.firstname,
@@ -1048,12 +1048,12 @@ RegisterNetEvent('denalifw-phone:server:GiveContactDetails', function(PlayerId)
         bank = Player.PlayerData.charinfo.account
     }
 
-    TriggerClientEvent('denalifw-phone:client:AddNewSuggestion', PlayerId, SuggestionData)
+    TriggerClientEvent('NADRP-phone:client:AddNewSuggestion', PlayerId, SuggestionData)
 end)
 
-RegisterNetEvent('denalifw-phone:server:AddTransaction', function(data)
+RegisterNetEvent('NADRP-phone:server:AddTransaction', function(data)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.insert('INSERT INTO crypto_transactions (citizenid, title, message) VALUES (?, ?, ?)', {
         Player.PlayerData.citizenid,
         data.TransactionTitle,
@@ -1061,59 +1061,59 @@ RegisterNetEvent('denalifw-phone:server:AddTransaction', function(data)
     })
 end)
 
-RegisterNetEvent('denalifw-phone:server:InstallApplication', function(ApplicationData)
+RegisterNetEvent('NADRP-phone:server:InstallApplication', function(ApplicationData)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     Player.PlayerData.metadata["phonedata"].InstalledApps[ApplicationData.app] = ApplicationData
     Player.Functions.SetMetaData("phonedata", Player.PlayerData.metadata["phonedata"])
 
-    -- TriggerClientEvent('denalifw-phone:RefreshPhone', src)
+    -- TriggerClientEvent('NADRP-phone:RefreshPhone', src)
 end)
 
-RegisterNetEvent('denalifw-phone:server:RemoveInstallation', function(App)
+RegisterNetEvent('NADRP-phone:server:RemoveInstallation', function(App)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     Player.PlayerData.metadata["phonedata"].InstalledApps[App] = nil
     Player.Functions.SetMetaData("phonedata", Player.PlayerData.metadata["phonedata"])
 
-    -- TriggerClientEvent('denalifw-phone:RefreshPhone', src)
+    -- TriggerClientEvent('NADRP-phone:RefreshPhone', src)
 end)
 
-RegisterNetEvent('denalifw-phone:server:addImageToGallery', function(image)
+RegisterNetEvent('NADRP-phone:server:addImageToGallery', function(image)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     MySQL.Async.insert('INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',{Player.PlayerData.citizenid,image})
 end)
 
-RegisterNetEvent('denalifw-phone:server:getImageFromGallery', function()
+RegisterNetEvent('NADRP-phone:server:getImageFromGallery', function()
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local images = MySQL.Sync.fetchAll('SELECT * FROM phone_gallery WHERE citizenid = ? ORDER BY `date` DESC',{Player.PlayerData.citizenid})
-    TriggerClientEvent('denalifw-phone:refreshImages', src, images)
+    TriggerClientEvent('NADRP-phone:refreshImages', src, images)
 end)
 
-RegisterNetEvent('denalifw-phone:server:RemoveImageFromGallery', function(data)
+RegisterNetEvent('NADRP-phone:server:RemoveImageFromGallery', function(data)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local image = data.image
     MySQL.Async.execute('DELETE FROM phone_gallery WHERE citizenid = ? AND image = ?',{Player.PlayerData.citizenid,image})
 end)
 
-RegisterNetEvent('denalifw-phone:server:sendPing', function(data)
+RegisterNetEvent('NADRP-phone:server:sendPing', function(data)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     print(src, data)
     if src ~= data then
 
     else
-        TriggerClientEvent("denalifw:Notify", src, "You cannot ping yourself", "error")
+        TriggerClientEvent("NADRP:Notify", src, "You cannot ping yourself", "error")
     end
 end)
 
 -- Command
 
-denalifw.Commands.Add("setmetadata", "Set Player Metadata (God Only)", {}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Commands.Add("setmetadata", "Set Player Metadata (God Only)", {}, false, function(source, args)
+    local Player = NADRP.Functions.GetPlayer(source)
     if args[1] then
         if args[1] == "trucker" then
             if args[2] then
@@ -1125,9 +1125,9 @@ denalifw.Commands.Add("setmetadata", "Set Player Metadata (God Only)", {}, false
     end
 end, "god")
 
-denalifw.Commands.Add('bill', 'Bill A Player', {{name = 'id', help = 'Player ID'}, {name = 'amount', help = 'Fine Amount'}}, false, function(source, args)
-    local biller = denalifw.Functions.GetPlayer(source)
-    local billed = denalifw.Functions.GetPlayer(tonumber(args[1]))
+NADRP.Commands.Add('bill', 'Bill A Player', {{name = 'id', help = 'Player ID'}, {name = 'amount', help = 'Fine Amount'}}, false, function(source, args)
+    local biller = NADRP.Functions.GetPlayer(source)
+    local billed = NADRP.Functions.GetPlayer(tonumber(args[1]))
     local amount = tonumber(args[2])
     if biller.PlayerData.job.name == "police" or biller.PlayerData.job.name == 'ambulance' or biller.PlayerData.job.name == 'mechanic' then
         if billed ~= nil then
@@ -1137,19 +1137,19 @@ denalifw.Commands.Add('bill', 'Bill A Player', {{name = 'id', help = 'Player ID'
                         'INSERT INTO phone_invoices (citizenid, amount, society, sender, sendercitizenid) VALUES (?, ?, ?, ?, ?)',
                         {billed.PlayerData.citizenid, amount, biller.PlayerData.job.name,
                          biller.PlayerData.charinfo.firstname, biller.PlayerData.citizenid})
-                    TriggerClientEvent('denalifw-phone:RefreshPhone', billed.PlayerData.source)
-                    TriggerClientEvent('denalifw:Notify', source, 'Invoice Successfully Sent', 'success')
-                    TriggerClientEvent('denalifw:Notify', billed.PlayerData.source, 'New Invoice Received')
+                    TriggerClientEvent('NADRP-phone:RefreshPhone', billed.PlayerData.source)
+                    TriggerClientEvent('NADRP:Notify', source, 'Invoice Successfully Sent', 'success')
+                    TriggerClientEvent('NADRP:Notify', billed.PlayerData.source, 'New Invoice Received')
                 else
-                    TriggerClientEvent('denalifw:Notify', source, 'Must Be A Valid Amount Above 0', 'error')
+                    TriggerClientEvent('NADRP:Notify', source, 'Must Be A Valid Amount Above 0', 'error')
                 end
             else
-                TriggerClientEvent('denalifw:Notify', source, 'You Cannot Bill Yourself', 'error')
+                TriggerClientEvent('NADRP:Notify', source, 'You Cannot Bill Yourself', 'error')
             end
         else
-            TriggerClientEvent('denalifw:Notify', source, 'Player Not Online', 'error')
+            TriggerClientEvent('NADRP:Notify', source, 'Player Not Online', 'error')
         end
     else
-        TriggerClientEvent('denalifw:Notify', source, 'No Access', 'error')
+        TriggerClientEvent('NADRP:Notify', source, 'No Access', 'error')
     end
 end)

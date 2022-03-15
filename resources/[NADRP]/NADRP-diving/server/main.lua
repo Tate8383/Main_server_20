@@ -1,4 +1,4 @@
-denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = exports['NADRP-core']:GetCoreObject()
 local AvailableCoral = {}
 
 -- Functions
@@ -19,7 +19,7 @@ local function GetItemPrice(Item, price)
 end
 
 local function HasCoral(src)
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local retval = false
     AvailableCoral = {}
     for k, v in pairs(QBDiving.CoralTypes) do
@@ -34,20 +34,20 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-diving:server:SetBerthVehicle', function(BerthId, vehicleModel)
-    TriggerClientEvent('denalifw-diving:client:SetBerthVehicle', -1, BerthId, vehicleModel)
+RegisterNetEvent('NADRP-diving:server:SetBerthVehicle', function(BerthId, vehicleModel)
+    TriggerClientEvent('NADRP-diving:client:SetBerthVehicle', -1, BerthId, vehicleModel)
     QBBoatshop.Locations["berths"][BerthId]["boatModel"] = boatModel
 end)
 
-RegisterNetEvent('denalifw-diving:server:SetDockInUse', function(BerthId, InUse)
+RegisterNetEvent('NADRP-diving:server:SetDockInUse', function(BerthId, InUse)
     QBBoatshop.Locations["berths"][BerthId]["inUse"] = InUse
-    TriggerClientEvent('denalifw-diving:client:SetDockInUse', -1, BerthId, InUse)
+    TriggerClientEvent('NADRP-diving:client:SetDockInUse', -1, BerthId, InUse)
 end)
 
-RegisterNetEvent('denalifw-diving:server:BuyBoat', function(boatModel, BerthId)
+RegisterNetEvent('NADRP-diving:server:BuyBoat', function(boatModel, BerthId)
     local BoatPrice = QBBoatshop.ShopBoats[boatModel]["price"]
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local PlayerMoney = {
         cash = Player.PlayerData.money.cash,
         bank = Player.PlayerData.money.bank
@@ -57,11 +57,11 @@ RegisterNetEvent('denalifw-diving:server:BuyBoat', function(boatModel, BerthId)
 
     if PlayerMoney.cash >= BoatPrice then
         Player.Functions.RemoveMoney('cash', BoatPrice, "bought-boat")
-        TriggerClientEvent('denalifw-diving:client:BuyBoat', src, boatModel, plate)
+        TriggerClientEvent('NADRP-diving:client:BuyBoat', src, boatModel, plate)
         InsertBoat(boatModel, Player, plate)
     elseif PlayerMoney.bank >= BoatPrice then
         Player.Functions.RemoveMoney('bank', BoatPrice, "bought-boat")
-        TriggerClientEvent('denalifw-diving:client:BuyBoat', src, boatModel, plate)
+        TriggerClientEvent('NADRP-diving:client:BuyBoat', src, boatModel, plate)
         InsertBoat(boatModel, Player, plate)
     else
         if PlayerMoney.bank > PlayerMoney.cash then
@@ -69,19 +69,19 @@ RegisterNetEvent('denalifw-diving:server:BuyBoat', function(boatModel, BerthId)
         else
             missingMoney = (BoatPrice - PlayerMoney.cash)
         end
-        TriggerClientEvent('denalifw:Notify', src, 'Not Enough Money, You Are Missing $' .. missingMoney .. '', 'error')
+        TriggerClientEvent('NADRP:Notify', src, 'Not Enough Money, You Are Missing $' .. missingMoney .. '', 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-diving:server:RemoveItem', function(item, amount)
+RegisterNetEvent('NADRP-diving:server:RemoveItem', function(item, amount)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     Player.Functions.RemoveItem(item, amount)
 end)
 
-RegisterNetEvent('denalifw-diving:server:SetBoatState', function(plate, state, boathouse, fuel)
+RegisterNetEvent('NADRP-diving:server:SetBoatState', function(plate, state, boathouse, fuel)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchScalar('SELECT 1 FROM player_boats WHERE plate = ?', {plate})
     if result ~= nil then
         MySQL.Async.execute(
@@ -90,14 +90,14 @@ RegisterNetEvent('denalifw-diving:server:SetBoatState', function(plate, state, b
     end
 end)
 
-RegisterNetEvent('denalifw-diving:server:CallCops', function(Coords)
+RegisterNetEvent('NADRP-diving:server:CallCops', function(Coords)
     local src = source
-    for k, v in pairs(denalifw.Functions.GetPlayers()) do
-        local Player = denalifw.Functions.GetPlayer(v)
+    for k, v in pairs(NADRP.Functions.GetPlayers()) do
+        local Player = NADRP.Functions.GetPlayer(v)
         if Player ~= nil then
             if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
                 local msg = "This coral may be stolen"
-                TriggerClientEvent('denalifw-diving:client:CallCops', Player.PlayerData.source, Coords, msg)
+                TriggerClientEvent('NADRP-diving:client:CallCops', Player.PlayerData.source, Coords, msg)
                 local alertData = {
                     title = "Illegal diving",
                     coords = {
@@ -107,15 +107,15 @@ RegisterNetEvent('denalifw-diving:server:CallCops', function(Coords)
                     },
                     description = msg
                 }
-                TriggerClientEvent("denalifw-phone:client:addPoliceAlert", -1, alertData)
+                TriggerClientEvent("NADRP-phone:client:addPoliceAlert", -1, alertData)
             end
         end
     end
 end)
 
-RegisterNetEvent('denalifw-diving:server:SellCoral', function()
+RegisterNetEvent('NADRP-diving:server:SellCoral', function()
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if HasCoral(src) then
         for k, v in pairs(AvailableCoral) do
             local Item = Player.Functions.GetItemByName(v.item)
@@ -124,30 +124,30 @@ RegisterNetEvent('denalifw-diving:server:SellCoral', function()
             if Item.amount > 1 then
                 for i = 1, Item.amount, 1 do
                     Player.Functions.RemoveItem(Item.name, 1)
-                    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[Item.name], "remove")
+                    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[Item.name], "remove")
                     Player.Functions.AddMoney('cash', math.ceil((Reward / Item.amount)), "sold-coral")
                     Wait(250)
                 end
             else
                 Player.Functions.RemoveItem(Item.name, 1)
                 Player.Functions.AddMoney('cash', Reward, "sold-coral")
-                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[Item.name], "remove")
+                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[Item.name], "remove")
             end
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, 'You don\'t have any coral to sell..', 'error')
+        TriggerClientEvent('NADRP:Notify', src, 'You don\'t have any coral to sell..', 'error')
     end
 end)
 
 -- Callbacks
 
-denalifw.Functions.CreateCallback('denalifw-diving:server:GetBusyDocks', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-diving:server:GetBusyDocks', function(source, cb)
     cb(QBBoatshop.Locations["berths"])
 end)
 
-denalifw.Functions.CreateCallback('denalifw-diving:server:GetMyBoats', function(source, cb, dock)
+NADRP.Functions.CreateCallback('NADRP-diving:server:GetMyBoats', function(source, cb, dock)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_boats WHERE citizenid = ? AND boathouse = ?', {Player.PlayerData.citizenid, dock})
     if result[1] ~= nil then
         cb(result)
@@ -156,9 +156,9 @@ denalifw.Functions.CreateCallback('denalifw-diving:server:GetMyBoats', function(
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-diving:server:GetDepotBoats', function(source, cb, dock)
+NADRP.Functions.CreateCallback('NADRP-diving:server:GetDepotBoats', function(source, cb, dock)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_boats WHERE citizenid = ? AND state = ?', {Player.PlayerData.citizenid, 0})
     if result[1] ~= nil then
         cb(result)
@@ -169,17 +169,17 @@ end)
 
 -- Items
 
-denalifw.Functions.CreateUseableItem("jerry_can", function(source, item)
-    TriggerClientEvent("denalifw-diving:client:UseJerrycan", source)
+NADRP.Functions.CreateUseableItem("jerry_can", function(source, item)
+    TriggerClientEvent("NADRP-diving:client:UseJerrycan", source)
 end)
 
-denalifw.Functions.CreateUseableItem("diving_gear", function(source, item)
-    TriggerClientEvent("denalifw-diving:client:UseGear", source, true)
+NADRP.Functions.CreateUseableItem("diving_gear", function(source, item)
+    TriggerClientEvent("NADRP-diving:client:UseGear", source, true)
 end)
 
 -- Commands
 
-denalifw.Commands.Add("divingsuit", "Take off your diving suit", {}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
-    TriggerClientEvent("denalifw-diving:client:UseGear", source, false)
+NADRP.Commands.Add("divingsuit", "Take off your diving suit", {}, false, function(source, args)
+    local Player = NADRP.Functions.GetPlayer(source)
+    TriggerClientEvent("NADRP-diving:client:UseGear", source, false)
 end)

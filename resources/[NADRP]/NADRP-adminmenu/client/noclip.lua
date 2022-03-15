@@ -160,6 +160,6 @@ AddEventHandler('onResourceStop', function(resourceName)
     end
 end)
 
-RegisterNetEvent('denalifw-admin:client:ToggleNoClip', function()
+RegisterNetEvent('NADRP-admin:client:ToggleNoClip', function()
     ToggleNoClipMode()
 end)

@@ -1,5 +1,5 @@
-denalifw = nil
-local denalifw = exports['denalifw-core']:GetCoreObject()
+NADRP = nil
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local HeistThermite, HeistBagScene = nil, nil
 local HeistProps, ExplosiveAnimTwo = {}, nil
 local MovingForward, Stage = false, 0

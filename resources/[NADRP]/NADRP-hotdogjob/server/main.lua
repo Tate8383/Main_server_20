@@ -1,8 +1,8 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local Bail = {}
 
-denalifw.Functions.CreateCallback('denalifw-hotdogjob:server:HasMoney', function(source, cb)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback('NADRP-hotdogjob:server:HasMoney', function(source, cb)
+    local Player = NADRP.Functions.GetPlayer(source)
 
     if Player.PlayerData.money.bank >= Config.Bail then
         Player.Functions.RemoveMoney('bank', Config.Bail)
@@ -14,8 +14,8 @@ denalifw.Functions.CreateCallback('denalifw-hotdogjob:server:HasMoney', function
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-hotdogjob:server:BringBack', function(source, cb)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback('NADRP-hotdogjob:server:BringBack', function(source, cb)
+    local Player = NADRP.Functions.GetPlayer(source)
 
     if Bail[Player.PlayerData.citizenid] then
         Player.Functions.AddMoney('bank', Config.Bail)
@@ -25,23 +25,23 @@ denalifw.Functions.CreateCallback('denalifw-hotdogjob:server:BringBack', functio
     end
 end)
 
-RegisterNetEvent('denalifw-hotdogjob:server:Sell', function(Amount, Price)
+RegisterNetEvent('NADRP-hotdogjob:server:Sell', function(Amount, Price)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
 
     Player.Functions.AddMoney('cash', tonumber(Amount * Price))
 end)
 
-RegisterNetEvent('denalifw-hotdogjob:server:UpdateReputation', function(quality)
+RegisterNetEvent('NADRP-hotdogjob:server:UpdateReputation', function(quality)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local JobReputation = Player.PlayerData.metadata["jobrep"]
 
     if quality == "exotic" then
         if JobReputation["hotdog"] ~= nil and JobReputation["hotdog"] + 3 > Config.MaxReputation then
             JobReputation["hotdog"] = Config.MaxReputation
             Player.Functions.SetMetaData("jobrep", JobReputation)
-            TriggerClientEvent('denalifw-hotdogjob:client:UpdateReputation', src, JobReputation)
+            TriggerClientEvent('NADRP-hotdogjob:client:UpdateReputation', src, JobReputation)
             return
         end
         if JobReputation["hotdog"] == nil then
@@ -53,7 +53,7 @@ RegisterNetEvent('denalifw-hotdogjob:server:UpdateReputation', function(quality)
         if JobReputation["hotdog"] ~= nil and JobReputation["hotdog"] + 2 > Config.MaxReputation then
             JobReputation["hotdog"] = Config.MaxReputation
             Player.Functions.SetMetaData("jobrep", JobReputation)
-            TriggerClientEvent('denalifw-hotdogjob:client:UpdateReputation', src, JobReputation)
+            TriggerClientEvent('NADRP-hotdogjob:client:UpdateReputation', src, JobReputation)
             return
         end
         if JobReputation["hotdog"] == nil then
@@ -65,7 +65,7 @@ RegisterNetEvent('denalifw-hotdogjob:server:UpdateReputation', function(quality)
         if JobReputation["hotdog"] ~= nil and JobReputation["hotdog"] + 1 > Config.MaxReputation then
             JobReputation["hotdog"] = Config.MaxReputation
             Player.Functions.SetMetaData("jobrep", JobReputation)
-            TriggerClientEvent('denalifw-hotdogjob:client:UpdateReputation', src, JobReputation)
+            TriggerClientEvent('NADRP-hotdogjob:client:UpdateReputation', src, JobReputation)
             return
         end
         if JobReputation["hotdog"] == nil then
@@ -75,9 +75,9 @@ RegisterNetEvent('denalifw-hotdogjob:server:UpdateReputation', function(quality)
         end
     end
     Player.Functions.SetMetaData("jobrep", JobReputation)
-    TriggerClientEvent('denalifw-hotdogjob:client:UpdateReputation', src, JobReputation)
+    TriggerClientEvent('NADRP-hotdogjob:client:UpdateReputation', src, JobReputation)
 end)
 
-denalifw.Commands.Add("removestand", Lang:t("info.command"), {}, false, function(source, args)
-    TriggerClientEvent('denalifw-hotdogjob:staff:DeletStand', source)
+NADRP.Commands.Add("removestand", Lang:t("info.command"), {}, false, function(source, args)
+    TriggerClientEvent('NADRP-hotdogjob:staff:DeletStand', source)
 end, 'admin')

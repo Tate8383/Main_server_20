@@ -1,13 +1,13 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
-denalifw.Functions.CreateUseableItem("fitbit", function(source, item)
-    local Player = denalifw.Functions.GetPlayer(source)
-    TriggerClientEvent('denalifw-fitbit:use', source)
+NADRP.Functions.CreateUseableItem("fitbit", function(source, item)
+    local Player = NADRP.Functions.GetPlayer(source)
+    TriggerClientEvent('NADRP-fitbit:use', source)
 end)
 
-RegisterNetEvent('denalifw-fitbit:server:setValue', function(type, value)
+RegisterNetEvent('NADRP-fitbit:server:setValue', function(type, value)
     local src = source
-    local ply = denalifw.Functions.GetPlayer(src)
+    local ply = NADRP.Functions.GetPlayer(src)
     local fitbitData = {}
 
     if type == "thirst" then
@@ -27,8 +27,8 @@ RegisterNetEvent('denalifw-fitbit:server:setValue', function(type, value)
     ply.Functions.SetMetaData('fitbit', fitbitData)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-fitbit:server:HasFitbit', function(source, cb)
-    local Ply = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback('NADRP-fitbit:server:HasFitbit', function(source, cb)
+    local Ply = NADRP.Functions.GetPlayer(source)
     local Fitbit = Ply.Functions.GetItemByName("fitbit")
 
     if Fitbit ~= nil then

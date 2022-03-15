@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local PlayerJob = {}
 local JobsDone = 0
 local NpcOn = false
@@ -25,8 +25,8 @@ local function deliverVehicle(vehicle)
     RemoveBlip(CurrentBlip2)
     JobsDone = JobsDone + 1
     VehicleSpawned = false
-    denalifw.Functions.Notify("You Have Delivered A Vehicle", "success")
-    denalifw.Functions.Notify("A New Vehicle Can Be Picked Up")
+    NADRP.Functions.Notify("You Have Delivered A Vehicle", "success")
+    NADRP.Functions.Notify("A New Vehicle Can Be Picked Up")
 
     local randomLocation = getRandomVehicleLocation()
     CurrentLocation.x = Config.Locations["towspots"][randomLocation].coords.x
@@ -139,7 +139,7 @@ local function MenuGarage()
         towMenu[#towMenu+1] = {
             header = Config.Vehicles[k],
             params = {
-                event = "denalifw-tow:client:TakeOutVehicle",
+                event = "NADRP-tow:client:TakeOutVehicle",
                 args = {
                     vehicle = k
                 }
@@ -151,30 +151,30 @@ local function MenuGarage()
         header = "⬅ Close Menu",
         txt = "",
         params = {
-            event = "denalifw-menu:client:closeMenu"
+            event = "NADRP-menu:client:closeMenu"
         }
 
     }
-    exports['denalifw-menu']:openMenu(towMenu)
+    exports['NADRP-menu']:openMenu(towMenu)
 end
 
 local function CloseMenuFull()
-    exports['denalifw-menu']:closeMenu()
+    exports['NADRP-menu']:closeMenu()
 end
 
 -- Events
 
-RegisterNetEvent('denalifw-tow:client:SpawnVehicle', function()
+RegisterNetEvent('NADRP-tow:client:SpawnVehicle', function()
     local vehicleInfo = selectedVeh
     local coords = Config.Locations["vehicle"].coords
-    denalifw.Functions.SpawnVehicle(vehicleInfo, function(veh)
+    NADRP.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, "TOWR"..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         SetEntityAsMissionEntity(veh, true, true)
         CloseMenuFull()
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
         for i = 1, 9, 1 do
             SetVehicleExtra(veh, i, 0)
@@ -182,8 +182,8 @@ RegisterNetEvent('denalifw-tow:client:SpawnVehicle', function()
     end, coords, true)
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    PlayerJob = denalifw.Functions.GetPlayerData().job
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    PlayerJob = NADRP.Functions.GetPlayerData().job
 
     if PlayerJob.name == "tow" then
         local TowBlip = AddBlipForCoord(Config.Locations["main"].coords.x, Config.Locations["main"].coords.y, Config.Locations["main"].coords.z)
@@ -210,7 +210,7 @@ RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     end
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 
     if PlayerJob.name == "tow" then
@@ -239,9 +239,9 @@ RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
 end)
 
 RegisterNetEvent('jobs:client:ToggleNpc', function()
-    if denalifw.Functions.GetPlayerData().job.name == "tow" then
+    if NADRP.Functions.GetPlayerData().job.name == "tow" then
         if CurrentTow ~= nil then
-            denalifw.Functions.Notify("First Finish Your Work", "error")
+            NADRP.Functions.Notify("First Finish Your Work", "error")
             return
         end
         NpcOn = not NpcOn
@@ -268,7 +268,7 @@ RegisterNetEvent('jobs:client:ToggleNpc', function()
     end
 end)
 
-RegisterNetEvent('denalifw-tow:client:TowVehicle', function()
+RegisterNetEvent('NADRP-tow:client:TowVehicle', function()
     local vehicle = GetVehiclePedIsIn(PlayerPedId(), true)
     if isTowVehicle(vehicle) then
         if CurrentTow == nil then
@@ -279,7 +279,7 @@ RegisterNetEvent('denalifw-tow:client:TowVehicle', function()
 
             if NpcOn and CurrentLocation ~= nil then
                 if GetEntityModel(targetVehicle) ~= GetHashKey(CurrentLocation.model) then
-                    denalifw.Functions.Notify("This Is Not The Right Vehicle", "error")
+                    NADRP.Functions.Notify("This Is Not The Right Vehicle", "error")
                     return
                 end
             end
@@ -289,7 +289,7 @@ RegisterNetEvent('denalifw-tow:client:TowVehicle', function()
                     local towPos = GetEntityCoords(vehicle)
                     local targetPos = GetEntityCoords(targetVehicle)
                     if #(towPos - targetPos) < 11.0 then
-                        denalifw.Functions.Progressbar("towing_vehicle", "Hoisting the Vehicle...", 5000, false, true, {
+                        NADRP.Functions.Progressbar("towing_vehicle", "Hoisting the Vehicle...", 5000, false, true, {
                             disableMovement = true,
                             disableCarMovement = true,
                             disableMouse = false,
@@ -305,26 +305,26 @@ RegisterNetEvent('denalifw-tow:client:TowVehicle', function()
                             CurrentTow = targetVehicle
                             if NpcOn then
                                 RemoveBlip(CurrentBlip)
-                                denalifw.Functions.Notify("Take The Vehicle To Hayes Depot", "success", 5000)
+                                NADRP.Functions.Notify("Take The Vehicle To Hayes Depot", "success", 5000)
                                 CurrentBlip2 = AddBlipForCoord(491.00, -1314.69, 29.25)
                                 SetBlipColour(CurrentBlip2, 3)
                                 SetBlipRoute(CurrentBlip2, true)
                                 SetBlipRouteColour(CurrentBlip2, 3)
                                 local chance = math.random(1,100)
                                 if chance < 26 then
-                                    TriggerServerEvent('denalifw-tow:server:nano')
+                                    TriggerServerEvent('NADRP-tow:server:nano')
                                 end
                             end
-                            denalifw.Functions.Notify("Vehicle Towed")
+                            NADRP.Functions.Notify("Vehicle Towed")
                         end, function() -- Cancel
                             StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
-                            denalifw.Functions.Notify("Failed", "error")
+                            NADRP.Functions.Notify("Failed", "error")
                         end)
                     end
                 end
             end
         else
-            denalifw.Functions.Progressbar("untowing_vehicle", "Remove The Vehicle", 5000, false, true, {
+            NADRP.Functions.Progressbar("untowing_vehicle", "Remove The Vehicle", 5000, false, true, {
                 disableMovement = true,
                 disableCarMovement = true,
                 disableMouse = false,
@@ -346,32 +346,32 @@ RegisterNetEvent('denalifw-tow:client:TowVehicle', function()
                     end
                 end
                 CurrentTow = nil
-                denalifw.Functions.Notify("Vehicle Taken Off")
+                NADRP.Functions.Notify("Vehicle Taken Off")
             end, function() -- Cancel
                 StopAnimTask(PlayerPedId(), "mini@repair", "fixing_a_ped", 1.0)
-                denalifw.Functions.Notify("Failed", "error")
+                NADRP.Functions.Notify("Failed", "error")
             end)
         end
     else
-        denalifw.Functions.Notify("You Must Have Been In A Towing Vehicle First", "error")
+        NADRP.Functions.Notify("You Must Have Been In A Towing Vehicle First", "error")
     end
 end)
 
-RegisterNetEvent('denalifw-tow:client:TakeOutVehicle', function(data)
+RegisterNetEvent('NADRP-tow:client:TakeOutVehicle', function(data)
     local coords = Config.Locations["vehicle"].coords
     coords = vector3(coords.x, coords.y, coords.z)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     if #(pos - coords) <= 5 then
         local vehicleInfo = data.vehicle
-        TriggerServerEvent('denalifw-tow:server:DoBail', true, vehicleInfo)
+        TriggerServerEvent('NADRP-tow:server:DoBail', true, vehicleInfo)
         selectedVeh = vehicleInfo
     else
-        denalifw.Functions.Notify('You are too far away', 'error')
+        NADRP.Functions.Notify('You are too far away', 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-tow:client:SelectVehicle', function()
+RegisterNetEvent('NADRP-tow:client:SelectVehicle', function()
     local coords = Config.Locations["vehicle"].coords
     coords = vector3(coords.x, coords.y, coords.z)
     local ped = PlayerPedId()
@@ -380,7 +380,7 @@ RegisterNetEvent('denalifw-tow:client:SelectVehicle', function()
     if #(pos - coords) <= 5 then
         MenuGarage()
     else
-        denalifw.Functions.Notify('You are too far away', 'error')
+        NADRP.Functions.Notify('You are too far away', 'error')
     end
 end)
 
@@ -410,11 +410,11 @@ function RunWorkThread()
                         else
                             if not shownHeader then
                                 shownHeader = true
-                                exports['denalifw-menu']:showHeader({
+                                exports['NADRP-menu']:showHeader({
                                     {
                                         header = "Select Vehicle",
                                         params = {
-                                            event = 'denalifw-tow:client:SelectVehicle',
+                                            event = 'NADRP-tow:client:SelectVehicle',
                                             args = {}
                                         },
                                     }
@@ -426,7 +426,7 @@ function RunWorkThread()
                         if IsControlJustReleased(0, 38) then
                             if IsPedInAnyVehicle(PlayerPedId(), false) then
                                 DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
-                                TriggerServerEvent('denalifw-tow:server:DoBail', false)
+                                TriggerServerEvent('NADRP-tow:server:DoBail', false)
                             end
                         end
                     end
@@ -434,7 +434,7 @@ function RunWorkThread()
                 else
                     if shownHeader then
                         shownHeader = false
-                        exports['denalifw-menu']:closeMenu()
+                        exports['NADRP-menu']:closeMenu()
                     end
                 end
 
@@ -448,11 +448,11 @@ function RunWorkThread()
                         if IsControlJustReleased(0, 38) then
                             if JobsDone > 0 then
                                 RemoveBlip(CurrentBlip)
-                                TriggerServerEvent("denalifw-tow:server:11101110", JobsDone)
+                                TriggerServerEvent("NADRP-tow:server:11101110", JobsDone)
                                 JobsDone = 0
                                 NpcOn = false
                             else
-                                denalifw.Functions.Notify("You have not done any work yet.", "error")
+                                NADRP.Functions.Notify("You have not done any work yet.", "error")
                             end
                         end
                     elseif #(pos - mainCoords) < 2.5 then
@@ -467,7 +467,7 @@ function RunWorkThread()
                 if NpcOn and CurrentLocation ~= nil and next(CurrentLocation) ~= nil then
                     if #(pos - vector3(CurrentLocation.x, CurrentLocation.y, CurrentLocation.z)) < 50.0 and not VehicleSpawned then
                         VehicleSpawned = true
-                        denalifw.Functions.SpawnVehicle(CurrentLocation.model, function(veh)
+                        NADRP.Functions.SpawnVehicle(CurrentLocation.model, function(veh)
                             exports['LegacyFuel']:SetFuel(veh, 0.0)
                             if math.random(1,2) == 1 then
                                 doCarDamage(veh)

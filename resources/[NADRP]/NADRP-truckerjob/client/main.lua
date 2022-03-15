@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local PlayerJob = {}
 local JobsDone = 0
 local LocationsDone = {}
@@ -66,7 +66,7 @@ local function getNewLocation()
         SetBlipRoute(CurrentBlip, true)
         SetBlipRouteColour(CurrentBlip, 3)
     else
-        denalifw.Functions.Notify("You Went To All The Shops .. Time For Your Payslip!")
+        NADRP.Functions.Notify("You Went To All The Shops .. Time For Your Payslip!")
         if CurrentBlip ~= nil then
             RemoveBlip(CurrentBlip)
 	    ClearAllBlipRoutes()
@@ -127,7 +127,7 @@ local function MenuGarage()
         truckMenu[#truckMenu+1] = {
             header = Config.Vehicles[k],
             params = {
-                event = "denalifw-trucker:client:TakeOutVehicle",
+                event = "NADRP-trucker:client:TakeOutVehicle",
                 args = {
                     vehicle = k
                 }
@@ -139,47 +139,47 @@ local function MenuGarage()
         header = "⬅ Close Menu",
         txt = "",
         params = {
-            event = "denalifw-menu:client:closeMenu"
+            event = "NADRP-menu:client:closeMenu"
         }
 
     }
-    exports['denalifw-menu']:openMenu(truckMenu)
+    exports['NADRP-menu']:openMenu(truckMenu)
 end
 
 
 local function CloseMenuFull()
-    exports['denalifw-menu']:closeMenu()
+    exports['NADRP-menu']:closeMenu()
 end
 
 -- Events
 
-RegisterNetEvent('denalifw-trucker:client:SpawnVehicle', function()
+RegisterNetEvent('NADRP-trucker:client:SpawnVehicle', function()
     local vehicleInfo = selectedVeh
     local coords = Config.Locations["vehicle"].coords
     coords = vector3(coords.x, coords.y, coords.z)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     if #(pos - coords) <= 1 then
-        denalifw.Functions.SpawnVehicle(vehicleInfo, function(veh)
+        NADRP.Functions.SpawnVehicle(vehicleInfo, function(veh)
             SetVehicleNumberPlateText(veh, "TRUK"..tostring(math.random(1000, 9999)))
             SetEntityHeading(veh, coords.w)
             exports['LegacyFuel']:SetFuel(veh, 100.0)
             CloseMenuFull()
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
             SetEntityAsMissionEntity(veh, true, true)
-            TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+            TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
             SetVehicleEngineOn(veh, true, true)
-            CurrentPlate = denalifw.Functions.GetPlate(veh)
+            CurrentPlate = NADRP.Functions.GetPlate(veh)
             getNewLocation()
         end, coords, true)
     else
-        denalifw.Functions.Notify('You are too far away', 'error')
+        NADRP.Functions.Notify('You are too far away', 'error')
     end
 
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    PlayerJob = denalifw.Functions.GetPlayerData().job
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    PlayerJob = NADRP.Functions.GetPlayerData().job
     CurrentLocation = nil
     CurrentBlip = nil
     hasBox = false
@@ -201,7 +201,7 @@ RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     end
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
+RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
     RemoveTruckerBlips()
     CurrentLocation = nil
     CurrentBlip = nil
@@ -210,7 +210,7 @@ RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     JobsDone = 0
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     local OldPlayerJob = PlayerJob.name
     PlayerJob = JobInfo
 
@@ -231,21 +231,21 @@ RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
     end
 end)
 
-RegisterNetEvent('denalifw-trucker:client:TakeOutVehicle', function(data)
+RegisterNetEvent('NADRP-trucker:client:TakeOutVehicle', function(data)
     local coords = Config.Locations["vehicle"].coords
     coords = vector3(coords.x, coords.y, coords.z)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     if #(pos - coords) <= 5 then
         local vehicleInfo = data.vehicle
-        TriggerServerEvent('denalifw-trucker:server:DoBail', true, vehicleInfo)
+        TriggerServerEvent('NADRP-trucker:server:DoBail', true, vehicleInfo)
         selectedVeh = vehicleInfo
     else
-        denalifw.Functions.Notify('You are too far away', 'error')
+        NADRP.Functions.Notify('You are too far away', 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-trucker:client:SelectVehicle', function()
+RegisterNetEvent('NADRP-trucker:client:SelectVehicle', function()
     local coords = Config.Locations["vehicle"].coords
     coords = vector3(coords.x, coords.y, coords.z)
     local ped = PlayerPedId()
@@ -254,7 +254,7 @@ RegisterNetEvent('denalifw-trucker:client:SelectVehicle', function()
     if #(pos - coords) <= 5 then
         MenuGarage()
     else
-        denalifw.Functions.Notify('You are too far away', 'error')
+        NADRP.Functions.Notify('You are too far away', 'error')
     end
 end)
 
@@ -283,7 +283,7 @@ function RunWorkThread()
                 if IsControlJustReleased(0, 178) then
                     if IsPedInAnyVehicle(PlayerPedId()) and isTruckerVehicle(GetVehiclePedIsIn(PlayerPedId(), false)) then
                         getNewLocation()
-                        CurrentPlate = denalifw.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false))
+                        CurrentPlate = NADRP.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false))
                     end
                 end
 
@@ -299,11 +299,11 @@ function RunWorkThread()
                         else
                             if not shownHeader then
                                 shownHeader = true
-                                exports['denalifw-menu']:showHeader({
+                                exports['NADRP-menu']:showHeader({
                                     {
                                         header = "Select Vehicle",
                                         params = {
-                                            event = 'denalifw-trucker:client:SelectVehicle',
+                                            event = 'NADRP-trucker:client:SelectVehicle',
                                             args = {}
                                         },
                                     }
@@ -317,12 +317,12 @@ function RunWorkThread()
                                 if GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId()), -1) == PlayerPedId() then
                                     if isTruckerVehicle(GetVehiclePedIsIn(PlayerPedId(), false)) then
                                         DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
-                                        TriggerServerEvent('denalifw-trucker:server:DoBail', false)
+                                        TriggerServerEvent('NADRP-trucker:server:DoBail', false)
                                     else
-                                        denalifw.Functions.Notify('This is not a commercial vehicle!', 'error')
+                                        NADRP.Functions.Notify('This is not a commercial vehicle!', 'error')
                                     end
                                 else
-                                    denalifw.Functions.Notify('You must be the driver to do this..')
+                                    NADRP.Functions.Notify('You must be the driver to do this..')
                                 end
                             end
                         end
@@ -331,7 +331,7 @@ function RunWorkThread()
                 else
                     if shownHeader then
                         shownHeader = false
-                        exports['denalifw-menu']:closeMenu()
+                        exports['NADRP-menu']:closeMenu()
                     end
                 end
 
@@ -344,7 +344,7 @@ function RunWorkThread()
                         DrawText3D(x,y,z, "~g~E~w~ - Payslip")
                         if IsControlJustReleased(0, 38) then
                             if JobsDone > 0 then
-                                TriggerServerEvent("denalifw-trucker:server:01101110", JobsDone)
+                                TriggerServerEvent("NADRP-trucker:server:01101110", JobsDone)
                                 JobsDone = 0
                                 if #LocationsDone == #Config.Locations["stores"] then
                                     LocationsDone = {}
@@ -355,7 +355,7 @@ function RunWorkThread()
                                     CurrentBlip = nil
                                 end
                             else
-                                denalifw.Functions.Notify("You haven't done any work yet..", "error")
+                                NADRP.Functions.Notify("You haven't done any work yet..", "error")
                             end
                         end
                     elseif #(pos - mainCoords) < 2.5 then
@@ -369,13 +369,13 @@ function RunWorkThread()
                         sleep = 5
                         if not hasBox then
                             local vehicle = GetVehiclePedIsIn(PlayerPedId(), true)
-                            if isTruckerVehicle(vehicle) and CurrentPlate == denalifw.Functions.GetPlate(vehicle) then
+                            if isTruckerVehicle(vehicle) and CurrentPlate == NADRP.Functions.GetPlate(vehicle) then
                                 local trunkpos = GetOffsetFromEntityInWorldCoords(vehicle, 0, -2.5, 0)
                                 if #(pos - vector3(trunkpos.x, trunkpos.y, trunkpos.z)) < 1.5 and not isWorking then
                                     DrawText3D(trunkpos.x, trunkpos.y, trunkpos.z, "~g~E~w~ - Pick Up Products")
                                     if IsControlJustReleased(0, 38) then
                                         isWorking = true
-                                        denalifw.Functions.Progressbar("work_carrybox", "Take A Box Of Products", 2000, false, true, {
+                                        NADRP.Functions.Progressbar("work_carrybox", "Take A Box Of Products", 2000, false, true, {
                                             disableMovement = true,
                                             disableCarMovement = true,
                                             disableMouse = false,
@@ -392,7 +392,7 @@ function RunWorkThread()
                                         end, function() -- Cancel
                                             isWorking = false
                                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                            denalifw.Functions.Notify("Canceled", "error")
+                                            NADRP.Functions.Notify("Canceled", "error")
                                         end)
                                     end
                                 else
@@ -407,7 +407,7 @@ function RunWorkThread()
                                     TriggerEvent('animations:client:EmoteCommandStart', {"c"})
                                     Wait(500)
                                     TriggerEvent('animations:client:EmoteCommandStart', {"bumbin"})
-                                    denalifw.Functions.Progressbar("work_dropbox", "Deliver Box Of Products", 2000, false, true, {
+                                    NADRP.Functions.Progressbar("work_dropbox", "Deliver Box Of Products", 2000, false, true, {
                                         disableMovement = true,
                                         disableCarMovement = true,
                                         disableMouse = false,
@@ -419,11 +419,11 @@ function RunWorkThread()
                                         currentCount = currentCount + 1
                                         if currentCount == CurrentLocation.dropcount then
                                             LocationsDone[#LocationsDone+1] = CurrentLocation.id
-                                            TriggerServerEvent("denalifw-shops:server:RestockShopItems", CurrentLocation.store)
-                                            denalifw.Functions.Notify("You Have Delivered All Products, To The Next Point")
+                                            TriggerServerEvent("NADRP-shops:server:RestockShopItems", CurrentLocation.store)
+                                            NADRP.Functions.Notify("You Have Delivered All Products, To The Next Point")
                                             local chance = math.random(1,100)
                                             if chance < 26 then
-                                                TriggerServerEvent('denalifw-trucker:server:nano')
+                                                TriggerServerEvent('NADRP-trucker:server:nano')
                                             end
                                             if CurrentBlip ~= nil then
                                                 RemoveBlip(CurrentBlip)
@@ -438,7 +438,7 @@ function RunWorkThread()
                                     end, function() -- Cancel
                                         isWorking = false
                                         ClearPedTasks(PlayerPedId())
-                                        denalifw.Functions.Notify("Canceled", "error")
+                                        NADRP.Functions.Notify("Canceled", "error")
                                     end)
                                 end
                             else

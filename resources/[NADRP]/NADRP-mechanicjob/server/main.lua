@@ -1,13 +1,13 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 local VehicleStatus = {}
 local VehicleDrivingDistance = {}
 
-denalifw.Functions.CreateCallback('denalifw-vehicletuning:server:GetDrivingDistances', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-vehicletuning:server:GetDrivingDistances', function(source, cb)
     cb(VehicleDrivingDistance)
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:server:SaveVehicleProps', function(vehicleProps)
+RegisterNetEvent('NADRP-vehicletuning:server:SaveVehicleProps', function(vehicleProps)
     if IsVehicleOwned(vehicleProps.plate) then
         MySQL.Async.execute('UPDATE player_vehicles SET mods = ? WHERE plate = ?',
             {json.encode(vehicleProps), vehicleProps.plate})
@@ -51,16 +51,16 @@ RegisterNetEvent('vehiclemod:server:setupVehicleStatus', function(plate, engineH
     end
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:server:UpdateDrivingDistance', function(amount, plate)
+RegisterNetEvent('NADRP-vehicletuning:server:UpdateDrivingDistance', function(amount, plate)
     VehicleDrivingDistance[plate] = amount
-    TriggerClientEvent('denalifw-vehicletuning:client:UpdateDrivingDistance', -1, VehicleDrivingDistance[plate], plate)
+    TriggerClientEvent('NADRP-vehicletuning:client:UpdateDrivingDistance', -1, VehicleDrivingDistance[plate], plate)
     local result = MySQL.Sync.fetchAll('SELECT plate FROM player_vehicles WHERE plate = ?', {plate})
     if result[1] ~= nil then
         MySQL.Async.execute('UPDATE player_vehicles SET drivingdistance = ? WHERE plate = ?', {amount, plate})
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-vehicletuning:server:IsVehicleOwned', function(source, cb, plate)
+NADRP.Functions.CreateCallback('NADRP-vehicletuning:server:IsVehicleOwned', function(source, cb, plate)
     local retval = false
     local result = MySQL.Sync.fetchScalar('SELECT 1 from player_vehicles WHERE plate = ?', {plate})
     if result then
@@ -69,7 +69,7 @@ denalifw.Functions.CreateCallback('denalifw-vehicletuning:server:IsVehicleOwned'
     cb(retval)
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:server:LoadStatus', function(veh, plate)
+RegisterNetEvent('NADRP-vehicletuning:server:LoadStatus', function(veh, plate)
     VehicleStatus[plate] = veh
     TriggerClientEvent("vehiclemod:client:setVehicleStatus", -1, plate, veh)
 end)
@@ -95,7 +95,7 @@ RegisterNetEvent('vehiclemod:server:updatePart', function(plate, part, level)
     end
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:server:SetPartLevel', function(plate, part, level)
+RegisterNetEvent('NADRP-vehicletuning:server:SetPartLevel', function(plate, part, level)
     if VehicleStatus[plate] ~= nil then
         VehicleStatus[plate][part] = level
         TriggerClientEvent("vehiclemod:client:setVehicleStatus", -1, plate, VehicleStatus[plate])
@@ -136,7 +136,7 @@ function GetVehicleStatus(plate)
     return retval
 end
 
-denalifw.Commands.Add("setvehiclestatus", "Set Vehicle Status", {{
+NADRP.Commands.Add("setvehiclestatus", "Set Vehicle Status", {{
     name = "part",
     help = "Type The Part You Want To Edit"
 }, {
@@ -148,14 +148,14 @@ denalifw.Commands.Add("setvehiclestatus", "Set Vehicle Status", {{
     TriggerClientEvent("vehiclemod:client:setPartLevel", source, part, level)
 end, "god")
 
-denalifw.Functions.CreateCallback('denalifw-vehicletuning:server:GetAttachedVehicle', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-vehicletuning:server:GetAttachedVehicle', function(source, cb)
     cb(Config.Plates)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-vehicletuning:server:IsMechanicAvailable', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-vehicletuning:server:IsMechanicAvailable', function(source, cb)
     local amount = 0
-    for k, v in pairs(denalifw.Functions.GetPlayers()) do
-        local Player = denalifw.Functions.GetPlayer(v)
+    for k, v in pairs(NADRP.Functions.GetPlayers()) do
+        local Player = NADRP.Functions.GetPlayer(v)
         if Player ~= nil then
             if (Player.PlayerData.job.name == "mechanic" and Player.PlayerData.job.onduty) then
                 amount = amount + 1
@@ -165,39 +165,39 @@ denalifw.Functions.CreateCallback('denalifw-vehicletuning:server:IsMechanicAvail
     cb(amount)
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:server:SetAttachedVehicle', function(veh, k)
+RegisterNetEvent('NADRP-vehicletuning:server:SetAttachedVehicle', function(veh, k)
     if veh ~= false then
         Config.Plates[k].AttachedVehicle = veh
-        TriggerClientEvent('denalifw-vehicletuning:client:SetAttachedVehicle', -1, veh, k)
+        TriggerClientEvent('NADRP-vehicletuning:client:SetAttachedVehicle', -1, veh, k)
     else
         Config.Plates[k].AttachedVehicle = nil
-        TriggerClientEvent('denalifw-vehicletuning:client:SetAttachedVehicle', -1, false, k)
+        TriggerClientEvent('NADRP-vehicletuning:client:SetAttachedVehicle', -1, false, k)
     end
 end)
 
-RegisterNetEvent('denalifw-vehicletuning:server:CheckForItems', function(part)
+RegisterNetEvent('NADRP-vehicletuning:server:CheckForItems', function(part)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local RepairPart = Player.Functions.GetItemByName(Config.RepairCostAmount[part].item)
 
     if RepairPart ~= nil then
         if RepairPart.amount >= Config.RepairCostAmount[part].costs then
-            TriggerClientEvent('denalifw-vehicletuning:client:RepaireeePart', src, part)
+            TriggerClientEvent('NADRP-vehicletuning:client:RepaireeePart', src, part)
             Player.Functions.RemoveItem(Config.RepairCostAmount[part].item, Config.RepairCostAmount[part].costs)
 
             for i = 1, Config.RepairCostAmount[part].costs, 1 do
                 TriggerClientEvent('inventory:client:ItemBox', src,
-                    denalifw.Shared.Items[Config.RepairCostAmount[part].item], "remove")
+                    NADRP.Shared.Items[Config.RepairCostAmount[part].item], "remove")
                 Wait(500)
             end
         else
-            TriggerClientEvent('denalifw:Notify', src,
-                "You Dont Have Enough " .. denalifw.Shared.Items[Config.RepairCostAmount[part].item]["label"] .. " (min. " ..
+            TriggerClientEvent('NADRP:Notify', src,
+                "You Dont Have Enough " .. NADRP.Shared.Items[Config.RepairCostAmount[part].item]["label"] .. " (min. " ..
                     Config.RepairCostAmount[part].costs .. "x)", "error")
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, "You Do Not Have " ..
-            denalifw.Shared.Items[Config.RepairCostAmount[part].item]["label"] .. " bij je!", "error")
+        TriggerClientEvent('NADRP:Notify', src, "You Do Not Have " ..
+            NADRP.Shared.Items[Config.RepairCostAmount[part].item]["label"] .. " bij je!", "error")
     end
 end)
 
@@ -212,61 +212,61 @@ function IsAuthorized(CitizenId)
     return retval
 end
 
-denalifw.Commands.Add("setmechanic", "Give Someone The Mechanic job", {{
+NADRP.Commands.Add("setmechanic", "Give Someone The Mechanic job", {{
     name = "id",
     help = "ID Of The Player"
 }}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
+    local Player = NADRP.Functions.GetPlayer(source)
 
     if IsAuthorized(Player.PlayerData.citizenid) then
         local TargetId = tonumber(args[1])
         if TargetId ~= nil then
-            local TargetData = denalifw.Functions.GetPlayer(TargetId)
+            local TargetData = NADRP.Functions.GetPlayer(TargetId)
             if TargetData ~= nil then
                 TargetData.Functions.SetJob("mechanic")
-                TriggerClientEvent('denalifw:Notify', TargetData.PlayerData.source,
+                TriggerClientEvent('NADRP:Notify', TargetData.PlayerData.source,
                     "You Were Hired As An Autocare Employee!")
-                TriggerClientEvent('denalifw:Notify', source, "You have (" .. TargetData.PlayerData.charinfo.firstname ..
+                TriggerClientEvent('NADRP:Notify', source, "You have (" .. TargetData.PlayerData.charinfo.firstname ..
                     ") Hired As An Autocare Employee!")
             end
         else
-            TriggerClientEvent('denalifw:Notify', source, "You Must Provide A Player ID!")
+            TriggerClientEvent('NADRP:Notify', source, "You Must Provide A Player ID!")
         end
     else
-        TriggerClientEvent('denalifw:Notify', source, "You Cannot Do This!", "error")
+        TriggerClientEvent('NADRP:Notify', source, "You Cannot Do This!", "error")
     end
 end)
 
-denalifw.Commands.Add("firemechanic", "Fire A Mechanic", {{
+NADRP.Commands.Add("firemechanic", "Fire A Mechanic", {{
     name = "id",
     help = "ID Of The Player"
 }}, false, function(source, args)
-    local Player = denalifw.Functions.GetPlayer(source)
+    local Player = NADRP.Functions.GetPlayer(source)
 
     if IsAuthorized(Player.PlayerData.citizenid) then
         local TargetId = tonumber(args[1])
         if TargetId ~= nil then
-            local TargetData = denalifw.Functions.GetPlayer(TargetId)
+            local TargetData = NADRP.Functions.GetPlayer(TargetId)
             if TargetData ~= nil then
                 if TargetData.PlayerData.job.name == "mechanic" then
                     TargetData.Functions.SetJob("unemployed")
-                    TriggerClientEvent('denalifw:Notify', TargetData.PlayerData.source,
+                    TriggerClientEvent('NADRP:Notify', TargetData.PlayerData.source,
                         "You Were Fired As An Autocare Employee!")
-                    TriggerClientEvent('denalifw:Notify', source,
+                    TriggerClientEvent('NADRP:Notify', source,
                         "You have (" .. TargetData.PlayerData.charinfo.firstname .. ") Fired As Autocare Employee!")
                 else
-                    TriggerClientEvent('denalifw:Notify', source, "Youre Not An Employee of Autocare!", "error")
+                    TriggerClientEvent('NADRP:Notify', source, "Youre Not An Employee of Autocare!", "error")
                 end
             end
         else
-            TriggerClientEvent('denalifw:Notify', source, "You Must Provide A Player ID!", "error")
+            TriggerClientEvent('NADRP:Notify', source, "You Must Provide A Player ID!", "error")
         end
     else
-        TriggerClientEvent('denalifw:Notify', source, "You Cannot Do This!", "error")
+        TriggerClientEvent('NADRP:Notify', source, "You Cannot Do This!", "error")
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-vehicletuning:server:GetStatus', function(source, cb, plate)
+NADRP.Functions.CreateCallback('NADRP-vehicletuning:server:GetStatus', function(source, cb, plate)
     if VehicleStatus[plate] ~= nil and next(VehicleStatus[plate]) ~= nil then
         cb(VehicleStatus[plate])
     else

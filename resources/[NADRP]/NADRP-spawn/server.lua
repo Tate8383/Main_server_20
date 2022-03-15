@@ -1,6 +1,6 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
-denalifw.Functions.CreateCallback('denalifw-spawn:server:getOwnedHouses', function(source, cb, cid)
+NADRP.Functions.CreateCallback('NADRP-spawn:server:getOwnedHouses', function(source, cb, cid)
     if cid ~= nil then
         local houses = MySQL.Sync.fetchAll('SELECT * FROM player_houses WHERE citizenid = ?', {cid})
         if houses[1] ~= nil then

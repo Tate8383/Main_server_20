@@ -40,7 +40,7 @@ local function loadAnim(dict)
 end
 
 local function GetClosestPlayer()
-    local closestPlayers = denalifw.Functions.GetPlayersFromCoords()
+    local closestPlayers = NADRP.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -73,7 +73,7 @@ local function LayOnStretcher()
         end
     else
         if distance < 2.0 then
-            TriggerServerEvent('denalifw-radialmenu:Stretcher:BusyCheck', GetPlayerServerId(player), "lay")
+            TriggerServerEvent('NADRP-radialmenu:Stretcher:BusyCheck', GetPlayerServerId(player), "lay")
         else
             loadAnim(inBedDicts)
             if stretcherObject and #(coords - GetEntityCoords(stretcherObject)) <= 3.0 then
@@ -108,7 +108,7 @@ local function attachToStretcher()
             FreezeEntityPosition(stretcherObject, false)
         else
             if distance < 2.0 then
-                TriggerServerEvent('denalifw-radialmenu:Stretcher:BusyCheck', GetPlayerServerId(closestPlayer), "attach")
+                TriggerServerEvent('NADRP-radialmenu:Stretcher:BusyCheck', GetPlayerServerId(closestPlayer), "attach")
             else
                 NetworkRequestControlOfEntity(stretcherObject)
                 loadAnim("anim@heists@box_carry@")
@@ -130,7 +130,7 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-radialmenu:client:TakeStretcher', function()
+RegisterNetEvent('NADRP-radialmenu:client:TakeStretcher', function()
     local vehicle = checkForVehicles()
     if vehicle ~= 0 then
         RequestModel("prop_ld_binbag_01")
@@ -148,14 +148,14 @@ RegisterNetEvent('denalifw-radialmenu:client:TakeStretcher', function()
                 isAttached = true
             end)
         else
-            denalifw.Functions.Notify(Lang:t("error.obj_not_found"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.obj_not_found"), 'error')
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.not_near_ambulance"), 'error')
+        NADRP.Functions.Notify(Lang:t("error.not_near_ambulance"), 'error')
     end
 end)
 
-RegisterNetEvent('denalifw-radialmenu:client:RemoveStretcher', function()
+RegisterNetEvent('NADRP-radialmenu:client:RemoveStretcher', function()
     local ped = PlayerPedId()
     local coords = GetOffsetFromEntityInWorldCoords(ped, 0, 1.5, 0)
     if stretcherObject then
@@ -165,18 +165,18 @@ RegisterNetEvent('denalifw-radialmenu:client:RemoveStretcher', function()
                 DeleteEntity(stretcherObject)
                 ClearPedTasks(ped)
                 DetachEntity(ped, false, true)
-                TriggerServerEvent('denalifw-radialmenu:server:RemoveStretcher', coords, stretcherObject)
+                TriggerServerEvent('NADRP-radialmenu:server:RemoveStretcher', coords, stretcherObject)
                 isAttached = false
                 stretcherObject = nil
                 isLayingOnBed = false
             end
         else
-            denalifw.Functions.Notify(Lang:t("error.far_away"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.far_away"), 'error')
         end
     end
 end)
 
-RegisterNetEvent('denalifw-radialmenu:client:RemoveStretcherFromArea', function(playerPos, bObject)
+RegisterNetEvent('NADRP-radialmenu:client:RemoveStretcherFromArea', function(playerPos, bObject)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     if pos ~= playerPos then
@@ -199,27 +199,27 @@ RegisterNetEvent('denalifw-radialmenu:client:RemoveStretcherFromArea', function(
     end
 end)
 
-RegisterNetEvent('denalifw-radialmenu:Stretcher:client:BusyCheck', function(otherId, type)
+RegisterNetEvent('NADRP-radialmenu:Stretcher:client:BusyCheck', function(otherId, type)
     local ped = PlayerPedId()
     if type == "lay" then
         loadAnim("anim@gangops@morgue@table@")
         IsEntityPlayingAnim(entity, animDict, animName, p4)
         if IsEntityPlayingAnim(ped, "anim@gangops@morgue@table@", "ko_front", 3) then
-            TriggerServerEvent('denalifw-radialmenu:server:BusyResult', true, otherId, type)
+            TriggerServerEvent('NADRP-radialmenu:server:BusyResult', true, otherId, type)
         else
-            TriggerServerEvent('denalifw-radialmenu:server:BusyResult', false, otherId, type)
+            TriggerServerEvent('NADRP-radialmenu:server:BusyResult', false, otherId, type)
         end
     else
         loadAnim('anim@heists@box_carry@')
         if IsEntityPlayingAnim(ped, 'anim@heists@box_carry@', 'idle', 3) then
-            TriggerServerEvent('denalifw-radialmenu:server:BusyResult', true, otherId, type)
+            TriggerServerEvent('NADRP-radialmenu:server:BusyResult', true, otherId, type)
         else
-            TriggerServerEvent('denalifw-radialmenu:server:BusyResult', false, otherId, type)
+            TriggerServerEvent('NADRP-radialmenu:server:BusyResult', false, otherId, type)
         end
     end
 end)
 
-RegisterNetEvent('denalifw-radialmenu:client:Result', function(isBusy, type)
+RegisterNetEvent('NADRP-radialmenu:client:Result', function(isBusy, type)
     local ped = PlayerPedId()
     local inBedDicts = "anim@gangops@morgue@table@"
     local inBedAnims = "ko_front"
@@ -231,7 +231,7 @@ RegisterNetEvent('denalifw-radialmenu:client:Result', function(isBusy, type)
             AttachEntityToEntity(ped, stretcherObject, 0, 0, 0.0, 1.6, 0.0, 0.0, 360.0, 0.0, false, false, false, false, 2, true)
             isLayingOnBed = true
         else
-            denalifw.Functions.Notify(Lang:t("error.stretcher_in_use"), "error")
+            NADRP.Functions.Notify(Lang:t("error.stretcher_in_use"), "error")
             isLayingOnBed = false
         end
     else
@@ -245,7 +245,7 @@ RegisterNetEvent('denalifw-radialmenu:client:Result', function(isBusy, type)
             FreezeEntityPosition(stretcherObject, false)
             isAttached = true
         else
-            denalifw.Functions.Notify(Lang:t("error.stretcher_in_use"), "error")
+            NADRP.Functions.Notify(Lang:t("error.stretcher_in_use"), "error")
             isAttached = false
         end
     end

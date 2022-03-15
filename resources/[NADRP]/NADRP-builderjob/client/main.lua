@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local PlayerData = {}
 
 local BuilderData = {
@@ -6,25 +6,25 @@ local BuilderData = {
     CurrentTask = nil,
 }
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    PlayerData = denalifw.Functions.GetPlayerData()
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    PlayerData = NADRP.Functions.GetPlayerData()
     PlayerJob = PlayerData.job
     GetCurrentProject()
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     GetCurrentProject()
 end)
 
 CreateThread(function()
     Wait(1000)
-    PlayerData = denalifw.Functions.GetPlayerData()
+    PlayerData = NADRP.Functions.GetPlayerData()
     GetCurrentProject()
 end)
 
 function GetCurrentProject()
-    denalifw.Functions.TriggerCallback('denalifw-builderjob:server:GetCurrentProject', function(BuilderConfig)
+    NADRP.Functions.TriggerCallback('NADRP-builderjob:server:GetCurrentProject', function(BuilderConfig)
         Config = BuilderConfig
     end)
 end
@@ -93,7 +93,7 @@ CreateThread(function()
                         if TaskData.completed == TaskData.total then
                             DrawText3Ds(data.coords.x, data.coords.y, data.coords.z - 0.2, Lang:t('info.project_end'))
                             if IsControlJustPressed(0, 47) then
-                                TriggerServerEvent('denalifw-builderjob:server:FinishProject')
+                                TriggerServerEvent('NADRP-builderjob:server:FinishProject')
                             end
                         end
 
@@ -135,22 +135,22 @@ function DoTask()
     local pos = GetEntityCoords(ped)
     local TaskData = Config.Projects[Config.CurrentProject].ProjectLocations["tasks"][BuilderData.CurrentTask]
     local CountDown = 5
-    TriggerServerEvent('denalifw-builderjob:server:SetTaskState', BuilderData.CurrentTask, true, false)
+    TriggerServerEvent('NADRP-builderjob:server:SetTaskState', BuilderData.CurrentTask, true, false)
 
     if TaskData.type == "hammer" then
         while CountDown ~= 0 do
             CountDown = CountDown - 1
             Wait(1000)
         end
-        TriggerServerEvent('denalifw-builderjob:server:SetTaskState', BuilderData.CurrentTask, true, true)
+        TriggerServerEvent('NADRP-builderjob:server:SetTaskState', BuilderData.CurrentTask, true, true)
     end
 end
 
-RegisterNetEvent('denalifw-builderjob:client:SetTaskState', function(Task, IsBusy, IsCompleted)
+RegisterNetEvent('NADRP-builderjob:client:SetTaskState', function(Task, IsBusy, IsCompleted)
     Config.Projects[Config.CurrentProject].ProjectLocations["tasks"][Task].IsBusy = IsBusy
     Config.Projects[Config.CurrentProject].ProjectLocations["tasks"][Task].completed = IsCompleted
 end)
 
-RegisterNetEvent('denalifw-builderjob:client:FinishProject', function(BuilderConfig)
+RegisterNetEvent('NADRP-builderjob:client:FinishProject', function(BuilderConfig)
     Config = BuilderConfig
 end)

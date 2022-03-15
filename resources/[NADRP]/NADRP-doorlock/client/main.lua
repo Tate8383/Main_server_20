@@ -1,7 +1,7 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local closestDoorKey, closestDoorValue = nil, nil
 local maxDistance = 1.25
-local PlayerData = denalifw.Functions.GetPlayerData()
+local PlayerData = NADRP.Functions.GetPlayerData()
 local doorFound = false
 
 -- Functions
@@ -42,16 +42,16 @@ local function setDoorLocking(doorId, key)
 	SetTimeout(400, function()
 		doorId.locking = false
 		doorId.locked = not doorId.locked
-		TriggerServerEvent('denalifw-doorlock:server:updateState', key, doorId.locked)
+		TriggerServerEvent('NADRP-doorlock:server:updateState', key, doorId.locked)
 	end)
 end
 
 local function lockpickFinish(success)
 	if success then
-		denalifw.Functions.Notify(Lang:t("success.lockpick_success"), 'success', 2500)
+		NADRP.Functions.Notify(Lang:t("success.lockpick_success"), 'success', 2500)
 		setDoorLocking(closestDoorValue, closestDoorKey)
 	else
-		denalifw.Functions.Notify(Lang:t("error.lockpick_fail"), 'error', 2500)
+		NADRP.Functions.Notify(Lang:t("error.lockpick_fail"), 'error', 2500)
 	end
 end
 
@@ -99,16 +99,16 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-	TriggerServerEvent("denalifw-doorlock:server:setupDoors")
-	PlayerData = denalifw.Functions.GetPlayerData()
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+	TriggerServerEvent("NADRP-doorlock:server:setupDoors")
+	PlayerData = NADRP.Functions.GetPlayerData()
 end)
 
-RegisterNetEvent('denalifw:Player:SetPlayerData', function(val)
+RegisterNetEvent('NADRP:Player:SetPlayerData', function(val)
 	PlayerData = val
 end)
 
-RegisterNetEvent('denalifw-doorlock:client:setState', function(doorID, state)
+RegisterNetEvent('NADRP-doorlock:client:setState', function(doorID, state)
 	QB.Doors[doorID].locked = state
 	local current = QB.Doors[doorID]
 	if current.doors then
@@ -139,7 +139,7 @@ RegisterNetEvent('denalifw-doorlock:client:setState', function(doorID, state)
 	end
 end)
 
-RegisterNetEvent('denalifw-doorlock:client:setDoors', function(doorList)
+RegisterNetEvent('NADRP-doorlock:client:setDoors', function(doorList)
 	QB.Doors = doorList
 end)
 
@@ -150,21 +150,21 @@ RegisterNetEvent('lockpicks:UseLockpick', function()
 		if dist < 1.5 then
 			if QB.Doors[k].pickable then
 				if QB.Doors[k].locked then
-					denalifw.Functions.TriggerCallback('denalifw:HasItem', function(hasItem)
+					NADRP.Functions.TriggerCallback('NADRP:HasItem', function(hasItem)
 						if hasItem then
 							closestDoorKey, closestDoorValue = k, v
-							TriggerEvent('denalifw-lockpick:client:openLockpick', lockpickFinish)
+							TriggerEvent('NADRP-lockpick:client:openLockpick', lockpickFinish)
 						else
-							denalifw.Functions.Notify(Lang:t("error.screwdriverset_not_found"), "error")
+							NADRP.Functions.Notify(Lang:t("error.screwdriverset_not_found"), "error")
 						end
 					end, "screwdriverset")
 					break
 				else
-					denalifw.Functions.Notify(Lang:t("error.door_not_locked"), 'error', 2500)
+					NADRP.Functions.Notify(Lang:t("error.door_not_locked"), 'error', 2500)
 					break
 				end
 			else
-				denalifw.Functions.Notify(Lang:t("error.door_not_lockpickable"), 'error', 2500)
+				NADRP.Functions.Notify(Lang:t("error.door_not_lockpickable"), 'error', 2500)
 				break
 			end
 		end
@@ -256,7 +256,7 @@ CreateThread(function()
 					if isAuthorized then
 						setDoorLocking(current, i)
 					else
-						denalifw.Functions.Notify(Lang:t("error.not_authorized"), 'error')
+						NADRP.Functions.Notify(Lang:t("error.not_authorized"), 'error')
 					end
 					sleep = 100
 				end

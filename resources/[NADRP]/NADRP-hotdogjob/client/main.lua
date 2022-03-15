@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local PlayerData = {}
 local HotdogBlip = nil
 local IsWorking = false
@@ -74,13 +74,13 @@ function UpdateLevel()
     return ReturnData
 end
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
-    PlayerData = denalifw.Functions.GetPlayerData()
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+    PlayerData = NADRP.Functions.GetPlayerData()
     UpdateLevel()
     UpdateBlip()
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     UpdateBlip()
 end)
 
@@ -141,7 +141,7 @@ CreateThread(function()
 end)
 
 function StartWorking()
-    denalifw.Functions.TriggerCallback('denalifw-hotdogjob:server:HasMoney', function(HasMoney)
+    NADRP.Functions.TriggerCallback('NADRP-hotdogjob:server:HasMoney', function(HasMoney)
         if HasMoney then
             local PlayerPed = PlayerPedId()
             local SpawnCoords = Config.Locations["spawn"].coords
@@ -155,9 +155,9 @@ function StartWorking()
             HotdogLoop()
             UpdateUI()
             CheckLoop()
-            denalifw.Functions.Notify(Lang:t("success.deposit"), 'success')
+            NADRP.Functions.Notify(Lang:t("success.deposit"), 'success')
         else
-            denalifw.Functions.Notify(Lang:t("error.no_money"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.no_money"), 'error')
         end
     end)
 end
@@ -271,12 +271,12 @@ function HotdogLoop()
     end)
 end
 
-RegisterNetEvent('denalifw-hotdogjob:client:UpdateReputation', function(JobRep)
+RegisterNetEvent('NADRP-hotdogjob:client:UpdateReputation', function(JobRep)
     PlayerData.metadata["jobrep"] = JobRep
     UpdateLevel()
 end)
 
-RegisterNetEvent('denalifw-hotdogjob:client:ToggleSell', function(data)
+RegisterNetEvent('NADRP-hotdogjob:client:ToggleSell', function(data)
     if not SellingData.Enabled then
         SellingData.Enabled = true
         ToggleSell()
@@ -314,7 +314,7 @@ function ToggleSell()
                                 end
                             end
 
-                            local closestPed, closestDistance = denalifw.Functions.GetClosestPed(coords, PlayerPeds)
+                            local closestPed, closestDistance = NADRP.Functions.GetClosestPed(coords, PlayerPeds)
 
                             if closestDistance < 15.0 and closestPed ~= 0 and not IsPedInAnyVehicle(closestPed, false) then
                                 SellToPed(closestPed)
@@ -327,10 +327,10 @@ function ToggleSell()
                 end
             end)
         else
-            denalifw.Functions.Notify(Lang:t("error.too_far"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.too_far"), 'error')
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.no_stand"), 'error')
+        NADRP.Functions.Notify(Lang:t("error.no_stand"), 'error')
     end
 end
 
@@ -418,7 +418,7 @@ function SellToPed(ped)
             SellingData.Target = nil
             SellingData.HasTarget = false
             SellingData.Hotdog = nil
-            denalifw.Functions.Notify(Lang:t("error.too_far"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.too_far"), 'error')
             break
         end
         Wait(100)
@@ -459,8 +459,8 @@ function SellToPed(ped)
 
                 DrawText3Ds(pedCoords.x, pedCoords.y, pedCoords.z, Lang:t("info.sell_dogs", {value = HotdogsForSale, value2 = (HotdogsForSale * SellingPrice)}))
                 if IsControlJustPressed(0, 161) or IsDisabledControlJustPressed(0, 161) then
-                    denalifw.Functions.Notify(Lang:t("success.sold_hotdogs", {value = HotdogsForSale, value2 = (HotdogsForSale * SellingPrice)}), 'success')
-                    TriggerServerEvent('denalifw-hotdogjob:server:Sell', HotdogsForSale, SellingPrice)
+                    NADRP.Functions.Notify(Lang:t("success.sold_hotdogs", {value = HotdogsForSale, value2 = (HotdogsForSale * SellingPrice)}), 'success')
+                    TriggerServerEvent('NADRP-hotdogjob:server:Sell', HotdogsForSale, SellingPrice)
                     SellingData.HasTarget = false
                     local Myped = PlayerPedId()
 
@@ -505,7 +505,7 @@ function SellToPed(ped)
                 end
 
                 if IsControlJustPressed(0, 162) or IsDisabledControlJustPressed(0, 162) then
-                    denalifw.Functions.Notify(Lang:t("error.cust_refused"), 'error')
+                    NADRP.Functions.Notify(Lang:t("error.cust_refused"), 'error')
                     SellingData.HasTarget = false
 
                     FreezeEntityPosition(ped, false)
@@ -529,7 +529,7 @@ function SellToPed(ped)
                     SellingData.Target = nil
                     SellingData.HasTarget = false
                     SellingData.Hotdog = nil
-                denalifw.Functions.Notify(Lang:t("error.too_far"), 'error')
+                NADRP.Functions.Notify(Lang:t("error.too_far"), 'error')
                 break
             end
         else
@@ -543,7 +543,7 @@ function SellToPed(ped)
             SellingData.Target = nil
             SellingData.HasTarget = false
             SellingData.Hotdog = nil
-            denalifw.Functions.Notify(Lang:t("error.too_far"), 'error')
+            NADRP.Functions.Notify(Lang:t("error.too_far"), 'error')
             break
         end
 
@@ -553,8 +553,8 @@ end
 
 function StartHotdogMinigame()
     PrepareAnim()
-    TriggerEvent('denalifw-keyminigame:show')
-    TriggerEvent('denalifw-keyminigame:start', FinishMinigame)
+    TriggerEvent('NADRP-keyminigame:show')
+    TriggerEvent('NADRP-keyminigame:start', FinishMinigame)
 end
 
 function PrepareAnim()
@@ -597,24 +597,24 @@ function FinishMinigame(faults)
         Quality = "rare"
     end
     if Config.Stock[Quality].Current + 1 <= Config.Stock[Quality].Max[Config.MyLevel] then
-        TriggerServerEvent('denalifw-hotdogjob:server:UpdateReputation', Quality)
+        TriggerServerEvent('NADRP-hotdogjob:server:UpdateReputation', Quality)
         if Config.MyLevel == 1 then
-            denalifw.Functions.Notify(Lang:t("success.made_hotdog", {value = Config.Stock[Quality].Label}), "success")
+            NADRP.Functions.Notify(Lang:t("success.made_hotdog", {value = Config.Stock[Quality].Label}), "success")
             Config.Stock[Quality].Current = Config.Stock[Quality].Current + 1
         else
             local Luck = math.random(1, 2)
             local LuckyNumber = math.random(1, 2)
             local LuckyAmount = math.random(1, Config.MyLevel)
             if Luck == LuckyNumber then
-                denalifw.Functions.Notify(Lang:t("success.made_luck_hotdog", {value = LuckyAmount, value2 = Config.Stock[Quality].Label}), "success")
+                NADRP.Functions.Notify(Lang:t("success.made_luck_hotdog", {value = LuckyAmount, value2 = Config.Stock[Quality].Label}), "success")
                 Config.Stock[Quality].Current = Config.Stock[Quality].Current + LuckyAmount
             else
-                denalifw.Functions.Notify(Lang:t("success.made_hotdog", {value = Config.Stock[Quality].Label}), "success")
+                NADRP.Functions.Notify(Lang:t("success.made_hotdog", {value = Config.Stock[Quality].Label}), "success")
                 Config.Stock[Quality].Current = Config.Stock[Quality].Current + 1
             end
         end
     else
-        denalifw.Functions.Notify(Lang:t("error.no_more", {value = Config.Stock[Quality].Label}), "error")
+        NADRP.Functions.Notify(Lang:t("error.no_more", {value = Config.Stock[Quality].Label}), "error")
     end
     PreparingFood = false
 end
@@ -659,7 +659,7 @@ end
 
 function StopWorking()
     if DoesEntityExist(StandObject) then
-        denalifw.Functions.TriggerCallback('denalifw-hotdogjob:server:BringBack', function(DidBail)
+        NADRP.Functions.TriggerCallback('NADRP-hotdogjob:server:BringBack', function(DidBail)
             if DidBail then
                 DeleteObject(StandObject)
                 ClearPedTasksImmediately(PlayerPedId())
@@ -671,13 +671,13 @@ function StopWorking()
                 for _, v in pairs(Config.Stock) do
                     v.Current = 0
                 end
-                denalifw.Functions.Notify(Lang:t("success.deposit_returned"), 'success')
+                NADRP.Functions.Notify(Lang:t("success.deposit_returned"), 'success')
             else
-                denalifw.Functions.Notify(Lang:t("error.deposit_notreturned"), 'error')
+                NADRP.Functions.Notify(Lang:t("error.deposit_notreturned"), 'error')
             end
         end)
     else
-        denalifw.Functions.Notify(Lang:t("error.no_stand_found"), 'error')
+        NADRP.Functions.Notify(Lang:t("error.no_stand_found"), 'error')
         IsWorking = false
         StandObject = nil
         IsPushing = false
@@ -724,7 +724,7 @@ function CheckLoop()
     end)
 end
 
-RegisterNetEvent('denalifw-hotdogjob:staff:DeletStand', function()
+RegisterNetEvent('NADRP-hotdogjob:staff:DeletStand', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local Object = GetClosestObjectOfType(pos.x, pos.y, pos.z, 10.0, `prop_hotdogstand_01`, true, false, false)
@@ -742,7 +742,7 @@ RegisterNetEvent('denalifw-hotdogjob:staff:DeletStand', function()
             end
             Wait(100)
             DeleteEntity(Object)
-            denalifw.Functions.Notify(Lang:t("info.admin_removed", "primary"))
+            NADRP.Functions.Notify(Lang:t("info.admin_removed", "primary"))
         end
     end
 end)

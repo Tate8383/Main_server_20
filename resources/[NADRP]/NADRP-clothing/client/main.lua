@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local creatingCharacter = false
 local cam = -1
 local headingToCam = GetEntityHeading(PlayerPedId())
@@ -294,14 +294,14 @@ local skinData = {
     },
 }
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded')
-AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
-    TriggerServerEvent("denalifw-clothes:loadPlayerSkin")
-    PlayerData = denalifw.Functions.GetPlayerData()
+RegisterNetEvent('NADRP:Client:OnPlayerLoaded')
+AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
+    TriggerServerEvent("NADRP-clothes:loadPlayerSkin")
+    PlayerData = NADRP.Functions.GetPlayerData()
 end)
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate')
-AddEventHandler('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate')
+AddEventHandler('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerData.job = JobInfo
 end)
 
@@ -439,8 +439,8 @@ Citizen.CreateThread(function()
                                 if IsControlJustPressed(0, 38) then -- E
                                     customCamLocation = Config.ClothingRooms[k].cameraLocation
                                     gender = "male"
-                                    if denalifw.Functions.GetPlayerData().charinfo.gender == 1 then gender = "female" end
-                                    denalifw.Functions.TriggerCallback('denalifw-clothing:server:getOutfits', function(result)
+                                    if NADRP.Functions.GetPlayerData().charinfo.gender == 1 then gender = "female" end
+                                    NADRP.Functions.TriggerCallback('NADRP-clothing:server:getOutfits', function(result)
                                         openMenu({
                                             {menu = "roomOutfits", label = "Presets", selected = true, outfits = Config.Outfits[PlayerData.job.name][gender]},
                                             {menu = "myOutfits", label = "My Outfits", selected = false, outfits = result},
@@ -455,8 +455,8 @@ Citizen.CreateThread(function()
                                     if IsControlJustPressed(0, 38) then -- E
                                         customCamLocation = Config.ClothingRooms[k].cameraLocation
                                         gender = "male"
-                                        if denalifw.Functions.GetPlayerData().charinfo.gender == 1 then gender = "female" end
-                                        denalifw.Functions.TriggerCallback('denalifw-clothing:server:getOutfits', function(result)
+                                        if NADRP.Functions.GetPlayerData().charinfo.gender == 1 then gender = "female" end
+                                        NADRP.Functions.TriggerCallback('NADRP-clothing:server:getOutfits', function(result)
                                             openMenu({
                                                 {menu = "roomOutfits", label = "Presets", selected = true, outfits = Config.Outfits[PlayerData.gang.name][gender]},
                                                 {menu = "myOutfits", label = "My Outfits", selected = false, outfits = result},
@@ -480,9 +480,9 @@ Citizen.CreateThread(function()
     end
 end)
 
-RegisterNetEvent('denalifw-clothing:client:openOutfitMenu')
-AddEventHandler('denalifw-clothing:client:openOutfitMenu', function()
-    denalifw.Functions.TriggerCallback('denalifw-clothing:server:getOutfits', function(result)
+RegisterNetEvent('NADRP-clothing:client:openOutfitMenu')
+AddEventHandler('NADRP-clothing:client:openOutfitMenu', function()
+    NADRP.Functions.TriggerCallback('NADRP-clothing:server:getOutfits', function(result)
         openMenu({
             {menu = "myOutfits", label = "My Outfits", selected = true, outfits = result},
         })
@@ -491,7 +491,7 @@ end)
 
 RegisterNUICallback('selectOutfit', function(data)
 
-    TriggerEvent('denalifw-clothing:client:loadOutfit', data)
+    TriggerEvent('NADRP-clothing:client:loadOutfit', data)
 end)
 
 RegisterNUICallback('rotateRight', function()
@@ -576,8 +576,8 @@ local clothingCategorys = {
     ["neck_thikness"]   = {type = "cheek",  id = 5},
 }
 
-RegisterNetEvent('denalifw-clothing:client:openMenu')
-AddEventHandler('denalifw-clothing:client:openMenu', function()
+RegisterNetEvent('NADRP-clothing:client:openMenu')
+AddEventHandler('NADRP-clothing:client:openMenu', function()
     customCamLocation = nil
     openMenu({
         {menu = "character", label = "Character", selected = true},
@@ -721,7 +721,7 @@ function openMenu(allowedMenus)
     previousSkinData = json.encode(skinData)
     creatingCharacter = true
 
-    local PlayerData = denalifw.Functions.GetPlayerData()
+    local PlayerData = NADRP.Functions.GetPlayerData()
     local trackerMeta = PlayerData.metadata["tracker"]
 
     GetMaxValues()
@@ -740,18 +740,18 @@ function openMenu(allowedMenus)
 end
 
 RegisterNUICallback('TrackerError', function()
-    denalifw.Functions.Notify("You can't remove your ankle bracelet ..", "error")
+    NADRP.Functions.Notify("You can't remove your ankle bracelet ..", "error")
 end)
 
 RegisterNUICallback('saveOutfit', function(data, cb)
     local ped = PlayerPedId()
     local model = GetEntityModel(ped)
 
-    TriggerServerEvent('denalifw-clothes:saveOutfit', data.outfitName, model, skinData)
+    TriggerServerEvent('NADRP-clothes:saveOutfit', data.outfitName, model, skinData)
 end)
 
-RegisterNetEvent('denalifw-clothing:client:reloadOutfits')
-AddEventHandler('denalifw-clothing:client:reloadOutfits', function(myOutfits)
+RegisterNetEvent('NADRP-clothing:client:reloadOutfits')
+AddEventHandler('NADRP-clothing:client:reloadOutfits', function(myOutfits)
     SendNUIMessage({
         action = "reloadMyOutfits",
         outfits = myOutfits
@@ -999,8 +999,8 @@ RegisterNUICallback('updateSkinOnInput', function(data)
 end)
 
 RegisterNUICallback('removeOutfit', function(data, cb)
-    TriggerServerEvent('denalifw-clothing:server:removeOutfit', data.outfitName, data.outfitId)
-    denalifw.Functions.Notify("You have deleted your"..data.outfitName.." outfit!")
+    TriggerServerEvent('NADRP-clothing:server:removeOutfit', data.outfitName, data.outfitId)
+    NADRP.Functions.Notify("You have deleted your"..data.outfitName.." outfit!")
 end)
 
 function ChangeVariation(data)
@@ -1609,7 +1609,7 @@ function ChangeToSkinNoUpdate(skin)
 end
 
 RegisterNUICallback('setCurrentPed', function(data, cb)
-    local playerData = denalifw.Functions.GetPlayerData()
+    local playerData = NADRP.Functions.GetPlayerData()
 
     if playerData.charinfo.gender == 0 then
         cb(Config.ManPlayerModels[data.ped])
@@ -1627,12 +1627,12 @@ end)
 function SaveSkin()
 	local model = GetEntityModel(PlayerPedId())
     clothing = json.encode(skinData)
-	TriggerServerEvent("denalifw-clothing:saveSkin", model, clothing)
+	TriggerServerEvent("NADRP-clothing:saveSkin", model, clothing)
 end
 
-RegisterNetEvent('denalifw-clothes:client:CreateFirstCharacter')
-AddEventHandler('denalifw-clothes:client:CreateFirstCharacter', function()
-    denalifw.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('NADRP-clothes:client:CreateFirstCharacter')
+AddEventHandler('NADRP-clothes:client:CreateFirstCharacter', function()
+    NADRP.Functions.GetPlayerData(function(PlayerData)
         local skin = "mp_m_freemode_01"
         openMenu({
             {menu = "character", label = "Character", selected = true},
@@ -1651,8 +1651,8 @@ AddEventHandler('denalifw-clothes:client:CreateFirstCharacter', function()
     end)
 end)
 
-RegisterNetEvent("denalifw-clothes:loadSkin")
-AddEventHandler("denalifw-clothes:loadSkin", function(new, model, data)
+RegisterNetEvent("NADRP-clothes:loadSkin")
+AddEventHandler("NADRP-clothes:loadSkin", function(new, model, data)
     model = model ~= nil and tonumber(model) or false
     Citizen.CreateThread(function()
         RequestModel(model)
@@ -1663,12 +1663,12 @@ AddEventHandler("denalifw-clothes:loadSkin", function(new, model, data)
         SetPlayerModel(PlayerId(), model)
         SetPedComponentVariation(PlayerPedId(), 0, 0, 0, 2)
         data = json.decode(data)
-        TriggerEvent('denalifw-clothing:client:loadPlayerClothing', data, PlayerPedId())
+        TriggerEvent('NADRP-clothing:client:loadPlayerClothing', data, PlayerPedId())
     end)
 end)
 
-RegisterNetEvent('denalifw-clothing:client:loadPlayerClothing')
-AddEventHandler('denalifw-clothing:client:loadPlayerClothing', function(data, ped)
+RegisterNetEvent('NADRP-clothing:client:loadPlayerClothing')
+AddEventHandler('NADRP-clothing:client:loadPlayerClothing', function(data, ped)
     if ped == nil then ped = PlayerPedId() end
 
     for i = 0, 11 do
@@ -1840,8 +1840,8 @@ function typeof(var)
     end
 end
 
-RegisterNetEvent('denalifw-clothing:client:loadOutfit')
-AddEventHandler('denalifw-clothing:client:loadOutfit', function(oData)
+RegisterNetEvent('NADRP-clothing:client:loadOutfit')
+AddEventHandler('NADRP-clothing:client:loadOutfit', function(oData)
     local ped = PlayerPedId()
 
     data = oData.outfitData
@@ -1904,13 +1904,13 @@ AddEventHandler('denalifw-clothing:client:loadOutfit', function(oData)
 
     -- Accessory
     if data["accessory"] ~= nil then
-        if denalifw.Functions.GetPlayerData().metadata["tracker"] then
+        if NADRP.Functions.GetPlayerData().metadata["tracker"] then
             SetPedComponentVariation(ped, 7, 13, 0, 0)
         else
             SetPedComponentVariation(ped, 7, data["accessory"].item, data["accessory"].texture, 0)
         end
     else
-        if denalifw.Functions.GetPlayerData().metadata["tracker"] then
+        if NADRP.Functions.GetPlayerData().metadata["tracker"] then
             SetPedComponentVariation(ped, 7, 13, 0, 0)
         else
             SetPedComponentVariation(ped, 7, -1, 0, 2)
@@ -1955,7 +1955,7 @@ AddEventHandler('denalifw-clothing:client:loadOutfit', function(oData)
     end
 
     if oData.outfitName ~= nil then
-        denalifw.Functions.Notify("You have chosen "..oData.outfitName.."! Press Confirm to confirm outfit.")
+        NADRP.Functions.Notify("You have chosen "..oData.outfitName.."! Press Confirm to confirm outfit.")
     end
 end)
 
@@ -1975,9 +1975,9 @@ function loadAnimDict( dict )
     end
 end
 
-RegisterNetEvent("denalifw-clothing:client:adjustfacewear")
-AddEventHandler("denalifw-clothing:client:adjustfacewear",function(type)
-    if denalifw.Functions.GetPlayerData().metadata["ishandcuffed"] then return end
+RegisterNetEvent("NADRP-clothing:client:adjustfacewear")
+AddEventHandler("NADRP-clothing:client:adjustfacewear",function(type)
+    if NADRP.Functions.GetPlayerData().metadata["ishandcuffed"] then return end
 	removeWear = not removeWear
 	local AnimSet = "none"
 	local AnimationOn = "none"
@@ -2113,7 +2113,7 @@ function reloadSkin(health)
 
     local model = nil
 
-    local gender = denalifw.Functions.GetPlayerData().charinfo.gender
+    local gender = NADRP.Functions.GetPlayerData().charinfo.gender
 
     if gender == 1 then -- Gender is ONE for FEMALE
     model = GetHashKey("mp_f_freemode_01") -- Female Model
@@ -2127,8 +2127,8 @@ function reloadSkin(health)
     SetModelAsNoLongerNeeded(model)
     Citizen.Wait(1000) -- Safety Delay
     
-    TriggerServerEvent("denalifw-clothes:loadPlayerSkin") -- LOADING PLAYER'S CLOTHES
-    TriggerServerEvent("denalifw-clothing:loadPlayerSkin") -- LOADING PLAYER'S CLOTHES - Event 2
+    TriggerServerEvent("NADRP-clothes:loadPlayerSkin") -- LOADING PLAYER'S CLOTHES
+    TriggerServerEvent("NADRP-clothing:loadPlayerSkin") -- LOADING PLAYER'S CLOTHES - Event 2
 
     SetPedMaxHealth(PlayerId(), maxhealth)
     Citizen.Wait(1000) -- Safety Delay

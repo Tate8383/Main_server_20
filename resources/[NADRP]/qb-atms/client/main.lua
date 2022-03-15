@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
 -- Functions
 
@@ -52,7 +52,7 @@ RegisterNetEvent('qb-atms:client:loadATM', function(cards)
                 local obj = GetClosestObjectOfType(playerCoords.x, playerCoords.y, playerCoords.z, 2.0, hash, false, false, false)
                 local atmCoords = GetEntityCoords(obj, false)
                     PlayATMAnimation('enter')
-                denalifw.Functions.Progressbar("accessing_atm", "Accessing ATM", 1500, false, true, {
+                NADRP.Functions.Progressbar("accessing_atm", "Accessing ATM", 1500, false, true, {
                     disableMovement = false,
                     disableCarMovement = false,
                     disableMouse = false,
@@ -64,12 +64,12 @@ RegisterNetEvent('qb-atms:client:loadATM', function(cards)
                         cards = cards,
                     })
                 end, function()
-                    denalifw.Functions.Notify("Failed!", "error")
+                    NADRP.Functions.Notify("Failed!", "error")
                 end)
             end
         end
     else
-        denalifw.Functions.Notify("Please visit a branch to order a card", "error")
+        NADRP.Functions.Notify("Please visit a branch to order a card", "error")
     end
 end)
 
@@ -102,7 +102,7 @@ RegisterNUICallback("doATMWithdraw", function(data, cb)
 end)
 
 RegisterNUICallback("loadBankingAccount", function(data, cb)
-    denalifw.Functions.TriggerCallback('qb-atms:server:loadBankAccount', function(banking)
+    NADRP.Functions.TriggerCallback('qb-atms:server:loadBankAccount', function(banking)
         if banking ~= false and type(banking) == "table" then
             SendNUIMessage({
                 status = "loadBankAccount",
@@ -118,15 +118,15 @@ RegisterNUICallback("loadBankingAccount", function(data, cb)
 end)
 
 RegisterNUICallback("removeCard", function(data, cb)
-    denalifw.Functions.TriggerCallback('qb-debitcard:server:deleteCard', function(hasDeleted)
+    NADRP.Functions.TriggerCallback('qb-debitcard:server:deleteCard', function(hasDeleted)
         if hasDeleted then
             SetNuiFocus(false, false)
             SendNUIMessage({
                 status = "closeATM"
             })
-            denalifw.Functions.Notify('Card has been deleted.', 'success')
+            NADRP.Functions.Notify('Card has been deleted.', 'success')
         else
-            denalifw.Functions.Notify('Failed to delete card.', 'error')
+            NADRP.Functions.Notify('Failed to delete card.', 'error')
         end
     end, data)
 end)

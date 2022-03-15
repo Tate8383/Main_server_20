@@ -105,7 +105,7 @@ window.onload = function(e)
                 var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                 var val2 = $("." + menu + " .item_selected .item1").text();
                 var val3 = $("." + menu + " .item_selected .item2").text();
-                $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                     id: val1,
                     item: val2,
                     item2: val3
@@ -131,7 +131,7 @@ window.onload = function(e)
                 var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                 var val2 = $("." + menu + " .item_selected .item1").text();
                 var val3 = $("." + menu + " .item_selected .item2").text();
-                $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                     id: val1,
                     item: val2,
                     item2: val3
@@ -149,7 +149,7 @@ window.onload = function(e)
     function updateItem2TextOnly(menu, id, text)
     {
         $("." + menu + " ." + id + " .item2").text(text);
-        $.post("https://denalifw-customs/updateItem2", JSON.stringify({
+        $.post("https://NADRP-customs/updateItem2", JSON.stringify({
             item: text
         }));
     }
@@ -179,7 +179,7 @@ window.onload = function(e)
             menuStructure[menu].previousSelectedItemID = null
         }
 
-        $.post("https://denalifw-customs/updateItem2", JSON.stringify({
+        $.post("https://NADRP-customs/updateItem2", JSON.stringify({
             item: text
         }));
     }
@@ -208,7 +208,7 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                    $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
@@ -231,7 +231,7 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                    $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
@@ -260,7 +260,7 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                    $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
@@ -294,7 +294,7 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                    $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
@@ -314,7 +314,7 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                    $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3
@@ -338,7 +338,7 @@ window.onload = function(e)
                     var val1 = $("." + menu + " .item_selected").attr("class").split(" ")[0];
                     var val2 = $("." + menu + " .item_selected .item1").text();
                     var val3 = $("." + menu + " .item_selected .item2").text();
-                    $.post("https://denalifw-customs/selectedItem", JSON.stringify({
+                    $.post("https://NADRP-customs/selectedItem", JSON.stringify({
                         id: val1,
                         item: val2,
                         item2: val3

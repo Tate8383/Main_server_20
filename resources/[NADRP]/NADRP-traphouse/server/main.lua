@@ -1,24 +1,24 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
-RegisterServerEvent('denalifw-traphouse:server:TakeoverHouse')
-AddEventHandler('denalifw-traphouse:server:TakeoverHouse', function(Traphouse)
+RegisterServerEvent('NADRP-traphouse:server:TakeoverHouse')
+AddEventHandler('NADRP-traphouse:server:TakeoverHouse', function(Traphouse)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local CitizenId = Player.PlayerData.citizenid
 
     if not HasCitizenIdHasKey(CitizenId, Traphouse) then
         if Player.Functions.RemoveMoney('cash', Config.TakeoverPrice) then
-            TriggerClientEvent('denalifw-traphouse:client:TakeoverHouse', src, Traphouse)
+            TriggerClientEvent('NADRP-traphouse:client:TakeoverHouse', src, Traphouse)
         else
-            TriggerClientEvent('denalifw:Notify', src, Lang:t("error.not_enough"), 'error')
+            TriggerClientEvent('NADRP:Notify', src, Lang:t("error.not_enough"), 'error')
         end
     end
 end)
 
-RegisterServerEvent('denalifw-traphouse:server:AddHouseKeyHolder')
-AddEventHandler('denalifw-traphouse:server:AddHouseKeyHolder', function(CitizenId, TraphouseId, IsOwner)
+RegisterServerEvent('NADRP-traphouse:server:AddHouseKeyHolder')
+AddEventHandler('NADRP-traphouse:server:AddHouseKeyHolder', function(CitizenId, TraphouseId, IsOwner)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
 
     if Config.TrapHouses[TraphouseId] ~= nil then
         if IsOwner then
@@ -31,7 +31,7 @@ AddEventHandler('denalifw-traphouse:server:AddHouseKeyHolder', function(CitizenI
                 citizenid = CitizenId,
                 owner = IsOwner,
             }
-            TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
+            TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
         else
             if #Config.TrapHouses[TraphouseId].keyholders + 1 <= 6 then
                 if not HasCitizenIdHasKey(CitizenId, TraphouseId) then
@@ -39,14 +39,14 @@ AddEventHandler('denalifw-traphouse:server:AddHouseKeyHolder', function(CitizenI
                         citizenid = CitizenId,
                         owner = IsOwner,
                     }
-                    TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
+                    TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
                 end
             else
-                TriggerClientEvent('denalifw:Notify', src, Lang:t("error.no_slots"))
+                TriggerClientEvent('NADRP:Notify', src, Lang:t("error.no_slots"))
             end
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.occured"))
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.occured"))
     end
 end)
 
@@ -91,18 +91,18 @@ function HasTraphouseAndOwner(CitizenId)
     return retval
 end
 
-denalifw.Commands.Add("entertraphouse", Lang:t("info.enter"), {}, false, function(source, args)
+NADRP.Commands.Add("entertraphouse", Lang:t("info.enter"), {}, false, function(source, args)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
 
-    TriggerClientEvent('denalifw-traphouse:client:EnterTraphouse', src)
+    TriggerClientEvent('NADRP-traphouse:client:EnterTraphouse', src)
 end)
 
-denalifw.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help = "Player id"}}, true, function(source, args)
+NADRP.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help = "Player id"}}, true, function(source, args)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local TargetId = tonumber(args[1])
-    local TargetData = denalifw.Functions.GetPlayer(TargetId)
+    local TargetData = NADRP.Functions.GetPlayer(TargetId)
     local IsOwner = false
     local Traphouse = HasTraphouseAndOwner(Player.PlayerData.citizenid)
 
@@ -120,7 +120,7 @@ denalifw.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help
                             citizenid = TargetData.PlayerData.citizenid,
                             owner = IsOwner,
                         }
-                        TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
+                        TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
                     else
                         if #Config.TrapHouses[Traphouse].keyholders + 1 <= 6 then
                             if not HasCitizenIdHasKey(TargetData.PlayerData.citizenid, Traphouse) then
@@ -128,36 +128,36 @@ denalifw.Commands.Add("multikeys", Lang:t("info.give_keys"), {{name = "id", help
                                     citizenid = TargetData.PlayerData.citizenid,
                                     owner = IsOwner,
                                 }
-                                TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
+                                TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, Traphouse, Config.TrapHouses[Traphouse])
                             end
                         else
-                            TriggerClientEvent('denalifw:Notify', src, Lang:t("error.no_slots"))
+                            TriggerClientEvent('NADRP:Notify', src, Lang:t("error.no_slots"))
                         end
                     end
                 else
-                    TriggerClientEvent('denalifw:Notify', src, Lang:t("error.occured"))
+                    TriggerClientEvent('NADRP:Notify', src, Lang:t("error.occured"))
                 end
             else
-                TriggerClientEvent('denalifw:Notify', src, Lang:t("error.have_keys"), 'error')
+                TriggerClientEvent('NADRP:Notify', src, Lang:t("error.have_keys"), 'error')
             end
         else
-            TriggerClientEvent('denalifw:Notify', src, Lang:t("error.not_owner"), 'error')
+            TriggerClientEvent('NADRP:Notify', src, Lang:t("error.not_owner"), 'error')
         end
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.not_online"), 'error')
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.not_online"), 'error')
     end
 end)
 
-RegisterServerEvent('denalifw-traphouse:server:TakeMoney')
-AddEventHandler('denalifw-traphouse:server:TakeMoney', function(TraphouseId)
+RegisterServerEvent('NADRP-traphouse:server:TakeMoney')
+AddEventHandler('NADRP-traphouse:server:TakeMoney', function(TraphouseId)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     if Config.TrapHouses[TraphouseId].money ~= 0 then
         Player.Functions.AddMoney('cash', Config.TrapHouses[TraphouseId].money)
         Config.TrapHouses[TraphouseId].money = 0
-        TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
+        TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, TraphouseId, Config.TrapHouses[TraphouseId])
     else
-        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.no_money"), 'error')
+        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.no_money"), 'error')
     end
 end)
 
@@ -168,7 +168,7 @@ function SellTimeout(traphouseId, slot, itemName, amount, info)
                 if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
                     RemoveHouseItem(traphouseId, slot, itemName, 1)
                     Config.TrapHouses[traphouseId].money = Config.TrapHouses[traphouseId].money + math.ceil(info.worth / 100 * 80)
-                    TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
+                    TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
                 end
             end)
         else
@@ -178,7 +178,7 @@ function SellTimeout(traphouseId, slot, itemName, amount, info)
                     if Config.TrapHouses[traphouseId].inventory[slot] ~= nil then
                         RemoveHouseItem(traphouseId, slot, itemName, 1)
                         Config.TrapHouses[traphouseId].money = Config.TrapHouses[traphouseId].money + SellData.reward
-                        TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
+                        TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
                     end
                 end)
                 if amount > 1 then
@@ -195,7 +195,7 @@ function AddHouseItem(traphouseId, slot, itemName, amount, info, source)
     if Config.TrapHouses[traphouseId].inventory[slot] ~= nil and Config.TrapHouses[traphouseId].inventory[slot].name == itemName then
         Config.TrapHouses[traphouseId].inventory[slot].amount = Config.TrapHouses[traphouseId].inventory[slot].amount + amount
     else
-        local itemInfo = denalifw.Shared.Items[itemName:lower()]
+        local itemInfo = NADRP.Shared.Items[itemName:lower()]
         Config.TrapHouses[traphouseId].inventory[slot] = {
             name = itemInfo["name"],
             amount = amount,
@@ -211,7 +211,7 @@ function AddHouseItem(traphouseId, slot, itemName, amount, info, source)
         }
     end
     SellTimeout(traphouseId, slot, itemName, amount, info)
-    TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
+    TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
 end
 
 function RemoveHouseItem(traphouseId, slot, itemName, amount)
@@ -232,7 +232,7 @@ function RemoveHouseItem(traphouseId, slot, itemName, amount)
 			Config.TrapHouses[traphouseId].inventory[slot] = nil
 		end
 	end
-    TriggerClientEvent('denalifw-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
+    TriggerClientEvent('NADRP-traphouse:client:SyncData', -1, traphouseId, Config.TrapHouses[traphouseId])
 end
 
 function GetInventoryData(traphouse, slot)
@@ -254,10 +254,10 @@ function CanItemBeSaled(item)
     return retval
 end
 
-RegisterServerEvent('denalifw-traphouse:server:RobNpc')
-AddEventHandler('denalifw-traphouse:server:RobNpc', function(Traphouse)
+RegisterServerEvent('NADRP-traphouse:server:RobNpc')
+AddEventHandler('NADRP-traphouse:server:RobNpc', function(Traphouse)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local Chance = math.random(1, 10)
     local odd = math.random(1, 10)
 
@@ -266,13 +266,13 @@ AddEventHandler('denalifw-traphouse:server:RobNpc', function(Traphouse)
             label = Lang:t('info.pincode', {value = Config.TrapHouses[Traphouse].pincode})
         }
         Player.Functions.AddItem("stickynote", 1, false, info)
-        TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["stickynote"], "add")
+        TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["stickynote"], "add")
     else
         local amount = math.random(1, 80)
         Player.Functions.AddMoney('cash', amount)
     end
 end)
 
-denalifw.Functions.CreateCallback('denalifw-traphouse:server:GetTraphousesData', function(source, cb)
+NADRP.Functions.CreateCallback('NADRP-traphouse:server:GetTraphousesData', function(source, cb)
     cb(Config.TrapHouses)
 end)

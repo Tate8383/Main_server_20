@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local housePlants = {}
 local insideHouse = false
 local currentHouse = nil
@@ -18,8 +18,8 @@ DrawText3Ds = function(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('denalifw-weed:client:getHousePlants', function(house)
-    denalifw.Functions.TriggerCallback('denalifw-weed:server:getBuildingPlants', function(plants)
+RegisterNetEvent('NADRP-weed:client:getHousePlants', function(house)
+    NADRP.Functions.TriggerCallback('NADRP-weed:server:getBuildingPlants', function(plants)
         currentHouse = house
         housePlants[currentHouse] = plants
         insideHouse = true
@@ -111,7 +111,7 @@ CreateThread(function()
                                 DrawText3Ds(plantData["plantCoords"]["x"], plantData["plantCoords"]["y"], plantData["plantCoords"]["z"] + 0.2, "Press ~g~ E ~w~ to harvest plant.")
                                 DrawText3Ds(plantData["plantCoords"]["x"], plantData["plantCoords"]["y"], plantData["plantCoords"]["z"], 'Sort: ~g~'..plantData["plantSort"]["label"]..'~w~ ['..plantData["plantStats"]["gender"]..'] | Nutrition: ~b~'..plantData["plantStats"]["food"]..'% ~w~ | Health: ~b~'..plantData["plantStats"]["health"]..'%')
                                 if IsControlJustPressed(0, 38) then
-                                    denalifw.Functions.Progressbar("remove_weed_plant", "Harvesting Plant", 8000, false, true, {
+                                    NADRP.Functions.Progressbar("remove_weed_plant", "Harvesting Plant", 8000, false, true, {
                                         disableMovement = true,
                                         disableCarMovement = true,
                                         disableMouse = false,
@@ -127,17 +127,17 @@ CreateThread(function()
                                         else
                                             amount = math.random(1, 6)
                                         end
-                                        TriggerServerEvent('denalifw-weed:server:harvestPlant', currentHouse, amount, plantData["plantSort"]["name"], plantData["plantStats"]["plantId"])
+                                        TriggerServerEvent('NADRP-weed:server:harvestPlant', currentHouse, amount, plantData["plantSort"]["name"], plantData["plantStats"]["plantId"])
                                     end, function() -- Cancel
                                         ClearPedTasks(ped)
-                                        denalifw.Functions.Notify("Process Canceled", "error")
+                                        NADRP.Functions.Notify("Process Canceled", "error")
                                     end)
                                 end
                             end
                         elseif plantData["plantStats"]["health"] == 0 then
                             DrawText3Ds(plantData["plantCoords"]["x"], plantData["plantCoords"]["y"], plantData["plantCoords"]["z"], 'The plant has died. Press ~r~ E ~w~ to remove plant.')
                             if IsControlJustPressed(0, 38) then
-                                denalifw.Functions.Progressbar("remove_weed_plant", "Removing The Plant", 8000, false, true, {
+                                NADRP.Functions.Progressbar("remove_weed_plant", "Removing The Plant", 8000, false, true, {
                                     disableMovement = true,
                                     disableCarMovement = true,
                                     disableMouse = false,
@@ -148,10 +148,10 @@ CreateThread(function()
                                     flags = 16,
                                 }, {}, {}, function() -- Done
                                     ClearPedTasks(ped)
-                                    TriggerServerEvent('denalifw-weed:server:removeDeathPlant', currentHouse, plantData["plantStats"]["plantId"])
+                                    TriggerServerEvent('NADRP-weed:server:removeDeathPlant', currentHouse, plantData["plantStats"]["plantId"])
                                 end, function() -- Cancel
                                     ClearPedTasks(ped)
-                                    denalifw.Functions.Notify("Process Canceled", "error")
+                                    NADRP.Functions.Notify("Process Canceled", "error")
                                 end)
                             end
                         end
@@ -166,7 +166,7 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('denalifw-weed:client:leaveHouse', function()
+RegisterNetEvent('NADRP-weed:client:leaveHouse', function()
     despawnHousePlants()
     SetTimeout(1000, function()
         if currentHouse ~= nil then
@@ -177,11 +177,11 @@ RegisterNetEvent('denalifw-weed:client:leaveHouse', function()
     end)
 end)
 
-RegisterNetEvent('denalifw-weed:client:refreshHousePlants', function(house)
+RegisterNetEvent('NADRP-weed:client:refreshHousePlants', function(house)
     if currentHouse ~= nil and currentHouse == house then
         despawnHousePlants()
         SetTimeout(500, function()
-            denalifw.Functions.TriggerCallback('denalifw-weed:server:getBuildingPlants', function(plants)
+            NADRP.Functions.TriggerCallback('NADRP-weed:server:getBuildingPlants', function(plants)
                 currentHouse = house
                 housePlants[currentHouse] = plants
                 spawnHousePlants()
@@ -190,11 +190,11 @@ RegisterNetEvent('denalifw-weed:client:refreshHousePlants', function(house)
     end
 end)
 
-RegisterNetEvent('denalifw-weed:client:refreshPlantStats', function()
+RegisterNetEvent('NADRP-weed:client:refreshPlantStats', function()
     if insideHouse then
         despawnHousePlants()
         SetTimeout(500, function()
-            denalifw.Functions.TriggerCallback('denalifw-weed:server:getBuildingPlants', function(plants)
+            NADRP.Functions.TriggerCallback('NADRP-weed:server:getBuildingPlants', function(plants)
                 housePlants[currentHouse] = plants
                 spawnHousePlants()
             end, currentHouse)
@@ -209,7 +209,7 @@ function loadAnimDict(dict)
     end
 end
 
-RegisterNetEvent('denalifw-weed:client:placePlant', function(type, item)
+RegisterNetEvent('NADRP-weed:client:placePlant', function(type, item)
     local ped = PlayerPedId()
     local plyCoords = GetOffsetFromEntityInWorldCoords(ped, 0, 0.75, 0)
     local plantData = {
@@ -227,7 +227,7 @@ RegisterNetEvent('denalifw-weed:client:placePlant', function(type, item)
     if currentHouse ~= nil then
         if ClosestPlant == 0 then
 	LocalPlayer.state:set("inv_busy", true, true)
-            denalifw.Functions.Progressbar("plant_weed_plant", "Planting", 8000, false, true, {
+            NADRP.Functions.Progressbar("plant_weed_plant", "Planting", 8000, false, true, {
                 disableMovement = true,
                 disableCarMovement = true,
                 disableMouse = false,
@@ -239,22 +239,22 @@ RegisterNetEvent('denalifw-weed:client:placePlant', function(type, item)
 		LocalPlayer.state:set("inv_busy", false, true)				
             }, {}, {}, function() -- Done
                 ClearPedTasks(ped)
-                TriggerServerEvent('denalifw-weed:server:placePlant', json.encode(plantData["plantCoords"]), type, currentHouse)
-                TriggerServerEvent('denalifw-weed:server:removeSeed', item.slot, type)
+                TriggerServerEvent('NADRP-weed:server:placePlant', json.encode(plantData["plantCoords"]), type, currentHouse)
+                TriggerServerEvent('NADRP-weed:server:removeSeed', item.slot, type)
             end, function() -- Cancel
                 ClearPedTasks(ped)
-                denalifw.Functions.Notify("Process Canceled", "error")
+                NADRP.Functions.Notify("Process Canceled", "error")
 		LocalPlayer.state:set("inv_busy", false, true)				
             end)
         else
-            denalifw.Functions.Notify("Can't Place Here", 'error', 3500)
+            NADRP.Functions.Notify("Can't Place Here", 'error', 3500)
         end
     else
-        denalifw.Functions.Notify("It's Not Safe Here, try your house", 'error', 3500)
+        NADRP.Functions.Notify("It's Not Safe Here, try your house", 'error', 3500)
     end
 end)
 
-RegisterNetEvent('denalifw-weed:client:foodPlant', function(item)
+RegisterNetEvent('NADRP-weed:client:foodPlant', function(item)
     local plantData = {}
     if currentHouse ~= nil then
         if ClosestTarget ~= 0 then
@@ -286,10 +286,10 @@ RegisterNetEvent('denalifw-weed:client:foodPlant', function(item)
 
             if plyDistance < 1.0 then
                 if plantData["plantStats"]["food"] == 100 then
-                    denalifw.Functions.Notify('The Plant Does Not Need Nutrition', 'error', 3500)
+                    NADRP.Functions.Notify('The Plant Does Not Need Nutrition', 'error', 3500)
                 else
 		LocalPlayer.state:set("inv_busy", true, true)
-                    denalifw.Functions.Progressbar("plant_weed_plant", "Feeding Plant", math.random(4000, 8000), false, true, {
+                    NADRP.Functions.Progressbar("plant_weed_plant", "Feeding Plant", math.random(4000, 8000), false, true, {
                         disableMovement = true,
                         disableCarMovement = true,
                         disableMouse = false,
@@ -303,18 +303,18 @@ RegisterNetEvent('denalifw-weed:client:foodPlant', function(item)
                     }, {}, {}, function() -- Done
                         ClearPedTasks(ped)
                         local newFood = math.random(40, 60)
-                        TriggerServerEvent('denalifw-weed:server:foodPlant', currentHouse, newFood, plantData["plantSort"]["name"], plantData["plantStats"]["plantId"])
+                        TriggerServerEvent('NADRP-weed:server:foodPlant', currentHouse, newFood, plantData["plantSort"]["name"], plantData["plantStats"]["plantId"])
                     end, function() -- Cancel
                         ClearPedTasks(ped)
 			LocalPlayer.state:set("inv_busy", false, true)					
-                        denalifw.Functions.Notify("Process Canceled", "error")
+                        NADRP.Functions.Notify("Process Canceled", "error")
                     end)
                 end
             else
-                denalifw.Functions.Notify("Can't Place Here", "error")
+                NADRP.Functions.Notify("Can't Place Here", "error")
             end
         else
-            denalifw.Functions.Notify("Can't Place Here", "error")
+            NADRP.Functions.Notify("Can't Place Here", "error")
         end
     end
 end)

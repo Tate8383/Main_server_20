@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local carryPackage = nil
 local packagePos = nil
 local onDuty = false
@@ -126,9 +126,9 @@ CreateThread(function()
                 if IsControlJustReleased(0, 38) then
                     onDuty = not onDuty
                     if onDuty then
-                        denalifw.Functions.Notify("You Have Been Clocked In", "success")
+                        NADRP.Functions.Notify("You Have Been Clocked In", "success")
                     else
-                        denalifw.Functions.Notify("You Have Clocked Out", "error")
+                        NADRP.Functions.Notify("You Have Clocked Out", "error")
                     end
                 end
             end
@@ -155,7 +155,7 @@ CreateThread(function()
                     if #(pos - vector3(packagePos.x, packagePos.y, packagePos.z)) < 2.3 then
                         DrawText3D(packagePos.x,packagePos.y,packagePos.z+ 1, "~g~E~w~ - Pack Package")
                         if IsControlJustReleased(0, 38) then
-                            denalifw.Functions.Progressbar("pickup_reycle_package", "Pick Up The Package ..", math.random(4000, 6000), false, true, {
+                            NADRP.Functions.Progressbar("pickup_reycle_package", "Pick Up The Package ..", math.random(4000, 6000), false, true, {
                                 disableMovement = true,
                                 disableCarMovement = true,
                                 disableMouse = false,
@@ -174,14 +174,14 @@ CreateThread(function()
                         if IsControlJustReleased(0, 38) then
                             DropPackage()
                             ScrapAnim()
-                            denalifw.Functions.Progressbar("deliver_reycle_package", "Unpacking The Package", 5000, false, true, {
+                            NADRP.Functions.Progressbar("deliver_reycle_package", "Unpacking The Package", 5000, false, true, {
                                 disableMovement = true,
                                 disableCarMovement = true,
                                 disableMouse = false,
                                 disableCombat = true,
                             }, {}, {}, {}, function() -- Done
                                 StopAnimTask(PlayerPedId(), "mp_car_bomb", "car_bomb_mechanic", 1.0)
-                                TriggerServerEvent('denalifw-recycle:server:getItem')
+                                TriggerServerEvent('NADRP-recycle:server:getItem')
                                 GetRandomPackage()
                             end)
                         end

@@ -1,11 +1,11 @@
 local standardVolumeOutput = 0.3;
 local hasPlayerLoaded = false
 
-RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+RegisterNetEvent('DenaliFW:Client:OnPlayerLoaded', function()
     hasPlayerLoaded = true
 end)
 
-RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
+RegisterNetEvent('DenaliFW:Client:OnPlayerUnload', function()
     hasPlayerLoaded = false
 end)
 

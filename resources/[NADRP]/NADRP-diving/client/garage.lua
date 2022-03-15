@@ -7,7 +7,7 @@ local p = nil
 function FetchBoathouse()
     if p then return end
     p = promise.new()
-    denalifw.Functions.TriggerCallback("denalifw-diving:server:GetMyBoats", function(result)
+    NADRP.Functions.TriggerCallback("NADRP-diving:server:GetMyBoats", function(result)
         p:resolve(result)
     end, CurrentDock)
     return Citizen.Await(p)
@@ -16,7 +16,7 @@ end
 function FetchDepot()
     if p then return end
     p = promise.new()
-    denalifw.Functions.TriggerCallback("denalifw-diving:server:GetDepotBoats", function(result)
+    NADRP.Functions.TriggerCallback("NADRP-diving:server:GetDepotBoats", function(result)
         p:resolve(result)
     end)
     return Citizen.Await(p)
@@ -27,7 +27,7 @@ function MenuBoatDepot()
     p = nil
 
     if depotResult == nil then
-        denalifw.Functions.Notify("You have no vehicles in this Depot", "error", 5000)
+        NADRP.Functions.Notify("You have no vehicles in this Depot", "error", 5000)
         CloseMenu()
     else
         local depotMenu = {
@@ -60,11 +60,11 @@ function MenuBoatDepot()
             header = "⬅ Close Menu",
             txt = "",
             params = {
-                event = "denalifw-menu:client:closeMenu"
+                event = "NADRP-menu:client:closeMenu"
             }
 
         }
-        exports['denalifw-menu']:openMenu(depotMenu)
+        exports['NADRP-menu']:openMenu(depotMenu)
     end
 
 end
@@ -74,7 +74,7 @@ function MenuGarage()
     p = nil
 
     if boathouseResult == nil then
-        denalifw.Functions.Notify("You have no vehicles in this Boathouse", "error", 5000)
+        NADRP.Functions.Notify("You have no vehicles in this Boathouse", "error", 5000)
         CloseMenu()
     else
         local boathouseMenu = {
@@ -108,17 +108,17 @@ function MenuGarage()
             header = "⬅ Close Menu",
             txt = "",
             params = {
-                event = "denalifw-menu:client:closeMenu"
+                event = "NADRP-menu:client:closeMenu"
             }
 
         }
-        exports['denalifw-menu']:openMenu(boathouseMenu)
+        exports['NADRP-menu']:openMenu(boathouseMenu)
     end
 
 end
 
 function CloseMenu()
-    exports['denalifw-menu']:closeMenu()
+    exports['NADRP-menu']:closeMenu()
 end
 
 local function RemoveVehicle()
@@ -128,16 +128,16 @@ local function RemoveVehicle()
     if Boat then
         local CurVeh = GetVehiclePedIsIn(ped)
         local totalFuel = exports['LegacyFuel']:GetFuel(CurVeh)
-        TriggerServerEvent('denalifw-diving:server:SetBoatState', denalifw.Functions.GetPlate(CurVeh), 1, ClosestDock, totalFuel)
+        TriggerServerEvent('NADRP-diving:server:SetBoatState', NADRP.Functions.GetPlate(CurVeh), 1, ClosestDock, totalFuel)
 
-        denalifw.Functions.DeleteVehicle(CurVeh)
+        NADRP.Functions.DeleteVehicle(CurVeh)
         SetEntityCoords(ped, QBBoatshop.Docks[ClosestDock].coords.take.x, QBBoatshop.Docks[ClosestDock].coords.take.y, QBBoatshop.Docks[ClosestDock].coords.take.z)
     end
 end
 
 -- Events
 
-RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     if PlayerJob.name == "police" then
         if PoliceBlip ~= nil then
@@ -162,17 +162,17 @@ RegisterNetEvent('diving:client:TakeOutBoathouse', function(data)
     local putVec3 = vector3(QBBoatshop.Docks[CurrentDock].coords.take.x, QBBoatshop.Docks[CurrentDock].coords.take.y, QBBoatshop.Docks[CurrentDock].coords.take.z)
     if #(pos - putVec3) <= 1 then
         local vehicle = data.boat
-        denalifw.Functions.SpawnVehicle(vehicle.model, function(veh)
+        NADRP.Functions.SpawnVehicle(vehicle.model, function(veh)
             SetVehicleNumberPlateText(veh, vehicle.plate)
             SetEntityHeading(veh, QBBoatshop.Docks[CurrentDock].coords.put.w)
             exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
             CloseMenu()
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-            TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+            TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
             SetVehicleEngineOn(veh, true, true)
         end, QBBoatshop.Docks[CurrentDock].coords.put, true)
     else
-        denalifw.Functions.Notify('You are to far away', 'error')
+        NADRP.Functions.Notify('You are to far away', 'error')
     end
 end)
 
@@ -183,22 +183,22 @@ RegisterNetEvent('diving:client:TakeOutDepot', function(data)
     if #(pos - putVec3) <= 1 then
         local vehicle = data.boat
         if vehicle.state == 1 then
-            denalifw.Functions.SpawnVehicle(vehicle.model, function(veh)
+            NADRP.Functions.SpawnVehicle(vehicle.model, function(veh)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, QBBoatshop.Docks[CurrentDock].coords.put.w)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
-                denalifw.Functions.Notify("vehicle Out: Fuel: "..currentFuel.. "%", "primary", 4500)
+                NADRP.Functions.Notify("vehicle Out: Fuel: "..currentFuel.. "%", "primary", 4500)
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
                 SetVehicleEngineOn(veh, true, true)
-                TriggerServerEvent('denalifw-diving:server:SetBoatState', denalifw.Functions.GetPlate(veh), 0, CurrentDock, 100)
+                TriggerServerEvent('NADRP-diving:server:SetBoatState', NADRP.Functions.GetPlate(veh), 0, CurrentDock, 100)
                 CloseMenu()
             end, QBBoatshop.Docks[CurrentDock].coords.put, true)
         else
-            denalifw.Functions.Notify("The boat is not in the boathouse", "error", 4500)
+            NADRP.Functions.Notify("The boat is not in the boathouse", "error", 4500)
         end
     else
-        denalifw.Functions.Notify('You are to far away', 'error')
+        NADRP.Functions.Notify('You are to far away', 'error')
     end
 end)
 

@@ -1,4 +1,4 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 local firstAlarm = false
 local smashing = false
 
@@ -74,28 +74,28 @@ local function smashVitrine(k)
         TriggerServerEvent("evidence:server:CreateFingerDrop", plyCoords)
     elseif math.random(1, 100) <= 5 and IsWearingHandshoes() then
         TriggerServerEvent("evidence:server:CreateFingerDrop", plyCoords)
-        denalifw.Functions.Notify("You've left a fingerprint on the glass", "error")
+        NADRP.Functions.Notify("You've left a fingerprint on the glass", "error")
     end
     smashing = true
-    denalifw.Functions.Progressbar("smash_vitrine", "Stocking a display", Config.WhitelistedWeapons[pedWeapon]["timeOut"], false, true, {
+    NADRP.Functions.Progressbar("smash_vitrine", "Stocking a display", Config.WhitelistedWeapons[pedWeapon]["timeOut"], false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerServerEvent('denalifw-jewellery:server:setVitrineState', "isOpened", true, k)
-        TriggerServerEvent('denalifw-jewellery:server:setVitrineState', "isBusy", false, k)
-        TriggerServerEvent('denalifw-jewellery:server:vitrineReward')
-        TriggerServerEvent('denalifw-jewellery:server:setTimeout')
+        TriggerServerEvent('NADRP-jewellery:server:setVitrineState', "isOpened", true, k)
+        TriggerServerEvent('NADRP-jewellery:server:setVitrineState', "isBusy", false, k)
+        TriggerServerEvent('NADRP-jewellery:server:vitrineReward')
+        TriggerServerEvent('NADRP-jewellery:server:setTimeout')
         TriggerServerEvent('police:server:policeAlert', 'Robbery in progress')
         smashing = false
         TaskPlayAnim(ped, animDict, "exit", 3.0, 3.0, -1, 2, 0, 0, 0, 0)
     end, function() -- Cancel
-        TriggerServerEvent('denalifw-jewellery:server:setVitrineState', "isBusy", false, k)
+        TriggerServerEvent('NADRP-jewellery:server:setVitrineState', "isBusy", false, k)
         smashing = false
         TaskPlayAnim(ped, animDict, "exit", 3.0, 3.0, -1, 2, 0, 0, 0, 0)
     end)
-    TriggerServerEvent('denalifw-jewellery:server:setVitrineState', "isBusy", true, k)
+    TriggerServerEvent('NADRP-jewellery:server:setVitrineState', "isBusy", true, k)
 
     CreateThread(function()
         while smashing do
@@ -112,7 +112,7 @@ end
 
 -- Events
 
-RegisterNetEvent('denalifw-jewellery:client:setVitrineState', function(stateType, state, k)
+RegisterNetEvent('NADRP-jewellery:client:setVitrineState', function(stateType, state, k)
     Config.Locations[k][stateType] = state
 end)
 
@@ -136,7 +136,7 @@ CreateThread(function()
         local pos = GetEntityCoords(ped)
         inRange = false
         if LocalPlayer.state.isLoggedIn then
-            PlayerData = denalifw.Functions.GetPlayerData()
+            PlayerData = NADRP.Functions.GetPlayerData()
             for case,_ in pairs(Config.Locations) do
                 local dist = #(pos - vector3(Config.Locations[case]["coords"]["x"], Config.Locations[case]["coords"]["y"], Config.Locations[case]["coords"]["z"]))
                 local storeDist = #(pos - vector3(Config.JewelleryLocation["coords"]["x"], Config.JewelleryLocation["coords"]["y"], Config.JewelleryLocation["coords"]["z"]))
@@ -147,15 +147,15 @@ CreateThread(function()
                         if not Config.Locations[case]["isBusy"] and not Config.Locations[case]["isOpened"] then
                             DrawText3Ds(Config.Locations[case]["coords"]["x"], Config.Locations[case]["coords"]["y"], Config.Locations[case]["coords"]["z"], '[E] Smash the display case')
                             if IsControlJustPressed(0, 38) then
-                                denalifw.Functions.TriggerCallback('denalifw-jewellery:server:getCops', function(cops)
+                                NADRP.Functions.TriggerCallback('NADRP-jewellery:server:getCops', function(cops)
                                     if cops >= Config.RequiredCops then
                                         if validWeapon() then
                                             smashVitrine(case)
                                         else
-                                            denalifw.Functions.Notify('Your weapon is not strong enough..', 'error')
+                                            NADRP.Functions.Notify('Your weapon is not strong enough..', 'error')
                                         end
                                     else
-                                        denalifw.Functions.Notify('Not Enough Police ('.. Config.RequiredCops ..') Required', 'error')
+                                        NADRP.Functions.Notify('Not Enough Police ('.. Config.RequiredCops ..') Required', 'error')
                                     end
                                 end)
                             end

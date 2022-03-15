@@ -1,8 +1,8 @@
-local denalifw = exports['denalifw-core']:GetCoreObject()
+local NADRP = exports['NADRP-core']:GetCoreObject()
 
-RegisterNetEvent("denalifw-pawnshop:server:sellPawnItems", function(itemName, itemAmount, itemPrice)
+RegisterNetEvent("NADRP-pawnshop:server:sellPawnItems", function(itemName, itemAmount, itemPrice)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local totalPrice = (tonumber(itemAmount) * itemPrice)
 
     if Player.Functions.RemoveItem(itemName, tonumber(itemAmount)) then
@@ -12,33 +12,33 @@ RegisterNetEvent("denalifw-pawnshop:server:sellPawnItems", function(itemName, it
             Player.Functions.AddMoney("cash", totalPrice)
         end
 
-        TriggerClientEvent("denalifw:Notify", src, Lang:t('success.sold', {value = tonumber(itemAmount), value2 = denalifw.Shared.Items[itemName].label, value3 = totalPrice}), 'success')
-        TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[itemName], 'remove')
+        TriggerClientEvent("NADRP:Notify", src, Lang:t('success.sold', {value = tonumber(itemAmount), value2 = NADRP.Shared.Items[itemName].label, value3 = totalPrice}), 'success')
+        TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[itemName], 'remove')
     else
-        TriggerClientEvent("denalifw:Notify", src, Lang:t('error.no_items'), "error")
+        TriggerClientEvent("NADRP:Notify", src, Lang:t('error.no_items'), "error")
     end
 end)
 
-RegisterNetEvent("denalifw-pawnshop:server:meltItemRemove", function(itemName, itemAmount,item)
+RegisterNetEvent("NADRP-pawnshop:server:meltItemRemove", function(itemName, itemAmount,item)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local meltTime = 0
 
     if Player.Functions.RemoveItem(itemName, itemAmount) then
-        TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[itemName], 'remove')
+        TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[itemName], 'remove')
         
         meltTime = (tonumber(itemAmount) * item.time)
-        TriggerClientEvent('denalifw-pawnshop:client:startMelting', src, item, tonumber(itemAmount), (meltTime* 60000/1000))
+        TriggerClientEvent('NADRP-pawnshop:client:startMelting', src, item, tonumber(itemAmount), (meltTime* 60000/1000))
 
-        TriggerClientEvent("denalifw:Notify", src, Lang:t('info.melt_wait', {value = meltTime}), "primary")
+        TriggerClientEvent("NADRP:Notify", src, Lang:t('info.melt_wait', {value = meltTime}), "primary")
     else
-        TriggerClientEvent("denalifw:Notify", src, Lang:t('error.no_items'), "error")
+        TriggerClientEvent("NADRP:Notify", src, Lang:t('error.no_items'), "error")
     end
 end)
 
-RegisterNetEvent("denalifw-pawnshop:server:pickupMelted", function(item)
+RegisterNetEvent("NADRP-pawnshop:server:pickupMelted", function(item)
     local src = source
-    local Player = denalifw.Functions.GetPlayer(src)
+    local Player = NADRP.Functions.GetPlayer(src)
     local meltedAmount = 0
     local rewardAmount = 0
 
@@ -47,16 +47,16 @@ RegisterNetEvent("denalifw-pawnshop:server:pickupMelted", function(item)
         for l,m in pairs(v.item.reward) do
             rewardAmount = m.amount
             Player.Functions.AddItem(m.item, (meltedAmount * rewardAmount))
-            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[m.item], 'add')
-            TriggerClientEvent('denalifw:Notify', src, Lang:t('success.items_received', {value = (meltedAmount * rewardAmount), value2 = denalifw.Shared.Items[m.item].label}), 'success')
+            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[m.item], 'add')
+            TriggerClientEvent('NADRP:Notify', src, Lang:t('success.items_received', {value = (meltedAmount * rewardAmount), value2 = NADRP.Shared.Items[m.item].label}), 'success')
         end
     end
 
-    TriggerClientEvent('denalifw-pawnshop:client:resetPickup', src)
+    TriggerClientEvent('NADRP-pawnshop:client:resetPickup', src)
 end)
 
-denalifw.Functions.CreateCallback('denalifw-pawnshop:server:getInv', function(source, cb)
-    local Player = denalifw.Functions.GetPlayer(source)
+NADRP.Functions.CreateCallback('NADRP-pawnshop:server:getInv', function(source, cb)
+    local Player = NADRP.Functions.GetPlayer(source)
     local inventory = Player.PlayerData.items
 
     return cb(inventory)
