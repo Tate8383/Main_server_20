@@ -27,7 +27,7 @@ CreateThread(function()
 
                     DrawText3Ds(949.85, 35.39, 71.84 + 0.15, '~g~E~w~ - Sell chips')
                     if IsControlJustPressed(0, 38) then
-                        TriggerServerEvent('NADRP-casino:server:sell')
+                        TriggerServerEvent('denalifw-casino:server:sell')
                     end
                 end
             end

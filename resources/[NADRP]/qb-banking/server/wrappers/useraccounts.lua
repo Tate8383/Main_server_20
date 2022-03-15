@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 function generateCurrent(cid)
     local self = {}
@@ -131,7 +131,7 @@ function generateCurrent(cid)
 
                 if self.source ~= -1 then
                     TriggerClientEvent('qb-banking:client:newCardSuccess', self.source, cardNumber, friendlyName)
-                    local xPlayer = NADRP.Functions.GetPlayer(self.source)
+                    local xPlayer = denalifw.Functions.GetPlayer(self.source)
 
                     if selectedCard == "visa" then
                         xPlayer.Functions.AddItem('visa', 1)

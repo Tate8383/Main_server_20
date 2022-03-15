@@ -1,11 +1,11 @@
 local standardVolumeOutput = 0.3;
 local hasPlayerLoaded = false
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     hasPlayerLoaded = true
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     hasPlayerLoaded = false
 end)
 

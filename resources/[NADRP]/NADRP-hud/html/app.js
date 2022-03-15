@@ -511,96 +511,96 @@ document.onkeyup = function (data) {
 
 function closeMenu() {
   $("#openmenu").fadeOut(550);
-  $.post('https://NADRP-hud/closeMenu');
+  $.post('https://denalifw-hud/closeMenu');
 }
 function restartHud() {
   closeMenu()
-  $.post('https://NADRP-hud/restartHud');
+  $.post('https://denalifw-hud/restartHud');
 }
 function resetStorage() {
   closeMenu()
-  $.post('https://NADRP-hud/resetStorage');
+  $.post('https://denalifw-hud/resetStorage');
 }
 function showOutMap() {
-  $.post('https://NADRP-hud/showOutMap');
+  $.post('https://denalifw-hud/showOutMap');
 }
 function showOutCompass() {
-  $.post('https://NADRP-hud/showOutCompass');
+  $.post('https://denalifw-hud/showOutCompass');
 }
 function showFollowCompass() {
-  $.post('https://NADRP-hud/showFollowCompass');
+  $.post('https://denalifw-hud/showFollowCompass');
 }
 function openMenuSounds() {
-  $.post('https://NADRP-hud/openMenuSounds');
+  $.post('https://denalifw-hud/openMenuSounds');
 }
 function resetHudSounds() {
-  $.post('https://NADRP-hud/resetHudSounds');
+  $.post('https://denalifw-hud/resetHudSounds');
 }
 function checklistSounds() {
-  $.post('https://NADRP-hud/checklistSounds');
+  $.post('https://denalifw-hud/checklistSounds');
 }
 function showMapNotif() {
-  $.post('https://NADRP-hud/showMapNotif');
+  $.post('https://denalifw-hud/showMapNotif');
 }
 function showFuelAlert() {
-  $.post('https://NADRP-hud/showFuelAlert');
+  $.post('https://denalifw-hud/showFuelAlert');
 }
 function showCinematicNotif() {
-  $.post('https://NADRP-hud/showCinematicNotif');
+  $.post('https://denalifw-hud/showCinematicNotif');
 }
 function dynamicHealth() {
-  $.post('https://NADRP-hud/dynamicHealth');
+  $.post('https://denalifw-hud/dynamicHealth');
 }
 function dynamicArmor() {
-  $.post('https://NADRP-hud/dynamicArmor');
+  $.post('https://denalifw-hud/dynamicArmor');
 }
 function dynamicHunger() {
-  $.post('https://NADRP-hud/dynamicHunger');
+  $.post('https://denalifw-hud/dynamicHunger');
 }
 function dynamicThirst() {
-  $.post('https://NADRP-hud/dynamicThirst');
+  $.post('https://denalifw-hud/dynamicThirst');
 }
 function dynamicStress() {
-  $.post('https://NADRP-hud/dynamicStress');
+  $.post('https://denalifw-hud/dynamicStress');
 }
 function dynamicOxygen() {
-  $.post('https://NADRP-hud/dynamicOxygen');
+  $.post('https://denalifw-hud/dynamicOxygen');
 }
 function dynamicEngine() {
-  $.post('https://NADRP-hud/dynamicEngine');
+  $.post('https://denalifw-hud/dynamicEngine');
 }
 function dynamicNitro() {
-  $.post('https://NADRP-hud/dynamicNitro');
+  $.post('https://denalifw-hud/dynamicNitro');
 }
 function ToggleMapShape() {
-  $.post('https://NADRP-hud/ToggleMapShape');
+  $.post('https://denalifw-hud/ToggleMapShape');
 }
 function changeFPS() {
-  $.post('https://NADRP-hud/changeFPS');
+  $.post('https://denalifw-hud/changeFPS');
 }
 function ToggleMapBorders() {
-  $.post('https://NADRP-hud/ToggleMapBorders');
+  $.post('https://denalifw-hud/ToggleMapBorders');
 }
 function HideMap() {
-  $.post('https://NADRP-hud/HideMap');
+  $.post('https://denalifw-hud/HideMap');
 }
 function changeCompassFPS() {
-  $.post('https://NADRP-hud/changeCompassFPS');
+  $.post('https://denalifw-hud/changeCompassFPS');
 }
 function showCompassBase() {
-  $.post('https://NADRP-hud/showCompassBase');
+  $.post('https://denalifw-hud/showCompassBase');
 }
 function showStreetsNames() {
-  $.post('https://NADRP-hud/showStreetsNames');
+  $.post('https://denalifw-hud/showStreetsNames');
 }
 function showPointerIndex() {
-  $.post('https://NADRP-hud/showPointerIndex');
+  $.post('https://denalifw-hud/showPointerIndex');
 }
 function showDegreesNum() {
-  $.post('https://NADRP-hud/showDegreesNum');
+  $.post('https://denalifw-hud/showDegreesNum');
 }
 function cinematicMode() {
-  $.post('https://NADRP-hud/cinematicMode');
+  $.post('https://denalifw-hud/cinematicMode');
 }
 
 $(document).ready(function () {

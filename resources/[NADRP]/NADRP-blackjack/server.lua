@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 ranks = {'02', '03', '04', '05', '06', '07', '08', '09', '10', --[['11',]] 'JACK', 'QUEEN', 'KING', 'ACE'}
 suits = {'SPD', 'HRT', 'DIA', 'CLUB'}
@@ -189,7 +189,7 @@ RegisterServerEvent("BLACKJACK:SetPlayerBet")
 AddEventHandler('BLACKJACK:SetPlayerBet', SetPlayerBet)
 
 function CheckPlayerBet(i, bet)
-	local Player = NADRP.Functions.GetPlayer(source)
+	local Player = denalifw.Functions.GetPlayer(source)
 	local ItemList = {
 		["casinochips"] = 1,
 	}

@@ -1,6 +1,6 @@
 -- Variables
 local coin = Crypto.Coin
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local bannedCharacters = {'%','$',';'}
 
 -- Function
@@ -10,9 +10,9 @@ local function RefreshCrypto()
         Crypto.Worth[coin] = result[1].worth
         if result[1].history ~= nil then
             Crypto.History[coin] = json.decode(result[1].history)
-            TriggerClientEvent('NADRP-crypto:client:UpdateCryptoWorth', -1, coin, result[1].worth, json.decode(result[1].history))
+            TriggerClientEvent('denalifw-crypto:client:UpdateCryptoWorth', -1, coin, result[1].worth, json.decode(result[1].history))
         else
-            TriggerClientEvent('NADRP-crypto:client:UpdateCryptoWorth', -1, coin, result[1].worth, nil)
+            TriggerClientEvent('denalifw-crypto:client:UpdateCryptoWorth', -1, coin, result[1].worth, nil)
         end
     end
 end
@@ -93,7 +93,7 @@ end
 
 -- Commands
 
-NADRP.Commands.Add("setcryptoworth", "Set crypto value", {{name="crypto", help="Name of the crypto currency"}, {name="Value", help="New value of the crypto currency"}}, false, function(source, args)
+denalifw.Commands.Add("setcryptoworth", "Set crypto value", {{name="crypto", help="Name of the crypto currency"}, {name="Value", help="New value of the crypto currency"}}, false, function(source, args)
     local src = source
     local crypto = tostring(args[1])
 
@@ -120,83 +120,83 @@ NADRP.Commands.Add("setcryptoworth", "Set crypto value", {{name="crypto", help="
                     NewWorth = NewWorth
                 }
 
-                TriggerClientEvent('NADRP:Notify', src, "You have the value of "..Crypto.Labels[crypto].."adapted from: ($"..Crypto.Worth[crypto].." to: $"..NewWorth..") ("..ChangeLabel.." "..PercentageChange.."%)")
+                TriggerClientEvent('denalifw:Notify', src, "You have the value of "..Crypto.Labels[crypto].."adapted from: ($"..Crypto.Worth[crypto].." to: $"..NewWorth..") ("..ChangeLabel.." "..PercentageChange.."%)")
                 Crypto.Worth[crypto] = NewWorth
-                TriggerClientEvent('NADRP-crypto:client:UpdateCryptoWorth', -1, crypto, NewWorth)
+                TriggerClientEvent('denalifw-crypto:client:UpdateCryptoWorth', -1, crypto, NewWorth)
                 MySQL.Async.insert('INSERT INTO crypto (worth, history) VALUES (:worth, :history) ON DUPLICATE KEY UPDATE worth = :worth, history = :history', {
                     ['worth'] = NewWorth,
                     ['history'] = json.encode(Crypto.History[crypto]),
                 })
             else
-                TriggerClientEvent('NADRP:Notify', src, "You have not given a new value .. Current values: "..Crypto.Worth[crypto])
+                TriggerClientEvent('denalifw:Notify', src, "You have not given a new value .. Current values: "..Crypto.Worth[crypto])
             end
         else
-            TriggerClientEvent('NADRP:Notify', src, "This Crypto does not exist :(, available: Qbit")
+            TriggerClientEvent('denalifw:Notify', src, "This Crypto does not exist :(, available: Qbit")
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, "You have not provided Crypto, available: Qbit")
+        TriggerClientEvent('denalifw:Notify', src, "You have not provided Crypto, available: Qbit")
     end
 end, "admin")
 
-NADRP.Commands.Add("checkcryptoworth", "", {}, false, function(source)
+denalifw.Commands.Add("checkcryptoworth", "", {}, false, function(source)
     local src = source
-    TriggerClientEvent('NADRP:Notify', src, "The Qbit has a value of: $"..Crypto.Worth["qbit"])
+    TriggerClientEvent('denalifw:Notify', src, "The Qbit has a value of: $"..Crypto.Worth["qbit"])
 end)
 
-NADRP.Commands.Add("crypto", "", {}, false, function(source)
+denalifw.Commands.Add("crypto", "", {}, false, function(source)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local MyPocket = math.ceil(Player.PlayerData.money.crypto * Crypto.Worth["qbit"])
 
-    TriggerClientEvent('NADRP:Notify', src, "You have: "..Player.PlayerData.money.crypto.." QBit, with a value of: $"..MyPocket..",-")
+    TriggerClientEvent('denalifw:Notify', src, "You have: "..Player.PlayerData.money.crypto.." QBit, with a value of: $"..MyPocket..",-")
 end)
 
 -- Events
 
-RegisterServerEvent('NADRP-crypto:server:FetchWorth', function()
+RegisterServerEvent('denalifw-crypto:server:FetchWorth', function()
     for name,_ in pairs(Crypto.Worth) do
         local result = MySQL.Sync.fetchAll('SELECT * FROM crypto WHERE crypto = ?', { name })
         if result[1] ~= nil then
             Crypto.Worth[name] = result[1].worth
             if result[1].history ~= nil then
                 Crypto.History[name] = json.decode(result[1].history)
-                TriggerClientEvent('NADRP-crypto:client:UpdateCryptoWorth', -1, name, result[1].worth, json.decode(result[1].history))
+                TriggerClientEvent('denalifw-crypto:client:UpdateCryptoWorth', -1, name, result[1].worth, json.decode(result[1].history))
             else
-                TriggerClientEvent('NADRP-crypto:client:UpdateCryptoWorth', -1, name, result[1].worth, nil)
+                TriggerClientEvent('denalifw-crypto:client:UpdateCryptoWorth', -1, name, result[1].worth, nil)
             end
         end
     end
 end)
 
-RegisterServerEvent('NADRP-crypto:server:ExchangeFail', function()
+RegisterServerEvent('denalifw-crypto:server:ExchangeFail', function()
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local ItemData = Player.Functions.GetItemByName("cryptostick")
 
     if ItemData ~= nil then
         Player.Functions.RemoveItem("cryptostick", 1)
-        TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["cryptostick"], "remove")
-        TriggerClientEvent('NADRP:Notify', src, "Cryptostick malfunctioned", 'error')
+        TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["cryptostick"], "remove")
+        TriggerClientEvent('denalifw:Notify', src, "Cryptostick malfunctioned", 'error')
     end
 end)
 
-RegisterServerEvent('NADRP-crypto:server:Rebooting', function(state, percentage)
+RegisterServerEvent('denalifw-crypto:server:Rebooting', function(state, percentage)
     Crypto.Exchange.RebootInfo.state = state
     Crypto.Exchange.RebootInfo.percentage = percentage
 end)
 
-RegisterServerEvent('NADRP-crypto:server:GetRebootState', function()
+RegisterServerEvent('denalifw-crypto:server:GetRebootState', function()
     local src = source
-    TriggerClientEvent('NADRP-crypto:client:GetRebootState', src, Crypto.Exchange.RebootInfo)
+    TriggerClientEvent('denalifw-crypto:client:GetRebootState', src, Crypto.Exchange.RebootInfo)
 end)
 
-RegisterServerEvent('NADRP-crypto:server:SyncReboot', function()
-    TriggerClientEvent('NADRP-crypto:client:SyncReboot', -1)
+RegisterServerEvent('denalifw-crypto:server:SyncReboot', function()
+    TriggerClientEvent('denalifw-crypto:client:SyncReboot', -1)
 end)
 
-RegisterServerEvent('NADRP-crypto:server:ExchangeSuccess', function(LuckChance)
+RegisterServerEvent('denalifw-crypto:server:ExchangeSuccess', function(LuckChance)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local ItemData = Player.Functions.GetItemByName("cryptostick")
 
     if ItemData ~= nil then
@@ -209,16 +209,16 @@ RegisterServerEvent('NADRP-crypto:server:ExchangeSuccess', function(LuckChance)
 
         Player.Functions.RemoveItem("cryptostick", 1)
         Player.Functions.AddMoney('crypto', Amount)
-        TriggerClientEvent('NADRP:Notify', src, "You have exchanged your Cryptostick for: "..Amount.." QBit(\'s)", "success", 3500)
-        TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["cryptostick"], "remove")
-        TriggerClientEvent('NADRP-phone:client:AddTransaction', src, Player, {}, "There are "..Amount.." Qbit('s) credited!", "Credit")
+        TriggerClientEvent('denalifw:Notify', src, "You have exchanged your Cryptostick for: "..Amount.." QBit(\'s)", "success", 3500)
+        TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["cryptostick"], "remove")
+        TriggerClientEvent('denalifw-phone:client:AddTransaction', src, Player, {}, "There are "..Amount.." Qbit('s) credited!", "Credit")
     end
 end)
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback('NADRP-crypto:server:HasSticky', function(source, cb)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateCallback('denalifw-crypto:server:HasSticky', function(source, cb)
+    local Player = denalifw.Functions.GetPlayer(source)
     local Item = Player.Functions.GetItemByName("cryptostick")
 
     if Item ~= nil then
@@ -228,8 +228,8 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:HasSticky', function(source,
     end
 end)
 
-NADRP.Functions.CreateCallback('NADRP-crypto:server:GetCryptoData', function(source, cb, name)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateCallback('denalifw-crypto:server:GetCryptoData', function(source, cb, name)
+    local Player = denalifw.Functions.GetPlayer(source)
     local CryptoData = {
         History = Crypto.History[name],
         Worth = Crypto.Worth[name],
@@ -240,8 +240,8 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:GetCryptoData', function(sou
     cb(CryptoData)
 end)
 
-NADRP.Functions.CreateCallback('NADRP-crypto:server:BuyCrypto', function(source, cb, data)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateCallback('denalifw-crypto:server:BuyCrypto', function(source, cb, data)
+    local Player = denalifw.Functions.GetPlayer(source)
     local total_price = tonumber(data.Coins) * tonumber(Crypto.Worth["qbit"])
     if Player.PlayerData.money.bank >= total_price then
         local CryptoData = {
@@ -251,7 +251,7 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:BuyCrypto', function(source,
             WalletId = Player.PlayerData.metadata["walletid"],
         }
         Player.Functions.RemoveMoney('bank', total_price)
-        TriggerClientEvent('NADRP-phone:client:AddTransaction', source, Player, data, "You have "..tonumber(data.Coins).." Qbit('s) purchased!", "Credit")
+        TriggerClientEvent('denalifw-phone:client:AddTransaction', source, Player, data, "You have "..tonumber(data.Coins).." Qbit('s) purchased!", "Credit")
         Player.Functions.AddMoney('crypto', tonumber(data.Coins))
         cb(CryptoData)
     else
@@ -259,8 +259,8 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:BuyCrypto', function(source,
     end
 end)
 
-NADRP.Functions.CreateCallback('NADRP-crypto:server:SellCrypto', function(source, cb, data)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateCallback('denalifw-crypto:server:SellCrypto', function(source, cb, data)
+    local Player = denalifw.Functions.GetPlayer(source)
     
     if Player.PlayerData.money.crypto >= tonumber(data.Coins) then
         local CryptoData = {
@@ -270,7 +270,7 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:SellCrypto', function(source
             WalletId = Player.PlayerData.metadata["walletid"],
         }
         Player.Functions.RemoveMoney('crypto', tonumber(data.Coins))
-        TriggerClientEvent('NADRP-phone:client:AddTransaction', source, Player, data, "You have "..tonumber(data.Coins).." Qbit('s) sold!", "Depreciation")
+        TriggerClientEvent('denalifw-phone:client:AddTransaction', source, Player, data, "You have "..tonumber(data.Coins).." Qbit('s) sold!", "Depreciation")
         Player.Functions.AddMoney('bank', tonumber(data.Coins) * tonumber(Crypto.Worth["qbit"]))
         cb(CryptoData)
     else
@@ -278,7 +278,7 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:SellCrypto', function(source
     end
 end)
 
-NADRP.Functions.CreateCallback('NADRP-crypto:server:TransferCrypto', function(source, cb, data)
+denalifw.Functions.CreateCallback('denalifw-crypto:server:TransferCrypto', function(source, cb, data)
     local newCoin = tostring(data.Coins)
     local newWalletId = tostring(data.WalletId)
     for k, v in pairs(bannedCharacters) do
@@ -287,7 +287,7 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:TransferCrypto', function(so
     end
     data.WalletId = newWalletId
     data.Coins = tonumber(newCoin)
-    local Player = NADRP.Functions.GetPlayer(source)
+    local Player = denalifw.Functions.GetPlayer(source)
     if Player.PlayerData.money.crypto >= tonumber(data.Coins) then
         local query = '%"walletid":"' .. data.WalletId .. '"%'
         local result = MySQL.Sync.fetchAll('SELECT * FROM `players` WHERE `metadata` LIKE ?', { query })
@@ -299,12 +299,12 @@ NADRP.Functions.CreateCallback('NADRP-crypto:server:TransferCrypto', function(so
                 WalletId = Player.PlayerData.metadata["walletid"],
             }
             Player.Functions.RemoveMoney('crypto', tonumber(data.Coins))
-            TriggerClientEvent('NADRP-phone:client:AddTransaction', source, Player, data, "You have "..tonumber(data.Coins).." Qbit('s) transferred!", "Depreciation")
-            local Target = NADRP.Functions.GetPlayerByCitizenId(result[1].citizenid)
+            TriggerClientEvent('denalifw-phone:client:AddTransaction', source, Player, data, "You have "..tonumber(data.Coins).." Qbit('s) transferred!", "Depreciation")
+            local Target = denalifw.Functions.GetPlayerByCitizenId(result[1].citizenid)
 
             if Target ~= nil then
                 Target.Functions.AddMoney('crypto', tonumber(data.Coins))
-                TriggerClientEvent('NADRP-phone:client:AddTransaction', Target.PlayerData.source, Player, data, "There are "..tonumber(data.Coins).." Qbit('s) credited!", "Credit")
+                TriggerClientEvent('denalifw-phone:client:AddTransaction', Target.PlayerData.source, Player, data, "There are "..tonumber(data.Coins).." Qbit('s) credited!", "Credit")
             else
                 MoneyData = json.decode(result[1].money)
                 MoneyData.crypto = MoneyData.crypto + tonumber(data.Coins)

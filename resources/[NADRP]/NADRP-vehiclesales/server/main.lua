@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 -- Functions
 
@@ -18,7 +18,7 @@ end
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback('NADRP-occasions:server:getVehicles', function(source, cb)
+denalifw.Functions.CreateCallback('denalifw-occasions:server:getVehicles', function(source, cb)
     local result = MySQL.Sync.fetchAll('SELECT * FROM occasion_vehicles', {})
     if result[1] ~= nil then
         cb(result)
@@ -27,7 +27,7 @@ NADRP.Functions.CreateCallback('NADRP-occasions:server:getVehicles', function(so
     end
 end)
 
-NADRP.Functions.CreateCallback("NADRP-occasions:server:getSellerInformation", function(source, cb, citizenid)
+denalifw.Functions.CreateCallback("denalifw-occasions:server:getSellerInformation", function(source, cb, citizenid)
     MySQL.Async.fetchAll('SELECT * FROM players WHERE citizenid = ?', {citizenid}, function(result)
         if result[1] ~= nil then
             cb(result[1])
@@ -37,7 +37,7 @@ NADRP.Functions.CreateCallback("NADRP-occasions:server:getSellerInformation", fu
     end)
 end)
 
-NADRP.Functions.CreateCallback("NADRP-vehiclesales:server:CheckModelName", function(source, cb, plate)
+denalifw.Functions.CreateCallback("denalifw-vehiclesales:server:CheckModelName", function(source, cb, plate)
     if plate then
         local ReturnData = MySQL.Sync.fetchScalar("SELECT vehicle FROM player_vehicles WHERE plate = ?", {plate})
         cb(ReturnData)
@@ -46,9 +46,9 @@ end)
 
 -- Events
 
-RegisterNetEvent('NADRP-occasions:server:ReturnVehicle', function(vehicleData)
+RegisterNetEvent('denalifw-occasions:server:ReturnVehicle', function(vehicleData)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM occasion_vehicles WHERE plate = ? AND occasionid = ?',
         {vehicleData['plate'], vehicleData["oid"]})
     if result[1] ~= nil then
@@ -59,43 +59,43 @@ RegisterNetEvent('NADRP-occasions:server:ReturnVehicle', function(vehicleData)
                  GetHashKey(vehicleData["model"]), vehicleData["mods"], vehicleData["plate"], 0})
             MySQL.Async.execute('DELETE FROM occasion_vehicles WHERE occasionid = ? AND plate = ?',
                 {vehicleData["oid"], vehicleData['plate']})
-            TriggerClientEvent("NADRP-occasions:client:ReturnOwnedVehicle", src, result[1])
-            TriggerClientEvent('NADRP-occasion:client:refreshVehicles', -1)
+            TriggerClientEvent("denalifw-occasions:client:ReturnOwnedVehicle", src, result[1])
+            TriggerClientEvent('denalifw-occasion:client:refreshVehicles', -1)
         else
-            TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_your_vehicle'), 'error', 3500)
+            TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_your_vehicle'), 'error', 3500)
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, Lang:t('error.vehicle_does_not_exist'), 'error', 3500)
+        TriggerClientEvent('denalifw:Notify', src, Lang:t('error.vehicle_does_not_exist'), 'error', 3500)
     end
 end)
 
-RegisterNetEvent('NADRP-occasions:server:sellVehicle', function(vehiclePrice, vehicleData)
+RegisterNetEvent('denalifw-occasions:server:sellVehicle', function(vehiclePrice, vehicleData)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     MySQL.Async.execute('DELETE FROM player_vehicles WHERE plate = ? AND vehicle = ?',{vehicleData.plate, vehicleData.model})
     MySQL.Async.insert('INSERT INTO occasion_vehicles (seller, price, description, plate, model, mods, occasionid) VALUES (?, ?, ?, ?, ?, ?, ?)',{Player.PlayerData.citizenid, vehiclePrice, escapeSqli(vehicleData.desc), vehicleData.plate, vehicleData.model,json.encode(vehicleData.mods), generateOID()})
-    TriggerEvent("NADRP-log:server:CreateLog", "vehicleshop", "Vehicle for Sale", "red","**" .. GetPlayerName(src) .. "** has a " .. vehicleData.model .. " priced at " .. vehiclePrice)
-    TriggerClientEvent('NADRP-occasion:client:refreshVehicles', -1)
+    TriggerEvent("denalifw-log:server:CreateLog", "vehicleshop", "Vehicle for Sale", "red","**" .. GetPlayerName(src) .. "** has a " .. vehicleData.model .. " priced at " .. vehiclePrice)
+    TriggerClientEvent('denalifw-occasion:client:refreshVehicles', -1)
 end)
 
-RegisterNetEvent('NADRP-occasions:server:sellVehicleBack', function(vData)
+RegisterNetEvent('denalifw-occasions:server:sellVehicleBack', function(vData)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local price = math.floor(vData.price / 2)
     local plate = vData.plate
     Player.Functions.AddMoney('bank', price)
-    TriggerClientEvent('NADRP:Notify', src, Lang:t('success.sold_car_for_price', { value = price }), 'success', 5500)
+    TriggerClientEvent('denalifw:Notify', src, Lang:t('success.sold_car_for_price', { value = price }), 'success', 5500)
     MySQL.Async.execute('DELETE FROM player_vehicles WHERE plate = ?', {plate})
 end)
 
-RegisterNetEvent('NADRP-occasions:server:buyVehicle', function(vehicleData)
+RegisterNetEvent('denalifw-occasions:server:buyVehicle', function(vehicleData)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM occasion_vehicles WHERE plate = ? AND occasionid = ?',{vehicleData['plate'], vehicleData["oid"]})
     if result[1] ~= nil and next(result[1]) ~= nil then
         if Player.PlayerData.money.bank >= result[1].price then
             local SellerCitizenId = result[1].seller
-            local SellerData = NADRP.Functions.GetPlayerByCitizenId(SellerCitizenId)
+            local SellerData = denalifw.Functions.GetPlayerByCitizenId(SellerCitizenId)
             local NewPrice = math.ceil((result[1].price / 100) * 77)
             Player.Functions.RemoveMoney('bank', result[1].price)
             MySQL.Async.insert(
@@ -117,17 +117,17 @@ RegisterNetEvent('NADRP-occasions:server:buyVehicle', function(vehicleData)
                     MySQL.Async.execute('UPDATE players SET money = ? WHERE citizenid = ?', {json.encode(BuyerMoney), SellerCitizenId})
                 end
             end
-            TriggerEvent("NADRP-log:server:CreateLog", "vehicleshop", "bought", "green", "**" .. GetPlayerName(src) .. "** has bought for " .. result[1].price .. " (" .. result[1].plate ..") from **" .. SellerCitizenId .. "**")
-            TriggerClientEvent("NADRP-occasions:client:BuyFinished", src, result[1])
-            TriggerClientEvent('NADRP-occasion:client:refreshVehicles', -1)
+            TriggerEvent("denalifw-log:server:CreateLog", "vehicleshop", "bought", "green", "**" .. GetPlayerName(src) .. "** has bought for " .. result[1].price .. " (" .. result[1].plate ..") from **" .. SellerCitizenId .. "**")
+            TriggerClientEvent("denalifw-occasions:client:BuyFinished", src, result[1])
+            TriggerClientEvent('denalifw-occasion:client:refreshVehicles', -1)
             MySQL.Async.execute('DELETE FROM occasion_vehicles WHERE plate = ? AND occasionid = ?',{result[1].plate, result[1].occasionid})
-            TriggerEvent('NADRP-phone:server:sendNewMailToOffline', SellerCitizenId, {
+            TriggerEvent('denalifw-phone:server:sendNewMailToOffline', SellerCitizenId, {
                 sender = Lang:t('mail.sender'),
                 subject = Lang:t('mail.subject'),
-                message = Lang:t('mail.message', { value = NewPrice, value2 = NADRP.Shared.Vehicles[result[1].model].name})
+                message = Lang:t('mail.message', { value = NewPrice, value2 = denalifw.Shared.Vehicles[result[1].model].name})
             })
         else
-            TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_enough_money'), 'error', 3500)
+            TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_enough_money'), 'error', 3500)
         end
     end
 end)

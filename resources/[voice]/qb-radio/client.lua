@@ -1,14 +1,14 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local radioMenu = false
 local isLoggedIn = false
 local onRadio = false
 local RadioChannel = 0
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     isLoggedIn = true
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     isLoggedIn = false
     leaveradio()
 end)
@@ -29,7 +29,7 @@ CreateThread(function()
     while true do
         Wait(1000)
         if isLoggedIn and onRadio then
-            NADRP.Functions.TriggerCallback('qb-radio:server:GetItem', function(hasItem)
+            denalifw.Functions.TriggerCallback('qb-radio:server:GetItem', function(hasItem)
                 if not hasItem then
                     if RadioChannel ~= 0 then
                         leaveradio()
@@ -52,9 +52,9 @@ function connecttoradio(channel)
     end
     exports["pma-voice"]:setRadioChannel(channel)
     if SplitStr(tostring(channel), ".")[2] ~= nil and SplitStr(tostring(channel), ".")[2] ~= "" then
-        NADRP.Functions.Notify(Config.messages['joined_to_radio'] ..channel.. ' MHz', 'success')
+        denalifw.Functions.Notify(Config.messages['joined_to_radio'] ..channel.. ' MHz', 'success')
     else
-        NADRP.Functions.Notify(Config.messages['joined_to_radio'] ..channel.. '.00 MHz', 'success')
+        denalifw.Functions.Notify(Config.messages['joined_to_radio'] ..channel.. '.00 MHz', 'success')
     end
 end
 
@@ -63,7 +63,7 @@ function leaveradio()
     onRadio = false
     exports["pma-voice"]:setRadioChannel(0)
     exports["pma-voice"]:setVoiceProperty("radioEnabled", false)
-    NADRP.Functions.Notify(Config.messages['you_leave'] , 'error')
+    denalifw.Functions.Notify(Config.messages['you_leave'] , 'error')
 end
 
 function SplitStr(inputstr, sep)
@@ -90,23 +90,23 @@ RegisterNUICallback('joinRadio', function(data, cb)
         if rchannel <= Config.MaxFrequency and rchannel ~= 0 then
             if rchannel ~= RadioChannel then
                 if Config.RestrictedChannels[rchannel] ~= nil then
-                    local xPlayer = NADRP.Functions.GetPlayerData()
+                    local xPlayer = denalifw.Functions.GetPlayerData()
                     if Config.RestrictedChannels[rchannel][xPlayer.job.name] and xPlayer.job.onduty then
                         connecttoradio(rchannel)
                     else
-                        NADRP.Functions.Notify(Config.messages['restricted_channel_error'], 'error')
+                        denalifw.Functions.Notify(Config.messages['restricted_channel_error'], 'error')
                     end
                 else
                     connecttoradio(rchannel)
                 end
             else
-                NADRP.Functions.Notify(Config.messages['you_on_radio'] , 'error')
+                denalifw.Functions.Notify(Config.messages['you_on_radio'] , 'error')
             end
         else
-            NADRP.Functions.Notify(Config.messages['invalid_radio'] , 'error')
+            denalifw.Functions.Notify(Config.messages['invalid_radio'] , 'error')
         end
     else
-        NADRP.Functions.Notify(Config.messages['invalid_radio'] , 'error')
+        denalifw.Functions.Notify(Config.messages['invalid_radio'] , 'error')
     end
 end)
 
@@ -124,7 +124,7 @@ end
 
 RegisterNUICallback('leaveRadio', function(data, cb)
     if RadioChannel == 0 then
-        NADRP.Functions.Notify(Config.messages['not_on_radio'], 'error')
+        denalifw.Functions.Notify(Config.messages['not_on_radio'], 'error')
     else
         leaveradio()
     end

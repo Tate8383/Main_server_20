@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Menu'
+description 'denalifw-Menu'
 version '0.0.1'
 
 client_script 'client/main.lua'

@@ -1,19 +1,19 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local group = Config.Group
 local IsDecorating = false
 local flags = 0
 
-RegisterNetEvent('NADRP-anticheat:client:ToggleDecorate', function(bool)
+RegisterNetEvent('denalifw-anticheat:client:ToggleDecorate', function(bool)
   IsDecorating = bool
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    NADRP.Functions.TriggerCallback('NADRP-anticheat:server:GetPermissions', function(UserGroup)
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    denalifw.Functions.TriggerCallback('denalifw-anticheat:server:GetPermissions', function(UserGroup)
         group = UserGroup
     end)
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     IsDecorating = false
     flags = 0
 end)
@@ -38,7 +38,7 @@ CreateThread(function() -- Superjump --
 
                 if (lengthBetweenCoords > Config.SuperJumpLength) then
                     flags = flags + 1
-                    TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Superjump)**")
+                    TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Superjump)**")
                 end
             end
         end
@@ -64,7 +64,7 @@ CreateThread(function() -- Speedhack --
                         if not jumping then
                             if speed > Config.MaxSpeed then
                                 flags = flags + 1
-                                TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Speedhack)**")
+                                TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Speedhack)**")
                             end
                         end
                     end
@@ -85,8 +85,8 @@ CreateThread(function()	-- Invisibility --
             if not IsDecorating then
                 if not IsEntityVisible(ped) then
                     SetEntityVisible(ped, 1, 0)
-                    TriggerEvent('NADRP:Notify', "NADRP-ANTICHEAT: You were invisible and have been made visible again!")
-                    TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Made player visible", "green", "** @everyone " ..GetPlayerName(player).. "** was invisible and has been made visible again by NADRP-Anticheat")
+                    TriggerEvent('denalifw:Notify', "denalifw-ANTICHEAT: You were invisible and have been made visible again!")
+                    TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Made player visible", "green", "** @everyone " ..GetPlayerName(player).. "** was invisible and has been made visible again by denalifw-Anticheat")
                 end
             end
         end
@@ -104,7 +104,7 @@ CreateThread(function() -- Nightvision --
             if GetUsingnightvision(true) then
                 if not IsPedInAnyHeli(ped) then
                     flags = flags + 1
-                    TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Nightvision)**")
+                    TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Nightvision)**")
                 end
             end
         end
@@ -121,7 +121,7 @@ CreateThread(function() -- Thermalvision --
             if GetUsingseethrough(true) then
                 if not IsPedInAnyHeli(ped) then
                     flags = flags + 1
-                    TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Thermalvision)**")
+                    TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Cheat detected!", "orange", "** @everyone " ..GetPlayerName(player).. "** is flagged from anticheat! **(Flag "..flags.." /"..Config.FlagsForBan.." | Thermalvision)**")
                 end
             end
         end
@@ -148,8 +148,8 @@ CreateThread(function() 	-- Spawned car --
                         if plate == BlockedPlate then
                             if DriverSeat == ped then
                                 DeleteVehicle(veh)
-                                TriggerServerEvent("NADRP-anticheat:server:banPlayer", "Cheating")
-                                TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Cheat detected!", "red", "** @everyone " ..GetPlayerName(player).. "** has been banned for cheating (Sat as driver in spawned vehicle with license plate **"..BlockedPlate..")**")
+                                TriggerServerEvent("denalifw-anticheat:server:banPlayer", "Cheating")
+                                TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Cheat detected!", "red", "** @everyone " ..GetPlayerName(player).. "** has been banned for cheating (Sat as driver in spawned vehicle with license plate **"..BlockedPlate..")**")
                             end
                         end
                     end
@@ -168,13 +168,13 @@ CreateThread(function()	-- Check if ped has weapon in inventory --
             local PlayerPed = PlayerPedId()
             local player = PlayerId()
             local CurrentWeapon = GetSelectedPedWeapon(PlayerPed)
-            local WeaponInformation = NADRP.Shared.Weapons[CurrentWeapon]
+            local WeaponInformation = denalifw.Shared.Weapons[CurrentWeapon]
 
             if WeaponInformation["name"] ~= "weapon_unarmed" then
-                NADRP.Functions.TriggerCallback('NADRP-anticheat:server:HasWeaponInInventory', function(HasWeapon)
+                denalifw.Functions.TriggerCallback('denalifw-anticheat:server:HasWeaponInInventory', function(HasWeapon)
                     if not HasWeapon then
                         RemoveAllPedWeapons(PlayerPed, false)
-                        TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Weapon removed!", "orange", "** @everyone " ..GetPlayerName(player).. "** had a weapon on them that they did not have in his inventory. QB Anticheat has removed the weapon.")
+                        TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Weapon removed!", "orange", "** @everyone " ..GetPlayerName(player).. "** had a weapon on them that they did not have in his inventory. QB Anticheat has removed the weapon.")
                     end
                 end, WeaponInformation)
             end
@@ -187,18 +187,18 @@ CreateThread(function() -- Max flags reached = ban, log, explosion & break --
         Wait(500)
         local player = PlayerId()
         if flags >= Config.FlagsForBan then
-            -- TriggerServerEvent("NADRP-anticheat:server:banPlayer", "Cheating")
+            -- TriggerServerEvent("denalifw-anticheat:server:banPlayer", "Cheating")
             -- AddExplosion(coords, EXPLOSION_GRENADE, 1000.0, true, false, false, true)
-            TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Player banned! (Not really of course, this is a test duuuhhhh)", "red", "** @everyone " ..GetPlayerName(player).. "** Too often has been flagged by the anti-cheat and preemptively banned from the server")
+            TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Player banned! (Not really of course, this is a test duuuhhhh)", "red", "** @everyone " ..GetPlayerName(player).. "** Too often has been flagged by the anti-cheat and preemptively banned from the server")
             flags = 0
         end
     end
 end)
 
-RegisterNetEvent('NADRP-anticheat:client:NonRegisteredEventCalled', function(reason, CalledEvent)
+RegisterNetEvent('denalifw-anticheat:client:NonRegisteredEventCalled', function(reason, CalledEvent)
     local player = PlayerId()
-    TriggerServerEvent('NADRP-anticheat:server:banPlayer', reason)
-    TriggerServerEvent("NADRP-log:server:CreateLog", "anticheat", "Player banned! (Not really of course, this is a test duuuhhhh)", "red", "** @everyone " ..GetPlayerName(player).. "** has event **"..CalledEvent.."tried to trigger (LUA injector!)")
+    TriggerServerEvent('denalifw-anticheat:server:banPlayer', reason)
+    TriggerServerEvent("denalifw-log:server:CreateLog", "anticheat", "Player banned! (Not really of course, this is a test duuuhhhh)", "red", "** @everyone " ..GetPlayerName(player).. "** has event **"..CalledEvent.."tried to trigger (LUA injector!)")
 end)
 
 if Config.Antiresourcestop then

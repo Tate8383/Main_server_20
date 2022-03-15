@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 CreateThread(function()
     while true do
@@ -8,13 +8,13 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('NADRP-scrapyard:server:LoadVehicleList', function()
+RegisterNetEvent('denalifw-scrapyard:server:LoadVehicleList', function()
     local src = source
-    TriggerClientEvent("NADRP-scapyard:client:setNewVehicles", src, Config.CurrentVehicles)
+    TriggerClientEvent("denalifw-scapyard:client:setNewVehicles", src, Config.CurrentVehicles)
 end)
 
 
-NADRP.Functions.CreateCallback('NADRP-scrapyard:checkOwnerVehicle', function(source, cb, plate)
+denalifw.Functions.CreateCallback('denalifw-scrapyard:checkOwnerVehicle', function(source, cb, plate)
     local result = MySQL.Sync.fetchScalar("SELECT `plate` FROM `player_vehicles` WHERE `plate` = ?",{plate})
     if result then
         cb(false)
@@ -24,14 +24,14 @@ NADRP.Functions.CreateCallback('NADRP-scrapyard:checkOwnerVehicle', function(sou
 end)
 
 
-RegisterNetEvent('NADRP-scrapyard:server:ScrapVehicle', function(listKey)
+RegisterNetEvent('denalifw-scrapyard:server:ScrapVehicle', function(listKey)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Config.CurrentVehicles[listKey] ~= nil then
         for i = 1, math.random(2, 4), 1 do
             local item = Config.Items[math.random(1, #Config.Items)]
             Player.Functions.AddItem(item, math.random(25, 45))
-            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[item], 'add')
+            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[item], 'add')
             Wait(500)
         end
         local Luck = math.random(1, 8)
@@ -39,11 +39,11 @@ RegisterNetEvent('NADRP-scrapyard:server:ScrapVehicle', function(listKey)
         if Luck == Odd then
             local random = math.random(10, 20)
             Player.Functions.AddItem("rubber", random)
-            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["rubber"], 'add')
+            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["rubber"], 'add')
 
         end
         Config.CurrentVehicles[listKey] = nil
-        TriggerClientEvent("NADRP-scapyard:client:setNewVehicles", -1, Config.CurrentVehicles)
+        TriggerClientEvent("denalifw-scapyard:client:setNewVehicles", -1, Config.CurrentVehicles)
     end
 end)
 
@@ -55,7 +55,7 @@ function GenerateVehicleList()
             Config.CurrentVehicles[i] = randVehicle
         end
     end
-    TriggerClientEvent("NADRP-scapyard:client:setNewVehicles", -1, Config.CurrentVehicles)
+    TriggerClientEvent("denalifw-scapyard:client:setNewVehicles", -1, Config.CurrentVehicles)
 end
 
 function IsInList(name)

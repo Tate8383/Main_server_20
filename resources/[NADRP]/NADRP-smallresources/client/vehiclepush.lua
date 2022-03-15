@@ -1,5 +1,5 @@
-NADRP = nil
-local NADRP = exports['NADRP-core']:GetCoreObject()
+denalifw = nil
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local First = vector3(0.0, 0.0, 0.0)
 local Second = vector3(5.0, 5.0, 5.0)
 
@@ -13,7 +13,7 @@ local Vehicle = {
 CreateThread(function()
     while true do
         Wait(500)
-        local vehicle = NADRP.Functions.GetClosestVehicle()
+        local vehicle = denalifw.Functions.GetClosestVehicle()
         if vehicle ~= nil and vehicle ~= 0 then
             local ped = PlayerPedId()
             local pos = GetEntityCoords(ped)

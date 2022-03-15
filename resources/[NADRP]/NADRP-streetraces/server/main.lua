@@ -1,122 +1,122 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 local Races = {}
 
-RegisterNetEvent('NADRP-streetraces:NewRace', function(RaceTable)
+RegisterNetEvent('denalifw-streetraces:NewRace', function(RaceTable)
     local src = source
     local RaceId = math.random(1000, 9999)
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     if xPlayer.Functions.RemoveMoney('cash', RaceTable.amount, "streetrace-created") then
         Races[RaceId] = RaceTable
-        Races[RaceId].creator = NADRP.Functions.GetIdentifier(src, 'license')
-        Races[RaceId].joined[#Races[RaceId].joined+1] = NADRP.Functions.GetIdentifier(src, 'license')
-        TriggerClientEvent('NADRP-streetraces:SetRace', -1, Races)
-        TriggerClientEvent('NADRP-streetraces:SetRaceId', src, RaceId)
-        TriggerClientEvent('NADRP:Notify', src, "You joind the race for €"..Races[RaceId].amount..",-", 'success')
+        Races[RaceId].creator = denalifw.Functions.GetIdentifier(src, 'license')
+        Races[RaceId].joined[#Races[RaceId].joined+1] = denalifw.Functions.GetIdentifier(src, 'license')
+        TriggerClientEvent('denalifw-streetraces:SetRace', -1, Races)
+        TriggerClientEvent('denalifw-streetraces:SetRaceId', src, RaceId)
+        TriggerClientEvent('denalifw:Notify', src, "You joind the race for €"..Races[RaceId].amount..",-", 'success')
     end
 end)
 
-RegisterNetEvent('NADRP-streetraces:RaceWon', function(RaceId)
+RegisterNetEvent('denalifw-streetraces:RaceWon', function(RaceId)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     xPlayer.Functions.AddMoney('cash', Races[RaceId].pot, "race-won")
-    TriggerClientEvent('NADRP:Notify', src, "You won the race and €"..Races[RaceId].pot..",- recieved", 'success')
-    TriggerClientEvent('NADRP-streetraces:SetRace', -1, Races)
-    TriggerClientEvent('NADRP-streetraces:RaceDone', -1, RaceId, GetPlayerName(src))
+    TriggerClientEvent('denalifw:Notify', src, "You won the race and €"..Races[RaceId].pot..",- recieved", 'success')
+    TriggerClientEvent('denalifw-streetraces:SetRace', -1, Races)
+    TriggerClientEvent('denalifw-streetraces:RaceDone', -1, RaceId, GetPlayerName(src))
 end)
 
-RegisterNetEvent('NADRP-streetraces:JoinRace', function(RaceId)
+RegisterNetEvent('denalifw-streetraces:JoinRace', function(RaceId)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
-    local zPlayer = NADRP.Functions.GetPlayer(Races[RaceId].creator)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
+    local zPlayer = denalifw.Functions.GetPlayer(Races[RaceId].creator)
     if zPlayer ~= nil then
         if xPlayer.PlayerData.money.cash >= Races[RaceId].amount then
             Races[RaceId].pot = Races[RaceId].pot + Races[RaceId].amount
-            Races[RaceId].joined[#Races[RaceId].joined+1] = NADRP.Functions.GetIdentifier(src, 'license')
+            Races[RaceId].joined[#Races[RaceId].joined+1] = denalifw.Functions.GetIdentifier(src, 'license')
             if xPlayer.Functions.RemoveMoney('cash', Races[RaceId].amount, "streetrace-joined") then
-                TriggerClientEvent('NADRP-streetraces:SetRace', -1, Races)
-                TriggerClientEvent('NADRP-streetraces:SetRaceId', src, RaceId)
-                TriggerClientEvent('NADRP:Notify', zPlayer.PlayerData.source, GetPlayerName(src).." Joined the race", 'primary')
+                TriggerClientEvent('denalifw-streetraces:SetRace', -1, Races)
+                TriggerClientEvent('denalifw-streetraces:SetRaceId', src, RaceId)
+                TriggerClientEvent('denalifw:Notify', zPlayer.PlayerData.source, GetPlayerName(src).." Joined the race", 'primary')
             end
         else
-            TriggerClientEvent('NADRP:Notify', src, "You dont have enough cash", 'error')
+            TriggerClientEvent('denalifw:Notify', src, "You dont have enough cash", 'error')
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, "The person wo made the race is offline!", 'error')
+        TriggerClientEvent('denalifw:Notify', src, "The person wo made the race is offline!", 'error')
         Races[RaceId] = {}
     end
 end)
 
-NADRP.Commands.Add("createrace", "Start A Street Race", {{name="amount", help="The Stake Amount For The Race."}}, false, function(source, args)
+denalifw.Commands.Add("createrace", "Start A Street Race", {{name="amount", help="The Stake Amount For The Race."}}, false, function(source, args)
     local src = source
     local amount = tonumber(args[1])
-    if GetJoinedRace(NADRP.Functions.GetIdentifier(src, 'license')) == 0 then
-        TriggerClientEvent('NADRP-streetraces:CreateRace', src, amount)
+    if GetJoinedRace(denalifw.Functions.GetIdentifier(src, 'license')) == 0 then
+        TriggerClientEvent('denalifw-streetraces:CreateRace', src, amount)
     else
-        TriggerClientEvent('NADRP:Notify', src, "You Are Already In A Race", 'error')
+        TriggerClientEvent('denalifw:Notify', src, "You Are Already In A Race", 'error')
     end
 end)
 
-NADRP.Commands.Add("stoprace", "Stop The Race You Created", {}, false, function(source, args)
+denalifw.Commands.Add("stoprace", "Stop The Race You Created", {}, false, function(source, args)
     local src = source
     CancelRace(src)
 end)
 
-NADRP.Commands.Add("quitrace", "Get Out Of A Race. (You Will NOT Get Your Money Back!)", {}, false, function(source, args)
+denalifw.Commands.Add("quitrace", "Get Out Of A Race. (You Will NOT Get Your Money Back!)", {}, false, function(source, args)
     local src = source
-    local RaceId = GetJoinedRace(NADRP.Functions.GetIdentifier(src, 'license'))
+    local RaceId = GetJoinedRace(denalifw.Functions.GetIdentifier(src, 'license'))
     if RaceId ~= 0 then
-        if GetCreatedRace(NADRP.Functions.GetIdentifier(src, 'license')) ~= RaceId then
-            RemoveFromRace(NADRP.Functions.GetIdentifier(src, 'license'))
-            TriggerClientEvent('NADRP:Notify', src, "You Have Stepped Out Of The Race! And You Lost Your Money", 'error')
+        if GetCreatedRace(denalifw.Functions.GetIdentifier(src, 'license')) ~= RaceId then
+            RemoveFromRace(denalifw.Functions.GetIdentifier(src, 'license'))
+            TriggerClientEvent('denalifw:Notify', src, "You Have Stepped Out Of The Race! And You Lost Your Money", 'error')
         else
-            TriggerClientEvent('NADRP:Notify', src, "/stoprace To Stop The Race", 'error')
+            TriggerClientEvent('denalifw:Notify', src, "/stoprace To Stop The Race", 'error')
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, "You Are Not In A Race ", 'error')
+        TriggerClientEvent('denalifw:Notify', src, "You Are Not In A Race ", 'error')
     end
 end)
 
-NADRP.Commands.Add("startrace", "Start The Race", {}, false, function(source, args)
+denalifw.Commands.Add("startrace", "Start The Race", {}, false, function(source, args)
     local src = source
-    local RaceId = GetCreatedRace(NADRP.Functions.GetIdentifier(src, 'license'))
+    local RaceId = GetCreatedRace(denalifw.Functions.GetIdentifier(src, 'license'))
 
     if RaceId ~= 0 then
 
         Races[RaceId].started = true
-        TriggerClientEvent('NADRP-streetraces:SetRace', -1, Races)
-        TriggerClientEvent("NADRP-streetraces:StartRace", -1, RaceId)
+        TriggerClientEvent('denalifw-streetraces:SetRace', -1, Races)
+        TriggerClientEvent("denalifw-streetraces:StartRace", -1, RaceId)
     else
-        TriggerClientEvent('NADRP:Notify', src, "You Have Not Started A Race", 'error')
+        TriggerClientEvent('denalifw:Notify', src, "You Have Not Started A Race", 'error')
 
     end
 end)
 
 function CancelRace(source)
-    local RaceId = GetCreatedRace(NADRP.Functions.GetIdentifier(source, 'license'))
-    local Player = NADRP.Functions.GetPlayer(source)
+    local RaceId = GetCreatedRace(denalifw.Functions.GetIdentifier(source, 'license'))
+    local Player = denalifw.Functions.GetPlayer(source)
 
     if RaceId ~= 0 then
         for key, race in pairs(Races) do
             if Races[key] ~= nil and Races[key].creator == Player.PlayerData.license then
                 if not Races[key].started then
                     for _, iden in pairs(Races[key].joined) do
-                        local xdPlayer = NADRP.Functions.GetPlayer(iden)
+                        local xdPlayer = denalifw.Functions.GetPlayer(iden)
                             xdPlayer.Functions.AddMoney('cash', Races[key].amount, "race-cancelled")
-                            TriggerClientEvent('NADRP:Notify', xdPlayer.PlayerData.source, "Race Has Stopped, You Got Back $"..Races[key].amount.."", 'error')
-                            TriggerClientEvent('NADRP-streetraces:StopRace', xdPlayer.PlayerData.source)
+                            TriggerClientEvent('denalifw:Notify', xdPlayer.PlayerData.source, "Race Has Stopped, You Got Back $"..Races[key].amount.."", 'error')
+                            TriggerClientEvent('denalifw-streetraces:StopRace', xdPlayer.PlayerData.source)
                             RemoveFromRace(iden)
                     end
                 else
-                    TriggerClientEvent('NADRP:Notify', Player.PlayerData.source, "The Race Has Already Started", 'error')
+                    TriggerClientEvent('denalifw:Notify', Player.PlayerData.source, "The Race Has Already Started", 'error')
                 end
-                TriggerClientEvent('NADRP:Notify', source, "Race Stopped!", 'error')
+                TriggerClientEvent('denalifw:Notify', source, "Race Stopped!", 'error')
                 Races[key] = nil
             end
         end
-        TriggerClientEvent('NADRP-streetraces:SetRace', -1, Races)
+        TriggerClientEvent('denalifw-streetraces:SetRace', -1, Races)
     else
-        TriggerClientEvent('NADRP:Notify', source, "You Have Not Started A Race!", 'error')
+        TriggerClientEvent('denalifw:Notify', source, "You Have Not Started A Race!", 'error')
     end
 end
 

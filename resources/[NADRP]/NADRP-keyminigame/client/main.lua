@@ -1,13 +1,13 @@
 KeyMinigameCallback = {}
 
-RegisterNetEvent('NADRP-keyminigame:show', function()
+RegisterNetEvent('denalifw-keyminigame:show', function()
 	SendNUIMessage({
         action = "ShowMinigame"
     })
 	SetNuiFocus(true, false)
 end)
 
-RegisterNetEvent('NADRP-keyminigame:start', function(callback)
+RegisterNetEvent('denalifw-keyminigame:start', function(callback)
     KeyMinigameCallback = callback
 	SendNUIMessage({
         action = "StartMinigame"

@@ -1,6 +1,6 @@
 local IsNew = false
 
-RegisterNetEvent('NADRP-interior:client:SetNewState', function(bool)
+RegisterNetEvent('denalifw-interior:client:SetNewState', function(bool)
 	IsNew = bool
 end)
 
@@ -52,7 +52,7 @@ local function CreateApartmentFurnished(spawn)
 	TeleportToInterior(spawn.x + 1.5, spawn.y - 10.0, spawn.z, POIOffsets.exit.h)
 	if IsNew then
 		SetTimeout(750, function()
-			TriggerEvent('NADRP-clothes:client:CreateFirstCharacter')
+			TriggerEvent('denalifw-clothes:client:CreateFirstCharacter')
 			IsNew = false
 		end)
 	end

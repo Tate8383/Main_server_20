@@ -1,11 +1,11 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-hud'
+description 'denalifw-hud'
 version '2.1.0'
 
 shared_scripts {
-    '@NADRP-core/shared/locale.lua',
+    '@denalifw-core/shared/locale.lua',
     'locales/en.lua',
     'config.lua'
 }

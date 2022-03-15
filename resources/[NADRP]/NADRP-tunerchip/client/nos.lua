@@ -8,8 +8,8 @@ local function trim(value)
     return (string.gsub(value, '^%s*(.-)%s*$', '%1'))
 end
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    NADRP.Functions.TriggerCallback('nitrous:GetNosLoadedVehs', function(vehs)
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    denalifw.Functions.TriggerCallback('nitrous:GetNosLoadedVehs', function(vehs)
         VehicleNitrous = vehs
     end)
 end)
@@ -22,26 +22,26 @@ RegisterNetEvent('smallresource:client:LoadNitrous', function()
     if not NitrousActivated then
         if IsInVehicle and not IsThisModelABike(GetEntityModel(GetVehiclePedIsIn(ped))) then
             if GetPedInVehicleSeat(veh, -1) == ped then
-                NADRP.Functions.Progressbar("use_nos", "Connecting NOS...", 1000, false, true, {
+                denalifw.Functions.Progressbar("use_nos", "Connecting NOS...", 1000, false, true, {
                     disableMovement = false,
                     disableCarMovement = false,
                     disableMouse = false,
                     disableCombat = true,
                 }, {}, {}, {}, function() -- Done
-                    TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items['nitrous'], "remove")
-                    TriggerServerEvent("NADRP:Server:RemoveItem", 'nitrous', 1)
+                    TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items['nitrous'], "remove")
+                    TriggerServerEvent("denalifw:Server:RemoveItem", 'nitrous', 1)
                     local CurrentVehicle = GetVehiclePedIsIn(PlayerPedId())
                     local Plate = trim(GetVehicleNumberPlateText(CurrentVehicle))
                     TriggerServerEvent('nitrous:server:LoadNitrous', Plate)
                 end)
             else
-                NADRP.Functions.Notify("You cannot do that from this seat!", "error")
+                denalifw.Functions.Notify("You cannot do that from this seat!", "error")
             end
         else
-            NADRP.Functions.Notify('You\'re Not In A Car', 'error')
+            denalifw.Functions.Notify('You\'re Not In A Car', 'error')
         end
     else
-        NADRP.Functions.Notify('You Already Have NOS Active', 'error')
+        denalifw.Functions.Notify('You Already Have NOS Active', 'error')
     end
 end)
 

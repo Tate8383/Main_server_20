@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-GangMenu'
+description 'denalifw-GangMenu'
 version '1.0.0'
 
 client_scripts {

@@ -15,11 +15,11 @@ local function DrawText3Ds(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('NADRP-carwash:client:washCar', function()
+RegisterNetEvent('denalifw-carwash:client:washCar', function()
     local PlayerPed = PlayerPedId()
     local PedVehicle = GetVehiclePedIsIn(PlayerPed)
     washingVehicle = true
-    NADRP.Functions.Progressbar("search_cabin", "Vehicle is being washed ..", math.random(4000, 8000), false, true, {
+    denalifw.Functions.Progressbar("search_cabin", "Vehicle is being washed ..", math.random(4000, 8000), false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
@@ -30,7 +30,7 @@ RegisterNetEvent('NADRP-carwash:client:washCar', function()
         WashDecalsFromVehicle(PedVehicle, 1.0)
         washingVehicle = false
     end, function() -- Cancel
-        NADRP.Functions.Notify("Washing canceled ..", "error")
+        denalifw.Functions.Notify("Washing canceled ..", "error")
         washingVehicle = false
     end)
 end)
@@ -54,9 +54,9 @@ CreateThread(function()
                                 DrawText3Ds(Config.CarWash[k]["coords"]["x"], Config.CarWash[k]["coords"]["y"], Config.CarWash[k]["coords"]["z"], '~g~E~w~ - Washing car ($'..Config.DefaultPrice..')')
                                 if IsControlJustPressed(0, 38) then
                                     if dirtLevel > Config.DirtLevel then
-                                        TriggerServerEvent('NADRP-carwash:server:washCar')
+                                        TriggerServerEvent('denalifw-carwash:server:washCar')
                                     else
-                                        NADRP.Functions.Notify("The vehicle isn't dirty", 'error')
+                                        denalifw.Functions.Notify("The vehicle isn't dirty", 'error')
                                     end
                                 end
                             else

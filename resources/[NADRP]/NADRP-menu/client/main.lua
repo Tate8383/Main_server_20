@@ -35,11 +35,11 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-menu:client:openMenu', function(data)
+RegisterNetEvent('denalifw-menu:client:openMenu', function(data)
     openMenu(data)
 end)
 
-RegisterNetEvent('NADRP-menu:client:closeMenu', function()
+RegisterNetEvent('denalifw-menu:client:closeMenu', function()
     closeMenu()
 end)
 
@@ -59,7 +59,7 @@ RegisterNUICallback('clickedButton', function(option)
                 elseif data.params.isCommand then
                     ExecuteCommand(data.params.event)
                 elseif data.params.isQBCommand then
-                    TriggerServerEvent('NADRP:CallCommand', data.params.event, data.params.args)
+                    TriggerServerEvent('denalifw:CallCommand', data.params.event, data.params.args)
                 elseif data.params.isAction then
                     data.params.event(data.params.args)
                 else

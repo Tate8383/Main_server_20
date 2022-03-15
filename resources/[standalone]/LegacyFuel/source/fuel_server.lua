@@ -1,7 +1,7 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 RegisterNetEvent('fuel:pay', function(price, source)
-	local xPlayer = NADRP.Functions.GetPlayer(source)
+	local xPlayer = denalifw.Functions.GetPlayer(source)
 	local amount = math.floor(price + 0.5)
 
 	if price > 0 then

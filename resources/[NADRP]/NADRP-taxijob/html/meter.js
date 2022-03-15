@@ -4,7 +4,7 @@ var meterPlate = null;
 $(document).on('keydown', function() {
     switch(event.keyCode) {
         case 27:
-            $.post('https://NADRP-taxijob/hideMouse');
+            $.post('https://denalifw-taxijob/hideMouse');
             break;
     }
 });
@@ -52,13 +52,13 @@ function resetMeter() {
 
 function meterToggle() {
     if (!meterStarted) {
-        $.post('https://NADRP-taxijob/enableMeter', JSON.stringify({
+        $.post('https://denalifw-taxijob/enableMeter', JSON.stringify({
             enabled: true,
         }));
         toggleMeter(true)
         meterStarted = true;
     } else {
-        $.post('https://NADRP-taxijob/enableMeter', JSON.stringify({
+        $.post('https://denalifw-taxijob/enableMeter', JSON.stringify({
             enabled: false,
         }));
         toggleMeter(false)

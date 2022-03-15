@@ -9,7 +9,7 @@ const OpenMenu = (data) => {
     $(`.main-wrapper`).fadeIn(0);
 
     let form = [
-        "<form id='NADRP-input-form'>",
+        "<form id='denalifw-input-form'>",
         `<div class="heading">${
             data.header != null ? data.header : "Form Title"
         }</div>`,
@@ -49,15 +49,15 @@ const OpenMenu = (data) => {
 
     $(".main-wrapper").html(form.join(" "));
 
-    $("#NADRP-input-form").on("change", function (event) {
+    $("#denalifw-input-form").on("change", function (event) {
         formInputs[$(event.target).attr("name")] = $(event.target).val();
     });
 
-    $("#NADRP-input-form").on("submit", async function (event) {
+    $("#denalifw-input-form").on("submit", async function (event) {
         if (event != null) {
             event.preventDefault();
         }
-        let formData = $("#NADRP-input-form").serializeArray();
+        let formData = $("#denalifw-input-form").serializeArray();
 
         formData.forEach((item, index) => {
             formInputs[item.name] = item.value;
@@ -152,7 +152,7 @@ const renderSelectInput = (item) => {
 
 const CloseMenu = () => {
     $(`.main-wrapper`).fadeOut(0);
-    $("#NADRP-input-form").remove();
+    $("#denalifw-input-form").remove();
     formInputs = {};
 };
 

@@ -1,11 +1,11 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Pawnshop'
+description 'denalifw-Pawnshop'
 version '1.0.0'
 
 shared_scripts {
-	'@NADRP-core/shared/locale.lua',
+	'@denalifw-core/shared/locale.lua',
 	'config.lua',
 	'locales/en.lua',
 }

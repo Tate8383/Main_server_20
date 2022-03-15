@@ -1,6 +1,6 @@
 local cam = nil
 local charPed = nil
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 -- Main Thread
 
@@ -8,7 +8,7 @@ CreateThread(function()
 	while true do
 		Wait(0)
 		if NetworkIsSessionStarted() then
-			TriggerEvent('NADRP-multicharacter:client:chooseChar')
+			TriggerEvent('denalifw-multicharacter:client:chooseChar')
 			return
 		end
 	end
@@ -17,7 +17,7 @@ end)
 -- Functions
 
 local function skyCam(bool)
-    TriggerEvent('NADRP-weathersync:client:DisableSync')
+    TriggerEvent('denalifw-weathersync:client:DisableSync')
     if bool then
         DoScreenFadeIn(1000)
         SetTimecycleModifier('hud_def_blur')
@@ -46,31 +46,31 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-multicharacter:client:closeNUIdefault', function() -- This event is only for no starting apartments
+RegisterNetEvent('denalifw-multicharacter:client:closeNUIdefault', function() -- This event is only for no starting apartments
     DeleteEntity(charPed)
     SetNuiFocus(false, false)
     DoScreenFadeOut(500)
     Wait(2000)
     SetEntityCoords(PlayerPedId(), Config.DefaultSpawn.x, Config.DefaultSpawn.y, Config.DefaultSpawn.z)
-    TriggerServerEvent('NADRP:Server:OnPlayerLoaded')
-    TriggerEvent('NADRP:Client:OnPlayerLoaded')
-    TriggerServerEvent('NADRP-houses:server:SetInsideMeta', 0, false)
-    TriggerServerEvent('NADRP-apartments:server:SetInsideMeta', 0, 0, false)
+    TriggerServerEvent('denalifw:Server:OnPlayerLoaded')
+    TriggerEvent('denalifw:Client:OnPlayerLoaded')
+    TriggerServerEvent('denalifw-houses:server:SetInsideMeta', 0, false)
+    TriggerServerEvent('denalifw-apartments:server:SetInsideMeta', 0, 0, false)
     Wait(500)
     openCharMenu()
     SetEntityVisible(PlayerPedId(), true)
     Wait(500)
     DoScreenFadeIn(250)
-    TriggerEvent('NADRP-weathersync:client:EnableSync')
-    TriggerEvent('NADRP-clothes:client:CreateFirstCharacter')
+    TriggerEvent('denalifw-weathersync:client:EnableSync')
+    TriggerEvent('denalifw-clothes:client:CreateFirstCharacter')
 end)
 
-RegisterNetEvent('NADRP-multicharacter:client:closeNUI', function()
+RegisterNetEvent('denalifw-multicharacter:client:closeNUI', function()
     DeleteEntity(charPed)
     SetNuiFocus(false, false)
 end)
 
-RegisterNetEvent('NADRP-multicharacter:client:chooseChar', function()
+RegisterNetEvent('denalifw-multicharacter:client:chooseChar', function()
     SetNuiFocus(false, false)
     DoScreenFadeOut(10)
     Wait(1000)
@@ -96,13 +96,13 @@ end)
 RegisterNUICallback('disconnectButton', function()
     SetEntityAsMissionEntity(charPed, true, true)
     DeleteEntity(charPed)
-    TriggerServerEvent('NADRP-multicharacter:server:disconnect')
+    TriggerServerEvent('denalifw-multicharacter:server:disconnect')
 end)
 
 RegisterNUICallback('selectCharacter', function(data)
     local cData = data.cData
     DoScreenFadeOut(10)
-    TriggerServerEvent('NADRP-multicharacter:server:loadUserData', cData)
+    TriggerServerEvent('denalifw-multicharacter:server:loadUserData', cData)
     openCharMenu(false)
     SetEntityAsMissionEntity(charPed, true, true)
     DeleteEntity(charPed)
@@ -113,7 +113,7 @@ RegisterNUICallback('cDataPed', function(data)
     SetEntityAsMissionEntity(charPed, true, true)
     DeleteEntity(charPed)
     if cData ~= nil then
-        NADRP.Functions.TriggerCallback('NADRP-multicharacter:server:getSkin', function(model, data)
+        denalifw.Functions.TriggerCallback('denalifw-multicharacter:server:getSkin', function(model, data)
             model = model ~= nil and tonumber(model) or false
             if model ~= nil then
                 CreateThread(function()
@@ -128,7 +128,7 @@ RegisterNUICallback('cDataPed', function(data)
                     PlaceObjectOnGroundProperly(charPed)
                     SetBlockingOfNonTemporaryEvents(charPed, true)
                     data = json.decode(data)
-                    TriggerEvent('NADRP-clothing:client:loadPlayerClothing', data, charPed)
+                    TriggerEvent('denalifw-clothing:client:loadPlayerClothing', data, charPed)
                 end)
             else
                 CreateThread(function()
@@ -172,7 +172,7 @@ RegisterNUICallback('cDataPed', function(data)
 end)
 
 RegisterNUICallback('setupCharacters', function()
-    NADRP.Functions.TriggerCallback("NADRP-multicharacter:server:setupCharacters", function(result)
+    denalifw.Functions.TriggerCallback("denalifw-multicharacter:server:setupCharacters", function(result)
         SendNUIMessage({
             action = "setupCharacters",
             characters = result
@@ -192,11 +192,11 @@ RegisterNUICallback('createNewCharacter', function(data)
     elseif cData.gender == "Female" then
         cData.gender = 1
     end
-    TriggerServerEvent('NADRP-multicharacter:server:createCharacter', cData)
+    TriggerServerEvent('denalifw-multicharacter:server:createCharacter', cData)
     Wait(500)
 end)
 
 RegisterNUICallback('removeCharacter', function(data)
-    TriggerServerEvent('NADRP-multicharacter:server:deleteCharacter', data.citizenid)
-    TriggerEvent('NADRP-multicharacter:client:chooseChar')
+    TriggerServerEvent('denalifw-multicharacter:server:deleteCharacter', data.citizenid)
+    TriggerEvent('denalifw-multicharacter:client:chooseChar')
 end)

@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local inWatch = false
 
 -- Functions
@@ -27,7 +27,7 @@ RegisterNUICallback('close', function()
     closeWatch()
 end)
 
-RegisterNetEvent('NADRP-fitbit:use', function()
+RegisterNetEvent('denalifw-fitbit:use', function()
   openWatch()
 end)
 
@@ -36,17 +36,17 @@ end)
 RegisterNUICallback('setFoodWarning', function(data)
     local foodValue = tonumber(data.value)
 
-    TriggerServerEvent('NADRP-fitbit:server:setValue', 'food', foodValue)
+    TriggerServerEvent('denalifw-fitbit:server:setValue', 'food', foodValue)
 
-    NADRP.Functions.Notify('Fitbit: Hunger warning set to '..foodValue..'%')
+    denalifw.Functions.Notify('Fitbit: Hunger warning set to '..foodValue..'%')
 end)
 
 RegisterNUICallback('setThirstWarning', function(data)
     local thirstValue = tonumber(data.value)
 
-    TriggerServerEvent('NADRP-fitbit:server:setValue', 'thirst', thirstValue)
+    TriggerServerEvent('denalifw-fitbit:server:setValue', 'thirst', thirstValue)
 
-    NADRP.Functions.Notify('Fitbit: Thirst warning set to '..thirstValue..'%')
+    denalifw.Functions.Notify('Fitbit: Thirst warning set to '..thirstValue..'%')
 end)
 
 -- Threads
@@ -55,9 +55,9 @@ CreateThread(function()
     while true do
         Wait(5 * 60 * 1000)
         if LocalPlayer.state.isLoggedIn then
-            NADRP.Functions.TriggerCallback('NADRP-fitbit:server:HasFitbit', function(hasItem)
+            denalifw.Functions.TriggerCallback('denalifw-fitbit:server:HasFitbit', function(hasItem)
                 if hasItem then
-                    local PlayerData = NADRP.Functions.GetPlayerData()
+                    local PlayerData = denalifw.Functions.GetPlayerData()
                     if PlayerData.metadata["fitbit"].food ~= nil then
                         if PlayerData.metadata["hunger"] < PlayerData.metadata["fitbit"].food then
                             TriggerEvent("chatMessage", "FITBIT ", "warning", "Your hunger is "..round(PlayerData.metadata["hunger"], 2).."%")

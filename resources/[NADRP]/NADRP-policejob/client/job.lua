@@ -27,7 +27,7 @@ local function loadAnimDict(dict) -- interactions, job,
 end
 
 local function GetClosestPlayer() -- interactions, job, tracker
-    local closestPlayers = NADRP.Functions.GetPlayersFromCoords()
+    local closestPlayers = denalifw.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -58,7 +58,7 @@ end
 local function SetCarItemsInfo()
 	local items = {}
 	for k, item in pairs(Config.CarItems) do
-		local itemInfo = NADRP.Shared.Items[item.name:lower()]
+		local itemInfo = denalifw.Shared.Items[item.name:lower()]
 		items[item.slot] = {
 			name = itemInfo["name"],
 			amount = tonumber(item.amount),
@@ -122,9 +122,9 @@ end
 function TakeOutImpound(vehicle)
     local coords = Config.Locations["impound"][currentGarage]
     if coords then
-        NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-            NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
-                NADRP.Functions.SetVehicleProperties(veh, properties)
+        denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+            denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
+                denalifw.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, coords.w)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
@@ -132,7 +132,7 @@ function TakeOutImpound(vehicle)
                 TriggerServerEvent('police:server:TakeOutImpound',vehicle.plate)
                 closeMenuFull()
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
         end, coords, true)
@@ -142,18 +142,18 @@ end
 function TakeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
     if coords then
-        NADRP.Functions.SpawnVehicle(vehicleInfo, function(veh)
+        denalifw.Functions.SpawnVehicle(vehicleInfo, function(veh)
             SetCarItemsInfo()
             SetVehicleNumberPlateText(veh, Lang:t('info.police_plate')..tostring(math.random(1000, 9999)))
             SetEntityHeading(veh, coords.w)
             exports['LegacyFuel']:SetFuel(veh, 100.0)
             closeMenuFull()
             if Config.VehicleSettings[vehicleInfo] ~= nil then
-                NADRP.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
+                denalifw.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
             end
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-            TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
-            TriggerServerEvent("inventory:server:addTrunkItems", NADRP.Functions.GetPlate(veh), Config.CarItems)
+            TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+            TriggerServerEvent("inventory:server:addTrunkItems", denalifw.Functions.GetPlate(veh), Config.CarItems)
             SetVehicleEngineOn(veh, true, true)
         end, coords, true)
     end
@@ -162,7 +162,7 @@ end
 local function IsArmoryWhitelist() -- being removed
     local retval = false
 
-    if NADRP.Functions.GetPlayerData().job.name == 'police' then
+    if denalifw.Functions.GetPlayerData().job.name == 'police' then
         retval = true
     end
     return retval
@@ -171,7 +171,7 @@ end
 local function SetWeaponSeries()
     for k, v in pairs(Config.Items.items) do
         if k < 6 then
-            Config.Items.items[k].info.serie = tostring(NADRP.Shared.RandomInt(2) .. NADRP.Shared.RandomStr(3) .. NADRP.Shared.RandomInt(1) .. NADRP.Shared.RandomStr(2) .. NADRP.Shared.RandomInt(3) .. NADRP.Shared.RandomStr(4))
+            Config.Items.items[k].info.serie = tostring(denalifw.Shared.RandomInt(2) .. denalifw.Shared.RandomStr(3) .. denalifw.Shared.RandomInt(1) .. denalifw.Shared.RandomStr(2) .. denalifw.Shared.RandomInt(3) .. denalifw.Shared.RandomStr(4))
         end
     end
 end
@@ -184,7 +184,7 @@ function MenuGarage(currentSelection)
         }
     }
 
-    local authorizedVehicles = Config.AuthorizedVehicles[NADRP.Functions.GetPlayerData().job.grade.level]
+    local authorizedVehicles = Config.AuthorizedVehicles[denalifw.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(authorizedVehicles) do
         vehicleMenu[#vehicleMenu+1] = {
             header = label,
@@ -219,11 +219,11 @@ function MenuGarage(currentSelection)
         header = Lang:t('menu.close'),
         txt = "",
         params = {
-            event = "NADRP-menu:client:closeMenu"
+            event = "denalifw-menu:client:closeMenu"
         }
 
     }
-    exports['NADRP-menu']:openMenu(vehicleMenu)
+    exports['denalifw-menu']:openMenu(vehicleMenu)
 end
 
 function MenuImpound(currentSelection)
@@ -233,17 +233,17 @@ function MenuImpound(currentSelection)
             isMenuHeader = true
         }
     }
-    NADRP.Functions.TriggerCallback("police:GetImpoundedVehicles", function(result)
+    denalifw.Functions.TriggerCallback("police:GetImpoundedVehicles", function(result)
         local shouldContinue = false
         if result == nil then
-            NADRP.Functions.Notify(Lang:t("error.no_impound"), "error", 5000)
+            denalifw.Functions.Notify(Lang:t("error.no_impound"), "error", 5000)
         else
             shouldContinue = true
             for _ , v in pairs(result) do
-                local enginePercent = NADRP.Shared.Round(v.engine / 10, 0)
-                local bodyPercent = NADRP.Shared.Round(v.body / 10, 0)
+                local enginePercent = denalifw.Shared.Round(v.engine / 10, 0)
+                local bodyPercent = denalifw.Shared.Round(v.body / 10, 0)
                 local currentFuel = v.fuel
-                local vname = NADRP.Shared.Vehicles[v.vehicle].name
+                local vname = denalifw.Shared.Vehicles[v.vehicle].name
 
                 impoundMenu[#impoundMenu+1] = {
                     header = vname.." ["..v.plate.."]",
@@ -265,17 +265,17 @@ function MenuImpound(currentSelection)
                 header = Lang:t('menu.close'),
                 txt = "",
                 params = {
-                    event = "NADRP-menu:client:closeMenu"
+                    event = "denalifw-menu:client:closeMenu"
                 }
             }
-            exports['NADRP-menu']:openMenu(impoundMenu)
+            exports['denalifw-menu']:openMenu(impoundMenu)
         end
     end)
 
 end
 
 function closeMenuFull()
-    exports['NADRP-menu']:closeMenu()
+    exports['denalifw-menu']:closeMenu()
 end
 
 --NUI Callbacks
@@ -330,7 +330,7 @@ RegisterNetEvent('police:client:CallAnim', function()
 end)
 
 RegisterNetEvent('police:client:ImpoundVehicle', function(fullImpound, price)
-    local vehicle = NADRP.Functions.GetClosestVehicle()
+    local vehicle = denalifw.Functions.GetClosestVehicle()
     local bodyDamage = math.ceil(GetVehicleBodyHealth(vehicle))
     local engineDamage = math.ceil(GetVehicleEngineHealth(vehicle))
     local totalFuel = exports['LegacyFuel']:GetFuel(vehicle)
@@ -339,28 +339,28 @@ RegisterNetEvent('police:client:ImpoundVehicle', function(fullImpound, price)
         local pos = GetEntityCoords(ped)
         local vehpos = GetEntityCoords(vehicle)
         if #(pos - vehpos) < 5.0 and not IsPedInAnyVehicle(ped) then
-            local plate = NADRP.Functions.GetPlate(vehicle)
+            local plate = denalifw.Functions.GetPlate(vehicle)
             TriggerServerEvent("police:server:Impound", plate, fullImpound, price, bodyDamage, engineDamage, totalFuel)
-            NADRP.Functions.DeleteVehicle(vehicle)
+            denalifw.Functions.DeleteVehicle(vehicle)
         end
     end
 end)
 
 RegisterNetEvent('police:client:CheckStatus', function()
-    NADRP.Functions.GetPlayerData(function(PlayerData)
+    denalifw.Functions.GetPlayerData(function(PlayerData)
         if PlayerData.job.name == "police" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
-                NADRP.Functions.TriggerCallback('police:GetPlayerStatus', function(result)
+                denalifw.Functions.TriggerCallback('police:GetPlayerStatus', function(result)
                     if result then
                         for k, v in pairs(result) do
-                            NADRP.Functions.Notify(''..v..'')
+                            denalifw.Functions.Notify(''..v..'')
                         end
                     end
                 end, playerId)
             else
-                NADRP.Functions.Notify(Lang:t("error.none_nearby"), "error")
+                denalifw.Functions.Notify(Lang:t("error.none_nearby"), "error")
             end
         end
     end)
@@ -416,7 +416,7 @@ RegisterNetEvent('police:client:EvidenceStashDrawer', function(data)
     if not takeLoc then return end
 
     if #(pos - takeLoc) <= 1.0 then
-        local drawer = exports['NADRP-input']:ShowInput({
+        local drawer = exports['denalifw-input']:ShowInput({
             header = Lang:t('info.evidence_stash', {value = currentEvidence}),
             submitText = "open",
             inputs = {
@@ -437,25 +437,25 @@ RegisterNetEvent('police:client:EvidenceStashDrawer', function(data)
             TriggerEvent("inventory:client:SetCurrentStash", Lang:t('info.current_evidence', {value = currentEvidence, value2 = drawer.slot}))
         end
     else
-        exports['NADRP-menu']:closeMenu()
+        exports['denalifw-menu']:closeMenu()
     end
 end)
 
 -- Threads
 -- Toggle Duty in an event.
-RegisterNetEvent('NADRP-policejob:ToggleDuty', function()
+RegisterNetEvent('denalifw-policejob:ToggleDuty', function()
     onDuty = not onDuty
     TriggerServerEvent("police:server:UpdateCurrentCops")
     TriggerServerEvent("police:server:UpdateBlips")
-    TriggerServerEvent("NADRP:ToggleDuty")
+    TriggerServerEvent("denalifw:ToggleDuty")
 end)
 
 -- Toggle Duty in an event.
-RegisterNetEvent('NADRP-policejob:ToggleDuty', function()
+RegisterNetEvent('denalifw-policejob:ToggleDuty', function()
     onDuty = not onDuty
     TriggerServerEvent("police:server:UpdateCurrentCops")
     TriggerServerEvent("police:server:UpdateBlips")
-    TriggerServerEvent("NADRP:ToggleDuty")
+    TriggerServerEvent("denalifw:ToggleDuty")
 end)
 
 -- Toggle Duty
@@ -477,7 +477,7 @@ CreateThread(function()
                         if IsControlJustReleased(0, 38) then
                             onDuty = not onDuty
                             TriggerServerEvent("police:server:UpdateCurrentCops")
-                            TriggerServerEvent("NADRP:ToggleDuty")
+                            TriggerServerEvent("denalifw:ToggleDuty")
                             TriggerServerEvent("police:server:UpdateBlips")
                         end
                     elseif #(pos - v) < 2.5 then
@@ -505,7 +505,7 @@ CreateThread(function()
                     if #(pos - v) < 1.0 then
                         if not headerDrawn then
                             headerDrawn = true
-                            exports['NADRP-menu']:showHeader({
+                            exports['denalifw-menu']:showHeader({
                                 {
                                     header = Lang:t('info.evidence_stash', {value = k}),
                                     params = {
@@ -521,7 +521,7 @@ CreateThread(function()
                         DrawText3D(v.x, v.y, v.z, Lang:t('info.evidence_stash', {value = k}))
                         if headerDrawn then
                             headerDrawn = false
-                            exports['NADRP-menu']:closeMenu()
+                            exports['denalifw-menu']:closeMenu()
                         end
                     end
                 end
@@ -545,8 +545,8 @@ CreateThread(function()
                         if #(pos - v) < 1.5 then
                             DrawText3D(v.x, v.y, v.z, Lang:t('info.stash_enter'))
                             if IsControlJustReleased(0, 38) then
-                                TriggerServerEvent("inventory:server:OpenInventory", "stash", "policestash_"..NADRP.Functions.GetPlayerData().citizenid)
-                                TriggerEvent("inventory:client:SetCurrentStash", "policestash_"..NADRP.Functions.GetPlayerData().citizenid)
+                                TriggerServerEvent("inventory:server:OpenInventory", "stash", "policestash_"..denalifw.Functions.GetPlayerData().citizenid)
+                                TriggerEvent("inventory:client:SetCurrentStash", "policestash_"..denalifw.Functions.GetPlayerData().citizenid)
                             end
                         elseif #(pos - v) < 2.5 then
                             DrawText3D(v.x, v.y, v.z, Lang:t('info.stash'))
@@ -607,7 +607,7 @@ CreateThread(function()
                                     local playerId = GetPlayerServerId(player)
                                     TriggerServerEvent("police:server:showFingerprint", playerId)
                                 else
-                                    NADRP.Functions.Notify(Lang:t("error.none_nearby"), "error")
+                                    denalifw.Functions.Notify(Lang:t("error.none_nearby"), "error")
                                 end
                             end
                         elseif #(pos - v) < 2.5 then
@@ -684,10 +684,10 @@ CreateThread(function()
                             end
                             if IsControlJustReleased(0, 38) then
                                 if IsPedInAnyVehicle(PlayerPedId(), false) then
-                                    NADRP.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
+                                    denalifw.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
                                 else
                                     local coords = Config.Locations["helicopter"][k]
-                                    NADRP.Functions.SpawnVehicle(Config.PoliceHelicopter, function(veh)
+                                    denalifw.Functions.SpawnVehicle(Config.PoliceHelicopter, function(veh)
                                         SetVehicleLivery(veh , 0)
                                         SetVehicleMod(veh, 0, 48)
                                         SetVehicleNumberPlateText(veh, "ZULU"..tostring(math.random(1000, 9999)))
@@ -695,7 +695,7 @@ CreateThread(function()
                                         exports['LegacyFuel']:SetFuel(veh, 100.0)
                                         closeMenuFull()
                                         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                                        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                                        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                                         SetVehicleEngineOn(veh, true, true)
                                     end, coords, true)
                                 end
@@ -729,7 +729,7 @@ CreateThread(function()
                             else
                                 if not headerDrawn then
                                     headerDrawn = true
-                                    exports['NADRP-menu']:showHeader({
+                                    exports['denalifw-menu']:showHeader({
                                         {
                                             header = Lang:t('menu.pol_impound'),
                                             params = {
@@ -744,13 +744,13 @@ CreateThread(function()
                             end
                             if IsControlJustReleased(0, 38) then
                                 if IsPedInAnyVehicle(PlayerPedId(), false) then
-                                    NADRP.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
+                                    denalifw.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
                                 end
                             end
                         else
                             if headerDrawn then
                                 headerDrawn = false
-                                exports['NADRP-menu']:closeMenu()
+                                exports['denalifw-menu']:closeMenu()
                             end
                         end
                     end
@@ -780,7 +780,7 @@ CreateThread(function()
                             else
                                 if not headerDrawn then
                                     headerDrawn = true
-                                    exports['NADRP-menu']:showHeader({
+                                    exports['denalifw-menu']:showHeader({
                                         {
                                             header = Lang:t('menu.pol_garage'),
                                             params = {
@@ -795,13 +795,13 @@ CreateThread(function()
                             end
                             if IsControlJustReleased(0, 38) then
                                 if IsPedInAnyVehicle(PlayerPedId(), false) then
-                                    NADRP.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
+                                    denalifw.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
                                 end
                             end
                         else
                             if headerDrawn then
                                 headerDrawn = false
-                                exports['NADRP-menu']:closeMenu()
+                                exports['denalifw-menu']:closeMenu()
                             end
                         end
                     end

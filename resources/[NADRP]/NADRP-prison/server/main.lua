@@ -1,22 +1,22 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 local AlarmActivated = false
 
 RegisterNetEvent('prison:server:SetJailStatus', function(jailTime)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     Player.Functions.SetMetaData("injail", jailTime)
     if jailTime > 0 then
         if Player.PlayerData.job.name ~= "unemployed" then
             Player.Functions.SetJob("unemployed")
-            TriggerClientEvent('NADRP:Notify', src, Lang:t("info.lost_job"))
+            TriggerClientEvent('denalifw:Notify', src, Lang:t("info.lost_job"))
         end
     end
 end)
 
 RegisterNetEvent('prison:server:SaveJailItems', function()
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Player.PlayerData.metadata["jailitems"] == nil or next(Player.PlayerData.metadata["jailitems"]) == nil then
         Player.Functions.SetMetaData("jailitems", Player.PlayerData.items)
         Player.Functions.AddMoney('cash', 80)
@@ -27,7 +27,7 @@ end)
 
 RegisterNetEvent('prison:server:GiveJailItems', function()
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     Wait(1000)
     for k, v in pairs(Player.PlayerData.metadata["jailitems"]) do
         Player.Functions.AddItem(v.name, v.amount, false, v.info)
@@ -38,8 +38,8 @@ end)
 
 RegisterNetEvent('prison:server:SecurityLockdown', function()
     TriggerClientEvent("prison:client:SetLockDown", -1, true)
-    for k, v in pairs(NADRP.Functions.GetPlayers()) do
-        local Player = NADRP.Functions.GetPlayer(v)
+    for k, v in pairs(denalifw.Functions.GetPlayers()) do
+        local Player = denalifw.Functions.GetPlayer(v)
         if Player ~= nil then
             if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
                 TriggerClientEvent("prison:client:PrisonBreakAlert", v)
@@ -51,8 +51,8 @@ end)
 RegisterNetEvent('prison:server:SetGateHit', function(key)
     TriggerClientEvent("prison:client:SetGateHit", -1, key, true)
     if math.random(1, 100) <= 50 then
-        for k, v in pairs(NADRP.Functions.GetPlayers()) do
-            local Player = NADRP.Functions.GetPlayer(v)
+        for k, v in pairs(denalifw.Functions.GetPlayers()) do
+            local Player = denalifw.Functions.GetPlayer(v)
             if Player ~= nil then
                 if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
                     TriggerClientEvent("prison:client:PrisonBreakAlert", v)
@@ -64,7 +64,7 @@ end)
 
 RegisterNetEvent('prison:server:CheckRecordStatus', function()
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local CriminalRecord = Player.PlayerData.metadata["criminalrecord"]
     local currentDate = os.date("*t")
 
@@ -89,6 +89,6 @@ RegisterNetEvent('prison:server:JailAlarm', function()
     end
 end)
 
-NADRP.Functions.CreateCallback('prison:server:IsAlarmActive', function(source, cb)
+denalifw.Functions.CreateCallback('prison:server:IsAlarmActive', function(source, cb)
     cb(AlarmActivated)
 end)

@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local SafeCodes = {}
 local cashA = 250 				--<<how much minimum you can get from a robbery
 local cashB = 450				--<< how much maximum you can get from a robbery
@@ -30,9 +30,9 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('NADRP-storerobbery:server:takeMoney', function(register, isDone)
+RegisterNetEvent('denalifw-storerobbery:server:takeMoney', function(register, isDone)
     local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	-- Add some stuff if you want, this here above the if statement will trigger every 2 seconds of the animation when robbing a cash register.
     if isDone then
 	local bags = math.random(1,3)
@@ -40,7 +40,7 @@ RegisterNetEvent('NADRP-storerobbery:server:takeMoney', function(register, isDon
 		worth = math.random(cashA, cashB)
 	}
 	Player.Functions.AddItem('markedbills', bags, false, info)
-	TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['markedbills'], "add")
+	TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['markedbills'], "add")
         if math.random(1, 100) <= 10 then
             local code = SafeCodes[Config.Registers[register].safeKey]
             local info = {}
@@ -54,51 +54,51 @@ RegisterNetEvent('NADRP-storerobbery:server:takeMoney', function(register, isDon
                 }
             end
             Player.Functions.AddItem("stickynote", 1, false, info)
-            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["stickynote"], "add")
+            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["stickynote"], "add")
         end
     end
 end)
 
-RegisterNetEvent('NADRP-storerobbery:server:setRegisterStatus', function(register)
+RegisterNetEvent('denalifw-storerobbery:server:setRegisterStatus', function(register)
     Config.Registers[register].robbed   = true
     Config.Registers[register].time     = Config.resetTime
-    TriggerClientEvent('NADRP-storerobbery:client:setRegisterStatus', -1, register, Config.Registers[register])
+    TriggerClientEvent('denalifw-storerobbery:client:setRegisterStatus', -1, register, Config.Registers[register])
 end)
 
-RegisterNetEvent('NADRP-storerobbery:server:setSafeStatus', function(safe)
-    TriggerClientEvent('NADRP-storerobbery:client:setSafeStatus', -1, safe, true)
+RegisterNetEvent('denalifw-storerobbery:server:setSafeStatus', function(safe)
+    TriggerClientEvent('denalifw-storerobbery:client:setSafeStatus', -1, safe, true)
     Config.Safes[safe].robbed = true
 
     SetTimeout(math.random(40, 80) * (60 * 1000), function()
-        TriggerClientEvent('NADRP-storerobbery:client:setSafeStatus', -1, safe, false)
+        TriggerClientEvent('denalifw-storerobbery:client:setSafeStatus', -1, safe, false)
         Config.Safes[safe].robbed = false
     end)
 end)
 
-RegisterNetEvent('NADRP-storerobbery:server:SafeReward', function(safe)
+RegisterNetEvent('denalifw-storerobbery:server:SafeReward', function(safe)
     local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	local bags = math.random(1,3)
 	local info = {
 		worth = math.random(cashA, cashB)
 	}
 	Player.Functions.AddItem('markedbills', bags, false, info)
-	TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['markedbills'], "add")
+	TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['markedbills'], "add")
     local luck = math.random(1, 100)
     local odd = math.random(1, 100)
     if luck <= 10 then
         Player.Functions.AddItem("rolex", math.random(3, 7))
-        TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["rolex"], "add")
+        TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["rolex"], "add")
         if luck == odd then
             Wait(500)
             Player.Functions.AddItem("goldbar", 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["goldbar"], "add")
+            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["goldbar"], "add")
         end
     end
 end)
 
 
-RegisterNetEvent('NADRP-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
+RegisterNetEvent('denalifw-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
     local cameraId = 4
     if type == "safe" then
         cameraId = Config.Safes[safe].camId
@@ -110,8 +110,8 @@ RegisterNetEvent('NADRP-storerobbery:server:callCops', function(type, safe, stre
         coords = {x = coords.x, y = coords.y, z = coords.z},
         description = "Someone Is Trying To Rob A Store At "..streetLabel.." (CAMERA ID: "..cameraId..")"
     }
-    TriggerClientEvent("NADRP-storerobbery:client:robberyCall", -1, type, safe, streetLabel, coords)
-    TriggerClientEvent("NADRP-phone:client:addPoliceAlert", -1, alertData)
+    TriggerClientEvent("denalifw-storerobbery:client:robberyCall", -1, type, safe, streetLabel, coords)
+    TriggerClientEvent("denalifw-phone:client:addPoliceAlert", -1, alertData)
 end)
 
 CreateThread(function()
@@ -132,25 +132,25 @@ CreateThread(function()
 
         if #toSend > 0 then
             --The false on the end of this is redundant
-            TriggerClientEvent('NADRP-storerobbery:client:setRegisterStatus', -1, toSend, false)
+            TriggerClientEvent('denalifw-storerobbery:client:setRegisterStatus', -1, toSend, false)
         end
 
         Wait(Config.tickInterval)
     end
 end)
 
-NADRP.Functions.CreateCallback('NADRP-storerobbery:server:isCombinationRight', function(source, cb, safe)
+denalifw.Functions.CreateCallback('denalifw-storerobbery:server:isCombinationRight', function(source, cb, safe)
     cb(SafeCodes[safe])
 end)
 
-NADRP.Functions.CreateCallback('NADRP-storerobbery:server:getPadlockCombination', function(source, cb, safe)
+denalifw.Functions.CreateCallback('denalifw-storerobbery:server:getPadlockCombination', function(source, cb, safe)
     cb(SafeCodes[safe])
 end)
 
-NADRP.Functions.CreateCallback('NADRP-storerobbery:server:getRegisterStatus', function(source, cb)
+denalifw.Functions.CreateCallback('denalifw-storerobbery:server:getRegisterStatus', function(source, cb)
     cb(Config.Registers)
 end)
 
-NADRP.Functions.CreateCallback('NADRP-storerobbery:server:getSafeStatus', function(source, cb)
+denalifw.Functions.CreateCallback('denalifw-storerobbery:server:getSafeStatus', function(source, cb)
     cb(Config.Safes)
 end)

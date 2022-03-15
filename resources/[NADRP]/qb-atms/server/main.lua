@@ -1,5 +1,5 @@
 local dailyWithdraws = {}
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 -- Thread
 
@@ -7,7 +7,7 @@ CreateThread(function()
     while true do
         Wait(3600000)
         dailyWithdraws = {}
-        TriggerClientEvent('NADRP:Notify', -1, "Daily Withdraw Limit Reset", "success")
+        TriggerClientEvent('denalifw:Notify', -1, "Daily Withdraw Limit Reset", "success")
     end
 end)
 
@@ -15,7 +15,7 @@ end)
 
 RegisterCommand('atm', function(source)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     local visas = xPlayer.Functions.GetItemsByName('visa')
     local masters = xPlayer.Functions.GetItemsByName('mastercard')
     local cards = {}
@@ -25,7 +25,7 @@ RegisterCommand('atm', function(source)
             local info = v.info
             local cardNum = info.cardNumber
             local cardHolder = info.citizenid
-            local xCH = NADRP.Functions.GetPlayerByCitizenId(cardHolder)
+            local xCH = denalifw.Functions.GetPlayerByCitizenId(cardHolder)
             if xCH ~= nil then
                 if xCH.PlayerData.charinfo.card ~= cardNum then
                     info.cardActive = false
@@ -43,7 +43,7 @@ RegisterCommand('atm', function(source)
             local info = v.info
             local cardNum = info.cardNumber
             local cardHolder = info.citizenid
-            local xCH = NADRP.Functions.GetPlayerByCitizenId(cardHolder)
+            local xCH = denalifw.Functions.GetPlayerByCitizenId(cardHolder)
             if xCH ~= nil then
                 if xCH.PlayerData.charinfo.card ~= cardNum then
                     info.cardActive = false
@@ -66,9 +66,9 @@ end)
 RegisterNetEvent('qb-atms:server:doAccountWithdraw', function(data)
     if data ~= nil then
         local src = source
-        local xPlayer = NADRP.Functions.GetPlayer(src)
+        local xPlayer = denalifw.Functions.GetPlayer(src)
         local cardHolder = data.cid
-        local xCH = NADRP.Functions.GetPlayerByCitizenId(cardHolder)
+        local xCH = denalifw.Functions.GetPlayerByCitizenId(cardHolder)
 
         if not dailyWithdraws[cardHolder] then
             dailyWithdraws[cardHolder] = 0
@@ -85,9 +85,9 @@ RegisterNetEvent('qb-atms:server:doAccountWithdraw', function(data)
                     xCH.Functions.RemoveMoney('bank', tonumber(data.amount))
                     xPlayer.Functions.AddMoney('cash', tonumber(data.amount))
                     dailyWithdraws[cardHolder] = dailyWithdraws[cardHolder] + tonumber(data.amount)
-                    TriggerClientEvent('NADRP:Notify', src, "Withdraw $" .. data.amount .. ' from credit card. Daily Withdraws: ' .. dailyWithdraws[cardHolder], "success")
+                    TriggerClientEvent('denalifw:Notify', src, "Withdraw $" .. data.amount .. ' from credit card. Daily Withdraws: ' .. dailyWithdraws[cardHolder], "success")
                 else
-                    TriggerClientEvent('NADRP:Notify', src, "Not Enough Money", "error")
+                    TriggerClientEvent('denalifw:Notify', src, "Not Enough Money", "error")
                 end
 
                 banking['online'] = true
@@ -104,9 +104,9 @@ RegisterNetEvent('qb-atms:server:doAccountWithdraw', function(data)
                     xCH.money.bank = bankCount
                     MySQL.Async.execute('UPDATE players SET money = ? WHERE citizenid = ?', { xCH.money, cardHolder })
                     dailyWithdraws[cardHolder] = dailyWithdraws[cardHolder] + tonumber(data.amount)
-                    TriggerClientEvent('NADRP:Notify', src, "Withdraw $" .. data.amount .. ' from credit card. Daily Withdraws: ' .. dailyWithdraws[cardHolder], "success")
+                    TriggerClientEvent('denalifw:Notify', src, "Withdraw $" .. data.amount .. ' from credit card. Daily Withdraws: ' .. dailyWithdraws[cardHolder], "success")
                 else
-                    TriggerClientEvent('NADRP:Notify', src, "Not Enough Money", "error")
+                    TriggerClientEvent('denalifw:Notify', src, "Not Enough Money", "error")
                 end
 
                 banking['online'] = false
@@ -117,16 +117,16 @@ RegisterNetEvent('qb-atms:server:doAccountWithdraw', function(data)
             end
             TriggerClientEvent('qb-atms:client:updateBankInformation', src, banking)
         else
-            TriggerClientEvent('NADRP:Notify', src, "You have reached the daily limit", "error")
+            TriggerClientEvent('denalifw:Notify', src, "You have reached the daily limit", "error")
         end
     end
 end)
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback('qb-debitcard:server:requestCards', function(source, cb)
+denalifw.Functions.CreateCallback('qb-debitcard:server:requestCards', function(source, cb)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     local visas = xPlayer.Functions.GetItemsByName('visa')
     local masters = xPlayer.Functions.GetItemsByName('mastercard')
     local cards = {}
@@ -142,11 +142,11 @@ NADRP.Functions.CreateCallback('qb-debitcard:server:requestCards', function(sour
     return cards
 end)
 
-NADRP.Functions.CreateCallback('qb-debitcard:server:deleteCard', function(source, cb, data)
+denalifw.Functions.CreateCallback('qb-debitcard:server:deleteCard', function(source, cb, data)
     local cn = data.cardNumber
     local ct = data.cardType
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     local found = xPlayer.Functions.GetCardSlot(cn, ct)
     if found ~= nil then
         xPlayer.Functions.RemoveItem(ct, 1, found)
@@ -156,11 +156,11 @@ NADRP.Functions.CreateCallback('qb-debitcard:server:deleteCard', function(source
     end
 end)
 
-NADRP.Functions.CreateCallback('qb-atms:server:loadBankAccount', function(source, cb, cid, cardnumber)
+denalifw.Functions.CreateCallback('qb-atms:server:loadBankAccount', function(source, cb, cid, cardnumber)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     local cardHolder = cid
-    local xCH = NADRP.Functions.GetPlayerByCitizenId(cardHolder)
+    local xCH = denalifw.Functions.GetPlayerByCitizenId(cardHolder)
     local banking = {}
     if xCH ~= nil then
         banking['online'] = true

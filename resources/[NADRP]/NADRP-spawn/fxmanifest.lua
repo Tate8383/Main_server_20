@@ -1,13 +1,13 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Spawn'
+description 'denalifw-Spawn'
 version '1.0.0'
 
 shared_scripts {
 	'config.lua',
-	'@NADRP-houses/config.lua',
-	'@NADRP-apartments/config.lua'
+	'@denalifw-houses/config.lua',
+	'@denalifw-apartments/config.lua'
 }
 
 client_script 'client.lua'

@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local InApartment = false
 local ClosestHouse = nil
 local CurrentApartment = nil
@@ -11,7 +11,7 @@ local rangDoorbell = nil
 
 -- Handlers
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     CurrentApartment = nil
     InApartment = false
     CurrentOffset = 0
@@ -20,9 +20,9 @@ end)
 AddEventHandler('onResourceStop', function(resource)
     if resource == GetCurrentResourceName() then
         if houseObj ~= nil then
-            exports['NADRP-interior']:DespawnInterior(houseObj, function()
+            exports['denalifw-interior']:DespawnInterior(houseObj, function()
                 CurrentApartment = nil
-                TriggerEvent('NADRP-weathersync:client:EnableSync')
+                TriggerEvent('denalifw-weathersync:client:EnableSync')
                 DoScreenFadeIn(500)
                 while not IsScreenFadedOut() do
                     Wait(10)
@@ -57,16 +57,16 @@ local function EnterApartment(house, apartmentId, new)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.1)
     openHouseAnim()
     Wait(250)
-    NADRP.Functions.TriggerCallback('apartments:GetApartmentOffset', function(offset)
+    denalifw.Functions.TriggerCallback('apartments:GetApartmentOffset', function(offset)
         if offset == nil or offset == 0 then
-            NADRP.Functions.TriggerCallback('apartments:GetApartmentOffsetNewOffset', function(newoffset)
+            denalifw.Functions.TriggerCallback('apartments:GetApartmentOffsetNewOffset', function(newoffset)
                 if newoffset > 230 then
                     newoffset = 210
                 end
                 CurrentOffset = newoffset
                 TriggerServerEvent("apartments:server:AddObject", apartmentId, house, CurrentOffset)
                 local coords = { x = Apartments.Locations[house].coords.enter.x, y = Apartments.Locations[house].coords.enter.y, z = Apartments.Locations[house].coords.enter.z - CurrentOffset}
-                data = exports['NADRP-interior']:CreateApartmentFurnished(coords)
+                data = exports['denalifw-interior']:CreateApartmentFurnished(coords)
                 Wait(100)
                 houseObj = data[1]
                 POIOffsets = data[2]
@@ -75,11 +75,11 @@ local function EnterApartment(house, apartmentId, new)
                 ClosestHouse = house
                 rangDoorbell = nil
                 Wait(500)
-                TriggerEvent('NADRP-weathersync:client:DisableSync')
+                TriggerEvent('denalifw-weathersync:client:DisableSync')
                 Wait(100)
-                TriggerServerEvent('NADRP-apartments:server:SetInsideMeta', house, apartmentId, true, false)
+                TriggerServerEvent('denalifw-apartments:server:SetInsideMeta', house, apartmentId, true, false)
                 TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_close", 0.1)
-                TriggerServerEvent("NADRP:Server:SetMetaData", "currentapartment", CurrentApartment)
+                TriggerServerEvent("denalifw:Server:SetMetaData", "currentapartment", CurrentApartment)
             end, house)
         else
             if offset > 230 then
@@ -89,27 +89,27 @@ local function EnterApartment(house, apartmentId, new)
             TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.1)
             TriggerServerEvent("apartments:server:AddObject", apartmentId, house, CurrentOffset)
             local coords = { x = Apartments.Locations[ClosestHouse].coords.enter.x, y = Apartments.Locations[ClosestHouse].coords.enter.y, z = Apartments.Locations[ClosestHouse].coords.enter.z - CurrentOffset}
-            data = exports['NADRP-interior']:CreateApartmentFurnished(coords)
+            data = exports['denalifw-interior']:CreateApartmentFurnished(coords)
             Wait(100)
             houseObj = data[1]
             POIOffsets = data[2]
             InApartment = true
             CurrentApartment = apartmentId
             Wait(500)
-            TriggerEvent('NADRP-weathersync:client:DisableSync')
+            TriggerEvent('denalifw-weathersync:client:DisableSync')
             Wait(100)
-            TriggerServerEvent('NADRP-apartments:server:SetInsideMeta', house, apartmentId, true, true)
+            TriggerServerEvent('denalifw-apartments:server:SetInsideMeta', house, apartmentId, true, true)
             TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_close", 0.1)
-            TriggerServerEvent("NADRP:Server:SetMetaData", "currentapartment", CurrentApartment)
+            TriggerServerEvent("denalifw:Server:SetMetaData", "currentapartment", CurrentApartment)
         end
         if new ~= nil then
             if new then
-                TriggerEvent('NADRP-interior:client:SetNewState', true)
+                TriggerEvent('denalifw-interior:client:SetNewState', true)
             else
-                TriggerEvent('NADRP-interior:client:SetNewState', false)
+                TriggerEvent('denalifw-interior:client:SetNewState', false)
             end
         else
-            TriggerEvent('NADRP-interior:client:SetNewState', false)
+            TriggerEvent('denalifw-interior:client:SetNewState', false)
         end
     end, apartmentId)
 end
@@ -117,22 +117,22 @@ end
 local function LeaveApartment(house)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.1)
     openHouseAnim()
-    TriggerServerEvent("NADRP-apartments:returnBucket")
+    TriggerServerEvent("denalifw-apartments:returnBucket")
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(10) end
-    exports['NADRP-interior']:DespawnInterior(houseObj, function()
-        TriggerEvent('NADRP-weathersync:client:EnableSync')
+    exports['denalifw-interior']:DespawnInterior(houseObj, function()
+        TriggerEvent('denalifw-weathersync:client:EnableSync')
         SetEntityCoords(PlayerPedId(), Apartments.Locations[house].coords.enter.x, Apartments.Locations[house].coords.enter.y,Apartments.Locations[house].coords.enter.z)
         SetEntityHeading(PlayerPedId(), Apartments.Locations[house].coords.enter.w)
         Wait(1000)
         TriggerServerEvent("apartments:server:RemoveObject", CurrentApartment, house)
-        TriggerServerEvent('NADRP-apartments:server:SetInsideMeta', CurrentApartment, false)
+        TriggerServerEvent('denalifw-apartments:server:SetInsideMeta', CurrentApartment, false)
         CurrentApartment = nil
         InApartment = false
         CurrentOffset = 0
         DoScreenFadeIn(1000)
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_close", 0.1)
-        TriggerServerEvent("NADRP:Server:SetMetaData", "currentapartment", nil)
+        TriggerServerEvent("denalifw:Server:SetMetaData", "currentapartment", nil)
     end)
 end
 
@@ -150,16 +150,16 @@ local function SetClosestApartment()
     end
     if current ~= ClosestHouse and LocalPlayer.state.isLoggedIn and not InApartment then
         ClosestHouse = current
-        NADRP.Functions.TriggerCallback('apartments:IsOwner', function(result)
+        denalifw.Functions.TriggerCallback('apartments:IsOwner', function(result)
             IsOwned = result
         end, ClosestHouse)
     end
 end
 
 function MenuOwners()
-    NADRP.Functions.TriggerCallback('apartments:GetAvailableApartments', function(apartments)
+    denalifw.Functions.TriggerCallback('apartments:GetAvailableApartments', function(apartments)
         if next(apartments) == nil then
-            NADRP.Functions.Notify(Lang:t('error.nobody_home'), "error", 3500)
+            denalifw.Functions.Notify(Lang:t('error.nobody_home'), "error", 3500)
             closeMenuFull()
         else
             local vehicleMenu = {
@@ -187,11 +187,11 @@ function MenuOwners()
                 header = Lang:t('text.close_menu'),
                 txt = "",
                 params = {
-                    event = "NADRP-menu:client:closeMenu"
+                    event = "denalifw-menu:client:closeMenu"
                 }
 
             }
-            exports['NADRP-menu']:openMenu(vehicleMenu)
+            exports['denalifw-menu']:openMenu(vehicleMenu)
         end
     end, ClosestHouse)
 end
@@ -199,7 +199,7 @@ end
 
 
 function closeMenuFull()
-    exports['NADRP-menu']:closeMenu()
+    exports['denalifw-menu']:closeMenu()
 end
 
 local function DrawText3D(x, y, z, text)
@@ -219,18 +219,18 @@ end
 
 -- Events
 RegisterNetEvent('apartments:client:setupSpawnUI', function(cData)
-    NADRP.Functions.TriggerCallback('apartments:GetOwnedApartment', function(result)
+    denalifw.Functions.TriggerCallback('apartments:GetOwnedApartment', function(result)
         if result then
-            TriggerEvent('NADRP-spawn:client:setupSpawns', cData, false, nil)
-            TriggerEvent('NADRP-spawn:client:openUI', true)
+            TriggerEvent('denalifw-spawn:client:setupSpawns', cData, false, nil)
+            TriggerEvent('denalifw-spawn:client:openUI', true)
             TriggerEvent("apartments:client:SetHomeBlip", result.type)
         else
             if Apartments.Starting then
-                TriggerEvent('NADRP-spawn:client:setupSpawns', cData, true, Apartments.Locations)
-                TriggerEvent('NADRP-spawn:client:openUI', true)
+                TriggerEvent('denalifw-spawn:client:setupSpawns', cData, true, Apartments.Locations)
+                TriggerEvent('denalifw-spawn:client:openUI', true)
             else
-                TriggerEvent('NADRP-spawn:client:setupSpawns', cData, false, nil)
-                TriggerEvent('NADRP-spawn:client:openUI', true)
+                TriggerEvent('denalifw-spawn:client:setupSpawns', cData, false, nil)
+                TriggerEvent('denalifw-spawn:client:openUI', true)
             end
         end
     end, cData.citizenid)
@@ -241,7 +241,7 @@ RegisterNetEvent('apartments:client:SpawnInApartment', function(apartmentId, apa
     if rangDoorbell ~= nil then
         local doorbelldist = #(pos - vector3(Apartments.Locations[rangDoorbell].coords.enter.x, Apartments.Locations[rangDoorbell].coords.enter.y,Apartments.Locations[rangDoorbell].coords.enter.z))
         if doorbelldist > 5 then
-            NADRP.Functions.Notify(Lang:t('error.to_far_from_door'))
+            denalifw.Functions.Notify(Lang:t('error.to_far_from_door'))
             return
         end
     end
@@ -250,7 +250,7 @@ RegisterNetEvent('apartments:client:SpawnInApartment', function(apartmentId, apa
     IsOwned = true
 end)
 
-RegisterNetEvent('NADRP-apartments:client:LastLocationHouse', function(apartmentType, apartmentId)
+RegisterNetEvent('denalifw-apartments:client:LastLocationHouse', function(apartmentType, apartmentId)
     ClosestHouse = apartmentType
     EnterApartment(apartmentType, apartmentId, false)
 end)
@@ -288,7 +288,7 @@ end)
 RegisterNetEvent('apartments:client:RingDoor', function(player, house)
     CurrentDoorBell = player
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "doorbell", 0.1)
-    NADRP.Functions.Notify(Lang:t('info.at_the_door'))
+    denalifw.Functions.Notify(Lang:t('info.at_the_door'))
 end)
 
 RegisterNetEvent('apartments:client:DoorbellMenu', function()
@@ -296,7 +296,7 @@ RegisterNetEvent('apartments:client:DoorbellMenu', function()
 end)
 
 RegisterNetEvent('apartments:client:EnterApartment', function()
-    NADRP.Functions.TriggerCallback('apartments:GetOwnedApartment', function(result)
+    denalifw.Functions.TriggerCallback('apartments:GetOwnedApartment', function(result)
         if result ~= nil then
             EnterApartment(ClosestHouse, result.name)
         end
@@ -329,11 +329,11 @@ end)
 
 RegisterNetEvent('apartments:client:ChangeOutfit', function()
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "Clothes1", 0.4)
-    TriggerEvent('NADRP-clothing:client:openOutfitMenu')
+    TriggerEvent('denalifw-clothing:client:openOutfitMenu')
 end)
 
 RegisterNetEvent('apartments:client:Logout', function()
-    TriggerServerEvent('NADRP-houses:server:LogoutLocation')
+    TriggerServerEvent('denalifw-houses:server:LogoutLocation')
 end)
 
 -- Threads
@@ -448,12 +448,12 @@ CreateThread(function()
 
                 if inRange and not shownHeader then
                     shownHeader = true
-                    exports['NADRP-menu']:showHeader(headerMenu)
+                    exports['denalifw-menu']:showHeader(headerMenu)
                 end
 
                 if not inRange and shownHeader then
                     shownHeader = false
-                    exports['NADRP-menu']:closeMenu()
+                    exports['denalifw-menu']:closeMenu()
                 end
 
             else
@@ -506,12 +506,12 @@ CreateThread(function()
 
                 if inRange and not shownHeader then
                     shownHeader = true
-                    exports['NADRP-menu']:showHeader(headerMenu)
+                    exports['denalifw-menu']:showHeader(headerMenu)
                 end
 
                 if not inRange and shownHeader then
                     shownHeader = false
-                    exports['NADRP-menu']:closeMenu()
+                    exports['denalifw-menu']:closeMenu()
                 end
             end
         end

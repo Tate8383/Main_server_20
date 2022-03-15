@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 function NearTaxi(src)
     local ped = GetPlayerPed(src)
@@ -11,9 +11,9 @@ function NearTaxi(src)
     end
 end
 
-RegisterNetEvent('NADRP-taxi:server:NpcPay', function(Payment)
+RegisterNetEvent('denalifw-taxi:server:NpcPay', function(Payment)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "taxi" then
         if NearTaxi(src) then
             local randomAmount = math.random(1, 5)
@@ -23,7 +23,7 @@ RegisterNetEvent('NADRP-taxi:server:NpcPay', function(Payment)
             local chance = math.random(1, 100)
             if chance < 26 then
                 Player.Functions.AddItem("cryptostick", 1, false)
-                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["cryptostick"], "add")
+                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["cryptostick"], "add")
             end
         else
             DropPlayer(src, 'Attempting To Exploit')

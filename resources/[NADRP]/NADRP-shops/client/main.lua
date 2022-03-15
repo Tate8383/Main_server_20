@@ -1,10 +1,10 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 -- Functions
 
 local function SetupItems(shop)
     local products = Config.Locations[shop].products
-    local playerJob = NADRP.Functions.GetPlayerData().job.name
+    local playerJob = denalifw.Functions.GetPlayerData().job.name
     local items = {}
     for i = 1, #products do
         if not products[i].requiredJob then
@@ -37,15 +37,15 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-shops:client:UpdateShop', function(shop, itemData, amount)
-    TriggerServerEvent('NADRP-shops:server:UpdateShopItems', shop, itemData, amount)
+RegisterNetEvent('denalifw-shops:client:UpdateShop', function(shop, itemData, amount)
+    TriggerServerEvent('denalifw-shops:server:UpdateShopItems', shop, itemData, amount)
 end)
 
-RegisterNetEvent('NADRP-shops:client:SetShopItems', function(shop, shopProducts)
+RegisterNetEvent('denalifw-shops:client:SetShopItems', function(shop, shopProducts)
     Config.Locations[shop]["products"] = shopProducts
 end)
 
-RegisterNetEvent('NADRP-shops:client:RestockShopItems', function(shop, amount)
+RegisterNetEvent('denalifw-shops:client:RestockShopItems', function(shop, amount)
     if Config.Locations[shop]["products"] ~= nil then
         for k, v in pairs(Config.Locations[shop]["products"]) do
             Config.Locations[shop]["products"][k].amount = Config.Locations[shop]["products"][k].amount + amount
@@ -74,12 +74,12 @@ CreateThread(function()
                         if IsControlJustPressed(0, 38) then -- E
                             local ShopItems = {}
                             ShopItems.items = {}
-                            NADRP.Functions.TriggerCallback("NADRP-shops:server:getLicenseStatus", function(hasLicense, hasLicenseItem)
+                            denalifw.Functions.TriggerCallback("denalifw-shops:server:getLicenseStatus", function(hasLicense, hasLicenseItem)
                                 ShopItems.label = Config.Locations[shop]["label"]
                                 if Config.Locations[shop].products == Config.Products["weapons"] then
                                     if hasLicense and hasLicenseItem then
                                         ShopItems.items = SetupItems(shop)
-                                        NADRP.Functions.Notify(Lang:t("success.dealer_verify"), "success")
+                                        denalifw.Functions.Notify(Lang:t("success.dealer_verify"), "success")
                                         Wait(500)
                                     else
                                         for i = 1, #products do
@@ -89,15 +89,15 @@ CreateThread(function()
                                                 end
                                             else
                                                 for i2 = 1, #products[i].requiredJob do
-                                                    if NADRP.Functions.GetPlayerData().job.name == products[i].requiredJob[i2] and not products[i].requiresLicense then
+                                                    if denalifw.Functions.GetPlayerData().job.name == products[i].requiredJob[i2] and not products[i].requiresLicense then
                                                         ShopItems.items[#ShopItems.items+1] = products[i]
                                                     end
                                                 end
                                             end
                                         end
-                                        NADRP.Functions.Notify(Lang:t("error.dealer_decline"), "error")
+                                        denalifw.Functions.Notify(Lang:t("error.dealer_decline"), "error")
                                         Wait(500)
-                                        NADRP.Functions.Notify(Lang:t("error.talk_cop"), "error")
+                                        denalifw.Functions.Notify(Lang:t("error.talk_cop"), "error")
                                         Wait(1000)
                                     end
                                 else

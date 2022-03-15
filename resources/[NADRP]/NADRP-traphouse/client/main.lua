@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local PlayerData = {}
 local ClosestTraphouse = nil
 local InsideTraphouse = false
@@ -24,18 +24,18 @@ end)
 
 Citizen.CreateThread(function()
     Wait(1000)
-    if NADRP.Functions.GetPlayerData() ~= nil then
-        PlayerData = NADRP.Functions.GetPlayerData()
-        NADRP.Functions.TriggerCallback('NADRP-traphouse:server:GetTraphousesData', function(trappies)
+    if denalifw.Functions.GetPlayerData() ~= nil then
+        PlayerData = denalifw.Functions.GetPlayerData()
+        denalifw.Functions.TriggerCallback('denalifw-traphouse:server:GetTraphousesData', function(trappies)
             Config.TrapHouses = trappies
         end)
     end
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded')
-AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
-    PlayerData = NADRP.Functions.GetPlayerData()
-    NADRP.Functions.TriggerCallback('NADRP-traphouse:server:GetTraphousesData', function(trappies)
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded')
+AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
+    PlayerData = denalifw.Functions.GetPlayerData()
+    denalifw.Functions.TriggerCallback('denalifw-traphouse:server:GetTraphousesData', function(trappies)
         Config.TrapHouses = trappies
     end)
 end)
@@ -107,8 +107,8 @@ function DrawText3Ds(x, y, z, text)
     ClearDrawOrigin()
 end
 
-RegisterNetEvent('NADRP-traphouse:client:EnterTraphouse')
-AddEventHandler('NADRP-traphouse:client:EnterTraphouse', function(code)
+RegisterNetEvent('denalifw-traphouse:client:EnterTraphouse')
+AddEventHandler('denalifw-traphouse:client:EnterTraphouse', function(code)
     if ClosestTraphouse ~= nil then
         if InTraphouseRange then
             local data = Config.TrapHouses[ClosestTraphouse]
@@ -129,7 +129,7 @@ RegisterNUICallback('PinpadClose', function()
 end)
 
 RegisterNUICallback('ErrorMessage', function(data)
-    NADRP.Functions.Notify(data.message, 'error')
+    denalifw.Functions.Notify(data.message, 'error')
 end)
 
 RegisterNUICallback('EnterPincode', function(d)
@@ -137,7 +137,7 @@ RegisterNUICallback('EnterPincode', function(d)
     if tonumber(d.pin) == data.pincode then
         EnterTraphouse(data)
     else
-        NADRP.Functions.Notify(Lang:t("error.incorrect_code"), 'error')
+        denalifw.Functions.Notify(Lang:t("error.incorrect_code"), 'error')
     end
 end)
 
@@ -201,7 +201,7 @@ Citizen.CreateThread(function()
                                                 FreezeEntityPosition(targetPed, false)
                                                 ClearPedTasks(targetPed)
                                                 AddShockingEventAtPosition(99, GetEntityCoords(targetPed), 0.5)
-                                                TriggerServerEvent('NADRP-traphouse:server:RobNpc', ClosestTraphouse)
+                                                TriggerServerEvent('denalifw-traphouse:server:RobNpc', ClosestTraphouse)
                                                 CanRob = false
                                             end
                                         end
@@ -252,7 +252,7 @@ Citizen.CreateThread(function()
                             DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z + 0.2, Lang:t("info.inventory"))
                             DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z, Lang:t("info.take_over"))
                             if IsControlJustPressed(0, 38) then
-                                TriggerServerEvent('NADRP-traphouse:server:TakeoverHouse', CurrentTraphouse)
+                                TriggerServerEvent('denalifw-traphouse:server:TakeoverHouse', CurrentTraphouse)
                             end
                             if IsControlJustPressed(0, 74) then
                                 local TraphouseInventory = {}
@@ -268,7 +268,7 @@ Citizen.CreateThread(function()
                                 DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z - 0.2, Lang:t("info.multikeys"))
                                 DrawText3Ds(data.coords["interaction"].x, data.coords["interaction"].y, data.coords["interaction"].z - 0.4, Lang:t("info.pin_code_see"))
                                 if IsControlJustPressed(0, 47) then
-                                    NADRP.Functions.Notify(Lang:t('info.pin_code', {value = data.pincode}))
+                                    denalifw.Functions.Notify(Lang:t('info.pin_code', {value = data.pincode}))
                                 end
                             end
                             if IsControlJustPressed(0, 74) then
@@ -279,7 +279,7 @@ Citizen.CreateThread(function()
                                 TriggerServerEvent("inventory:server:OpenInventory", "traphouse", CurrentTraphouse, TraphouseInventory)
                             end
                             if IsControlJustPressed(0, 38) then
-                                TriggerServerEvent("NADRP-traphouse:server:TakeMoney", CurrentTraphouse)
+                                TriggerServerEvent("denalifw-traphouse:server:TakeMoney", CurrentTraphouse)
                             end
                         end
                     end
@@ -308,12 +308,12 @@ end)
 function EnterTraphouse(data)
     local coords = { x = data.coords["enter"].x, y = data.coords["enter"].y, z= data.coords["enter"].z - Config.MinZOffset}
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
-    data = exports['NADRP-interior']:CreateTrevorsShell(coords)
+    data = exports['denalifw-interior']:CreateTrevorsShell(coords)
     TraphouseObj = data[1]
     POIOffsets = data[2]
     CurrentTraphouse = ClosestTraphouse
     InsideTraphouse = true
-    TriggerEvent('NADRP-weathersync:client:DisableSync')
+    TriggerEvent('denalifw-weathersync:client:DisableSync')
     FreezeEntityPosition(TraphouseObj, true)
 end
 
@@ -322,8 +322,8 @@ function LeaveTraphouse(data)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     DoScreenFadeOut(250)
     Citizen.Wait(250)
-    exports['NADRP-interior']:DespawnInterior(TraphouseObj, function()
-        TriggerEvent('NADRP-weathersync:client:EnableSync')
+    exports['denalifw-interior']:DespawnInterior(TraphouseObj, function()
+        TriggerEvent('denalifw-weathersync:client:EnableSync')
         DoScreenFadeIn(250)
         SetEntityCoords(ped, data.coords["enter"].x, data.coords["enter"].y, data.coords["enter"].z + 0.5)
         SetEntityHeading(ped, 107.71)
@@ -334,19 +334,19 @@ function LeaveTraphouse(data)
     end)
 end
 
-RegisterNetEvent('NADRP-traphouse:client:TakeoverHouse')
-AddEventHandler('NADRP-traphouse:client:TakeoverHouse', function(TraphouseId)
+RegisterNetEvent('denalifw-traphouse:client:TakeoverHouse')
+AddEventHandler('denalifw-traphouse:client:TakeoverHouse', function(TraphouseId)
     local ped = PlayerPedId()
 
-    NADRP.Functions.Progressbar("takeover_traphouse", Lang:t("info.taking_over"), math.random(1000, 3000), false, true, {
+    denalifw.Functions.Progressbar("takeover_traphouse", Lang:t("info.taking_over"), math.random(1000, 3000), false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerServerEvent('NADRP-traphouse:server:AddHouseKeyHolder', PlayerData.citizenid, TraphouseId, true)
+        TriggerServerEvent('denalifw-traphouse:server:AddHouseKeyHolder', PlayerData.citizenid, TraphouseId, true)
     end, function()
-        NADRP.Functions.Notify(Lang:t("error.cancelled"), "error")
+        denalifw.Functions.Notify(Lang:t("error.cancelled"), "error")
     end)
 end)
 
@@ -375,19 +375,19 @@ function AddKeyHolder(CitizenId, Traphouse)
                     owner = false,
                 }
             end
-            NADRP.Functions.Notify(Lang:t('success.added', {value = CitizenId}))
+            denalifw.Functions.Notify(Lang:t('success.added', {value = CitizenId}))
         else
-            NADRP.Functions.Notify(Lang:t('error.p_have_keys', {value = CitizenId}))
+            denalifw.Functions.Notify(Lang:t('error.p_have_keys', {value = CitizenId}))
         end
     else
-        NADRP.Functions.Notify(Lang:t("error.up_to_6"))
+        denalifw.Functions.Notify(Lang:t("error.up_to_6"))
     end
     IsKeyHolder = HasKey(CitizenId)
     IsHouseOwner = IsOwner(CitizenId)
 end
 
-RegisterNetEvent('NADRP-traphouse:client:SyncData')
-AddEventHandler('NADRP-traphouse:client:SyncData', function(k, data)
+RegisterNetEvent('denalifw-traphouse:client:SyncData')
+AddEventHandler('denalifw-traphouse:client:SyncData', function(k, data)
     Config.TrapHouses[k] = data
     IsKeyHolder = HasKey(PlayerData.citizenid)
     IsHouseOwner = IsOwner(PlayerData.citizenid)

@@ -23,7 +23,7 @@ end
 
 local function TakeCoral(coral)
     QBDiving.Locations[CurrentDivingLocation.Area].coords.Coral[coral].PickedUp = true
-    TriggerServerEvent('NADRP-diving:server:TakeCoral', CurrentDivingLocation.Area, coral, true)
+    TriggerServerEvent('denalifw-diving:server:TakeCoral', CurrentDivingLocation.Area, coral, true)
 end
 
 local function CallCops()
@@ -32,7 +32,7 @@ local function CallCops()
     local Ped = PlayerPedId()
     local Coords = GetEntityCoords(Ped)
     if Call == Chance then
-        TriggerServerEvent('NADRP-diving:server:CallCops', Coords)
+        TriggerServerEvent('denalifw-diving:server:CallCops', Coords)
     end
 end
 
@@ -57,14 +57,14 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-diving:client:NewLocations', function()
-    NADRP.Functions.TriggerCallback('NADRP-diving:server:GetDivingConfig', function(Config, Area)
+RegisterNetEvent('denalifw-diving:client:NewLocations', function()
+    denalifw.Functions.TriggerCallback('denalifw-diving:server:GetDivingConfig', function(Config, Area)
         QBDiving.Locations = Config
-        TriggerEvent('NADRP-diving:client:SetDivingLocation', Area)
+        TriggerEvent('denalifw-diving:client:SetDivingLocation', Area)
     end)
 end)
 
-RegisterNetEvent('NADRP-diving:client:SetDivingLocation', function(DivingLocation)
+RegisterNetEvent('denalifw-diving:client:SetDivingLocation', function(DivingLocation)
     CurrentDivingLocation.Area = DivingLocation
 
     for _,Blip in pairs(CurrentDivingLocation.Blip) do
@@ -97,11 +97,11 @@ RegisterNetEvent('NADRP-diving:client:SetDivingLocation', function(DivingLocatio
     end)
 end)
 
-RegisterNetEvent('NADRP-diving:client:UpdateCoral', function(Area, Coral, Bool)
+RegisterNetEvent('denalifw-diving:client:UpdateCoral', function(Area, Coral, Bool)
     QBDiving.Locations[Area].coords.Coral[Coral].PickedUp = Bool
 end)
 
-RegisterNetEvent('NADRP-diving:server:CallCops', function(Coords, msg)
+RegisterNetEvent('denalifw-diving:server:CallCops', function(Coords, msg)
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     TriggerEvent("chatMessage", "911 MESSAGE", "error", msg)
     local transG = 100
@@ -125,10 +125,10 @@ RegisterNetEvent('NADRP-diving:server:CallCops', function(Coords, msg)
     end
 end)
 
-RegisterNetEvent('NADRP-diving:client:UseGear', function(bool)
+RegisterNetEvent('denalifw-diving:client:UseGear', function(bool)
     if bool then
         GearAnim()
-        NADRP.Functions.Progressbar("equip_gear", "Put on a diving suit", 5000, false, true, {}, {}, {}, {}, function() -- Done
+        denalifw.Functions.Progressbar("equip_gear", "Put on a diving suit", 5000, false, true, {}, {}, {}, {}, function() -- Done
             DeleteGear()
             local maskModel = `p_d_scuba_mask_s`
             local tankModel = `p_s_scuba_tank_s`
@@ -155,31 +155,31 @@ RegisterNetEvent('NADRP-diving:client:UseGear', function(bool)
             SetEnableScuba(PlayerPedId(), true)
             SetPedMaxTimeUnderwater(PlayerPedId(), 2000.00)
             currentGear.enabled = true
-            TriggerServerEvent('NADRP-diving:server:RemoveGear')
+            TriggerServerEvent('denalifw-diving:server:RemoveGear')
             ClearPedTasks(PlayerPedId())
             TriggerEvent('chatMessage', "SYSTEM", "error", "/divingsuit to take off your diving suit")
         end)
     else
         if currentGear.enabled then
             GearAnim()
-            NADRP.Functions.Progressbar("remove_gear", "Pull out a diving suit ..", 5000, false, true, {}, {}, {}, {}, function() -- Done
+            denalifw.Functions.Progressbar("remove_gear", "Pull out a diving suit ..", 5000, false, true, {}, {}, {}, {}, function() -- Done
                 DeleteGear()
 
                 SetEnableScuba(PlayerPedId(), false)
                 SetPedMaxTimeUnderwater(PlayerPedId(), 1.00)
                 currentGear.enabled = false
-                TriggerServerEvent('NADRP-diving:server:GiveBackGear')
+                TriggerServerEvent('denalifw-diving:server:GiveBackGear')
                 ClearPedTasks(PlayerPedId())
-                NADRP.Functions.Notify('You took your wetsuit off')
+                denalifw.Functions.Notify('You took your wetsuit off')
             end)
         else
-            NADRP.Functions.Notify('You are not wearing a diving gear ..', 'error')
+            denalifw.Functions.Notify('You are not wearing a diving gear ..', 'error')
         end
     end
 end)
 
-RegisterNetEvent('NADRP-diving:client:RemoveGear', function()	--Add event to call externally
-    TriggerEvent('NADRP-diving:client:UseGear', false)
+RegisterNetEvent('denalifw-diving:client:RemoveGear', function()	--Add event to call externally
+    TriggerEvent('denalifw-diving:client:UseGear', false)
 end)
 
 -- Threads
@@ -209,7 +209,7 @@ CreateThread(function()
                                         local times = math.random(2, 5)
                                         CallCops()
                                         FreezeEntityPosition(Ped, true)
-                                        NADRP.Functions.Progressbar("take_coral", "Collecting coral", times * 1000, false, true, {
+                                        denalifw.Functions.Progressbar("take_coral", "Collecting coral", times * 1000, false, true, {
                                             disableMovement = true,
                                             disableCarMovement = true,
                                             disableMouse = false,

@@ -12,27 +12,27 @@ local policeMessage = {
 
 CurrentCops = 0
 
-RegisterNetEvent('NADRP-drugs:client:cornerselling', function(data)
-    NADRP.Functions.TriggerCallback('NADRP-drugs:server:cornerselling:getAvailableDrugs', function(result)
+RegisterNetEvent('denalifw-drugs:client:cornerselling', function(data)
+    denalifw.Functions.TriggerCallback('denalifw-drugs:server:cornerselling:getAvailableDrugs', function(result)
         if CurrentCops >= Config.MinimumDrugSalePolice then
             if result ~= nil then
                 availableDrugs = result
                 if not cornerselling then
                     cornerselling = true
                     LocalPlayer.state:set("inv_busy", true, true)
-                    NADRP.Functions.Notify(Lang:t("info.started_selling_drugs"))
+                    denalifw.Functions.Notify(Lang:t("info.started_selling_drugs"))
                     startLocation = GetEntityCoords(PlayerPedId())
                 else
                     cornerselling = false
                     LocalPlayer.state:set("inv_busy", false, true)
-                    NADRP.Functions.Notify(Lang:t("info.stopped_selling_drugs"))
+                    denalifw.Functions.Notify(Lang:t("info.stopped_selling_drugs"))
                 end
             else
-                NADRP.Functions.Notify(Lang:t("error.has_no_drugs"), 'error')
+                denalifw.Functions.Notify(Lang:t("error.has_no_drugs"), 'error')
                 LocalPlayer.state:set("inv_busy", false, true)
             end
         else
-            NADRP.Functions.Notify(Lang:t("error.not_enough_police", {polices = Config.MinimumDrugSalePolice}), "error")
+            denalifw.Functions.Notify(Lang:t("error.not_enough_police", {polices = Config.MinimumDrugSalePolice}), "error")
         end
     end)
 end)
@@ -41,10 +41,10 @@ RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
 
-RegisterNetEvent('NADRP-drugs:client:refreshAvailableDrugs', function(items)
+RegisterNetEvent('denalifw-drugs:client:refreshAvailableDrugs', function(items)
     availableDrugs = items
     if #availableDrugs <= 0 then
-        NADRP.Functions.Notify(Lang:t("error.no_drugs_left"), 'error')
+        denalifw.Functions.Notify(Lang:t("error.no_drugs_left"), 'error')
         cornerselling = false
         LocalPlayer.state:set("inv_busy", false, true)
     end
@@ -74,7 +74,7 @@ local function loadAnimDict(dict)
 end
 
 local function toFarAway()
-    NADRP.Functions.Notify(Lang:t("error.too_far_away"), 'error')
+    denalifw.Functions.Notify(Lang:t("error.too_far_away"), 'error')
     LocalPlayer.state:set("inv_busy", false, true)
     cornerselling = false
     hasTarget = false
@@ -170,8 +170,8 @@ local function SellToPed(ped)
             pedCoords = GetEntityCoords(ped)
             pedDist = #(coords - pedCoords)
             if getRobbed == 18 or getRobbed == 9 then
-                TriggerServerEvent('NADRP-drugs:server:robCornerDrugs', availableDrugs[drugType].item, bagAmount)
-                NADRP.Functions.Notify(Lang:t("info.has_been_robbed", {bags = bagAmount, drugType = availableDrugs[drugType].label}))
+                TriggerServerEvent('denalifw-drugs:server:robCornerDrugs', availableDrugs[drugType].item, bagAmount)
+                denalifw.Functions.Notify(Lang:t("info.has_been_robbed", {bags = bagAmount, drugType = availableDrugs[drugType].label}))
                 stealingPed = ped
                 stealData = {
                     item = availableDrugs[drugType].item,
@@ -196,7 +196,7 @@ local function SellToPed(ped)
                 if pedDist < 1.5 and cornerselling then
                     DrawText3D(pedCoords.x, pedCoords.y, pedCoords.z, Lang:t("info.drug_offer", {bags = bagAmount, drugLabel = currentOfferDrug.label, randomPrice = randomPrice}))
                     if IsControlJustPressed(0, 38) then
-                        TriggerServerEvent('NADRP-drugs:server:sellCornerDrugs', availableDrugs[drugType].item, bagAmount, randomPrice)
+                        TriggerServerEvent('denalifw-drugs:server:sellCornerDrugs', availableDrugs[drugType].item, bagAmount, randomPrice)
                         hasTarget = false
 
                         loadAnimDict("gestures@f@standing@casual")
@@ -212,7 +212,7 @@ local function SellToPed(ped)
                     end
 
                     if IsControlJustPressed(0, 47) then
-                        NADRP.Functions.Notify(Lang:t("error.offer_declined"), 'error')
+                        denalifw.Functions.Notify(Lang:t("error.offer_declined"), 'error')
                         hasTarget = false
                         SetPedKeepTask(ped, false)
                         SetEntityAsNoLongerNeeded(ped)
@@ -255,8 +255,8 @@ CreateThread(function()
                         TaskPlayAnim(ped, "pickup_object" ,"pickup_low" ,8.0, -8.0, -1, 1, 0, false, false, false )
                         Wait(2000)
                         ClearPedTasks(ped)
-                        TriggerServerEvent("NADRP:Server:AddItem", stealData.item, stealData.amount)
-                        TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items[stealData.item], "add")
+                        TriggerServerEvent("denalifw:Server:AddItem", stealData.item, stealData.amount)
+                        TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items[stealData.item], "add")
                         stealingPed = nil
                         stealData = {}
                     end
@@ -282,7 +282,7 @@ CreateThread(function()
                         PlayerPeds[#PlayerPeds+1] = ped
                     end
                 end
-                local closestPed, closestDistance = NADRP.Functions.GetClosestPed(coords, PlayerPeds)
+                local closestPed, closestDistance = denalifw.Functions.GetClosestPed(coords, PlayerPeds)
                 if closestDistance < 15.0 and closestPed ~= 0 and not IsPedInAnyVehicle(closestPed) then
                     SellToPed(closestPed)
                 end

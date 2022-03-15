@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local playerJob = nil
 local garbageVehicle = nil
 local hasBag = false
@@ -39,12 +39,12 @@ local function setupClient()
     end
 end
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    playerJob = NADRP.Functions.GetPlayerData().job
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    playerJob = denalifw.Functions.GetPlayerData().job
     setupClient()
 end)
 
-RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
     playerJob = JobInfo
     if playerJob.name == "garbage" then
         if garbageBlip ~= nil then
@@ -65,7 +65,7 @@ end)
 
 AddEventHandler('onResourceStart', function(resource)
     if GetCurrentResourceName() == resource then
-        playerJob = NADRP.Functions.GetPlayerData().job
+        playerJob = denalifw.Functions.GetPlayerData().job
         setupClient()
     end
 end)
@@ -243,7 +243,7 @@ local function RunWorkLoop()
                             if TruckDist < 2 then
                                 DrawText3D(Coords.x, Coords.y, Coords.z, Lang:t("info.dispose_garbage"))
                                 if IsControlJustPressed(0, 51) and hasBag then
-                                    NADRP.Functions.Progressbar("deliverbag", Lang:t("info.progressbar"), 2000, false, true, {
+                                    denalifw.Functions.Progressbar("deliverbag", Lang:t("info.progressbar"), 2000, false, true, {
                                         disableMovement = true,
                                         disableCarMovement = true,
                                         disableMouse = false,
@@ -252,21 +252,21 @@ local function RunWorkLoop()
                                         hasBag = false
                                         -- Looks if you have delivered all bags
                                         if (amountOfBags - 1) == 0 then
-                                            NADRP.Functions.TriggerCallback('garbagejob:server:NextStop', function(hasMoreStops, nextStop, newBagAmount)
+                                            denalifw.Functions.TriggerCallback('garbagejob:server:NextStop', function(hasMoreStops, nextStop, newBagAmount)
                                                 if hasMoreStops and nextStop ~= 0 then
                                                     -- Here he puts your next location and you are not finished working yet.
                                                     currentStop = nextStop
                                                     currentStopNum = currentStopNum + 1
                                                     amountOfBags = newBagAmount
                                                     SetGarbageRoute()
-                                                    NADRP.Functions.Notify(Lang:t("info.all_bags"))
+                                                    denalifw.Functions.Notify(Lang:t("info.all_bags"))
                                                 else
                                                     if hasMoreStops and nextStop == currentStop then
-                                                        NADRP.Functions.Notify(Lang:t("info.depot_issue"))
+                                                        denalifw.Functions.Notify(Lang:t("info.depot_issue"))
                                                         amountOfBags = 0
                                                     else
                                                         -- You are done with work here.
-                                                        NADRP.Functions.Notify(Lang:t("info.done_working"))
+                                                        denalifw.Functions.Notify(Lang:t("info.done_working"))
                                                         isWorking = false
                                                         RemoveBlip(deliveryBlip)
                                                         SetRouteBack()
@@ -279,16 +279,16 @@ local function RunWorkLoop()
                                             -- You haven't delivered all bags here
                                             amountOfBags = amountOfBags - 1
                                             if amountOfBags > 1 then
-                                                NADRP.Functions.Notify(Lang:t("info.bags_left", {value = amountOfBags}))
+                                                denalifw.Functions.Notify(Lang:t("info.bags_left", {value = amountOfBags}))
                                             else
-                                                NADRP.Functions.Notify(Lang:t("info.bags_still", {value = amountOfBags}))
+                                                denalifw.Functions.Notify(Lang:t("info.bags_still", {value = amountOfBags}))
                                             end
                                             hasBag = false
                                         end
 
                                         DeliverAnim()
                                     end, function() -- Cancel
-                                        NADRP.Functions.Notify(Lang:t("error.cancled"), "error")
+                                        denalifw.Functions.Notify(Lang:t("error.cancled"), "error")
                                     end)
 
                                 end
@@ -296,7 +296,7 @@ local function RunWorkLoop()
                                 DrawText3D(Coords.x, Coords.y, Coords.z, Lang:t("info.stand_here"))
                             end
                         else
-                            NADRP.Functions.Notify(Lang:t("error.no_truck"), "error")
+                            denalifw.Functions.Notify(Lang:t("error.no_truck"), "error")
                             DeliverAnim()
                             hasBag = false
                         end
@@ -336,12 +336,12 @@ CreateThread(function()
                     if InVehicle then
                         DrawText3D(vehCoords.x, vehCoords.y, vehCoords.z, Lang:t("info.store_truck"))
                         if IsControlJustReleased(0, 38) then
-                            NADRP.Functions.TriggerCallback('garbagejob:server:EndShift', function(endShift)
+                            denalifw.Functions.TriggerCallback('garbagejob:server:EndShift', function(endShift)
                                 if endShift then
                                     BringBackCar()
-                                    NADRP.Functions.Notify(Lang:t("info.truck_returned"))
+                                    denalifw.Functions.Notify(Lang:t("info.truck_returned"))
                                 else
-                                    NADRP.Functions.Notify(Lang:t("info.no_deposit"))
+                                    denalifw.Functions.Notify(Lang:t("info.no_deposit"))
                                     currentStopNum = 0
                                     currentStop = 0
                                 end
@@ -350,11 +350,11 @@ CreateThread(function()
                     else
                         DrawText3D(vehCoords.x, vehCoords.y, vehCoords.z, Lang:t("info.get_truck"))
                         if IsControlJustReleased(0, 38) then
-                            NADRP.Functions.TriggerCallback('garbagejob:server:NewShift', function(shouldContinue, firstStop, totalBags)
+                            denalifw.Functions.TriggerCallback('garbagejob:server:NewShift', function(shouldContinue, firstStop, totalBags)
                                 if shouldContinue then
 
                                     local coords = Config.Locations["vehicle"].coords
-                                    NADRP.Functions.SpawnVehicle("trash2", function(veh)
+                                    denalifw.Functions.SpawnVehicle("trash2", function(veh)
                                         TaskWarpPedIntoVehicle(ped, veh, -1) -- hopefully this fixes an issue if something is delayed they'll get crushed
                                         SetVehicleEngineOn(veh, true, true)
 
@@ -363,20 +363,20 @@ CreateThread(function()
                                         SetEntityHeading(veh, coords.w)
                                         exports['LegacyFuel']:SetFuel(veh, 100.0)
                                         SetEntityAsMissionEntity(veh, true, true)
-                                        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                                        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                                         currentStop = firstStop
                                         currentStopNum = 1
                                         amountOfBags = totalBags
                                         isWorking = true
                                         SetGarbageRoute()
-                                        NADRP.Functions.Notify(Lang:t("info.deposit_paid", {value = Config.TruckPrice}))
-                                        NADRP.Functions.Notify(Lang:t("info.started"))
+                                        denalifw.Functions.Notify(Lang:t("info.deposit_paid", {value = Config.TruckPrice}))
+                                        denalifw.Functions.Notify(Lang:t("info.started"))
                                         Wait(10)
                                         -- Run the Work Loop to check for Garbo Bags.
                                         RunWorkLoop()
                                     end, coords, true)
                                 else
-                                    NADRP.Functions.Notify(Lang:t("info.not_enough", {value = Config.TruckPrice}))
+                                    denalifw.Functions.Notify(Lang:t("info.not_enough", {value = Config.TruckPrice}))
                                 end
                             end)
                         end

@@ -1,42 +1,42 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local PaymentTax = 15
 local Bail = {}
 
-RegisterNetEvent('NADRP-tow:server:DoBail', function(bool, vehInfo)
+RegisterNetEvent('denalifw-tow:server:DoBail', function(bool, vehInfo)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if bool then
         if Player.PlayerData.money.cash >= Config.BailPrice then
             Bail[Player.PlayerData.citizenid] = Config.BailPrice
             Player.Functions.RemoveMoney('cash', Config.BailPrice, "tow-paid-bail")
-            TriggerClientEvent('NADRP:Notify', src, 'You Have The Deposit of $'..Config.BailPrice..',- paid', 'success')
-            TriggerClientEvent('NADRP-tow:client:SpawnVehicle', src, vehInfo)
+            TriggerClientEvent('denalifw:Notify', src, 'You Have The Deposit of $'..Config.BailPrice..',- paid', 'success')
+            TriggerClientEvent('denalifw-tow:client:SpawnVehicle', src, vehInfo)
         elseif Player.PlayerData.money.bank >= Config.BailPrice then
             Bail[Player.PlayerData.citizenid] = Config.BailPrice
             Player.Functions.RemoveMoney('bank', Config.BailPrice, "tow-paid-bail")
-            TriggerClientEvent('NADRP:Notify', src, 'You Have Paid The Deposit Of $'..Config.BailPrice..' Paid', 'success')
-            TriggerClientEvent('NADRP-tow:client:SpawnVehicle', src, vehInfo)
+            TriggerClientEvent('denalifw:Notify', src, 'You Have Paid The Deposit Of $'..Config.BailPrice..' Paid', 'success')
+            TriggerClientEvent('denalifw-tow:client:SpawnVehicle', src, vehInfo)
         else
-            TriggerClientEvent('NADRP:Notify', src, 'Note Enough Money, The Deposit Is $'..Config.BailPrice..'', 'error')
+            TriggerClientEvent('denalifw:Notify', src, 'Note Enough Money, The Deposit Is $'..Config.BailPrice..'', 'error')
         end
     else
         if Bail[Player.PlayerData.citizenid] ~= nil then
             Player.Functions.AddMoney('bank', Bail[Player.PlayerData.citizenid], "tow-bail-paid")
             Bail[Player.PlayerData.citizenid] = nil
-            TriggerClientEvent('NADRP:Notify', src, 'You Got Back $'..Config.BailPrice..' From The Deposit', 'success')
+            TriggerClientEvent('denalifw:Notify', src, 'You Got Back $'..Config.BailPrice..' From The Deposit', 'success')
         end
     end
 end)
 
-RegisterNetEvent('NADRP-tow:server:nano', function()
-    local xPlayer = NADRP.Functions.GetPlayer(tonumber(source))
+RegisterNetEvent('denalifw-tow:server:nano', function()
+    local xPlayer = denalifw.Functions.GetPlayer(tonumber(source))
 	xPlayer.Functions.AddItem("cryptostick", 1, false)
-	TriggerClientEvent('inventory:client:ItemBox', source, NADRP.Shared.Items["cryptostick"], "add")
+	TriggerClientEvent('inventory:client:ItemBox', source, denalifw.Shared.Items["cryptostick"], "add")
 end)
 
-RegisterNetEvent('NADRP-tow:server:11101110', function(drops)
+RegisterNetEvent('denalifw-tow:server:11101110', function(drops)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local drops = tonumber(drops)
     local bonus = 0
     local DropPrice = math.random(150, 170)
@@ -58,13 +58,13 @@ RegisterNetEvent('NADRP-tow:server:11101110', function(drops)
     TriggerClientEvent('chatMessage', source, "JOB", "warning", "You Received Your Salary From: $"..payment..", Gross: $"..price.." (From What $"..bonus.." Bonus) In $"..taxAmount.." Tax ("..PaymentTax.."%)")
 end)
 
-NADRP.Commands.Add("npc", "Toggle Npc Job", {}, false, function(source, args)
+denalifw.Commands.Add("npc", "Toggle Npc Job", {}, false, function(source, args)
 	TriggerClientEvent("jobs:client:ToggleNpc", source)
 end)
 
-NADRP.Commands.Add("tow", "Place A Car On The Back Of Your Flatbed", {}, false, function(source, args)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Commands.Add("tow", "Place A Car On The Back Of Your Flatbed", {}, false, function(source, args)
+    local Player = denalifw.Functions.GetPlayer(source)
     if Player.PlayerData.job.name == "tow"  or Player.PlayerData.job.name == "mechanic" then
-        TriggerClientEvent("NADRP-tow:client:TowVehicle", source)
+        TriggerClientEvent("denalifw-tow:client:TowVehicle", source)
     end
 end)

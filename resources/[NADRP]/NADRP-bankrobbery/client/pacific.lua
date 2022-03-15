@@ -8,7 +8,7 @@ local requiredItemsShowed4 = false
 local function OnHackPacificDone(success)
     if success then
         TriggerEvent('mhacking:hide')
-        TriggerServerEvent('NADRP-bankrobbery:server:setBankState', "pacific", true)
+        TriggerServerEvent('denalifw-bankrobbery:server:setBankState', "pacific", true)
     else
 		TriggerEvent('mhacking:hide')
 	end
@@ -16,7 +16,7 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-bankrobbery:UseBankcardB', function()
+RegisterNetEvent('denalifw-bankrobbery:UseBankcardB', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local dist = #(pos - Config.BigBanks["pacific"]["coords"][1])
@@ -24,12 +24,12 @@ RegisterNetEvent('NADRP-bankrobbery:UseBankcardB', function()
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
     end
     if dist < 1.5 then
-        NADRP.Functions.TriggerCallback('NADRP-bankrobbery:server:isRobberyActive', function(isBusy)
+        denalifw.Functions.TriggerCallback('denalifw-bankrobbery:server:isRobberyActive', function(isBusy)
             if not isBusy then
                 if CurrentCops >= Config.MinimumPacificPolice then
                     if not Config.BigBanks["pacific"]["isOpened"] then
                         TriggerEvent('inventory:client:requiredItems', requiredItems2, false)
-                        NADRP.Functions.Progressbar("security_pass", "Please validate ..", math.random(5000, 10000), false, true, {
+                        denalifw.Functions.Progressbar("security_pass", "Please validate ..", math.random(5000, 10000), false, true, {
                             disableMovement = true,
                             disableCarMovement = true,
                             disableMouse = false,
@@ -40,8 +40,8 @@ RegisterNetEvent('NADRP-bankrobbery:UseBankcardB', function()
                             flags = 16,
                         }, {}, {}, function() -- Done
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            TriggerServerEvent('NADRP-doorlock:server:updateState', 1, false)
-                            TriggerServerEvent("NADRP:Server:RemoveItem", "security_card_02", 1)
+                            TriggerServerEvent('denalifw-doorlock:server:updateState', 1, false)
+                            TriggerServerEvent("denalifw:Server:RemoveItem", "security_card_02", 1)
                             if not copsCalled then
                                 local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                                 local street1 = GetStreetNameFromHashKey(s1)
@@ -51,22 +51,22 @@ RegisterNetEvent('NADRP-bankrobbery:UseBankcardB', function()
                                     streetLabel = streetLabel .. " " .. street2
                                 end
                                 if Config.BigBanks["pacific"]["alarm"] then
-                                    TriggerServerEvent("NADRP-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
+                                    TriggerServerEvent("denalifw-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
                                     copsCalled = true
                                 end
                             end
                         end, function() -- Cancel
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            NADRP.Functions.Notify("Canceled..", "error")
+                            denalifw.Functions.Notify("Canceled..", "error")
                         end)
                     else
-                        NADRP.Functions.Notify("Looks like the bank is already open ..", "error")
+                        denalifw.Functions.Notify("Looks like the bank is already open ..", "error")
                     end
                 else
-                    NADRP.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                    denalifw.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
                 end
             else
-                NADRP.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+                denalifw.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
             end
         end)
     end
@@ -77,16 +77,16 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
     local pos = GetEntityCoords(ped)
     local dist = #(pos - Config.BigBanks["pacific"]["coords"][2])
     if dist < 1.5 then
-        NADRP.Functions.TriggerCallback('NADRP-bankrobbery:server:isRobberyActive', function(isBusy)
+        denalifw.Functions.TriggerCallback('denalifw-bankrobbery:server:isRobberyActive', function(isBusy)
             if not isBusy then
                 local dist = #(pos - Config.BigBanks["pacific"]["coords"][2])
                 if dist < 1.5 then
                     if CurrentCops >= Config.MinimumPacificPolice then
                         if not Config.BigBanks["pacific"]["isOpened"] then
-                            NADRP.Functions.TriggerCallback('NADRP:HasItem', function(result)
+                            denalifw.Functions.TriggerCallback('denalifw:HasItem', function(result)
                                 if result then
                                     TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                                    NADRP.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
+                                    denalifw.Functions.Progressbar("hack_gate", "Connecting the hacking device ..", math.random(5000, 10000), false, true, {
                                         disableMovement = true,
                                         disableCarMovement = true,
                                         disableMouse = false,
@@ -96,10 +96,10 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                                         anim = "hotwire",
                                         flags = 16,
                                     }, {}, {}, function() -- Done
-                                        TriggerServerEvent("NADRP:Server:RemoveItem", "electronickit", 1)
-                                        TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["electronickit"], "remove")
-                                        TriggerServerEvent("NADRP:Server:RemoveItem", "trojan_usb", 1)
-                                        TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["trojan_usb"], "remove")
+                                        TriggerServerEvent("denalifw:Server:RemoveItem", "electronickit", 1)
+                                        TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["electronickit"], "remove")
+                                        TriggerServerEvent("denalifw:Server:RemoveItem", "trojan_usb", 1)
+                                        TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["trojan_usb"], "remove")
                                         StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
                                         TriggerEvent("mhacking:show")
                                         TriggerEvent("mhacking:start", math.random(5, 9), math.random(10, 15), OnHackPacificDone)
@@ -113,27 +113,27 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                                                 streetLabel = streetLabel .. " " .. street2
                                             end
                                             if Config.BigBanks["pacific"]["alarm"] then
-                                                TriggerServerEvent("NADRP-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
+                                                TriggerServerEvent("denalifw-bankrobbery:server:callCops", "pacific", 0, streetLabel, pos)
                                                 copsCalled = true
                                             end
                                         end
                                     end, function() -- Cancel
                                         StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                                        NADRP.Functions.Notify("Canceled", "error")
+                                        denalifw.Functions.Notify("Canceled", "error")
                                     end)
                                 else
-                                    NADRP.Functions.Notify("You're missing an item ..", "error")
+                                    denalifw.Functions.Notify("You're missing an item ..", "error")
                                 end
                             end, "trojan_usb")
                         else
-                            NADRP.Functions.Notify("Looks like the bank is already open", "error")
+                            denalifw.Functions.Notify("Looks like the bank is already open", "error")
                         end
                     else
-                        NADRP.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                        denalifw.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
                     end
                 end
             else
-                NADRP.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
+                denalifw.Functions.Notify("The security lock is active, opening the door is currently not possible.", "error", 5500)
             end
         end)
     end
@@ -144,20 +144,20 @@ end)
 CreateThread(function()
     Wait(2000)
     local requiredItems3 = {
-        [1] = {name = NADRP.Shared.Items["thermite"]["name"], image = NADRP.Shared.Items["thermite"]["image"]},
+        [1] = {name = denalifw.Shared.Items["thermite"]["name"], image = denalifw.Shared.Items["thermite"]["image"]},
     }
     local requiredItems2 = {
-        [1] = {name = NADRP.Shared.Items["electronickit"]["name"], image = NADRP.Shared.Items["electronickit"]["image"]},
-        [2] = {name = NADRP.Shared.Items["trojan_usb"]["name"], image = NADRP.Shared.Items["trojan_usb"]["image"]},
+        [1] = {name = denalifw.Shared.Items["electronickit"]["name"], image = denalifw.Shared.Items["electronickit"]["image"]},
+        [2] = {name = denalifw.Shared.Items["trojan_usb"]["name"], image = denalifw.Shared.Items["trojan_usb"]["image"]},
     }
     local requiredItems = {
-        [1] = {name = NADRP.Shared.Items["security_card_02"]["name"], image = NADRP.Shared.Items["security_card_02"]["image"]},
+        [1] = {name = denalifw.Shared.Items["security_card_02"]["name"], image = denalifw.Shared.Items["security_card_02"]["image"]},
     }
     while true do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inRange = false
-        if NADRP ~= nil then
+        if denalifw ~= nil then
             if #(pos - Config.BigBanks["pacific"]["coords"][1]) < 10.0 then
                 inRange = true
                 if not Config.BigBanks["pacific"]["isOpened"] then
@@ -226,7 +226,7 @@ CreateThread(function()
                                         if CurrentCops >= Config.MinimumPacificPolice then
                                             openLocker("pacific", k)
                                         else
-                                            NADRP.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
+                                            denalifw.Functions.Notify('Minimum Of '..Config.MinimumPacificPolice..' Police Needed', "error")
                                         end
                                     end
                                 end
@@ -246,14 +246,14 @@ end)
 CreateThread(function()
     Wait(2000)
     local requiredItems4 = {
-        [1] = {name = NADRP.Shared.Items["thermite"]["name"], image = NADRP.Shared.Items["thermite"]["image"]},
+        [1] = {name = denalifw.Shared.Items["thermite"]["name"], image = denalifw.Shared.Items["thermite"]["image"]},
     }
     while true do
         Wait(1)
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inRange = false
-        if NADRP ~= nil then
+        if denalifw ~= nil then
             if #(pos - Config.BigBanks["pacific"]["thermite"][2]["coords"]) < 10.0 then
                 inRange = true
                 if not Config.BigBanks["pacific"]["thermite"][1]["isOpened"] then

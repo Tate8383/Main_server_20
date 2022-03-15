@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 local Webhooks = {
     ['default'] = 'https://discord.com/api/webhooks/953239846175006720/O1q-9IWM4iMA-JNwXHa0oXTYouC2EN4BgC91FQp0__XgDzVgSvHzLn432pUf5nKv21SB',
@@ -53,7 +53,7 @@ local Colors = { -- https://www.spycolor.com/
     ["lightgreen"] = 65309,
 }
 
-RegisterNetEvent('NADRP-log:server:CreateLog', function(name, title, color, message, tagEveryone)        
+RegisterNetEvent('denalifw-log:server:CreateLog', function(name, title, color, message, tagEveryone)        
     local tag = tagEveryone or false
     local webHook = Webhooks[name] or Webhooks['default']
     local embedData = {
@@ -65,7 +65,7 @@ RegisterNetEvent('NADRP-log:server:CreateLog', function(name, title, color, mess
             },
             ['description'] = message,
             ['author'] = {
-                ['name'] = 'NADRP Logs',
+                ['name'] = 'denalifw Logs',
                 ['icon_url'] = 'https://media.discordapp.net/attachments/870094209783308299/870104331142189126/Logo_-_Display_Picture_-_Stylized_-_Red.png?width=670&height=670',
             },
         }
@@ -77,6 +77,6 @@ RegisterNetEvent('NADRP-log:server:CreateLog', function(name, title, color, mess
     end
 end)
 
-NADRP.Commands.Add('testwebhook', 'Test Your Discord Webhook For Logs (God Only)', {}, false, function(source, args)
-    TriggerEvent('NADRP-log:server:CreateLog', 'testwebhook', 'Test Webhook', 'default', 'Webhook setup successfully')
+denalifw.Commands.Add('testwebhook', 'Test Your Discord Webhook For Logs (God Only)', {}, false, function(source, args)
+    TriggerEvent('denalifw-log:server:CreateLog', 'testwebhook', 'Test Webhook', 'default', 'Webhook setup successfully')
 end, 'god')

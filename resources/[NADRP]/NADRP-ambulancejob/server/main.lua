@@ -1,6 +1,6 @@
 local PlayerInjuries = {}
 local PlayerWeaponWounds = {}
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 -- Events
 
 -- Compatibility with txAdmin Menu's heal options.
@@ -16,17 +16,17 @@ end)
 
 RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
 	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
 	Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
-	TriggerEvent('NADRP-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+	TriggerEvent('denalifw-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 end)
 
 RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	for k, v in pairs(Config.Locations["beds"]) do
 		if not v.taken then
 			TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
@@ -34,10 +34,10 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 			if Config.WipeInventoryOnRespawn then
 				Player.Functions.ClearInventory()
 				MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-				TriggerClientEvent('NADRP:Notify', src, Lang:t('error.possessions_taken'), 'error')
+				TriggerClientEvent('denalifw:Notify', src, Lang:t('error.possessions_taken'), 'error')
 			end
 			Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-			TriggerEvent('NADRP-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+			TriggerEvent('denalifw-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
 			TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 			return
 		end
@@ -49,10 +49,10 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	if Config.WipeInventoryOnRespawn then
 		Player.Functions.ClearInventory()
 		MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-		TriggerClientEvent('NADRP:Notify', src, Lang:t('error.possessions_taken'), 'error')
+		TriggerClientEvent('denalifw:Notify', src, Lang:t('error.possessions_taken'), 'error')
 	end
 	Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-	TriggerEvent('NADRP-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+	TriggerEvent('denalifw-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 end)
 
@@ -60,7 +60,7 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
     local src = source
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
-    local players = NADRP.Functions.GetQBPlayers()
+    local players = denalifw.Functions.GetQBPlayers()
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
             TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
@@ -79,7 +79,7 @@ end)
 
 RegisterNetEvent('hospital:server:SetWeaponDamage', function(data)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player then
 		PlayerWeaponWounds[Player.PlayerData.source] = data
 	end
@@ -87,13 +87,13 @@ end)
 
 RegisterNetEvent('hospital:server:RestoreWeaponDamage', function()
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	PlayerWeaponWounds[Player.PlayerData.source] = nil
 end)
 
 RegisterNetEvent('hospital:server:SetDeathStatus', function(isDead)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player then
 		Player.Functions.SetMetaData("isdead", isDead)
 	end
@@ -101,7 +101,7 @@ end)
 
 RegisterNetEvent('hospital:server:SetLaststandStatus', function(bool)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player then
 		Player.Functions.SetMetaData("inlaststand", bool)
 	end
@@ -109,7 +109,7 @@ end)
 
 RegisterNetEvent('hospital:server:SetArmor', function(amount)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player then
 		Player.Functions.SetMetaData("armor", amount)
 	end
@@ -117,12 +117,12 @@ end)
 
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
-	local Patient = NADRP.Functions.GetPlayer(playerId)
+	local Player = denalifw.Functions.GetPlayer(src)
+	local Patient = denalifw.Functions.GetPlayer(playerId)
 	if Patient then
 		if Player.PlayerData.job.name =="ambulance" then
 			Player.Functions.RemoveItem('bandage', 1)
-			TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['bandage'], "remove")
+			TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['bandage'], "remove")
 			TriggerClientEvent("hospital:client:HealInjuries", Patient.PlayerData.source, "full")
 		end
 	end
@@ -130,7 +130,7 @@ end)
 
 RegisterNetEvent('hospital:server:SetDoctor', function()
 	local amount = 0
-    local players = NADRP.Functions.GetQBPlayers()
+    local players = denalifw.Functions.GetQBPlayers()
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
             amount = amount + 1
@@ -141,38 +141,38 @@ end)
 
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
-	local Patient = NADRP.Functions.GetPlayer(playerId)
+	local Player = denalifw.Functions.GetPlayer(src)
+	local Patient = denalifw.Functions.GetPlayer(playerId)
 	local oldMan = isOldMan or false
 	if Patient then
 		if oldMan then
 			if Player.Functions.RemoveMoney("cash", 5000, "revived-player") then
 				Player.Functions.RemoveItem('firstaid', 1)
-				TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['firstaid'], "remove")
+				TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['firstaid'], "remove")
 				TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
 			else
-				TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_enough_money'), "error")
+				TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_enough_money'), "error")
 			end
 		else
 			Player.Functions.RemoveItem('firstaid', 1)
-			TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['firstaid'], "remove")
+			TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['firstaid'], "remove")
 			TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
 		end
 	end
 end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function()
-    local players = NADRP.Functions.GetQBPlayers()
+    local players = denalifw.Functions.GetQBPlayers()
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-			TriggerClientEvent('NADRP:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
+			TriggerClientEvent('denalifw:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
 		end
 	end
 end)
 
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
 	local src = source
-	local Target = NADRP.Functions.GetPlayer(targetId)
+	local Target = denalifw.Functions.GetPlayer(targetId)
 	if Target then
 		TriggerClientEvent('hospital:client:CanHelp', targetId, src)
 	end
@@ -183,15 +183,15 @@ RegisterNetEvent('hospital:server:CanHelp', function(helperId, canHelp)
 	if canHelp then
 		TriggerClientEvent('hospital:client:HelpPerson', helperId, src)
 	else
-		TriggerClientEvent('NADRP:Notify', helperId, Lang:t('error.cant_help'), "error")
+		TriggerClientEvent('denalifw:Notify', helperId, Lang:t('error.cant_help'), "error")
 	end
 end)
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
+denalifw.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	local amount = 0
-    local players = NADRP.Functions.GetQBPlayers()
+    local players = denalifw.Functions.GetQBPlayers()
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			amount = amount + 1
@@ -200,8 +200,8 @@ NADRP.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	cb(amount)
 end)
 
-NADRP.Functions.CreateCallback('hospital:GetPlayerStatus', function(source, cb, playerId)
-	local Player = NADRP.Functions.GetPlayer(playerId)
+denalifw.Functions.CreateCallback('hospital:GetPlayerStatus', function(source, cb, playerId)
+	local Player = denalifw.Functions.GetPlayer(playerId)
 	local injuries = {}
 	injuries["WEAPONWOUNDS"] = {}
 	if Player then
@@ -224,7 +224,7 @@ NADRP.Functions.CreateCallback('hospital:GetPlayerStatus', function(source, cb, 
     cb(injuries)
 end)
 
-NADRP.Functions.CreateCallback('hospital:GetPlayerBleeding', function(source, cb)
+denalifw.Functions.CreateCallback('hospital:GetPlayerBleeding', function(source, cb)
 	local src = source
 	if PlayerInjuries[src] and PlayerInjuries[src].isBleeding then
 		cb(PlayerInjuries[src].isBleeding)
@@ -235,12 +235,12 @@ end)
 
 -- Commands
 
-NADRP.Commands.Add('911e', Lang:t('info.ems_report'), {{name = 'message', help = Lang:t('info.message_sent')}}, false, function(source, args)
+denalifw.Commands.Add('911e', Lang:t('info.ems_report'), {{name = 'message', help = Lang:t('info.message_sent')}}, false, function(source, args)
 	local src = source
 	if args[1] then message = table.concat(args, " ") else message = Lang:t('info.civ_call') end
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
-    local players = NADRP.Functions.GetQBPlayers()
+    local players = denalifw.Functions.GetQBPlayers()
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
             TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
@@ -248,86 +248,86 @@ NADRP.Commands.Add('911e', Lang:t('info.ems_report'), {{name = 'message', help =
     end
 end)
 
-NADRP.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, args)
+denalifw.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, args)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:CheckStatus", src)
 	else
-		TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_ems'), "error")
+		TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_ems'), "error")
 	end
 end)
 
-NADRP.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(source, args)
+denalifw.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(source, args)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:TreatWounds", src)
 	else
-		TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_ems'), "error")
+		TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_ems'), "error")
 	end
 end)
 
-NADRP.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function(source, args)
+denalifw.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function(source, args)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:RevivePlayer", src)
 	else
-		TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_ems'), "error")
+		TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_ems'), "error")
 	end
 end)
 
-NADRP.Commands.Add("revive", Lang:t('info.revive_player_a'), {{name = "id", help = Lang:t('info.player_id')}}, false, function(source, args)
+denalifw.Commands.Add("revive", Lang:t('info.revive_player_a'), {{name = "id", help = Lang:t('info.player_id')}}, false, function(source, args)
 	local src = source
 	if args[1] then
-		local Player = NADRP.Functions.GetPlayer(tonumber(args[1]))
+		local Player = denalifw.Functions.GetPlayer(tonumber(args[1]))
 		if Player then
 			TriggerClientEvent('hospital:client:Revive', Player.PlayerData.source)
 		else
-			TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_online'), "error")
 		end
 	else
 		TriggerClientEvent('hospital:client:Revive', src)
 	end
 end, "admin")
 
-NADRP.Commands.Add("setpain", Lang:t('info.pain_level'), {{name = "id", help = Lang:t('info.player_id')}}, false, function(source, args)
+denalifw.Commands.Add("setpain", Lang:t('info.pain_level'), {{name = "id", help = Lang:t('info.player_id')}}, false, function(source, args)
 	local src = source
 	if args[1] then
-		local Player = NADRP.Functions.GetPlayer(tonumber(args[1]))
+		local Player = denalifw.Functions.GetPlayer(tonumber(args[1]))
 		if Player then
 			TriggerClientEvent('hospital:client:SetPain', Player.PlayerData.source)
 		else
-			TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_online'), "error")
 		end
 	else
 		TriggerClientEvent('hospital:client:SetPain', src)
 	end
 end, "admin")
 
-NADRP.Commands.Add("kill", Lang:t('info.kill'), {{name = "id", help = Lang:t('info.player_id')}}, false, function(source, args)
+denalifw.Commands.Add("kill", Lang:t('info.kill'), {{name = "id", help = Lang:t('info.player_id')}}, false, function(source, args)
 	local src = source
 	if args[1] then
-		local Player = NADRP.Functions.GetPlayer(tonumber(args[1]))
+		local Player = denalifw.Functions.GetPlayer(tonumber(args[1]))
 		if Player then
 			TriggerClientEvent('hospital:client:KillPlayer', Player.PlayerData.source)
 		else
-			TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_online'), "error")
 		end
 	else
 		TriggerClientEvent('hospital:client:KillPlayer', src)
 	end
 end, "admin")
 
-NADRP.Commands.Add('aheal', Lang:t('info.heal_player_a'), {{name = 'id', help = Lang:t('info.player_id')}}, false, function(source, args)
+denalifw.Commands.Add('aheal', Lang:t('info.heal_player_a'), {{name = 'id', help = Lang:t('info.player_id')}}, false, function(source, args)
 	local src = source
 	if args[1] then
-		local Player = NADRP.Functions.GetPlayer(tonumber(args[1]))
+		local Player = denalifw.Functions.GetPlayer(tonumber(args[1]))
 		if Player then
 			TriggerClientEvent('hospital:client:adminHeal', Player.PlayerData.source)
 		else
-			TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_online'), "error")
+			TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_online'), "error")
 		end
 	else
 		TriggerClientEvent('hospital:client:adminHeal', src)
@@ -336,33 +336,33 @@ end, 'admin')
 
 -- Items
 
-NADRP.Functions.CreateUseableItem("ifaks", function(source, item)
+denalifw.Functions.CreateUseableItem("ifaks", function(source, item)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player.Functions.GetItemByName(item.name) ~= nil then
 		TriggerClientEvent("hospital:client:UseIfaks", src)
 	end
 end)
 
-NADRP.Functions.CreateUseableItem("bandage", function(source, item)
+denalifw.Functions.CreateUseableItem("bandage", function(source, item)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player.Functions.GetItemByName(item.name) ~= nil then
 		TriggerClientEvent("hospital:client:UseBandage", src)
 	end
 end)
 
-NADRP.Functions.CreateUseableItem("painkillers", function(source, item)
+denalifw.Functions.CreateUseableItem("painkillers", function(source, item)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player.Functions.GetItemByName(item.name) ~= nil then
 		TriggerClientEvent("hospital:client:UsePainkillers", src)
 	end
 end)
 
-NADRP.Functions.CreateUseableItem("firstaid", function(source, item)
+denalifw.Functions.CreateUseableItem("firstaid", function(source, item)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 	if Player.Functions.GetItemByName(item.name) ~= nil then
 		TriggerClientEvent("hospital:client:UseFirstAid", src)
 	end

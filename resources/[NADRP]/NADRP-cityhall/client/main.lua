@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local inCityhallPage = false
 local qbCityhall = {}
 
@@ -84,18 +84,18 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('NADRP-cityhall:client:getIds', function()
-    TriggerServerEvent('NADRP-cityhall:server:getIDs')
+RegisterNetEvent('denalifw-cityhall:client:getIds', function()
+    TriggerServerEvent('denalifw-cityhall:server:getIDs')
 end)
 
-RegisterNetEvent('NADRP-cityhall:client:sendDriverEmail', function(charinfo)
+RegisterNetEvent('denalifw-cityhall:client:sendDriverEmail', function(charinfo)
     SetTimeout(math.random(2500, 4000), function()
         local gender = "Mr"
-        if NADRP.Functions.GetPlayerData().charinfo.gender == 1 then
+        if denalifw.Functions.GetPlayerData().charinfo.gender == 1 then
             gender = "Mrs"
         end
-        local charinfo = NADRP.Functions.GetPlayerData().charinfo
-        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+        local charinfo = denalifw.Functions.GetPlayerData().charinfo
+        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
             sender = "Township",
             subject = "Driving lessons request",
             message = "Hello " .. gender .. " " .. charinfo.lastname .. ",<br /><br />We have just received a message that someone wants to take driving lessons<br />If you are willing to teach, please contact us:<br />Naam: <strong>".. charinfo.firstname .. " " .. charinfo.lastname .. "</strong><br />Phone Number: <strong>"..charinfo.phone.."</strong><br/><br/>Kind regards,<br />Township Los Santos",
@@ -123,15 +123,15 @@ RegisterNUICallback('requestId', function(data)
     if inRange then
         local idType = data.idType
 
-        TriggerServerEvent('NADRP-cityhall:server:requestId', idTypes[idType])
-        NADRP.Functions.Notify('You have recived your '..idTypes[idType].label..' for $50', 'success', 3500)
+        TriggerServerEvent('denalifw-cityhall:server:requestId', idTypes[idType])
+        denalifw.Functions.Notify('You have recived your '..idTypes[idType].label..' for $50', 'success', 3500)
     else
-        NADRP.Functions.Notify('This will not work', 'error')
+        denalifw.Functions.Notify('This will not work', 'error')
     end
 end)
 
 RegisterNUICallback('requestLicenses', function(data, cb)
-    local PlayerData = NADRP.Functions.GetPlayerData()
+    local PlayerData = denalifw.Functions.GetPlayerData()
     local licensesMeta = PlayerData.metadata["licences"]
     local availableLicenses = {}
 
@@ -159,8 +159,8 @@ end)
 
 RegisterNUICallback('applyJob', function(data)
     if inRange then
-        TriggerServerEvent('NADRP-cityhall:server:ApplyJob', data.job)
+        TriggerServerEvent('denalifw-cityhall:server:ApplyJob', data.job)
     else
-        NADRP.Functions.Notify('Unfortunately will not work ...', 'error')
+        denalifw.Functions.Notify('Unfortunately will not work ...', 'error')
     end
 end)

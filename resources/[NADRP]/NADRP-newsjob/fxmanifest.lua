@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-NewsJob'
+description 'denalifw-NewsJob'
 version '1.0.1'
 
 shared_script 'config.lua'

@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Multicharacter'
+description 'denalifw-Multicharacter'
 version '1.0.0'
 
 shared_script 'config.lua'
@@ -22,8 +22,8 @@ files {
 }
 
 dependencies {
-    'NADRP-core',
-    'NADRP-spawn'
+    'denalifw-core',
+    'denalifw-spawn'
 }
 
 lua54 'yes'

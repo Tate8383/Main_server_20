@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Anticheat'
+description 'denalifw-Anticheat'
 version '1.0.0'
 
 shared_script 'config.lua'

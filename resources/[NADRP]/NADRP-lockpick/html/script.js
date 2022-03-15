@@ -81,7 +81,7 @@ $(function () {
     
     document.onkeyup = function (data) {
         if (data.which == 27 ) {
-            $.post('https://NADRP-lockpick/exit');
+            $.post('https://denalifw-lockpick/exit');
         }
     };
 }); //docready
@@ -226,7 +226,7 @@ function reset() {
 
 function outOfPins() {
     gameOver = true;
-    $.post('https://NADRP-lockpick/callback', JSON.stringify({
+    $.post('https://denalifw-lockpick/callback', JSON.stringify({
         success: false
     }));
     setTimeout(function(){
@@ -236,7 +236,7 @@ function outOfPins() {
 
 function unlock() {
     gameOver = true;
-    $.post('https://NADRP-lockpick/callback', JSON.stringify({
+    $.post('https://denalifw-lockpick/callback', JSON.stringify({
         success: true
     }));
     solveDeg = (Math.random() * 180) - 90

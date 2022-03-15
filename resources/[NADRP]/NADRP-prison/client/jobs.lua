@@ -24,16 +24,16 @@ local function CreateJobBlip()
         local Chance = math.random(100)
         local Odd = math.random(100)
         if Chance == Odd then
-            TriggerServerEvent('NADRP:Server:AddItem', 'phone', 1)
-            TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["phone"], "add")
-            NADRP.Functions.Notify(Lang:t("success.found_phone"), "success")
+            TriggerServerEvent('denalifw:Server:AddItem', 'phone', 1)
+            TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["phone"], "add")
+            denalifw.Functions.Notify(Lang:t("success.found_phone"), "success")
         end
     end
 end
 
 local function JobDone()
     if math.random(1, 100) <= 50 then
-        NADRP.Functions.Notify(Lang:t("success.time_cut"))
+        denalifw.Functions.Notify(Lang:t("success.time_cut"))
         jailTime = jailTime - math.random(1, 2)
     end
     local newLocation = math.random(1, #Config.Locations.jobs[currentJob])
@@ -60,7 +60,7 @@ CreateThread(function()
                     DrawMarker(2, Config.Locations.jobs[currentJob][currentLocation].coords.x, Config.Locations.jobs[currentJob][currentLocation].coords.y, Config.Locations.jobs[currentJob][currentLocation].coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 150, 200, 50, 222, false, false, false, true, false, false, false)
                     if #(pos - vector3(Config.Locations.jobs[currentJob][currentLocation].coords.x, Config.Locations.jobs[currentJob][currentLocation].coords.y, Config.Locations.jobs[currentJob][currentLocation].coords.z)) < 1 and not isWorking then
                         isWorking = true
-                        NADRP.Functions.Progressbar("work_electric", "Working on electricity..", math.random(5000, 10000), false, true, {
+                        denalifw.Functions.Progressbar("work_electric", "Working on electricity..", math.random(5000, 10000), false, true, {
                             disableMovement = true,
                             disableCarMovement = true,
                             disableMouse = false,
@@ -76,7 +76,7 @@ CreateThread(function()
                         end, function() -- Cancel
                             isWorking = false
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            NADRP.Functions.Notify(Lang:t("error.cancelled"), "error")
+                            denalifw.Functions.Notify(Lang:t("error.cancelled"), "error")
                         end)
                     end
                 end

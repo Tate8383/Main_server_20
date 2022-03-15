@@ -795,7 +795,7 @@ function ResetClothing(anim)
 	LastEquipped = {}
 end
 
-RegisterNetEvent('NADRP-radialmenu:ResetClothing', ResetClothing)
+RegisterNetEvent('denalifw-radialmenu:ResetClothing', ResetClothing)
 
 function ToggleClothing(whic, extra)
 	local which = whic
@@ -880,7 +880,7 @@ function ToggleClothing(whic, extra)
 	Notify(Lang:t("info.already_wearing")) return false
 end
 
-RegisterNetEvent('NADRP-radialmenu:ToggleClothing', ToggleClothing)
+RegisterNetEvent('denalifw-radialmenu:ToggleClothing', ToggleClothing)
 
 function ToggleProps(whic)
 	local which = whic
@@ -924,7 +924,7 @@ function ToggleProps(whic)
 	end
 end
 
-RegisterNetEvent('NADRP-radialmenu:ToggleProps', ToggleProps)
+RegisterNetEvent('denalifw-radialmenu:ToggleProps', ToggleProps)
 
 for k,v in pairs(Config.Commands) do
 	RegisterCommand(k, v.Func)
@@ -995,7 +995,7 @@ function FirstUpper(str)
 end
 
 function Notify(message, color) -- However you want your notifications to be shown, you can switch it up here.
-	NADRP.Functions.Notify(message, color)
+	denalifw.Functions.Notify(message, color)
 end
 
 function IsMpPed(ped)

@@ -11,28 +11,28 @@ Config.MenuItems = {
                 title = 'Give Contact Details',
                 icon = 'address-book',
                 type = 'client',
-                event = 'NADRP-phone:client:GiveContactDetails',
+                event = 'denalifw-phone:client:GiveContactDetails',
                 shouldClose = true
             }, {
                 id = 'getintrunk',
                 title = 'Get In Trunk',
                 icon = 'car',
                 type = 'client',
-                event = 'NADRP-trunk:client:GetIn',
+                event = 'denalifw-trunk:client:GetIn',
                 shouldClose = true
             }, {
                 id = 'cornerselling',
                 title = 'Corner Selling',
                 icon = 'cannabis',
                 type = 'client',
-                event = 'NADRP-drugs:client:cornerselling',
+                event = 'denalifw-drugs:client:cornerselling',
                 shouldClose = true
             }, {
                 id = 'togglehotdogsell',
                 title = 'Hotdog Selling',
                 icon = 'hotdog',
                 type = 'client',
-                event = 'NADRP-hotdogjob:client:ToggleSell',
+                event = 'denalifw-hotdogjob:client:ToggleSell',
                 shouldClose = true
             }, {
                 id = 'interactions',
@@ -108,7 +108,7 @@ Config.MenuItems = {
                         title = 'Give House Keys',
                         icon = 'key',
                         type = 'client',
-                        event = 'NADRP-houses:client:giveHouseKey',
+                        event = 'denalifw-houses:client:giveHouseKey',
                         shouldClose = true,
                         items = {}
                     }, {
@@ -116,7 +116,7 @@ Config.MenuItems = {
                         title = 'Remove House Keys',
                         icon = 'key',
                         type = 'client',
-                        event = 'NADRP-houses:client:removeHouseKey',
+                        event = 'denalifw-houses:client:removeHouseKey',
                         shouldClose = true,
                         items = {}
                     }, {
@@ -124,14 +124,14 @@ Config.MenuItems = {
                         title = 'Toggle Doorlock',
                         icon = 'door-closed',
                         type = 'client',
-                        event = 'NADRP-houses:client:toggleDoorlock',
+                        event = 'denalifw-houses:client:toggleDoorlock',
                         shouldClose = true
                     }, {
                         id = 'decoratehouse',
                         title = 'Decorate House',
                         icon = 'boxes',
                         type = 'client',
-                        event = 'NADRP-houses:client:decorate',
+                        event = 'denalifw-houses:client:decorate',
                         shouldClose = true
                     }, {
                         id = 'houseLocations',
@@ -143,21 +143,21 @@ Config.MenuItems = {
                                 title = 'Set Stash',
                                 icon = 'box-open',
                                 type = 'client',
-                                event = 'NADRP-houses:client:setLocation',
+                                event = 'denalifw-houses:client:setLocation',
                                 shouldClose = true
                             }, {
                                 id = 'setoutift',
                                 title = 'Set Wardrobe',
                                 icon = 'tshirt',
                                 type = 'client',
-                                event = 'NADRP-houses:client:setLocation',
+                                event = 'denalifw-houses:client:setLocation',
                                 shouldClose = true
                             }, {
                                 id = 'setlogout',
                                 title = 'Set Logout',
                                 icon = 'door-open',
                                 type = 'client',
-                                event = 'NADRP-houses:client:setLocation',
+                                event = 'denalifw-houses:client:setLocation',
                                 shouldClose = true
                             }
                         }
@@ -173,49 +173,49 @@ Config.MenuItems = {
                         title = 'Hair',
                         icon = 'user',
                         type = 'client',
-                        event = 'NADRP-radialmenu:ToggleClothing',
+                        event = 'denalifw-radialmenu:ToggleClothing',
                         shouldClose = true
                     }, {
                         id = 'Ear',
                         title = 'Ear Piece',
                         icon = 'deaf',
                         type = 'client',
-                        event = 'NADRP-radialmenu:ToggleProps',
+                        event = 'denalifw-radialmenu:ToggleProps',
                         shouldClose = true
                     }, {
                         id = 'Neck',
                         title = 'Neck',
                         icon = 'user-tie',
                         type = 'client',
-                        event = 'NADRP-radialmenu:ToggleClothing',
+                        event = 'denalifw-radialmenu:ToggleClothing',
                         shouldClose = true
                     }, {
                         id = 'Top',
                         title = 'Top',
                         icon = 'tshirt',
                         type = 'client',
-                        event = 'NADRP-radialmenu:ToggleClothing',
+                        event = 'denalifw-radialmenu:ToggleClothing',
                         shouldClose = true
                     }, {
                         id = 'Shirt',
                         title = 'Shirt',
                         icon = 'tshirt',
                         type = 'client',
-                        event = 'NADRP-radialmenu:ToggleClothing',
+                        event = 'denalifw-radialmenu:ToggleClothing',
                         shouldClose = true
                     }, {
                         id = 'Pants',
                         title = 'Pants',
                         icon = 'user',
                         type = 'client',
-                        event = 'NADRP-radialmenu:ToggleClothing',
+                        event = 'denalifw-radialmenu:ToggleClothing',
                         shouldClose = true
                     }, {
                         id = 'Shoes',
                         title = 'Shoes',
                         icon = 'shoe-prints',
                         type = 'client',
-                        event = 'NADRP-radialmenu:ToggleClothing',
+                        event = 'denalifw-radialmenu:ToggleClothing',
                         shouldClose = true
                     }, {
                         id = 'meer',
@@ -227,63 +227,63 @@ Config.MenuItems = {
                                 title = 'Hat',
                                 icon = 'hat-cowboy-side',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleProps',
+                                event = 'denalifw-radialmenu:ToggleProps',
                                 shouldClose = true
                             }, {
                                 id = 'Glasses',
                                 title = 'Glasses',
                                 icon = 'glasses',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleProps',
+                                event = 'denalifw-radialmenu:ToggleProps',
                                 shouldClose = true
                             }, {
                                 id = 'Visor',
                                 title = 'Visor',
                                 icon = 'hat-cowboy-side',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleProps',
+                                event = 'denalifw-radialmenu:ToggleProps',
                                 shouldClose = true
                             }, {
                                 id = 'Mask',
                                 title = 'Mask',
                                 icon = 'theater-masks',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleClothing',
+                                event = 'denalifw-radialmenu:ToggleClothing',
                                 shouldClose = true
                             }, {
                                 id = 'Vest',
                                 title = 'Vest',
                                 icon = 'vest',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleClothing',
+                                event = 'denalifw-radialmenu:ToggleClothing',
                                 shouldClose = true
                             }, {
                                 id = 'Bag',
                                 title = 'Bag',
                                 icon = 'shopping-bag',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleClothing',
+                                event = 'denalifw-radialmenu:ToggleClothing',
                                 shouldClose = true
                             }, {
                                 id = 'Bracelet',
                                 title = 'Bracelet',
                                 icon = 'user',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleProps',
+                                event = 'denalifw-radialmenu:ToggleProps',
                                 shouldClose = true
                             }, {
                                 id = 'Watch',
                                 title = 'Watch',
                                 icon = 'stopwatch',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleProps',
+                                event = 'denalifw-radialmenu:ToggleProps',
                                 shouldClose = true
                             }, {
                                 id = 'Gloves',
                                 title = 'Gloves',
                                 icon = 'mitten',
                                 type = 'client',
-                                event = 'NADRP-radialmenu:ToggleClothing',
+                                event = 'denalifw-radialmenu:ToggleClothing',
                                 shouldClose = true
                             }
                         }
@@ -307,42 +307,42 @@ Config.MenuItems = {
                         title = 'Drivers door',
                         icon = 'car-side',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:openDoor',
+                        event = 'denalifw-radialmenu:client:openDoor',
                         shouldClose = false
                     }, {
                         id = 'door4',
                         title = 'Hood',
                         icon = 'car',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:openDoor',
+                        event = 'denalifw-radialmenu:client:openDoor',
                         shouldClose = false
                     }, {
                         id = 'door1',
                         title = 'Passengers door',
                         icon = 'car-side',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:openDoor',
+                        event = 'denalifw-radialmenu:client:openDoor',
                         shouldClose = false
                     }, {
                         id = 'door3',
                         title = 'Right rear',
                         icon = 'car-side',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:openDoor',
+                        event = 'denalifw-radialmenu:client:openDoor',
                         shouldClose = false
                     }, {
                         id = 'door5',
                         title = 'Trunk',
                         icon = 'car',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:openDoor',
+                        event = 'denalifw-radialmenu:client:openDoor',
                         shouldClose = false
                     }, {
                         id = 'door2',
                         title = 'Left rear',
                         icon = 'car-side',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:openDoor',
+                        event = 'denalifw-radialmenu:client:openDoor',
                         shouldClose = false
                     }
                 }
@@ -356,91 +356,91 @@ Config.MenuItems = {
                         title = 'Extra 1',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra2',
                         title = 'Extra 2',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra3',
                         title = 'Extra 3',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra4',
                         title = 'Extra 4',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra5',
                         title = 'Extra 5',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra6',
                         title = 'Extra 6',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra7',
                         title = 'Extra 7',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra8',
                         title = 'Extra 8',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra9',
                         title = 'Extra 9',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra10',
                         title = 'Extra 10',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra11',
                         title = 'Extra 11',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra12',
                         title = 'Extra 12',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }, {
                         id = 'extra13',
                         title = 'Extra 13',
                         icon = 'box-open',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:setExtra',
+                        event = 'denalifw-radialmenu:client:setExtra',
                         shouldClose = false
                     }
                 }
@@ -454,7 +454,7 @@ Config.MenuItems = {
                         title = 'Driver',
                         icon = 'chair',
                         type = 'client',
-                        event = 'NADRP-radialmenu:client:ChangeSeat',
+                        event = 'denalifw-radialmenu:client:ChangeSeat',
                         shouldClose = false
                     }
                 }
@@ -510,14 +510,14 @@ Config.JobInteractions = {
                     title = 'Spawn Stretcher',
                     icon = 'plus',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:TakeStretcher',
+                    event = 'denalifw-radialmenu:client:TakeStretcher',
                     shouldClose = false
                 }, {
                     id = 'despawnstretcher',
                     title = 'Remove Stretcher',
                     icon = 'minus',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:RemoveStretcher',
+                    event = 'denalifw-radialmenu:client:RemoveStretcher',
                     shouldClose = false
                 }
             }
@@ -529,21 +529,21 @@ Config.JobInteractions = {
             title = 'Show/Hide Meter',
             icon = 'eye-slash',
             type = 'client',
-            event = 'NADRP-taxi:client:toggleMeter',
+            event = 'denalifw-taxi:client:toggleMeter',
             shouldClose = false
         }, {
             id = 'togglemouse',
             title = 'Start/Stop Meter',
             icon = 'hourglass-start',
             type = 'client',
-            event = 'NADRP-taxi:client:enableMeter',
+            event = 'denalifw-taxi:client:enableMeter',
             shouldClose = true
         }, {
             id = 'npc_mission',
             title = 'NPC Mission',
             icon = 'taxi',
             type = 'client',
-            event = 'NADRP-taxi:client:DoTaxiNpc',
+            event = 'denalifw-taxi:client:DoTaxiNpc',
             shouldClose = true
         }
     },
@@ -560,7 +560,7 @@ Config.JobInteractions = {
             title = 'Tow vehicle',
             icon = 'truck-pickup',
             type = 'client',
-            event = 'NADRP-tow:client:TowVehicle',
+            event = 'denalifw-tow:client:TowVehicle',
             shouldClose = true
         }
     },
@@ -570,7 +570,7 @@ Config.JobInteractions = {
             title = 'Tow vehicle',
             icon = 'truck-pickup',
             type = 'client',
-            event = 'NADRP-tow:client:TowVehicle',
+            event = 'denalifw-tow:client:TowVehicle',
             shouldClose = true
         }
     },
@@ -587,14 +587,14 @@ Config.JobInteractions = {
             title = 'Check Tune Status',
             icon = 'info-circle',
             type = 'client',
-            event = 'NADRP-tunerchip:client:TuneStatus',
+            event = 'denalifw-tunerchip:client:TuneStatus',
             shouldClose = true
         }, {
             id = 'resethouse',
             title = 'Reset house lock',
             icon = 'key',
             type = 'client',
-            event = 'NADRP-houses:client:ResetHouse',
+            event = 'denalifw-houses:client:ResetHouse',
             shouldClose = true
         }, {
             id = 'takedriverlicense',
@@ -709,7 +709,7 @@ Config.JobInteractions = {
             title = 'Toggle sell',
             icon = 'hotdog',
             type = 'client',
-            event = 'NADRP-hotdogjob:client:ToggleSell',
+            event = 'denalifw-hotdogjob:client:ToggleSell',
             shouldClose = true
         }
     }

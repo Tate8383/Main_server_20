@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 function NearBus(src)
     local ped = GetPlayerPed(src)
@@ -11,9 +11,9 @@ function NearBus(src)
     end
 end
 
-RegisterNetEvent('NADRP-busjob:server:NpcPay', function(Payment)
+RegisterNetEvent('denalifw-busjob:server:NpcPay', function(Payment)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "bus" then
         if NearBus(src) then
             local randomAmount = math.random(1, 5)

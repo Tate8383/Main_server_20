@@ -38,7 +38,7 @@ Padlock.Open = function(data) {
 
 Padlock.Close = function() {
     $("#padlock").css("display", "none");
-    $.post('https://NADRP-storerobbery/PadLockClose');
+    $.post('https://denalifw-storerobbery/PadLockClose');
 }
 
 Keypad.Open = function(data) {
@@ -69,9 +69,9 @@ Keypad.Open = function(data) {
 
 Keypad.Close = function(data) {
     $("#keypad").css("display", "none");
-    $.post('https://NADRP-storerobbery/PadLockClose');
+    $.post('https://denalifw-storerobbery/PadLockClose');
     if (data.error != null) {
-        $.post('https://NADRP-storerobbery/CombinationFail');
+        $.post('https://denalifw-storerobbery/CombinationFail');
     }
 }
 
@@ -91,7 +91,7 @@ var CanConfirm = true;
 
 function submitForm(e) {
     $("#keypad").css("display", "none");
-    $.post("https://NADRP-storerobbery/TryCombination", JSON.stringify({
+    $.post("https://denalifw-storerobbery/TryCombination", JSON.stringify({
         combination: e.value,
     }));
 };
@@ -126,10 +126,10 @@ findCombo = function(comboArr){
             // make numbers green when found
             $(".num" + (i + 1)).addClass("found");
             // on unlock
-            $.post('https://NADRP-storerobbery/callcops');
+            $.post('https://denalifw-storerobbery/callcops');
             if (i == comboArr.length - 1) {
                 // unlock :)
-                $.post('https://NADRP-storerobbery/PadLockSuccess');
+                $.post('https://denalifw-storerobbery/PadLockSuccess');
                 Padlock.Close();
             }
         }
@@ -234,7 +234,7 @@ $(function () {
             } else if(CurrentType == "padlock") {
                 Padlock.Close();
             } else {
-                $.post('https://NADRP-storerobbery/exit');
+                $.post('https://denalifw-storerobbery/exit');
             }
         }
     };
@@ -380,7 +380,7 @@ function reset() {
 
 function outOfPins() {
     gameOver = true;
-    $.post('https://NADRP-storerobbery/fail');
+    $.post('https://denalifw-storerobbery/fail');
     setTimeout(function(){
         reset()
     }, 250)
@@ -388,7 +388,7 @@ function outOfPins() {
 
 function unlock() {
     gameOver = true;
-    $.post('https://NADRP-storerobbery/success');
+    $.post('https://denalifw-storerobbery/success');
     solveDeg = (Math.random() * 180) - 90
     solvePadding = 4
     maxDistFromSolve = 45

@@ -7,7 +7,7 @@ Traphouses.Functions.OpenPinpad = function() {
 
 Traphouses.Functions.ClosePinpad = function() {
     $(".container").fadeOut(300);
-    $.post('https://NADRP-traphouse/PinpadClose');
+    $.post('https://denalifw-traphouse/PinpadClose');
 }
 
 $(document).on('keydown', function() {
@@ -48,7 +48,7 @@ $(document).on('keydown', function() {
         case 13:
             var v = $("#PINbox").val();
             if (v == "") {
-                $.post('https://NADRP-traphouse/ErrorMessage', JSON.stringify({
+                $.post('https://denalifw-traphouse/ErrorMessage', JSON.stringify({
                     message: "Vul een code in!"
                 }))
             } else {
@@ -56,7 +56,7 @@ $(document).on('keydown', function() {
                     pin: v
                 }
                 $("#PINbox").val("");
-                $.post('https://NADRP-traphouse/EnterPincode', JSON.stringify({
+                $.post('https://denalifw-traphouse/EnterPincode', JSON.stringify({
                     pin: data.pin
                 }))
                 Traphouses.Functions.ClosePinpad();
@@ -117,11 +117,11 @@ function clearForm(e){
 
 function submitForm(e) {
 	if (e.value == "") {
-		$.post('https://NADRP-traphouse/ErrorMessage', JSON.stringify({
+		$.post('https://denalifw-traphouse/ErrorMessage', JSON.stringify({
             message: "Vul een code in!"
         }))
 	} else {
-        $.post('https://NADRP-traphouse/EnterPincode', JSON.stringify({
+        $.post('https://denalifw-traphouse/EnterPincode', JSON.stringify({
             pin: e.value
         }))
         $("#PINbox").val("");

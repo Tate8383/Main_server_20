@@ -6,7 +6,7 @@ local painkillerAmount = 0
 
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
-        NADRP.Functions.Notify("You are "..Config.BleedingStates[tonumber(isBleeding)].label, "error", 5000)
+        denalifw.Functions.Notify("You are "..Config.BleedingStates[tonumber(isBleeding)].label, "error", 5000)
     end
 end
 
@@ -36,7 +36,7 @@ end
 
 RegisterNetEvent('hospital:client:UseIfaks', function()
     local ped = PlayerPedId()
-    NADRP.Functions.Progressbar("use_bandage", Lang:t('progress.ifaks'), 3000, false, true, {
+    denalifw.Functions.Progressbar("use_bandage", Lang:t('progress.ifaks'), 3000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
@@ -47,8 +47,8 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("NADRP:Server:RemoveItem", "ifaks", 1)
-        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["ifaks"], "remove")
+        TriggerServerEvent("denalifw:Server:RemoveItem", "ifaks", 1)
+        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["ifaks"], "remove")
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         onPainKillers = true
@@ -60,13 +60,13 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         end
     end, function() -- Cancel
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        NADRP.Functions.Notify(Lang:t('error.canceled'), "error")
+        denalifw.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)
 
 RegisterNetEvent('hospital:client:UseBandage', function()
     local ped = PlayerPedId()
-    NADRP.Functions.Progressbar("use_bandage", Lang:t('progress.bandage'), 4000, false, true, {
+    denalifw.Functions.Progressbar("use_bandage", Lang:t('progress.bandage'), 4000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
@@ -77,8 +77,8 @@ RegisterNetEvent('hospital:client:UseBandage', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        TriggerServerEvent("NADRP:Server:RemoveItem", "bandage", 1)
-        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["bandage"], "remove")
+        TriggerServerEvent("denalifw:Server:RemoveItem", "bandage", 1)
+        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["bandage"], "remove")
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         if math.random(1, 100) < 50 then
             RemoveBleed(1)
@@ -88,13 +88,13 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         end
     end, function() -- Cancel
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        NADRP.Functions.Notify(Lang:t('error.canceled'), "error")
+        denalifw.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)
 
 RegisterNetEvent('hospital:client:UsePainkillers', function()
     local ped = PlayerPedId()
-    NADRP.Functions.Progressbar("use_bandage", Lang:t('progress.painkillers'), 3000, false, true, {
+    denalifw.Functions.Progressbar("use_bandage", Lang:t('progress.painkillers'), 3000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
 		disableMouse = false,
@@ -105,15 +105,15 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("NADRP:Server:RemoveItem", "painkillers", 1)
-        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items["painkillers"], "remove")
+        TriggerServerEvent("denalifw:Server:RemoveItem", "painkillers", 1)
+        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items["painkillers"], "remove")
         onPainKillers = true
         if painkillerAmount < 3 then
             painkillerAmount = painkillerAmount + 1
         end
     end, function() -- Cancel
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        NADRP.Functions.Notify(Lang:t('error.canceled'), "error")
+        denalifw.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)
 
@@ -205,7 +205,7 @@ CreateThread(function()
                         local randX = math.random() + math.random(-1, 1)
                         local randY = math.random() + math.random(-1, 1)
                         local coords = GetOffsetFromEntityInWorldCoords(player, randX, randY, 0)
-                        TriggerServerEvent("evidence:server:CreateBloodDrop", NADRP.Functions.GetPlayerData().citizenid, NADRP.Functions.GetPlayerData().metadata["bloodtype"], coords)
+                        TriggerServerEvent("evidence:server:CreateBloodDrop", denalifw.Functions.GetPlayerData().citizenid, denalifw.Functions.GetPlayerData().metadata["bloodtype"], coords)
 
                         if advanceBleedTimer >= Config.AdvanceBleedTimer then
                             ApplyBleed(1)

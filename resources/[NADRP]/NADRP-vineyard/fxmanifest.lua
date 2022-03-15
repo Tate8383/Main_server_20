@@ -1,11 +1,11 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Vineyard'
+description 'denalifw-Vineyard'
 version '1.0.0'
 
 shared_scripts {
-    '@NADRP-core/shared/locale.lua',
+    '@denalifw-core/shared/locale.lua',
     'locales/en.lua',
     'config.lua'
 }

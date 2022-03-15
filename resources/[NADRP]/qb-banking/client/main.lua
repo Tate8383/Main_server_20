@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 InBank = false
 blips = {}
@@ -42,7 +42,7 @@ local function removeBlips()
 end
 
 local function openAccountScreen()
-    NADRP.Functions.TriggerCallback('qb-banking:getBankingInformation', function(banking)
+    denalifw.Functions.TriggerCallback('qb-banking:getBankingInformation', function(banking)
         if banking ~= nil then
             InBank = true
             SetNuiFocus(true, true)
@@ -56,11 +56,11 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     createBlips()
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     removeBlips()
 end)
 

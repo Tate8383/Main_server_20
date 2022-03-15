@@ -1,5 +1,5 @@
-NADRP = exports['NADRP-core']:GetCoreObject()
-PlayerData = NADRP.Functions.GetPlayerData() -- Setting this for when you restart the resource in game
+denalifw = exports['denalifw-core']:GetCoreObject()
+PlayerData = denalifw.Functions.GetPlayerData() -- Setting this for when you restart the resource in game
 local inRadialMenu = false
 
 -- Functions
@@ -67,7 +67,7 @@ local function setupSubItems()
                     title = Lang:t("options.driver_seat"),
                     icon = 'caret-up',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
                 [2] = {
@@ -75,7 +75,7 @@ local function setupSubItems()
                     title = Lang:t("options.passenger_seat"),
                     icon = 'caret-up',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
             }
@@ -86,7 +86,7 @@ local function setupSubItems()
                     title = Lang:t("options.driver_seat"),
                     icon = 'caret-up',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
                 [1] = {
@@ -94,7 +94,7 @@ local function setupSubItems()
                     title = Lang:t("options.passenger_seat"),
                     icon = 'caret-up',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
                 [3] = {
@@ -102,7 +102,7 @@ local function setupSubItems()
                     title = Lang:t("options.other_seats"),
                     icon = 'caret-down',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
             }
@@ -113,7 +113,7 @@ local function setupSubItems()
                     title = Lang:t("options.driver_seat"),
                     icon = 'caret-up',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
                 [1] = {
@@ -121,7 +121,7 @@ local function setupSubItems()
                     title = Lang:t("options.passenger_seat"),
                     icon = 'caret-up',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
                 [3] = {
@@ -129,7 +129,7 @@ local function setupSubItems()
                     title = Lang:t("options.rear_left_seat"),
                     icon = 'caret-down',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
                 [2] = {
@@ -137,7 +137,7 @@ local function setupSubItems()
                     title = Lang:t("options.rear_right_seat"),
                     icon = 'caret-down',
                     type = 'client',
-                    event = 'NADRP-radialmenu:client:ChangeSeat',
+                    event = 'denalifw-radialmenu:client:ChangeSeat',
                     shouldClose = false,
                 },
             }
@@ -225,25 +225,25 @@ RegisterKeyMapping('radialmenu', Lang:t("general.command_description"), 'keyboar
 -- Events
 
 -- Sets the metadata when the player spawns
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    PlayerData = NADRP.Functions.GetPlayerData()
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    PlayerData = denalifw.Functions.GetPlayerData()
 end)
 
 -- Sets the playerdata to an empty table when the player has quit or did /logout
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     PlayerData = {}
 end)
 
 -- This will update all the PlayerData that doesn't get updated with a specific event other than this like the metadata
-RegisterNetEvent('NADRP:Player:SetPlayerData', function(val)
+RegisterNetEvent('denalifw:Player:SetPlayerData', function(val)
     PlayerData = val
 end)
 
-RegisterNetEvent('NADRP-radialmenu:client:noPlayers', function()
-    NADRP.Functions.Notify(Lang:t("error.no_people_nearby"), 'error', 2500)
+RegisterNetEvent('denalifw-radialmenu:client:noPlayers', function()
+    denalifw.Functions.Notify(Lang:t("error.no_people_nearby"), 'error', 2500)
 end)
 
-RegisterNetEvent('NADRP-radialmenu:client:openDoor', function(data)
+RegisterNetEvent('denalifw-radialmenu:client:openDoor', function(data)
     local string = data.id
     local replace = string:gsub("door", "")
     local door = tonumber(replace)
@@ -251,16 +251,16 @@ RegisterNetEvent('NADRP-radialmenu:client:openDoor', function(data)
     local closestVehicle = GetVehiclePedIsIn(ped) ~= 0 and GetVehiclePedIsIn(ped) or getNearestVeh()
     if closestVehicle ~= 0 then
         if closestVehicle ~= GetVehiclePedIsIn(ped) then
-            local plate = NADRP.Functions.GetPlate(closestVehicle)
+            local plate = denalifw.Functions.GetPlate(closestVehicle)
             if GetVehicleDoorAngleRatio(closestVehicle, door) > 0.0 then
                 if not IsVehicleSeatFree(closestVehicle, -1) then
-                    TriggerServerEvent('NADRP-radialmenu:trunk:server:Door', false, plate, door)
+                    TriggerServerEvent('denalifw-radialmenu:trunk:server:Door', false, plate, door)
                 else
                     SetVehicleDoorShut(closestVehicle, door, false)
                 end
             else
                 if not IsVehicleSeatFree(closestVehicle, -1) then
-                    TriggerServerEvent('NADRP-radialmenu:trunk:server:Door', true, plate, door)
+                    TriggerServerEvent('denalifw-radialmenu:trunk:server:Door', true, plate, door)
                 else
                     SetVehicleDoorOpen(closestVehicle, door, false, false)
                 end
@@ -273,11 +273,11 @@ RegisterNetEvent('NADRP-radialmenu:client:openDoor', function(data)
             end
         end
     else
-        NADRP.Functions.Notify(Lang:t("error.no_vehicle_found"), 'error', 2500)
+        denalifw.Functions.Notify(Lang:t("error.no_vehicle_found"), 'error', 2500)
     end
 end)
 
-RegisterNetEvent('NADRP-radialmenu:client:setExtra', function(data)
+RegisterNetEvent('denalifw-radialmenu:client:setExtra', function(data)
     local string = data.id
     local replace = string:gsub("extra", "")
     local extra = tonumber(replace)
@@ -289,24 +289,24 @@ RegisterNetEvent('NADRP-radialmenu:client:setExtra', function(data)
             if DoesExtraExist(veh, extra) then
                 if IsVehicleExtraTurnedOn(veh, extra) then
                     SetVehicleExtra(veh, extra, 1)
-                    NADRP.Functions.Notify(Lang:t("error.extra_deactivated", {extra = extra}), 'error', 2500)
+                    denalifw.Functions.Notify(Lang:t("error.extra_deactivated", {extra = extra}), 'error', 2500)
                 else
                     SetVehicleExtra(veh, extra, 0)
-                    NADRP.Functions.Notify(Lang:t("success.extra_activated", {extra = extra}), 'success', 2500)
+                    denalifw.Functions.Notify(Lang:t("success.extra_activated", {extra = extra}), 'success', 2500)
                 end
             else
-                NADRP.Functions.Notify(Lang:t("error.extra_not_present", {extra = extra}), 'error', 2500)
+                denalifw.Functions.Notify(Lang:t("error.extra_not_present", {extra = extra}), 'error', 2500)
             end
         else
-            NADRP.Functions.Notify(Lang:t("error.not_driver"), 'error', 2500)
+            denalifw.Functions.Notify(Lang:t("error.not_driver"), 'error', 2500)
         end
     end
 end)
 
-RegisterNetEvent('NADRP-radialmenu:trunk:client:Door', function(plate, door, open)
+RegisterNetEvent('denalifw-radialmenu:trunk:client:Door', function(plate, door, open)
     local veh = GetVehiclePedIsIn(PlayerPedId())
     if veh ~= 0 then
-        local pl = NADRP.Functions.GetPlate(veh)
+        local pl = denalifw.Functions.GetPlate(veh)
         if pl == plate then
             if open then
                 SetVehicleDoorOpen(veh, door, false, false)
@@ -317,25 +317,25 @@ RegisterNetEvent('NADRP-radialmenu:trunk:client:Door', function(plate, door, ope
     end
 end)
 
-RegisterNetEvent('NADRP-radialmenu:client:ChangeSeat', function(data)
+RegisterNetEvent('denalifw-radialmenu:client:ChangeSeat', function(data)
     local Veh = GetVehiclePedIsIn(PlayerPedId())
     local IsSeatFree = IsVehicleSeatFree(Veh, data.id)
     local speed = GetEntitySpeed(Veh)
-    local HasHarnass = exports['NADRP-smallresources']:HasHarness()
+    local HasHarnass = exports['denalifw-smallresources']:HasHarness()
     if not HasHarnass then
         local kmh = speed * 3.6
         if IsSeatFree then
             if kmh <= 100.0 then
                 SetPedIntoVehicle(PlayerPedId(), Veh, data.id)
-                NADRP.Functions.Notify(Lang:t("info.switched_seats"), {seat = data.title})
+                denalifw.Functions.Notify(Lang:t("info.switched_seats"), {seat = data.title})
             else
-                NADRP.Functions.Notify(Lang:t("error.vehicle_driving_fast"), 'error')
+                denalifw.Functions.Notify(Lang:t("error.vehicle_driving_fast"), 'error')
             end
         else
-            NADRP.Functions.Notify(Lang:t("error.seat_occupied"), 'error')
+            denalifw.Functions.Notify(Lang:t("error.seat_occupied"), 'error')
         end
     else
-        NADRP.Functions.Notify(Lang:t("error.race_harness_on"), 'error')
+        denalifw.Functions.Notify(Lang:t("error.race_harness_on"), 'error')
     end
 end)
 
@@ -358,7 +358,7 @@ RegisterNUICallback('selectItem', function(data)
         elseif itemData.type == 'command' then
             ExecuteCommand(itemData.event)
         elseif itemData.type == 'qbcommand' then
-            TriggerServerEvent('NADRP:CallCommand', itemData.event, itemData)
+            TriggerServerEvent('denalifw:CallCommand', itemData.event, itemData)
         end
     end
 end)

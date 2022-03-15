@@ -8,8 +8,8 @@ local isHealingPerson = false
 local healAnimDict = "mini@cpr@char_a@cpr_str"
 local healAnim = "cpr_pumpchest"
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    NADRP.Functions.TriggerCallback('NADRP-drugs:server:RequestConfig', function(DealerConfig)
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    denalifw.Functions.TriggerCallback('denalifw-drugs:server:RequestConfig', function(DealerConfig)
         Config.Dealers = DealerConfig
     end)
 end)
@@ -67,7 +67,7 @@ CreateThread(function()
                                     if player ~= -1 and distance < 5.0 then
                                         local playerId = GetPlayerServerId(player)
                                         isHealingPerson = true
-                                        NADRP.Functions.Progressbar("hospital_revive", Lang:t("info.reviving_player"), 5000, false, true, {
+                                        denalifw.Functions.Progressbar("hospital_revive", Lang:t("info.reviving_player"), 5000, false, true, {
                                             disableMovement = false,
                                             disableCarMovement = false,
                                             disableMouse = false,
@@ -79,14 +79,14 @@ CreateThread(function()
                                         }, {}, {}, function() -- Done
                                             isHealingPerson = false
                                             StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                                            NADRP.Functions.Notify(Lang:t("success.helped_player"), "success")
+                                            denalifw.Functions.Notify(Lang:t("success.helped_player"), "success")
                                             TriggerServerEvent("hospital:server:RevivePlayer", playerId, true)
                                         end, function() -- Cancel
                                             isHealingPerson = false
                                             StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                                         end)
                                     else
-                                        NADRP.Functions.Notify(Lang:t("error.no_player_nearby"), "error")
+                                        denalifw.Functions.Notify(Lang:t("error.no_player_nearby"), "error")
                                     end
                                 else
                                     if waitingDelivery == nil then
@@ -115,7 +115,7 @@ CreateThread(function()
 end)
 
 function GetClosestPlayer()
-    local closestPlayers = NADRP.Functions.GetPlayersFromCoords()
+    local closestPlayers = denalifw.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -164,7 +164,7 @@ function buyDealerStuff()
     repItems.slots = 30
 
     for k, v in pairs(Config.Dealers[currentDealer]["products"]) do
-        if NADRP.Functions.GetPlayerData().metadata["dealerrep"] >= Config.Dealers[currentDealer]["products"][k].minrep then
+        if denalifw.Functions.GetPlayerData().metadata["dealerrep"] >= Config.Dealers[currentDealer]["products"][k].minrep then
             repItems.items[k] = Config.Dealers[currentDealer]["products"][k]
         end
     end
@@ -176,7 +176,7 @@ function knockDoorAnim(home)
     local knockAnimLib = "timetable@jimmy@doorknock@"
     local knockAnim = "knockdoor_idle"
     local PlayerPed = PlayerPedId()
-    local myData = NADRP.Functions.GetPlayerData()
+    local myData = denalifw.Functions.GetPlayerData()
 
     if home then
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "knock_door", 0.2)
@@ -210,15 +210,15 @@ function knockDoorAnim(home)
         Wait(3500)
         TaskPlayAnim(PlayerPed, knockAnimLib, "exit", 3.0, 3.0, -1, 1, 0, false, false, false)
         Wait(1000)
-        NADRP.Functions.Notify(Lang:t("info.no_one_home"), 'primary', 3500)
+        denalifw.Functions.Notify(Lang:t("info.no_one_home"), 'primary', 3500)
     end
 end
 
-RegisterNetEvent('NADRP-drugs:client:updateDealerItems', function(itemData, amount)
-    TriggerServerEvent('NADRP-drugs:server:updateDealerItems', itemData, amount, currentDealer)
+RegisterNetEvent('denalifw-drugs:client:updateDealerItems', function(itemData, amount)
+    TriggerServerEvent('denalifw-drugs:server:updateDealerItems', itemData, amount, currentDealer)
 end)
 
-RegisterNetEvent('NADRP-drugs:client:setDealerItems', function(itemData, amount, dealer)
+RegisterNetEvent('denalifw-drugs:client:setDealerItems', function(itemData, amount, dealer)
     Config.Dealers[dealer]["products"][itemData.slot].amount = Config.Dealers[dealer]["products"][itemData.slot].amount - amount
 end)
 
@@ -233,15 +233,15 @@ function requestDelivery()
         ["dealer"] = currentDealer,
         ["itemData"] = Config.DeliveryItems[item]
     }
-    TriggerServerEvent('NADRP-drugs:server:giveDeliveryItems', amount)
+    TriggerServerEvent('denalifw-drugs:server:giveDeliveryItems', amount)
     SetTimeout(2000, function()
-        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
             sender = Config.Dealers[currentDealer]["name"],
             subject = "Delivery Location",
-            message = Lang:t("info.delivery_info_email", {itemAmount = amount, itemLabel = NADRP.Shared.Items[waitingDelivery["itemData"]["item"]]["label"]}),
+            message = Lang:t("info.delivery_info_email", {itemAmount = amount, itemLabel = denalifw.Shared.Items[waitingDelivery["itemData"]["item"]]["label"]}),
             button = {
                 enabled = true,
-                buttonEvent = "NADRP-drugs:client:setLocation",
+                buttonEvent = "denalifw-drugs:client:setLocation",
                 buttonData = waitingDelivery
             }
         })
@@ -249,7 +249,7 @@ function requestDelivery()
 end
 
 function randomDeliveryItemOnRep()
-    local myRep = NADRP.Functions.GetPlayerData().metadata["dealerrep"]
+    local myRep = denalifw.Functions.GetPlayerData().metadata["dealerrep"]
     retval = nil
     for k, v in pairs(Config.DeliveryItems) do
         if Config.DeliveryItems[k]["minrep"] <= myRep then
@@ -266,15 +266,15 @@ end
 
 function setMapBlip(x, y)
     SetNewWaypoint(x, y)
-    NADRP.Functions.Notify(Lang:t("success.route_has_been_set"), 'success');
+    denalifw.Functions.Notify(Lang:t("success.route_has_been_set"), 'success');
 end
 
-RegisterNetEvent('NADRP-drugs:client:setLocation', function(locationData)
+RegisterNetEvent('denalifw-drugs:client:setLocation', function(locationData)
     if activeDelivery == nil then
         activeDelivery = locationData
     else
         setMapBlip(activeDelivery["coords"]["x"], activeDelivery["coords"]["y"])
-        NADRP.Functions.Notify(Lang:t("error.pending_delivery"), 'error')
+        denalifw.Functions.Notify(Lang:t("error.pending_delivery"), 'error')
         return
     end
 
@@ -293,7 +293,7 @@ RegisterNetEvent('NADRP-drugs:client:setLocation', function(locationData)
             if dist < 15 then
                 inDeliveryRange = true
                 if dist < 1.5 then
-                    DrawText3D(activeDelivery["coords"]["x"], activeDelivery["coords"]["y"], activeDelivery["coords"]["z"], Lang:t("info.deliver_items_button", {itemAmount = activeDelivery["amount"], itemLabel = NADRP.Shared.Items[activeDelivery["itemData"]["item"]]["label"]}))
+                    DrawText3D(activeDelivery["coords"]["x"], activeDelivery["coords"]["y"], activeDelivery["coords"]["z"], Lang:t("info.deliver_items_button", {itemAmount = activeDelivery["amount"], itemLabel = denalifw.Shared.Items[activeDelivery["itemData"]["item"]]["label"]}))
                     if IsControlJustPressed(0, 38) then
                         deliverStuff(activeDelivery)
                         activeDelivery = nil
@@ -326,18 +326,18 @@ function deliverStuff(activeDelivery)
         Wait(500)
         TriggerEvent('animations:client:EmoteCommandStart', {"bumbin"})
         checkPedDistance()
-        NADRP.Functions.Progressbar("work_dropbox", Lang:t("info.delivering_products"), 3500, false, true, {
+        denalifw.Functions.Progressbar("work_dropbox", Lang:t("info.delivering_products"), 3500, false, true, {
             disableMovement = true,
             disableCarMovement = true,
             disableMouse = false,
             disableCombat = true,
         }, {}, {}, {}, function() -- Done
-            TriggerServerEvent('NADRP-drugs:server:succesDelivery', activeDelivery, true)
+            TriggerServerEvent('denalifw-drugs:server:succesDelivery', activeDelivery, true)
         end, function() -- Cancel
             ClearPedTasks(PlayerPedId())
         end)
     else
-        TriggerServerEvent('NADRP-drugs:server:succesDelivery', activeDelivery, false)
+        TriggerServerEvent('denalifw-drugs:server:succesDelivery', activeDelivery, false)
     end
     deliveryTimeout = 0
 end
@@ -351,7 +351,7 @@ function checkPedDistance()
         end
     end
 	local coords = GetEntityCoords(player)
-    local closestPed, closestDistance = NADRP.Functions.GetClosestPed(coords, PlayerPeds)
+    local closestPed, closestDistance = denalifw.Functions.GetClosestPed(coords, PlayerPeds)
 
     if closestDistance < 40 and closestPed ~= 0 then
         local callChance = math.random(1, 100)
@@ -372,10 +372,10 @@ function doPoliceAlert()
     if street2 ~= nil then
         streetLabel = streetLabel .. " " .. street2
     end
-    TriggerServerEvent('NADRP-drugs:server:callCops', streetLabel, pos)
+    TriggerServerEvent('denalifw-drugs:server:callCops', streetLabel, pos)
 end
 
-RegisterNetEvent('NADRP-drugs:client:robberyCall', function(msg, streetLabel, coords)
+RegisterNetEvent('denalifw-drugs:client:robberyCall', function(msg, streetLabel, coords)
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
     TriggerEvent("chatMessage", "911-ALERT", "error", msg)
     local transG = 250
@@ -400,21 +400,21 @@ RegisterNetEvent('NADRP-drugs:client:robberyCall', function(msg, streetLabel, co
     end
 end)
 
-RegisterNetEvent('NADRP-drugs:client:sendDeliveryMail', function(type, deliveryData)
+RegisterNetEvent('denalifw-drugs:client:sendDeliveryMail', function(type, deliveryData)
     if type == 'perfect' then
-        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
             sender = Config.Dealers[deliveryData["dealer"]]["name"],
             subject = "Delivery",
             message = Lang:t("info.perfect_delivery", {dealerName = Config.Dealers[deliveryData["dealer"]]["name"]})
         })
     elseif type == 'bad' then
-        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
             sender = Config.Dealers[deliveryData["dealer"]]["name"],
             subject = "Delivery",
             message = Lang:t("info.bad_delivery")
         })
     elseif type == 'late' then
-        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
             sender = Config.Dealers[deliveryData["dealer"]]["name"],
             subject = "Delivery",
             message = Lang:t("info.late_delivery")
@@ -422,7 +422,7 @@ RegisterNetEvent('NADRP-drugs:client:sendDeliveryMail', function(type, deliveryD
     end
 end)
 
-RegisterNetEvent('NADRP-drugs:client:CreateDealer', function(dealerName, minTime, maxTime)
+RegisterNetEvent('denalifw-drugs:client:CreateDealer', function(dealerName, minTime, maxTime)
     local ped = PlayerPedId()
     local loc = GetEntityCoords(ped)
     local DealerData = {
@@ -438,15 +438,15 @@ RegisterNetEvent('NADRP-drugs:client:CreateDealer', function(dealerName, minTime
         }
     }
 
-    TriggerServerEvent('NADRP-drugs:server:CreateDealer', DealerData)
+    TriggerServerEvent('denalifw-drugs:server:CreateDealer', DealerData)
 end)
 
-RegisterNetEvent('NADRP-drugs:client:RefreshDealers', function(DealerData)
+RegisterNetEvent('denalifw-drugs:client:RefreshDealers', function(DealerData)
     Config.Dealers = DealerData
 end)
 
-RegisterNetEvent('NADRP-drugs:client:GotoDealer', function(DealerData)
+RegisterNetEvent('denalifw-drugs:client:GotoDealer', function(DealerData)
     local ped = PlayerPedId()
     SetEntityCoords(ped, DealerData["coords"]["x"], DealerData["coords"]["y"], DealerData["coords"]["z"])
-    NADRP.Functions.Notify(Lang:t("success.teleported_to_dealer", {dealerName = DealerData["name"]}), 'success')
+    denalifw.Functions.Notify(Lang:t("success.teleported_to_dealer", {dealerName = DealerData["name"]}), 'success')
 end)

@@ -1,5 +1,5 @@
-NADRP = nil
-local NADRP = exports['NADRP-core']:GetCoreObject()
+denalifw = nil
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local piggyBackInProgress = false
 
 RegisterCommand("piggyback",function(source, args)

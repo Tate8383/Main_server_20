@@ -1,13 +1,13 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-HotdogJob'
+description 'denalifw-HotdogJob'
 version '1.0.0'
 
 ui_page 'html/ui.html'
 
 shared_scripts {
-    '@NADRP-core/shared/locale.lua',
+    '@denalifw-core/shared/locale.lua',
     'locales/en.lua',
     'config.lua'
 }

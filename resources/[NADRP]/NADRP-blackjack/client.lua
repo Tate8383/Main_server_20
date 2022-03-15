@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local seatSideAngle = 30
 local bet = 0
 local hand = {}
@@ -33,17 +33,17 @@ CreateThread(function()
 end)
 
 --[===[
-	exports["NADRP-blackjack"]:SetSatDownCallback(function()
+	exports["denalifw-blackjack"]:SetSatDownCallback(function()
 		-- Disable hud components?
 		-- etc
 	end)
 
-	exports["NADRP-blackjack"]:SetStandUpCallback(function()
+	exports["denalifw-blackjack"]:SetStandUpCallback(function()
 		-- Enable hud components?
 		-- etc
 	end)
 
-	exports["NADRP-blackjack"]:SetLeaveCheckCallback(function()
+	exports["denalifw-blackjack"]:SetLeaveCheckCallback(function()
 		-- if isCuffed or isBeingCarried or isInJail??? then
 		-- return true
 		-- else
@@ -51,7 +51,7 @@ end)
 		-- end
 	end)
 
-	exports["NADRP-blackjack"]:SetCanSitDownCallback(function()
+	exports["denalifw-blackjack"]:SetCanSitDownCallback(function()
 		-- if not isCuffed and not isBeingCarried and not isInJail??? then
 		-- return true
 		-- else
@@ -835,7 +835,7 @@ AddEventHandler("BLACKJACK:RequestBets", function(index, _timeLeft)
 					end
 					return
 				else
-					NADRP.Functions.Notify("You don't have enough Chips for the bet.", "error")
+					denalifw.Functions.Notify("You don't have enough Chips for the bet.", "error")
 				end
 			end
 		end
@@ -1006,7 +1006,7 @@ AddEventHandler("BLACKJACK:RequestMove", function(_timeLeft)
 
 					return
 				else
-					NADRP.Functions.Notify("You don't have enough money to double down.", "error")
+					denalifw.Functions.Notify("You don't have enough money to double down.", "error")
 				end
 			end
 			if IsControlJustPressed(1, 209) and CanSplitHand(hand) == true then
@@ -1065,7 +1065,7 @@ AddEventHandler("BLACKJACK:RequestMove", function(_timeLeft)
 
 					return
 				else
-					NADRP.Functions.Notify("You don't have enough money to split.", "error")
+					denalifw.Functions.Notify("You don't have enough money to split.", "error")
 
 				end
 			end
@@ -1506,7 +1506,7 @@ CreateThread(function()
 		CreateThread(CreatePeds)
 	else
 		ThefeedSetAnimpostfxColor(255, 0, 0, 255)
-		Notification("This server is missing objects required for NADRP-blackjack!", nil, true)
+		Notification("This server is missing objects required for denalifw-blackjack!", nil, true)
 	end
 end)
 

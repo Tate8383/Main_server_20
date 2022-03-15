@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local ActivePolice = 2  		--<< needed policemen to activate the mission
 local cashA = 250 				--<<how much minimum you can get from a robbery
 local cashB = 450				--<< how much maximum you can get from a robbery
@@ -10,15 +10,15 @@ RegisterServerEvent('AttackTransport:akceptujto')
 AddEventHandler('AttackTransport:akceptujto', function()
 	local copsOnDuty = 0
 	local _source = source
-	local xPlayer = NADRP.Functions.GetPlayer(_source)
+	local xPlayer = denalifw.Functions.GetPlayer(_source)
 	local accountMoney = 0
 	accountMoney = xPlayer.PlayerData.money["bank"]
 if ActiveMission == 0 then
 	if accountMoney < ActivationCost then
-	TriggerClientEvent('NADRP:Notify', _source, "You need $"..ActivationCost.." in the bank to accept the mission")
+	TriggerClientEvent('denalifw:Notify', _source, "You need $"..ActivationCost.." in the bank to accept the mission")
 	else
-		for k, v in pairs(NADRP.Functions.GetPlayers()) do
-			local Player = NADRP.Functions.GetPlayer(v)
+		for k, v in pairs(denalifw.Functions.GetPlayers()) do
+			local Player = denalifw.Functions.GetPlayer(v)
 			if Player ~= nil then
 				if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
 					copsOnDuty = copsOnDuty + 1
@@ -31,20 +31,20 @@ if ActiveMission == 0 then
 
 		OdpalTimer()
     else
-		TriggerClientEvent('NADRP:Notify', _source, 'Need at least '..ActivePolice.. ' SASP to activate the mission.')
+		TriggerClientEvent('denalifw:Notify', _source, 'Need at least '..ActivePolice.. ' SASP to activate the mission.')
     end
 	end
 else
-TriggerClientEvent('NADRP:Notify', _source, 'Someone is already carrying out this mission')
+TriggerClientEvent('denalifw:Notify', _source, 'Someone is already carrying out this mission')
 end
 end)
 
-RegisterServerEvent('NADRP-armoredtruckheist:server:callCops')
-AddEventHandler('NADRP-armoredtruckheist:server:callCops', function(streetLabel, coords)
+RegisterServerEvent('denalifw-armoredtruckheist:server:callCops')
+AddEventHandler('denalifw-armoredtruckheist:server:callCops', function(streetLabel, coords)
     local place = "Armored Truck"
     local msg = "The Alram has been activated from a "..place.. " at " ..streetLabel
 
-    TriggerClientEvent("NADRP-armoredtruckheist:client:robberyCall", -1, streetLabel, coords)
+    TriggerClientEvent("denalifw-armoredtruckheist:client:robberyCall", -1, streetLabel, coords)
 
 end)
 
@@ -63,20 +63,20 @@ end)
 RegisterServerEvent('AttackTransport:graczZrobilnapad')
 AddEventHandler('AttackTransport:graczZrobilnapad', function(moneyCalc)
 	local _source = source
-	local xPlayer = NADRP.Functions.GetPlayer(_source)
+	local xPlayer = denalifw.Functions.GetPlayer(_source)
 	local bags = math.random(1,3)
 	local info = {
 		worth = math.random(cashA, cashB)
 	}
 	xPlayer.Functions.AddItem('markedbills', bags, false, info)
-	TriggerClientEvent('inventory:client:ItemBox', _source, NADRP.Shared.Items['markedbills'], "add")
+	TriggerClientEvent('inventory:client:ItemBox', _source, denalifw.Shared.Items['markedbills'], "add")
 
 	local chance = math.random(1, 100)
-	TriggerClientEvent('NADRP:Notify', _source, 'You took '..bags..' bags of cash from the van')
+	TriggerClientEvent('denalifw:Notify', _source, 'You took '..bags..' bags of cash from the van')
 
 	if chance >= 95 then
 	xPlayer.Functions.AddItem('security_card_01', 1)
-	TriggerClientEvent('inventory:client:ItemBox', _source, NADRP.Shared.Items['security_card_01'], "add")
+	TriggerClientEvent('inventory:client:ItemBox', _source, denalifw.Shared.Items['security_card_01'], "add")
 	end
 
 Wait(2500)

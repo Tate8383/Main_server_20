@@ -1,5 +1,5 @@
 local ApartmentObjects = {}
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 -- Functions
 
@@ -28,9 +28,9 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-apartments:server:SetInsideMeta', function(house, insideId, bool, isVisiting)
+RegisterNetEvent('denalifw-apartments:server:SetInsideMeta', function(house, insideId, bool, isVisiting)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local insideMeta = Player.PlayerData.metadata["inside"]
 
     if bool then
@@ -41,7 +41,7 @@ RegisterNetEvent('NADRP-apartments:server:SetInsideMeta', function(house, inside
             insideMeta.house = nil
             Player.Functions.SetMetaData("inside", insideMeta)
         end
-        NADRP.Functions.SetPlayerBucket(src, tonumber(routeId))
+        denalifw.Functions.SetPlayerBucket(src, tonumber(routeId))
     else
         insideMeta.apartment.apartmentType = nil
         insideMeta.apartment.apartmentId = nil
@@ -49,18 +49,18 @@ RegisterNetEvent('NADRP-apartments:server:SetInsideMeta', function(house, inside
 
 
         Player.Functions.SetMetaData("inside", insideMeta)
-        NADRP.Functions.SetPlayerBucket(src, 0)
+        denalifw.Functions.SetPlayerBucket(src, 0)
     end
 end)
 
-RegisterNetEvent('NADRP-apartments:returnBucket', function()
+RegisterNetEvent('denalifw-apartments:returnBucket', function()
     local src = source
     SetPlayerRoutingBucket(src, 0)
 end)
 
 RegisterNetEvent('apartments:server:CreateApartment', function(type, label)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local num = CreateApartmentId(type)
     local apartmentId = tostring(type .. num)
     local label = tostring(label .. " " .. num)
@@ -70,16 +70,16 @@ RegisterNetEvent('apartments:server:CreateApartment', function(type, label)
         label,
         Player.PlayerData.citizenid
     })
-    TriggerClientEvent('NADRP:Notify', src, Lang:t('success.receive_apart').." ("..label..")")
+    TriggerClientEvent('denalifw:Notify', src, Lang:t('success.receive_apart').." ("..label..")")
     TriggerClientEvent("apartments:client:SpawnInApartment", src, apartmentId, type)
     TriggerClientEvent("apartments:client:SetHomeBlip", src, type)
 end)
 
 RegisterNetEvent('apartments:server:UpdateApartment', function(type, label)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     MySQL.Async.execute('UPDATE apartments SET type = ?, label = ? WHERE citizenid = ?', { type, label, Player.PlayerData.citizenid })
-    TriggerClientEvent('NADRP:Notify', src, Lang:t('success.changed_apart'))
+    TriggerClientEvent('denalifw:Notify', src, Lang:t('success.changed_apart'))
     TriggerClientEvent("apartments:client:SetHomeBlip", src, type)
 end)
 
@@ -93,7 +93,7 @@ RegisterNetEvent('apartments:server:RingDoor', function(apartmentId, apartment)
 end)
 
 RegisterNetEvent('apartments:server:OpenDoor', function(target, apartmentId, apartment)
-    local OtherPlayer = NADRP.Functions.GetPlayer(target)
+    local OtherPlayer = denalifw.Functions.GetPlayer(target)
     if OtherPlayer ~= nil then
         TriggerClientEvent('apartments:client:SpawnInApartment', OtherPlayer.PlayerData.source, apartmentId, apartment)
     end
@@ -101,7 +101,7 @@ end)
 
 RegisterNetEvent('apartments:server:AddObject', function(apartmentId, apartment, offset)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if ApartmentObjects[apartment] ~= nil and ApartmentObjects[apartment].apartments ~= nil and ApartmentObjects[apartment].apartments[apartmentId] ~= nil then
         ApartmentObjects[apartment].apartments[apartmentId].players[src] = Player.PlayerData.citizenid
     else
@@ -133,7 +133,7 @@ end)
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback('apartments:GetAvailableApartments', function(source, cb, apartment)
+denalifw.Functions.CreateCallback('apartments:GetAvailableApartments', function(source, cb, apartment)
     local apartments = {}
     if ApartmentObjects ~= nil and ApartmentObjects[apartment] ~= nil and ApartmentObjects[apartment].apartments ~= nil then
         for k, v in pairs(ApartmentObjects[apartment].apartments) do
@@ -146,7 +146,7 @@ NADRP.Functions.CreateCallback('apartments:GetAvailableApartments', function(sou
     cb(apartments)
 end)
 
-NADRP.Functions.CreateCallback('apartments:GetApartmentOffset', function(source, cb, apartmentId)
+denalifw.Functions.CreateCallback('apartments:GetApartmentOffset', function(source, cb, apartmentId)
     local retval = 0
     if ApartmentObjects ~= nil then
         for k, v in pairs(ApartmentObjects) do
@@ -158,7 +158,7 @@ NADRP.Functions.CreateCallback('apartments:GetApartmentOffset', function(source,
     cb(retval)
 end)
 
-NADRP.Functions.CreateCallback('apartments:GetApartmentOffsetNewOffset', function(source, cb, apartment)
+denalifw.Functions.CreateCallback('apartments:GetApartmentOffsetNewOffset', function(source, cb, apartment)
     local retval = Apartments.SpawnOffset
     if ApartmentObjects ~= nil and ApartmentObjects[apartment] ~= nil and ApartmentObjects[apartment].apartments ~= nil then
         for k, v in pairs(ApartmentObjects[apartment].apartments) do
@@ -170,7 +170,7 @@ NADRP.Functions.CreateCallback('apartments:GetApartmentOffsetNewOffset', functio
     cb(retval)
 end)
 
-NADRP.Functions.CreateCallback('apartments:GetOwnedApartment', function(source, cb, cid)
+denalifw.Functions.CreateCallback('apartments:GetOwnedApartment', function(source, cb, cid)
     if cid ~= nil then
         local result = MySQL.Sync.fetchAll('SELECT * FROM apartments WHERE citizenid = ?', { cid })
         if result[1] ~= nil then
@@ -179,7 +179,7 @@ NADRP.Functions.CreateCallback('apartments:GetOwnedApartment', function(source, 
         return cb(nil)
     else
         local src = source
-        local Player = NADRP.Functions.GetPlayer(src)
+        local Player = denalifw.Functions.GetPlayer(src)
         local result = MySQL.Sync.fetchAll('SELECT * FROM apartments WHERE citizenid = ?', { Player.PlayerData.citizenid })
         if result[1] ~= nil then
             return cb(result[1])
@@ -188,9 +188,9 @@ NADRP.Functions.CreateCallback('apartments:GetOwnedApartment', function(source, 
     end
 end)
 
-NADRP.Functions.CreateCallback('apartments:IsOwner', function(source, cb, apartment)
+denalifw.Functions.CreateCallback('apartments:IsOwner', function(source, cb, apartment)
 	local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Player ~= nil then
         local result = MySQL.Sync.fetchAll('SELECT * FROM apartments WHERE citizenid = ?', { Player.PlayerData.citizenid })
         if result[1] ~= nil then
@@ -206,9 +206,9 @@ NADRP.Functions.CreateCallback('apartments:IsOwner', function(source, cb, apartm
 end)
 
 
-NADRP.Functions.CreateCallback('apartments:GetOutfits', function(source, cb)
+denalifw.Functions.CreateCallback('apartments:GetOutfits', function(source, cb)
 	local src = source
-	local Player = NADRP.Functions.GetPlayer(src)
+	local Player = denalifw.Functions.GetPlayer(src)
 
 	if Player then
         local result = MySQL.Sync.fetchAll('SELECT * FROM player_outfits WHERE citizenid = ?', { Player.PlayerData.citizenid })

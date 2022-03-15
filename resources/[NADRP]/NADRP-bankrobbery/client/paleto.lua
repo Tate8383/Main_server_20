@@ -4,17 +4,17 @@ local requiredItemsShowed2 = false
 CreateThread(function()
     Wait(2000)
     local requiredItems = {
-        [1] = {name = NADRP.Shared.Items["security_card_01"]["name"], image = NADRP.Shared.Items["security_card_01"]["image"]},
+        [1] = {name = denalifw.Shared.Items["security_card_01"]["name"], image = denalifw.Shared.Items["security_card_01"]["image"]},
     }
 
     local requiredItems2 = {
-        [1] = {name = NADRP.Shared.Items["thermite"]["name"], image = NADRP.Shared.Items["thermite"]["image"]},
+        [1] = {name = denalifw.Shared.Items["thermite"]["name"], image = denalifw.Shared.Items["thermite"]["image"]},
     }
     while true do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
         local inRange = false
-        if NADRP ~= nil then
+        if denalifw ~= nil then
             if #(pos - Config.BigBanks["paleto"]["coords"]) < 20.0 then
                 inRange = true
                 if not Config.BigBanks["paleto"]["isOpened"] then
@@ -44,7 +44,7 @@ CreateThread(function()
                                             if CurrentCops >= Config.MinimumPaletoPolice then
                                                 openLocker("paleto", k)
                                             else
-                                                NADRP.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
+                                                denalifw.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
                                             end
                                         end
                                     end
@@ -81,7 +81,7 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('NADRP-bankrobbery:UseBankcardA', function()
+RegisterNetEvent('denalifw-bankrobbery:UseBankcardA', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local dist = #(pos - Config.BigBanks["paleto"]["coords"])
@@ -89,12 +89,12 @@ RegisterNetEvent('NADRP-bankrobbery:UseBankcardA', function()
         TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
     end
     if dist < 1.5 then
-        NADRP.Functions.TriggerCallback('NADRP-bankrobbery:server:isRobberyActive', function(isBusy)
+        denalifw.Functions.TriggerCallback('denalifw-bankrobbery:server:isRobberyActive', function(isBusy)
             if not isBusy then
                 if CurrentCops >= Config.MinimumPaletoPolice then
                     if not Config.BigBanks["paleto"]["isOpened"] then
                         TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                        NADRP.Functions.Progressbar("security_pass", "Validitating card..", math.random(5000, 10000), false, true, {
+                        denalifw.Functions.Progressbar("security_pass", "Validitating card..", math.random(5000, 10000), false, true, {
                             disableMovement = true,
                             disableCarMovement = true,
                             disableMouse = false,
@@ -105,9 +105,9 @@ RegisterNetEvent('NADRP-bankrobbery:UseBankcardA', function()
                             flags = 16,
                         }, {}, {}, function() -- Done
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            TriggerServerEvent('NADRP-bankrobbery:server:setBankState', "paleto", true)
-                            TriggerServerEvent("NADRP:Server:RemoveItem", "security_card_01", 1)
-                            TriggerServerEvent('NADRP-doorlock:server:updateState', 4, false)
+                            TriggerServerEvent('denalifw-bankrobbery:server:setBankState', "paleto", true)
+                            TriggerServerEvent("denalifw:Server:RemoveItem", "security_card_01", 1)
+                            TriggerServerEvent('denalifw-doorlock:server:updateState', 4, false)
                             if not copsCalled then
 								local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                                 local street1 = GetStreetNameFromHashKey(s1)
@@ -117,22 +117,22 @@ RegisterNetEvent('NADRP-bankrobbery:UseBankcardA', function()
                                     streetLabel = streetLabel .. " " .. street2
                                 end
                                 if Config.BigBanks["paleto"]["alarm"] then
-                                    TriggerServerEvent("NADRP-bankrobbery:server:callCops", "paleto", 0, streetLabel, pos)
+                                    TriggerServerEvent("denalifw-bankrobbery:server:callCops", "paleto", 0, streetLabel, pos)
                                     copsCalled = true
                                 end
                             end
                         end, function() -- Cancel
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            NADRP.Functions.Notify("Canceled..", "error")
+                            denalifw.Functions.Notify("Canceled..", "error")
                         end)
                     else
-                        NADRP.Functions.Notify("It looks like the bank is already opened..", "error")
+                        denalifw.Functions.Notify("It looks like the bank is already opened..", "error")
                     end
                 else
-                    NADRP.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
+                    denalifw.Functions.Notify('Minimum Of '..Config.MinimumPaletoPolice..' Police Needed', "error")
                 end
             else
-                NADRP.Functions.Notify("The security lock is active, the door cannot be opened at the moment..", "error", 5500)
+                denalifw.Functions.Notify("The security lock is active, the door cannot be opened at the moment..", "error", 5500)
             end
         end)
     end

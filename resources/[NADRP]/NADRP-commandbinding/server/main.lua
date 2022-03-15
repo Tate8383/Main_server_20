@@ -1,13 +1,13 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
-NADRP.Commands.Add("binds", "Open commandbinding menu", {}, false, function(source, args)
-    local Player = NADRP.Functions.GetPlayer(source)
-	TriggerClientEvent("NADRP-commandbinding:client:openUI", source)
+denalifw.Commands.Add("binds", "Open commandbinding menu", {}, false, function(source, args)
+    local Player = denalifw.Functions.GetPlayer(source)
+	TriggerClientEvent("denalifw-commandbinding:client:openUI", source)
 end)
 
-RegisterNetEvent('NADRP-commandbinding:server:setKeyMeta', function(keyMeta)
+RegisterNetEvent('denalifw-commandbinding:server:setKeyMeta', function(keyMeta)
     local src = source
-    local ply = NADRP.Functions.GetPlayer(src)
+    local ply = denalifw.Functions.GetPlayer(src)
 
     ply.Functions.SetMetaData("commandbinds", keyMeta)
 end)

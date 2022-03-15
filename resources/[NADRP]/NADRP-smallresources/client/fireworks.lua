@@ -72,7 +72,7 @@ CreateThread(function()
 end)
 
 RegisterNetEvent('fireworks:client:UseFirework', function(itemName, assetName)
-    NADRP.Functions.Progressbar("spawn_object", "Placing object..", 3000, false, true, {
+    denalifw.Functions.Progressbar("spawn_object", "Placing object..", 3000, false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
@@ -83,13 +83,13 @@ RegisterNetEvent('fireworks:client:UseFirework', function(itemName, assetName)
         flags = 16,
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        TriggerServerEvent("NADRP:Server:RemoveItem", itemName, 1)
-        TriggerEvent("inventory:client:ItemBox", NADRP.Shared.Items[itemName], "remove")
+        TriggerServerEvent("denalifw:Server:RemoveItem", itemName, 1)
+        TriggerEvent("inventory:client:ItemBox", denalifw.Shared.Items[itemName], "remove")
         local pos = GetEntityCoords(PlayerPedId())
         DoFireWork(assetName, pos)
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        NADRP.Functions.Notify("Canceled..", "error")
+        denalifw.Functions.Notify("Canceled..", "error")
     end)
 end)
 

@@ -117,12 +117,12 @@ CreateThread(function()
                 local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
                 local weaponLabel = Lang:t('info.wep_unknown')
                 local weaponName = Lang:t('info.wep_unknown')
-                local weaponItem = NADRP.Shared.Weapons[killerWeapon]
+                local weaponItem = denalifw.Shared.Weapons[killerWeapon]
                 if weaponItem then
                     weaponLabel = weaponItem.label
                     weaponName = weaponItem.name
                 end
-                TriggerServerEvent("NADRP-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
+                TriggerServerEvent("denalifw-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
                 deathTime = Config.DeathTime
                 OnDeath()
                 DeathTimer()

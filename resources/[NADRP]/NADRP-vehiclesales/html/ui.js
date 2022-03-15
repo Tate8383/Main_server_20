@@ -24,7 +24,7 @@ var app = new Vue({
                             desc: this.vehicleDescription
                         })                        
                     };
-                    fetch("https://NADRP-vehiclesales/sellVehicle", requestOptions);
+                    fetch("https://denalifw-vehiclesales/sellVehicle", requestOptions);
                     this.close();
                 } else {
                     this.errors.push("Price must be a numeric value only");
@@ -39,7 +39,7 @@ var app = new Vue({
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({})
             };
-            fetch("https://NADRP-vehiclesales/buyVehicle", requestOptions);
+            fetch("https://denalifw-vehiclesales/buyVehicle", requestOptions);
             this.close();
         },
         close() {            
@@ -48,7 +48,7 @@ var app = new Vue({
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({})
             };
-            fetch("https://NADRP-vehiclesales/close", requestOptions);
+            fetch("https://denalifw-vehiclesales/close", requestOptions);
             // .then(function(msg) {
             //     console.log(msg);
 

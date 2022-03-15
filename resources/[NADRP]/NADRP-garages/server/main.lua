@@ -1,11 +1,11 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local OutsideVehicles = {}
 
 -- Events
 
-RegisterNetEvent('NADRP-garages:server:UpdateOutsideVehicles', function(Vehicles)
+RegisterNetEvent('denalifw-garages:server:UpdateOutsideVehicles', function(Vehicles)
     local src = source
-    local Ply = NADRP.Functions.GetPlayer(src)
+    local Ply = denalifw.Functions.GetPlayer(src)
     local CitizenId = Ply.PlayerData.citizenid
     OutsideVehicles[CitizenId] = Vehicles
 end)
@@ -19,33 +19,33 @@ AddEventHandler('onResourceStart', function(resource)
     end
 end)
 
-RegisterNetEvent('NADRP-garage:server:PayDepotPrice', function(vehicle, garage)
+RegisterNetEvent('denalifw-garage:server:PayDepotPrice', function(vehicle, garage)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local cashBalance = Player.PlayerData.money["cash"]
     local bankBalance = Player.PlayerData.money["bank"]
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {vehicle.plate}, function(result)
         if result[1] then
             if cashBalance >= result[1].depotprice then
                 Player.Functions.RemoveMoney("cash", result[1].depotprice, "paid-depot")
-                TriggerClientEvent("NADRP-garages:client:takeOutDepot", src, vehicle, garage)
+                TriggerClientEvent("denalifw-garages:client:takeOutDepot", src, vehicle, garage)
             elseif bankBalance >= result[1].depotprice then
                 Player.Functions.RemoveMoney("bank", result[1].depotprice, "paid-depot")
-                TriggerClientEvent("NADRP-garages:client:takeOutDepot", src, vehicle, garage)
+                TriggerClientEvent("denalifw-garages:client:takeOutDepot", src, vehicle, garage)
             else
-                TriggerClientEvent('NADRP:Notify', src, Lang:t("error.not_enough"), 'error')
+                TriggerClientEvent('denalifw:Notify', src, Lang:t("error.not_enough"), 'error')
             end
         end
     end)
 end)
 
-RegisterNetEvent('NADRP-garage:server:updateVehicleState', function(state, plate, garage)
+RegisterNetEvent('denalifw-garage:server:updateVehicleState', function(state, plate, garage)
     MySQL.Async.execute('UPDATE player_vehicles SET state = ?, garage = ?, depotprice = ? WHERE plate = ?',{state, garage, 0, plate})
 end)
 
-RegisterNetEvent('NADRP-garage:server:updateVehicleStatus', function(fuel, engine, body, plate, garage)
+RegisterNetEvent('denalifw-garage:server:updateVehicleStatus', function(fuel, engine, body, plate, garage)
     local src = source
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
 
     if engine > 1000 then
         engine = engine / 1000
@@ -60,9 +60,9 @@ end)
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback("NADRP-garage:server:checkVehicleOwner", function(source, cb, plate)
+denalifw.Functions.CreateCallback("denalifw-garage:server:checkVehicleOwner", function(source, cb, plate)
     local src = source
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ? AND citizenid = ?',{plate, pData.PlayerData.citizenid}, function(result)
         if result[1] then
             cb(true, result[1].balance)
@@ -72,8 +72,8 @@ NADRP.Functions.CreateCallback("NADRP-garage:server:checkVehicleOwner", function
     end)
 end)
 
-NADRP.Functions.CreateCallback("NADRP-garage:server:GetOutsideVehicles", function(source, cb)
-    local Ply = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateCallback("denalifw-garage:server:GetOutsideVehicles", function(source, cb)
+    local Ply = denalifw.Functions.GetPlayer(source)
     local CitizenId = Ply.PlayerData.citizenid
     if OutsideVehicles[CitizenId] and next(OutsideVehicles[CitizenId]) then
         cb(OutsideVehicles[CitizenId])
@@ -82,9 +82,9 @@ NADRP.Functions.CreateCallback("NADRP-garage:server:GetOutsideVehicles", functio
     end
 end)
 
-NADRP.Functions.CreateCallback("NADRP-garage:server:GetUserVehicles", function(source, cb, garage)
+denalifw.Functions.CreateCallback("denalifw-garage:server:GetUserVehicles", function(source, cb, garage)
     local src = source
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND garage = ?', {pData.PlayerData.citizenid, garage}, function(result)
         if result[1] then
             cb(result)
@@ -94,7 +94,7 @@ NADRP.Functions.CreateCallback("NADRP-garage:server:GetUserVehicles", function(s
     end)
 end)
 
-NADRP.Functions.CreateCallback("NADRP-garage:server:GetVehicleProperties", function(source, cb, plate)
+denalifw.Functions.CreateCallback("denalifw-garage:server:GetVehicleProperties", function(source, cb, plate)
     local src = source
     local properties = {}
     local result = MySQL.Sync.fetchAll('SELECT mods FROM player_vehicles WHERE plate = ?', {plate})
@@ -104,9 +104,9 @@ NADRP.Functions.CreateCallback("NADRP-garage:server:GetVehicleProperties", funct
     cb(properties)
 end)
 
-NADRP.Functions.CreateCallback("NADRP-garage:server:GetDepotVehicles", function(source, cb)
+denalifw.Functions.CreateCallback("denalifw-garage:server:GetDepotVehicles", function(source, cb)
     local src = source
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ? AND state = ?',{pData.PlayerData.citizenid, 0}, function(result)
         if result[1] then
             cb(result)
@@ -116,9 +116,9 @@ NADRP.Functions.CreateCallback("NADRP-garage:server:GetDepotVehicles", function(
     end)
 end)
 
-NADRP.Functions.CreateCallback("NADRP-garage:server:GetHouseVehicles", function(source, cb, house)
+denalifw.Functions.CreateCallback("denalifw-garage:server:GetHouseVehicles", function(source, cb, house)
     local src = source
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE garage = ?', {house}, function(result)
         if result[1] then
             cb(result)
@@ -128,12 +128,12 @@ NADRP.Functions.CreateCallback("NADRP-garage:server:GetHouseVehicles", function(
     end)
 end)
 
-NADRP.Functions.CreateCallback("NADRP-garage:server:checkVehicleHouseOwner", function(source, cb, plate, house)
+denalifw.Functions.CreateCallback("denalifw-garage:server:checkVehicleHouseOwner", function(source, cb, plate, house)
     local src = source
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
     MySQL.Async.fetchAll('SELECT * FROM player_vehicles WHERE plate = ?', {plate}, function(result)
         if result[1] then
-            local hasHouseKey = exports['NADRP-houses']:hasKey(result[1].license, result[1].citizenid, house)
+            local hasHouseKey = exports['denalifw-houses']:hasKey(result[1].license, result[1].citizenid, house)
             if hasHouseKey then
                 cb(true)
             else

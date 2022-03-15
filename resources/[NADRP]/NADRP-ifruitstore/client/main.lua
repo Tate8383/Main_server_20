@@ -1,6 +1,6 @@
 -- Variables
 
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local CurrentCops = 0
 local copsCalled = false
 local requiredItemsShowed = false
@@ -21,11 +21,11 @@ function lockpickDone(success)
     else
         if math.random(1, 100) <= 40 and IsWearingHandshoes() then
             TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-            NADRP.Functions.Notify("You ripped your glove..")
+            denalifw.Functions.Notify("You ripped your glove..")
         end
         if math.random(1, 100) <= 10 then
-            TriggerServerEvent("NADRP:Server:RemoveItem", "advancedlockpick", 1)
-            TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["advancedlockpick"], "remove")
+            TriggerServerEvent("denalifw:Server:RemoveItem", "advancedlockpick", 1)
+            TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["advancedlockpick"], "remove")
         end
     end
 end
@@ -36,7 +36,7 @@ function GrabItem(spot)
         requiredItemsShowed2 = false
         TriggerEvent('inventory:client:requiredItems', requiredItems, false)
     end
-    NADRP.Functions.Progressbar("grab_ifruititem", "Disconnect Item", 10000, false, true, {
+    denalifw.Functions.Progressbar("grab_ifruititem", "Disconnect Item", 10000, false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
@@ -55,20 +55,20 @@ function GrabItem(spot)
                 streetLabel = streetLabel .. " " .. street2
             end
             -- if Config.SmallBanks[closestBank]["alarm"] then
-                TriggerServerEvent("NADRP-ifruitstore:server:callCops", streetLabel, pos)
+                TriggerServerEvent("denalifw-ifruitstore:server:callCops", streetLabel, pos)
                 copsCalled = true
             -- end
         end
 
         StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-        TriggerServerEvent('NADRP-ifruitstore:server:setSpotState', "isDone", true, spot)
-        TriggerServerEvent('NADRP-ifruitstore:server:setSpotState', "isBusy", false, spot)
-        TriggerServerEvent('NADRP-ifruitstore:server:itemReward', spot)
-        TriggerServerEvent('NADRP-ifruitstore:server:PoliceAlertMessage', 'People try to steal items at the iFruit Store', pos, true)
+        TriggerServerEvent('denalifw-ifruitstore:server:setSpotState', "isDone", true, spot)
+        TriggerServerEvent('denalifw-ifruitstore:server:setSpotState', "isBusy", false, spot)
+        TriggerServerEvent('denalifw-ifruitstore:server:itemReward', spot)
+        TriggerServerEvent('denalifw-ifruitstore:server:PoliceAlertMessage', 'People try to steal items at the iFruit Store', pos, true)
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
-        TriggerServerEvent('NADRP-ifruitstore:server:setSpotState', "isBusy", false, spot)
-        NADRP.Functions.Notify("Canceled..", "error")
+        TriggerServerEvent('denalifw-ifruitstore:server:setSpotState', "isBusy", false, spot)
+        denalifw.Functions.Notify("Canceled..", "error")
     end)
 end
 
@@ -130,23 +130,23 @@ end)
 
 RegisterNUICallback('thermitefailed', function()
     PlaySound(-1, "Place_Prop_Fail", "DLC_Dmod_Prop_Editor_Sounds", 0, 0, 1)
-    TriggerServerEvent("NADRP-ifruitstore:server:SetThermiteStatus", "isBusy", false)
-    TriggerServerEvent("NADRP:Server:RemoveItem", "thermite", 1)
-    TriggerEvent('inventory:client:ItemBox', NADRP.Shared.Items["thermite"], "remove")
+    TriggerServerEvent("denalifw-ifruitstore:server:SetThermiteStatus", "isBusy", false)
+    TriggerServerEvent("denalifw:Server:RemoveItem", "thermite", 1)
+    TriggerEvent('inventory:client:ItemBox', denalifw.Shared.Items["thermite"], "remove")
     local coords = GetEntityCoords(PlayerPedId())
     local randTime = math.random(10000, 15000)
     CreateFire(coords, randTime)
 
-    TriggerServerEvent('NADRP-ifruitstore:server:PoliceAlertMessage', 'People try to steal items at the iFruit Store', coords, true)
+    TriggerServerEvent('denalifw-ifruitstore:server:PoliceAlertMessage', 'People try to steal items at the iFruit Store', coords, true)
 end)
 
 RegisterNUICallback('thermitesuccess', function()
-    NADRP.Functions.Notify("The fuses are broken", "success")
-    TriggerServerEvent("NADRP:Server:RemoveItem", "thermite", 1)
+    denalifw.Functions.Notify("The fuses are broken", "success")
+    TriggerServerEvent("denalifw:Server:RemoveItem", "thermite", 1)
     local pos = GetEntityCoords(PlayerPedId())
     if #(pos - vector3(Config.Locations["thermite"].x, Config.Locations["thermite"].y,Config.Locations["thermite"].z)) < 1.0 then
-        TriggerServerEvent("NADRP-ifruitstore:server:SetThermiteStatus", "isDone", true)
-        TriggerServerEvent("NADRP-ifruitstore:server:SetThermiteStatus", "isBusy", false)
+        TriggerServerEvent("denalifw-ifruitstore:server:SetThermiteStatus", "isDone", true)
+        TriggerServerEvent("denalifw-ifruitstore:server:SetThermiteStatus", "isBusy", false)
     end
 end)
 
@@ -161,24 +161,24 @@ RegisterNetEvent('SafeCracker:EndMinigame', function(won)
         if won then
             if not Config.Locations["safe"].isDone then
                 SetNuiFocus(false, false)
-                TriggerServerEvent("NADRP-ifruitstore:server:SafeReward")
-                TriggerServerEvent("NADRP-ifruitstore:server:SetSafeStatus", "isBusy", false)
-                TriggerServerEvent("NADRP-ifruitstore:server:SetSafeStatus", "isDone", false)
+                TriggerServerEvent("denalifw-ifruitstore:server:SafeReward")
+                TriggerServerEvent("denalifw-ifruitstore:server:SetSafeStatus", "isBusy", false)
+                TriggerServerEvent("denalifw-ifruitstore:server:SetSafeStatus", "isDone", false)
                 takeAnim()
             end
         end
     end
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    TriggerServerEvent("NADRP-ifruitstore:server:LoadLocationList")
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    TriggerServerEvent("denalifw-ifruitstore:server:LoadLocationList")
 end)
 
 RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
 
-RegisterNetEvent('NADRP-ifruitstore:client:LoadList', function(list)
+RegisterNetEvent('denalifw-ifruitstore:client:LoadList', function(list)
     Config.Locations = list
 end)
 
@@ -192,11 +192,11 @@ RegisterNetEvent('thermite:UseThermite', function()
             end
             if requiredItemsShowed then
                 requiredItems = {
-                    [1] = {name = NADRP.Shared.Items["thermite"]["name"], image = NADRP.Shared.Items["thermite"]["image"]},
+                    [1] = {name = denalifw.Shared.Items["thermite"]["name"], image = denalifw.Shared.Items["thermite"]["image"]},
                 }
                 requiredItemsShowed = false
                 TriggerEvent('inventory:client:requiredItems', requiredItems, false)
-                TriggerServerEvent("NADRP-ifruitstore:server:SetThermiteStatus", "isBusy", true)
+                TriggerServerEvent("denalifw-ifruitstore:server:SetThermiteStatus", "isBusy", true)
                 SetNuiFocus(true, true)
                 SendNUIMessage({
                     action = "openThermite",
@@ -204,12 +204,12 @@ RegisterNetEvent('thermite:UseThermite', function()
                 })
             end
         else
-            NADRP.Functions.Notify("Not enough police", "error")
+            denalifw.Functions.Notify("Not enough police", "error")
         end
     end
 end)
 
-RegisterNetEvent('NADRP-ifruitstore:client:setSpotState', function(stateType, state, spot)
+RegisterNetEvent('denalifw-ifruitstore:client:setSpotState', function(stateType, state, spot)
     if stateType == "isBusy" then
         Config.Locations["takeables"][spot].isBusy = state
     elseif stateType == "isDone" then
@@ -217,7 +217,7 @@ RegisterNetEvent('NADRP-ifruitstore:client:setSpotState', function(stateType, st
     end
 end)
 
-RegisterNetEvent('NADRP-ifruitstore:client:SetSafeStatus', function(stateType, state)
+RegisterNetEvent('denalifw-ifruitstore:client:SetSafeStatus', function(stateType, state)
     if stateType == "isBusy" then
         Config.Locations["safe"].isBusy = state
     elseif stateType == "isDone" then
@@ -225,7 +225,7 @@ RegisterNetEvent('NADRP-ifruitstore:client:SetSafeStatus', function(stateType, s
     end
 end)
 
-RegisterNetEvent('NADRP-ifruitstore:client:SetThermiteStatus', function(stateType, state)
+RegisterNetEvent('denalifw-ifruitstore:client:SetThermiteStatus', function(stateType, state)
     if stateType == "isBusy" then
         Config.Locations["thermite"].isBusy = state
     elseif stateType == "isDone" then
@@ -233,7 +233,7 @@ RegisterNetEvent('NADRP-ifruitstore:client:SetThermiteStatus', function(stateTyp
     end
 end)
 
-RegisterNetEvent('NADRP-ifruitstore:client:PoliceAlertMessage', function(msg, coords, blip)
+RegisterNetEvent('denalifw-ifruitstore:client:PoliceAlertMessage', function(msg, coords, blip)
     if blip then
         PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
         TriggerEvent("chatMessage", "911-Report", "error", msg)
@@ -265,11 +265,11 @@ RegisterNetEvent('NADRP-ifruitstore:client:PoliceAlertMessage', function(msg, co
     end
 end)
 
-RegisterNetEvent('NADRP-ifruitstore:client:robberyCall', function(streetLabel, coords)
+RegisterNetEvent('denalifw-ifruitstore:client:robberyCall', function(streetLabel, coords)
     if PlayerJob.name == "police" then
 
         PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-        TriggerEvent('NADRP-policealerts:client:AddPoliceAlert', {
+        TriggerEvent('denalifw-policealerts:client:AddPoliceAlert', {
             timeOut = 10000,
             alertTitle = "iFruitStore robbery attempt",
             coords = {
@@ -287,7 +287,7 @@ RegisterNetEvent('NADRP-ifruitstore:client:robberyCall', function(streetLabel, c
                     detail = streetLabel,
                 },
             },
-            callSign = NADRP.Functions.GetPlayerData().metadata["callsign"],
+            callSign = denalifw.Functions.GetPlayerData().metadata["callsign"],
         })
 
         local transG = 250
@@ -339,7 +339,7 @@ Citizen.CreateThread(function()
                         if not Config.Locations["thermite"].isDone then
                             if not requiredItemsShowed then
                                 requiredItems = {
-                                    [1] = {name = NADRP.Shared.Items["thermite"]["name"], image = NADRP.Shared.Items["thermite"]["image"]},
+                                    [1] = {name = denalifw.Shared.Items["thermite"]["name"], image = denalifw.Shared.Items["thermite"]["image"]},
                                 }
                                 requiredItemsShowed = true
                                 TriggerEvent('inventory:client:requiredItems', requiredItems, true)
@@ -349,7 +349,7 @@ Citizen.CreateThread(function()
                 else
                     if requiredItemsShowed then
                         requiredItems = {
-                            [1] = {name = NADRP.Shared.Items["thermite"]["name"], image = NADRP.Shared.Items["thermite"]["image"]},
+                            [1] = {name = denalifw.Shared.Items["thermite"]["name"], image = denalifw.Shared.Items["thermite"]["image"]},
                         }
                         requiredItemsShowed = false
                         TriggerEvent('inventory:client:requiredItems', requiredItems, false)
@@ -377,7 +377,7 @@ CreateThread(function()
                     if dist < 0.6 then
                         if not requiredItemsShowed2 then
                             requiredItems = {
-                                [1] = {name = NADRP.Shared.Items["advancedlockpick"]["name"], image = NADRP.Shared.Items["advancedlockpick"]["image"]},
+                                [1] = {name = denalifw.Shared.Items["advancedlockpick"]["name"], image = denalifw.Shared.Items["advancedlockpick"]["image"]},
                             }
                             requiredItemsShowed2 = true
                             TriggerEvent('inventory:client:requiredItems', requiredItems, true)
@@ -387,26 +387,26 @@ CreateThread(function()
                             if IsControlJustPressed(0, 38) then
                                 if CurrentCops >= 0 then
                                     if Config.Locations["thermite"].isDone then
-                                        NADRP.Functions.TriggerCallback('NADRP:HasItem', function(hasItem)
+                                        denalifw.Functions.TriggerCallback('denalifw:HasItem', function(hasItem)
                                             if hasItem then
                                                 currentSpot = spot
                                                 GrabItem(currentSpot)
                                             else
-                                                NADRP.Functions.Notify("You are missing an advanced lockpick", "error")
+                                                denalifw.Functions.Notify("You are missing an advanced lockpick", "error")
                                             end
                                         end, "advancedlockpick")
                                     else
-                                        NADRP.Functions.Notify("Security is still active..", "error")
+                                        denalifw.Functions.Notify("Security is still active..", "error")
                                     end
                                 else
-                                    NADRP.Functions.Notify("Not enough Police", "error")
+                                    denalifw.Functions.Notify("Not enough Police", "error")
                                 end
                             end
                         end
                     else
                         if requiredItemsShowed2 then
                             requiredItems = {
-                                [1] = {name = NADRP.Shared.Items["advancedlockpick"]["name"], image = NADRP.Shared.Items["advancedlockpick"]["image"]},
+                                [1] = {name = denalifw.Shared.Items["advancedlockpick"]["name"], image = denalifw.Shared.Items["advancedlockpick"]["image"]},
                             }
                             requiredItemsShowed2 = false
                             TriggerEvent('inventory:client:requiredItems', requiredItems, false)
@@ -418,7 +418,7 @@ CreateThread(function()
             if not inRange then
                 if requiredItemsShowed2 then
                     requiredItems = {
-                        [1] = {name = NADRP.Shared.Items["advancedlockpick"]["name"], image = NADRP.Shared.Items["advancedlockpick"]["image"]},
+                        [1] = {name = denalifw.Shared.Items["advancedlockpick"]["name"], image = denalifw.Shared.Items["advancedlockpick"]["image"]},
                     }
                     requiredItemsShowed2 = false
                     TriggerEvent('inventory:client:requiredItems', requiredItems, false)

@@ -2,36 +2,36 @@
 
 AddEventHandler('playerDropped', function()
     local src = source
-    if NADRP.Players[src] then
-        local Player = NADRP.Players[src]
-        TriggerEvent('NADRP-log:server:CreateLog', 'joinleave', 'Dropped', 'red', '**' .. GetPlayerName(src) .. '** (' .. Player.PlayerData.license .. ') left..')
+    if denalifw.Players[src] then
+        local Player = denalifw.Players[src]
+        TriggerEvent('denalifw-log:server:CreateLog', 'joinleave', 'Dropped', 'red', '**' .. GetPlayerName(src) .. '** (' .. Player.PlayerData.license .. ') left..')
         Player.Functions.Save()
         _G.Player_Buckets[Player.PlayerData.license] = nil
-        NADRP.Players[src] = nil
+        denalifw.Players[src] = nil
     end
 end)
 
 AddEventHandler('chatMessage', function(source, n, message)
     local src = source
     if string.sub(message, 1, 1) == '/' then
-        local args = NADRP.Shared.SplitStr(message, ' ')
+        local args = denalifw.Shared.SplitStr(message, ' ')
         local command = string.gsub(args[1]:lower(), '/', '')
         CancelEvent()
-        if NADRP.Commands.List[command] then
-            local Player = NADRP.Functions.GetPlayer(src)
+        if denalifw.Commands.List[command] then
+            local Player = denalifw.Functions.GetPlayer(src)
             if Player then
-                local isGod = NADRP.Functions.HasPermission(src, 'god')
-                local hasPerm = NADRP.Functions.HasPermission(src, NADRP.Commands.List[command].permission)
+                local isGod = denalifw.Functions.HasPermission(src, 'god')
+                local hasPerm = denalifw.Functions.HasPermission(src, denalifw.Commands.List[command].permission)
                 local isPrincipal = IsPlayerAceAllowed(src, 'command')
                 table.remove(args, 1)
                 if isGod or hasPerm or isPrincipal then
-                    if (NADRP.Commands.List[command].argsrequired and #NADRP.Commands.List[command].arguments ~= 0 and args[#NADRP.Commands.List[command].arguments] == nil) then
-                        TriggerClientEvent('NADRP:Notify', src, Lang:t('error.missing_args2'), 'error')
+                    if (denalifw.Commands.List[command].argsrequired and #denalifw.Commands.List[command].arguments ~= 0 and args[#denalifw.Commands.List[command].arguments] == nil) then
+                        TriggerClientEvent('denalifw:Notify', src, Lang:t('error.missing_args2'), 'error')
                     else
-                        NADRP.Commands.List[command].callback(src, args)
+                        denalifw.Commands.List[command].callback(src, args)
                     end
                 else
-                    TriggerClientEvent('NADRP:Notify', src, Lang:t('error.no_access'), 'error')
+                    TriggerClientEvent('denalifw:Notify', src, Lang:t('error.no_access'), 'error')
                 end
             end
         end
@@ -63,8 +63,8 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
 
     deferrals.update(string.format('Hello %s. We are checking if you are banned.', name))
 
-    local isBanned, Reason = NADRP.Functions.IsPlayerBanned(player)
-    local isLicenseAlreadyInUse = NADRP.Functions.IsLicenseInUse(license)
+    local isBanned, Reason = denalifw.Functions.IsPlayerBanned(player)
+    local isLicenseAlreadyInUse = denalifw.Functions.IsLicenseInUse(license)
 
     Wait(2500)
 
@@ -88,43 +88,43 @@ AddEventHandler('playerConnecting', OnPlayerConnecting)
 
 -- Open & Close Server (prevents players from joining)
 
-RegisterNetEvent('NADRP:server:CloseServer', function(reason)
+RegisterNetEvent('denalifw:server:CloseServer', function(reason)
     local src = source
-    if NADRP.Functions.HasPermission(src, 'admin') or NADRP.Functions.HasPermission(src, 'god') then
+    if denalifw.Functions.HasPermission(src, 'admin') or denalifw.Functions.HasPermission(src, 'god') then
         local reason = reason or 'No reason specified'
-        NADRP.Config.Server.closed = true
-        NADRP.Config.Server.closedReason = reason
+        denalifw.Config.Server.closed = true
+        denalifw.Config.Server.closedReason = reason
     else
-        NADRP.Functions.Kick(src, 'You don\'t have permissions for this..', nil, nil)
+        denalifw.Functions.Kick(src, 'You don\'t have permissions for this..', nil, nil)
     end
 end)
 
-RegisterNetEvent('NADRP:server:OpenServer', function()
+RegisterNetEvent('denalifw:server:OpenServer', function()
     local src = source
-    if NADRP.Functions.HasPermission(src, 'admin') or NADRP.Functions.HasPermission(src, 'god') then
-        NADRP.Config.Server.closed = false
+    if denalifw.Functions.HasPermission(src, 'admin') or denalifw.Functions.HasPermission(src, 'god') then
+        denalifw.Config.Server.closed = false
     else
-        NADRP.Functions.Kick(src, 'You don\'t have permissions for this..', nil, nil)
+        denalifw.Functions.Kick(src, 'You don\'t have permissions for this..', nil, nil)
     end
 end)
 
 -- Callbacks
 
-RegisterNetEvent('NADRP:Server:TriggerCallback', function(name, ...)
+RegisterNetEvent('denalifw:Server:TriggerCallback', function(name, ...)
     local src = source
-    NADRP.Functions.TriggerCallback(name, src, function(...)
-        TriggerClientEvent('NADRP:Client:TriggerCallback', src, name, ...)
+    denalifw.Functions.TriggerCallback(name, src, function(...)
+        TriggerClientEvent('denalifw:Client:TriggerCallback', src, name, ...)
     end, ...)
 end)
 
 -- Player
 
-RegisterNetEvent('NADRP:UpdatePlayer', function()
+RegisterNetEvent('denalifw:UpdatePlayer', function()
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Player then
-        local newHunger = Player.PlayerData.metadata['hunger'] - NADRP.Config.Player.HungerRate
-        local newThirst = Player.PlayerData.metadata['thirst'] - NADRP.Config.Player.ThirstRate
+        local newHunger = Player.PlayerData.metadata['hunger'] - denalifw.Config.Player.HungerRate
+        local newThirst = Player.PlayerData.metadata['thirst'] - denalifw.Config.Player.ThirstRate
         if newHunger <= 0 then
             newHunger = 0
         end
@@ -138,9 +138,9 @@ RegisterNetEvent('NADRP:UpdatePlayer', function()
     end
 end)
 
-RegisterNetEvent('NADRP:Server:SetMetaData', function(meta, data)
+RegisterNetEvent('denalifw:Server:SetMetaData', function(meta, data)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if meta == 'hunger' or meta == 'thirst' then
         if data > 100 then
             data = 100
@@ -152,71 +152,71 @@ RegisterNetEvent('NADRP:Server:SetMetaData', function(meta, data)
     TriggerClientEvent('hud:client:UpdateNeeds', src, Player.PlayerData.metadata['hunger'], Player.PlayerData.metadata['thirst'])
 end)
 
-RegisterNetEvent('NADRP:ToggleDuty', function()
+RegisterNetEvent('denalifw:ToggleDuty', function()
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Player.PlayerData.job.onduty then
         Player.Functions.SetJobDuty(false)
-        TriggerClientEvent('NADRP:Notify', src, Lang:t('info.off_duty'))
+        TriggerClientEvent('denalifw:Notify', src, Lang:t('info.off_duty'))
     else
         Player.Functions.SetJobDuty(true)
-        TriggerClientEvent('NADRP:Notify', src, Lang:t('info.on_duty'))
+        TriggerClientEvent('denalifw:Notify', src, Lang:t('info.on_duty'))
     end
-    TriggerClientEvent('NADRP:Client:SetDuty', src, Player.PlayerData.job.onduty)
+    TriggerClientEvent('denalifw:Client:SetDuty', src, Player.PlayerData.job.onduty)
 end)
 
 -- Items
 
-RegisterNetEvent('NADRP:Server:UseItem', function(item)
+RegisterNetEvent('denalifw:Server:UseItem', function(item)
     local src = source
     if item and item.amount > 0 then
-        if NADRP.Functions.CanUseItem(item.name) then
-            NADRP.Functions.UseItem(src, item)
+        if denalifw.Functions.CanUseItem(item.name) then
+            denalifw.Functions.UseItem(src, item)
         end
     end
 end)
 
-RegisterNetEvent('NADRP:Server:RemoveItem', function(itemName, amount, slot)
+RegisterNetEvent('denalifw:Server:RemoveItem', function(itemName, amount, slot)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     Player.Functions.RemoveItem(itemName, amount, slot)
 end)
 
-RegisterNetEvent('NADRP:Server:AddItem', function(itemName, amount, slot, info)
+RegisterNetEvent('denalifw:Server:AddItem', function(itemName, amount, slot, info)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     Player.Functions.AddItem(itemName, amount, slot, info)
 end)
 
--- Non-Chat Command Calling (ex: NADRP-adminmenu)
+-- Non-Chat Command Calling (ex: denalifw-adminmenu)
 
-RegisterNetEvent('NADRP:CallCommand', function(command, args)
+RegisterNetEvent('denalifw:CallCommand', function(command, args)
     local src = source
-    if NADRP.Commands.List[command] then
-        local Player = NADRP.Functions.GetPlayer(src)
+    if denalifw.Commands.List[command] then
+        local Player = denalifw.Functions.GetPlayer(src)
         if Player then
-            local isGod = NADRP.Functions.HasPermission(src, 'god')
-            local hasPerm = NADRP.Functions.HasPermission(src, NADRP.Commands.List[command].permission)
+            local isGod = denalifw.Functions.HasPermission(src, 'god')
+            local hasPerm = denalifw.Functions.HasPermission(src, denalifw.Commands.List[command].permission)
             local isPrincipal = IsPlayerAceAllowed(src, 'command')
-            if (NADRP.Commands.List[command].permission == Player.PlayerData.job.name) or isGod or hasPerm or isPrincipal then
-                if (NADRP.Commands.List[command].argsrequired and #NADRP.Commands.List[command].arguments ~= 0 and args[#NADRP.Commands.List[command].arguments] == nil) then
-                    TriggerClientEvent('NADRP:Notify', src, Lang:t('error.missing_args2'), 'error')
+            if (denalifw.Commands.List[command].permission == Player.PlayerData.job.name) or isGod or hasPerm or isPrincipal then
+                if (denalifw.Commands.List[command].argsrequired and #denalifw.Commands.List[command].arguments ~= 0 and args[#denalifw.Commands.List[command].arguments] == nil) then
+                    TriggerClientEvent('denalifw:Notify', src, Lang:t('error.missing_args2'), 'error')
                 else
-                    NADRP.Commands.List[command].callback(src, args)
+                    denalifw.Commands.List[command].callback(src, args)
                 end
             else
-                TriggerClientEvent('NADRP:Notify', src, Lang:t('error.no_access'), 'error')
+                TriggerClientEvent('denalifw:Notify', src, Lang:t('error.no_access'), 'error')
             end
         end
     end
 end)
 
--- Has Item Callback (can also use client function - NADRP.Functions.HasItem(item))
+-- Has Item Callback (can also use client function - denalifw.Functions.HasItem(item))
 
-NADRP.Functions.CreateCallback('NADRP:HasItem', function(source, cb, items, amount)
+denalifw.Functions.CreateCallback('denalifw:HasItem', function(source, cb, items, amount)
     local src = source
     local retval = false
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Player then
         if type(items) == 'table' then
             local count = 0

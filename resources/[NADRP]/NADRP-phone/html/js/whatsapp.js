@@ -31,7 +31,7 @@ $(document).on('click', '.whatsapp-chat', function(e){
 
     QB.Phone.Functions.SetupChatMessages(ChatData);
 
-    $.post('https://NADRP-phone/ClearAlerts', JSON.stringify({
+    $.post('https://denalifw-phone/ClearAlerts', JSON.stringify({
         number: ChatData.number
     }));
 
@@ -63,7 +63,7 @@ $(document).on('click', '.whatsapp-chat', function(e){
 
 $(document).on('click', '#whatsapp-openedchat-back', function(e){
     e.preventDefault();
-    $.post('https://NADRP-phone/GetWhatsappChats', JSON.stringify({}), function(chats){
+    $.post('https://denalifw-phone/GetWhatsappChats', JSON.stringify({}), function(chats){
         QB.Phone.Functions.LoadWhatsappChats(chats);
     });
     OpenedChatData.number = null;
@@ -188,7 +188,7 @@ $(document).on('click', '#whatsapp-openedchat-send', function(e){
     var Message = $("#whatsapp-openedchat-message").val();
 
     if (Message !== null && Message !== undefined && Message !== "") {
-        $.post('https://NADRP-phone/SendMessage', JSON.stringify({
+        $.post('https://denalifw-phone/SendMessage', JSON.stringify({
             ChatNumber: OpenedChatData.number,
             ChatDate: GetCurrentDateKey(),
             ChatMessage: Message,
@@ -212,7 +212,7 @@ $(document).on('keypress', function (e) {
                     ALLOWED_ATTR: []
                 });
                 if (clean == '') clean = 'Hmm, I shouldn\'t be able to do this...'
-                $.post('https://NADRP-phone/SendMessage', JSON.stringify({
+                $.post('https://denalifw-phone/SendMessage', JSON.stringify({
                     ChatNumber: OpenedChatData.number,
                     ChatDate: GetCurrentDateKey(),
                     ChatMessage: clean,
@@ -230,7 +230,7 @@ $(document).on('keypress', function (e) {
 $(document).on('click', '#send-location', function(e){
     e.preventDefault();
 
-    $.post('https://NADRP-phone/SendMessage', JSON.stringify({
+    $.post('https://denalifw-phone/SendMessage', JSON.stringify({
         ChatNumber: OpenedChatData.number,
         ChatDate: GetCurrentDateKey(),
         ChatMessage: "Shared location",
@@ -242,9 +242,9 @@ $(document).on('click', '#send-location', function(e){
 $(document).on('click', '#send-image', function(e){
     e.preventDefault();
     let ChatNumber2 = OpenedChatData.number;
-    $.post('https://NADRP-phone/TakePhoto', JSON.stringify({}),function(url){
+    $.post('https://denalifw-phone/TakePhoto', JSON.stringify({}),function(url){
         if(url){
-        $.post('https://NADRP-phone/SendMessage', JSON.stringify({
+        $.post('https://denalifw-phone/SendMessage', JSON.stringify({
         ChatNumber: ChatNumber2,
         ChatDate: GetCurrentDateKey(),
         ChatMessage: "Photo",
@@ -260,7 +260,7 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
         OpenedChatData.number = cData.number;
 
         if (OpenedChatPicture == null) {
-            $.post('https://NADRP-phone/GetProfilePicture', JSON.stringify({
+            $.post('https://denalifw-phone/GetProfilePicture', JSON.stringify({
                 number: OpenedChatData.number,
             }), function(picture){
                 OpenedChatPicture = "./img/default.png";
@@ -306,7 +306,7 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
     } else {
         OpenedChatData.number = NewChatData.number;
         if (OpenedChatPicture == null) {
-            $.post('https://NADRP-phone/GetProfilePicture', JSON.stringify({
+            $.post('https://denalifw-phone/GetProfilePicture', JSON.stringify({
                 number: OpenedChatData.number,
             }), function(picture){
                 OpenedChatPicture = "./img/default.png";
@@ -338,7 +338,7 @@ $(document).on('click', '.whatsapp-shared-location', function(e){
     messageCoords.x = $(this).data('x');
     messageCoords.y = $(this).data('y');
 
-    $.post('https://NADRP-phone/SharedLocation', JSON.stringify({
+    $.post('https://denalifw-phone/SharedLocation', JSON.stringify({
         coords: messageCoords,
     }))
 });

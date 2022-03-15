@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 CreateThread(function()
     local accts = MySQL.Sync.fetchAll('SELECT * FROM bank_accounts WHERE account_type = ?', { 'Business' })
@@ -69,7 +69,7 @@ end)
 
 RegisterNetEvent('qb-banking:createNewCard', function()
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
 
     if xPlayer ~= nil then
         local cid = xPlayer.PlayerData.citizenid
@@ -85,7 +85,7 @@ end)
 
 local function getCharacterName(cid)
     local src = source
-    local player = NADRP.Functions.GetPlayer(src)
+    local player = denalifw.Functions.GetPlayer(src)
     local name = player.PlayerData.name
 end
 
@@ -114,7 +114,7 @@ end
 RegisterNetEvent('qb-banking:initiateTransfer', function(data)
     --[[
     local _src = source
-    local _startChar = NADRP.Functions.GetPlayer(_src)
+    local _startChar = denalifw.Functions.GetPlayer(_src)
     while _startChar == nil do Wait(0) end
 
     local checkAccount, cid, acType = checkAccountExists(data.account, data.sortcode)
@@ -204,9 +204,9 @@ local function format_int(number)
     return minus .. int:reverse():gsub("^,", "") .. fraction
 end
 
-NADRP.Functions.CreateCallback('qb-banking:getBankingInformation', function(source, cb)
+denalifw.Functions.CreateCallback('qb-banking:getBankingInformation', function(source, cb)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     while xPlayer == nil do Wait(0) end
         if (xPlayer) then
             local banking = {
@@ -231,7 +231,7 @@ end)
 
 RegisterNetEvent('qb-banking:createBankCard', function(pin)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     local cid = xPlayer.PlayerData.citizenid
     local cardNumber = math.random(1000000000000000,9999999999999999)
     xPlayer.Functions.SetCreditCard(cardNumber)
@@ -251,14 +251,14 @@ RegisterNetEvent('qb-banking:createBankCard', function(pin)
     end
 
     TriggerClientEvent('qb-banking:openBankScreen', src)
-    TriggerClientEvent('NADRP:Notify', src, 'You have successfully ordered a Debit Card.', 'success')
+    TriggerClientEvent('denalifw:Notify', src, 'You have successfully ordered a Debit Card.', 'success')
 
     TriggerEvent('qb-log:server:CreateLog', 'banking', 'Banking', 'lightgreen', "**"..GetPlayerName(xPlayer.PlayerData.source) .. " (citizenid: "..xPlayer.PlayerData.citizenid.." | id: "..xPlayer.PlayerData.source..")** successfully ordered a debit card")
 end)
 
 RegisterNetEvent('qb-banking:doQuickDeposit', function(amount)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     while xPlayer == nil do Wait(0) end
     local currentCash = xPlayer.Functions.GetMoney('cash')
 
@@ -275,7 +275,7 @@ end)
 
 RegisterNetEvent('qb-banking:toggleCard', function(toggle)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
 
     while xPlayer == nil do Wait(0) end
         --_char:Bank():ToggleDebitCard(toggle)
@@ -283,7 +283,7 @@ end)
 
 RegisterNetEvent('qb-banking:doQuickWithdraw', function(amount, branch)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     while xPlayer == nil do Wait(0) end
     local currentCash = xPlayer.Functions.GetMoney('bank')
 
@@ -301,7 +301,7 @@ end)
 RegisterNetEvent('qb-banking:updatePin', function(pin)
     if pin ~= nil then
         local src = source
-        local xPlayer = NADRP.Functions.GetPlayer(src)
+        local xPlayer = denalifw.Functions.GetPlayer(src)
         while xPlayer == nil do Wait(0) end
 
         --   _char:Bank().UpdateDebitCardPin(pin)
@@ -312,7 +312,7 @@ end)
 
 RegisterNetEvent('qb-banking:savingsDeposit', function(amount)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     while xPlayer == nil do Wait(0) end
     local currentBank = xPlayer.Functions.GetMoney('bank')
 
@@ -329,7 +329,7 @@ end)
 
 RegisterNetEvent('qb-banking:savingsWithdraw', function(amount)
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     while xPlayer == nil do Wait(0) end
     local currentSavings = savingsAccounts[xPlayer.PlayerData.citizenid].GetBalance()
 
@@ -346,7 +346,7 @@ end)
 
 RegisterNetEvent('qb-banking:createSavingsAccount', function()
     local src = source
-    local xPlayer = NADRP.Functions.GetPlayer(src)
+    local xPlayer = denalifw.Functions.GetPlayer(src)
     local success = createSavingsAccount(xPlayer.PlayerData.citizenid)
     repeat Wait(0) until success ~= nil
     TriggerClientEvent('qb-banking:openBankScreen', src)
@@ -355,14 +355,14 @@ RegisterNetEvent('qb-banking:createSavingsAccount', function()
 end)
 
 
-NADRP.Commands.Add('givecash', 'Give cash to player.', {{name = 'id', help = 'Player ID'}, {name = 'amount', help = 'Amount'}}, true, function(source, args)
+denalifw.Commands.Add('givecash', 'Give cash to player.', {{name = 'id', help = 'Player ID'}, {name = 'amount', help = 'Amount'}}, true, function(source, args)
     local src = source
 	local id = tonumber(args[1])
 	local amount = math.ceil(tonumber(args[2]))
 
 	if id and amount then
-		local xPlayer = NADRP.Functions.GetPlayer(src)
-		local xReciv = NADRP.Functions.GetPlayer(id)
+		local xPlayer = denalifw.Functions.GetPlayer(src)
+		local xReciv = denalifw.Functions.GetPlayer(id)
 
 		if xReciv and xPlayer then
 			if not xPlayer.PlayerData.metadata["isdead"] then
@@ -370,26 +370,26 @@ NADRP.Commands.Add('givecash', 'Give cash to player.', {{name = 'id', help = 'Pl
 				if #(GetEntityCoords(GetPlayerPed(src)) - GetEntityCoords(GetPlayerPed(id))) < distance then
 					if xPlayer.Functions.RemoveMoney('cash', amount) then
 						if xReciv.Functions.AddMoney('cash', amount) then
-							TriggerClientEvent('NADRP:Notify', src, "Success fully gave to ID " .. tostring(id) .. ' $' .. tostring(amount) .. '.', "success")
-							TriggerClientEvent('NADRP:Notify', id, "Success recived gave $" .. tostring(amount) .. ' from ID ' .. tostring(src), "success")
+							TriggerClientEvent('denalifw:Notify', src, "Success fully gave to ID " .. tostring(id) .. ' $' .. tostring(amount) .. '.', "success")
+							TriggerClientEvent('denalifw:Notify', id, "Success recived gave $" .. tostring(amount) .. ' from ID ' .. tostring(src), "success")
 							TriggerClientEvent("payanimation", src)
 						else
-							TriggerClientEvent('NADRP:Notify', src, "Could not give item to the given id.", "error")
+							TriggerClientEvent('denalifw:Notify', src, "Could not give item to the given id.", "error")
 						end
 					else
-						TriggerClientEvent('NADRP:Notify', src, "You don\'t have this amount.", "error")
+						TriggerClientEvent('denalifw:Notify', src, "You don\'t have this amount.", "error")
 					end
 				else
-					TriggerClientEvent('NADRP:Notify', src, "You are too far away lmfao.", "error")
+					TriggerClientEvent('denalifw:Notify', src, "You are too far away lmfao.", "error")
 				end
 			else
-				TriggerClientEvent('NADRP:Notify', src, "You are dead LOL.", "error")
+				TriggerClientEvent('denalifw:Notify', src, "You are dead LOL.", "error")
 			end
 		else
-			TriggerClientEvent('NADRP:Notify', src, "Wrong ID.", "error")
+			TriggerClientEvent('denalifw:Notify', src, "Wrong ID.", "error")
 		end
 	else
-		TriggerClientEvent('NADRP:Notify', src, "Usage /givecash [ID] [AMOUNT]", "error")
+		TriggerClientEvent('denalifw:Notify', src, "Usage /givecash [ID] [AMOUNT]", "error")
 	end
 end)
 

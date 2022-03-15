@@ -21,15 +21,15 @@ CreateThread(function()
                         if IsControlJustPressed(0, 47) then
                             LocalPlayer.state:set("inv_busy", true, true)
                             TaskStartScenarioInPlace(PlayerPedId(), "WORLD_HUMAN_STAND_IMPATIENT", 0, true)
-                            NADRP.Functions.Progressbar("sell_coral_items", "Check Pockets To Sell Coral", math.random(2000, 4000), false, true, {}, {}, {}, {}, function() -- Done
+                            denalifw.Functions.Progressbar("sell_coral_items", "Check Pockets To Sell Coral", math.random(2000, 4000), false, true, {}, {}, {}, {}, function() -- Done
                                 ClearPedTasks(PlayerPedId())
-                                TriggerServerEvent('NADRP-diving:server:SellCoral')
+                                TriggerServerEvent('denalifw-diving:server:SellCoral')
                                 notInteressted = true
                                 SetTimeout(0, ClearTimeOut)
                                 LocalPlayer.state:set("inv_busy", false, true)
                             end, function() -- Cancel
                                 ClearPedTasks(PlayerPedId())
-                                NADRP.Functions.Notify("Canceled..", "error")
+                                denalifw.Functions.Notify("Canceled..", "error")
                                 LocalPlayer.state:set("inv_busy", false, true)
                             end)
                         end

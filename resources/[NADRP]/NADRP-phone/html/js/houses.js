@@ -111,7 +111,7 @@ $(document).on('click', '.house-key-delete', function(e){
         $(this).remove();
     });
 
-    $.post('https://NADRP-phone/RemoveKeyholder', JSON.stringify({
+    $.post('https://denalifw-phone/RemoveKeyholder', JSON.stringify({
         HolderData: Data,
         HouseData: CurrentHouseData,
     }));
@@ -129,7 +129,7 @@ $(document).on('click', '#myhouse-option-transfer-confirm', function(e){
         
     var NewBSN = $(".myhouse-option-transfer-container-citizenid").val();
 
-    $.post('https://NADRP-phone/TransferCid', JSON.stringify({
+    $.post('https://denalifw-phone/TransferCid', JSON.stringify({
         newBsn: NewBSN,
         HouseData: CurrentHouseData,
     }), function(CanTransfer){
@@ -143,7 +143,7 @@ $(document).on('click', '#myhouse-option-transfer-confirm', function(e){
             }, AnimationDuration);
 
             setTimeout(function(){
-                $.post('https://NADRP-phone/GetPlayerHouses', JSON.stringify({}), function(Houses){
+                $.post('https://denalifw-phone/GetPlayerHouses', JSON.stringify({}), function(Houses){
                     SetupPlayerHouses(Houses);
                     $(".myhouses-options-container").fadeOut(150);
                 });

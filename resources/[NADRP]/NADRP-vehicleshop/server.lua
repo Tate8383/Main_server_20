@@ -1,17 +1,17 @@
 -- Variables
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local financetimer = {}
 local paymentDue = false
 
 -- Handlers
 
 -- Store game time for player when they load
-RegisterNetEvent('NADRP-vehicleshop:server:addPlayer', function(citizenid, gameTime)
+RegisterNetEvent('denalifw-vehicleshop:server:addPlayer', function(citizenid, gameTime)
     financetimer[citizenid] = gameTime
 end)
 
 -- Deduct stored game time from player on logout
-RegisterNetEvent('NADRP-vehicleshop:server:removePlayer', function(citizenid)
+RegisterNetEvent('denalifw-vehicleshop:server:removePlayer', function(citizenid)
     if financetimer[citizenid] then
         local playTime = financetimer[citizenid]
         local financetime = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ?', {citizenid})
@@ -71,7 +71,7 @@ local function calculateNewFinance(paymentAmount, vehData)
 end
 
 local function GeneratePlate()
-    local plate = NADRP.Shared.RandomInt(1) .. NADRP.Shared.RandomStr(2) .. NADRP.Shared.RandomInt(3) .. NADRP.Shared.RandomStr(2)
+    local plate = denalifw.Shared.RandomInt(1) .. denalifw.Shared.RandomStr(2) .. denalifw.Shared.RandomInt(3) .. denalifw.Shared.RandomStr(2)
     local result = MySQL.Sync.fetchScalar('SELECT plate FROM player_vehicles WHERE plate = ?', {plate})
     if result then
         return GeneratePlate()
@@ -93,9 +93,9 @@ end
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback('NADRP-vehicleshop:server:getVehicles', function(source, cb)
+denalifw.Functions.CreateCallback('denalifw-vehicleshop:server:getVehicles', function(source, cb)
     local src = source
-    local player = NADRP.Functions.GetPlayer(src)
+    local player = denalifw.Functions.GetPlayer(src)
     if player then
         local vehicles = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid})
         if vehicles[1] then
@@ -107,32 +107,32 @@ end)
 -- Events
 
 -- Sync vehicle for other players
-RegisterNetEvent('NADRP-vehicleshop:server:swapVehicle', function(data)
+RegisterNetEvent('denalifw-vehicleshop:server:swapVehicle', function(data)
     local src = source
-    TriggerClientEvent('NADRP-vehicleshop:client:swapVehicle', -1, data)
+    TriggerClientEvent('denalifw-vehicleshop:client:swapVehicle', -1, data)
     Wait(1500) -- let new car spawn
-    TriggerClientEvent('NADRP-vehicleshop:client:homeMenu', src) -- reopen main menu
+    TriggerClientEvent('denalifw-vehicleshop:client:homeMenu', src) -- reopen main menu
 end)
 
 -- Send customer for test drive
-RegisterNetEvent('NADRP-vehicleshop:server:customTestDrive', function(vehicle, playerid)
+RegisterNetEvent('denalifw-vehicleshop:server:customTestDrive', function(vehicle, playerid)
     local src = source
     local target = tonumber(playerid)
-    if not NADRP.Functions.GetPlayer(target) then
-        TriggerClientEvent('NADRP:Notify', src, 'Invalid Player Id Supplied', 'error')
+    if not denalifw.Functions.GetPlayer(target) then
+        TriggerClientEvent('denalifw:Notify', src, 'Invalid Player Id Supplied', 'error')
         return
     end
     if #(GetEntityCoords(GetPlayerPed(src))-GetEntityCoords(GetPlayerPed(target)))<3 then
-        TriggerClientEvent('NADRP-vehicleshop:client:customTestDrive', target, vehicle)
+        TriggerClientEvent('denalifw-vehicleshop:client:customTestDrive', target, vehicle)
     else
-        TriggerClientEvent('NADRP:Notify', src, 'This player is not close enough', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'This player is not close enough', 'error')
     end
 end)
 
 -- Make a finance payment
-RegisterNetEvent('NADRP-vehicleshop:server:financePayment', function(paymentAmount, vehData)
+RegisterNetEvent('denalifw-vehicleshop:server:financePayment', function(paymentAmount, vehData)
     local src = source
-    local player = NADRP.Functions.GetPlayer(src)
+    local player = denalifw.Functions.GetPlayer(src)
     local cash = player.PlayerData.money['cash']
     local bank = player.PlayerData.money['bank']
     local plate = vehData.vehiclePlate
@@ -149,21 +149,21 @@ RegisterNetEvent('NADRP-vehicleshop:server:financePayment', function(paymentAmou
                 player.Functions.RemoveMoney('bank', paymentAmount)
                 MySQL.Async.execute('UPDATE player_vehicles SET balance = ?, paymentamount = ?, paymentsleft = ?, financetime = ? WHERE plate = ?', {newBalance, newPayment, newPaymentsLeft, timer, plate})
             else
-                TriggerClientEvent('NADRP:Notify', src, 'Not enough money', 'error')
+                TriggerClientEvent('denalifw:Notify', src, 'Not enough money', 'error')
             end
         else
-            TriggerClientEvent('NADRP:Notify', src, 'Minimum payment allowed is $' ..comma_value(minPayment), 'error')
+            TriggerClientEvent('denalifw:Notify', src, 'Minimum payment allowed is $' ..comma_value(minPayment), 'error')
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, 'You overpaid', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'You overpaid', 'error')
     end
 end)
 
 
 -- Pay off vehice in full
-RegisterNetEvent('NADRP-vehicleshop:server:financePaymentFull', function(data)
+RegisterNetEvent('denalifw-vehicleshop:server:financePaymentFull', function(data)
     local src = source
-    local player = NADRP.Functions.GetPlayer(src)
+    local player = denalifw.Functions.GetPlayer(src)
     local cash = player.PlayerData.money['cash']
     local bank = player.PlayerData.money['bank']
     local vehBalance = data.vehBalance
@@ -176,22 +176,22 @@ RegisterNetEvent('NADRP-vehicleshop:server:financePaymentFull', function(data)
             player.Functions.RemoveMoney('bank', vehBalance)
             MySQL.Async.execute('UPDATE player_vehicles SET balance = ?, paymentamount = ?, paymentsleft = ?, financetime = ? WHERE plate = ?', {0, 0, 0, 0, vehPlate})
         else
-            TriggerClientEvent('NADRP:Notify', src, 'Not enough money', 'error')
+            TriggerClientEvent('denalifw:Notify', src, 'Not enough money', 'error')
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, 'Vehicle is already paid off', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'Vehicle is already paid off', 'error')
     end
 end)
 
 -- Buy public vehicle outright
-RegisterNetEvent('NADRP-vehicleshop:server:buyShowroomVehicle', function(vehicle)
+RegisterNetEvent('denalifw-vehicleshop:server:buyShowroomVehicle', function(vehicle)
     local src = source
     local vehicle = vehicle.buyVehicle
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
     local cid = pData.PlayerData.citizenid
     local cash = pData.PlayerData.money['cash']
     local bank = pData.PlayerData.money['bank']
-    local vehiclePrice = NADRP.Shared.Vehicles[vehicle]['price']
+    local vehiclePrice = denalifw.Shared.Vehicles[vehicle]['price']
     local plate = GeneratePlate()
     if cash > vehiclePrice then
         MySQL.Async.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, state) VALUES (?, ?, ?, ?, ?, ?, ?)', {
@@ -203,8 +203,8 @@ RegisterNetEvent('NADRP-vehicleshop:server:buyShowroomVehicle', function(vehicle
             plate,
             0
         })
-        TriggerClientEvent('NADRP:Notify', src, 'Congratulations on your purchase!', 'success')
-        TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
+        TriggerClientEvent('denalifw:Notify', src, 'Congratulations on your purchase!', 'success')
+        TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
         pData.Functions.RemoveMoney('cash', vehiclePrice, 'vehicle-bought-in-showroom')
     elseif bank > vehiclePrice then
         MySQL.Async.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, state) VALUES (?, ?, ?, ?, ?, ?, ?)', {
@@ -216,29 +216,29 @@ RegisterNetEvent('NADRP-vehicleshop:server:buyShowroomVehicle', function(vehicle
             plate,
             0
         })
-        TriggerClientEvent('NADRP:Notify', src, 'Congratulations on your purchase!', 'success')
-        TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
+        TriggerClientEvent('denalifw:Notify', src, 'Congratulations on your purchase!', 'success')
+        TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
         pData.Functions.RemoveMoney('bank', vehiclePrice, 'vehicle-bought-in-showroom')
     else
-        TriggerClientEvent('NADRP:Notify', src, 'Not enough money', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'Not enough money', 'error')
     end
 end)
 
 -- Finance public vehicle
-RegisterNetEvent('NADRP-vehicleshop:server:financeVehicle', function(downPayment, paymentAmount, vehicle)
+RegisterNetEvent('denalifw-vehicleshop:server:financeVehicle', function(downPayment, paymentAmount, vehicle)
     local src = source
     local downPayment = tonumber(downPayment)
     local paymentAmount = tonumber(paymentAmount)
-    local pData = NADRP.Functions.GetPlayer(src)
+    local pData = denalifw.Functions.GetPlayer(src)
     local cid = pData.PlayerData.citizenid
     local cash = pData.PlayerData.money['cash']
     local bank = pData.PlayerData.money['bank']
-    local vehiclePrice = NADRP.Shared.Vehicles[vehicle]['price']
+    local vehiclePrice = denalifw.Shared.Vehicles[vehicle]['price']
     local timer = (Config.PaymentInterval * 60)
     local minDown = tonumber(round((Config.MinimumDown/100) * vehiclePrice))
-    if downPayment > vehiclePrice then return TriggerClientEvent('NADRP:Notify', src, 'Vehicle is not worth that much', 'error') end
-    if downPayment < minDown then return TriggerClientEvent('NADRP:Notify', src, 'Down payment too small', 'error') end
-    if paymentAmount > Config.MaximumPayments then return TriggerClientEvent('NADRP:Notify', src, 'Exceeded maximum payment amount', 'error') end
+    if downPayment > vehiclePrice then return TriggerClientEvent('denalifw:Notify', src, 'Vehicle is not worth that much', 'error') end
+    if downPayment < minDown then return TriggerClientEvent('denalifw:Notify', src, 'Down payment too small', 'error') end
+    if paymentAmount > Config.MaximumPayments then return TriggerClientEvent('denalifw:Notify', src, 'Exceeded maximum payment amount', 'error') end
     local plate = GeneratePlate()
     local balance, vehPaymentAmount = calculateFinance(vehiclePrice, downPayment, paymentAmount)
     if cash >= downPayment then
@@ -255,8 +255,8 @@ RegisterNetEvent('NADRP-vehicleshop:server:financeVehicle', function(downPayment
             paymentAmount,
             timer
         })
-        TriggerClientEvent('NADRP:Notify', src, 'Congratulations on your purchase!', 'success')
-        TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
+        TriggerClientEvent('denalifw:Notify', src, 'Congratulations on your purchase!', 'success')
+        TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
         pData.Functions.RemoveMoney('cash', downPayment, 'vehicle-bought-in-showroom')
     elseif bank >= downPayment then
         MySQL.Async.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, state, balance, paymentamount, paymentsleft, financetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', {
@@ -272,22 +272,22 @@ RegisterNetEvent('NADRP-vehicleshop:server:financeVehicle', function(downPayment
             paymentAmount,
             timer
         })
-        TriggerClientEvent('NADRP:Notify', src, 'Congratulations on your purchase!', 'success')
-        TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
+        TriggerClientEvent('denalifw:Notify', src, 'Congratulations on your purchase!', 'success')
+        TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', src, vehicle, plate)
         pData.Functions.RemoveMoney('bank', downPayment, 'vehicle-bought-in-showroom')
     else
-        TriggerClientEvent('NADRP:Notify', src, 'Not enough money', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'Not enough money', 'error')
     end
 end)
 
 -- Sell vehicle to customer
-RegisterNetEvent('NADRP-vehicleshop:server:sellShowroomVehicle', function(data, playerid)
+RegisterNetEvent('denalifw-vehicleshop:server:sellShowroomVehicle', function(data, playerid)
     local src = source
-    local player = NADRP.Functions.GetPlayer(src)
-    local target = NADRP.Functions.GetPlayer(tonumber(playerid))
+    local player = denalifw.Functions.GetPlayer(src)
+    local target = denalifw.Functions.GetPlayer(tonumber(playerid))
 
     if not target then
-        TriggerClientEvent('NADRP:Notify', src, 'Invalid Player Id Supplied', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'Invalid Player Id Supplied', 'error')
         return
     end
 
@@ -296,7 +296,7 @@ RegisterNetEvent('NADRP-vehicleshop:server:sellShowroomVehicle', function(data, 
         local cash = target.PlayerData.money['cash']
         local bank = target.PlayerData.money['bank']
         local vehicle = data
-        local vehiclePrice = NADRP.Shared.Vehicles[vehicle]['price']
+        local vehiclePrice = denalifw.Shared.Vehicles[vehicle]['price']
         local plate = GeneratePlate()
         if cash >= vehiclePrice then
             MySQL.Async.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, state) VALUES (?, ?, ?, ?, ?, ?, ?)', {
@@ -308,10 +308,10 @@ RegisterNetEvent('NADRP-vehicleshop:server:sellShowroomVehicle', function(data, 
                 plate,
                 0
             })
-            TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
+            TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
             target.Functions.RemoveMoney('cash', vehiclePrice, 'vehicle-bought-in-showroom')
-            TriggerEvent('NADRP-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
-            TriggerClientEvent('NADRP:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
+            TriggerEvent('denalifw-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
+            TriggerClientEvent('denalifw:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
         elseif bank >= vehiclePrice then
             MySQL.Async.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, state) VALUES (?, ?, ?, ?, ?, ?, ?)', {
                 target.PlayerData.license,
@@ -322,26 +322,26 @@ RegisterNetEvent('NADRP-vehicleshop:server:sellShowroomVehicle', function(data, 
                 plate,
                 0
             })
-            TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
+            TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
             target.Functions.RemoveMoney('bank', vehiclePrice, 'vehicle-bought-in-showroom')
-            TriggerEvent('NADRP-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
-            TriggerClientEvent('NADRP:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
+            TriggerEvent('denalifw-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
+            TriggerClientEvent('denalifw:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
         else
-            TriggerClientEvent('NADRP:Notify', src, 'Not enough money', 'error')
+            TriggerClientEvent('denalifw:Notify', src, 'Not enough money', 'error')
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, 'This player is not close enough', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'This player is not close enough', 'error')
     end
 end)
 
 -- Finance vehicle to customer
-RegisterNetEvent('NADRP-vehicleshop:server:sellfinanceVehicle', function(downPayment, paymentAmount, vehicle, playerid)
+RegisterNetEvent('denalifw-vehicleshop:server:sellfinanceVehicle', function(downPayment, paymentAmount, vehicle, playerid)
     local src = source
-    local player = NADRP.Functions.GetPlayer(src)
-    local target = NADRP.Functions.GetPlayer(tonumber(playerid))
+    local player = denalifw.Functions.GetPlayer(src)
+    local target = denalifw.Functions.GetPlayer(tonumber(playerid))
 
     if not target then
-        TriggerClientEvent('NADRP:Notify', src, 'Invalid Player Id Supplied', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'Invalid Player Id Supplied', 'error')
         return
     end
 
@@ -351,12 +351,12 @@ RegisterNetEvent('NADRP-vehicleshop:server:sellfinanceVehicle', function(downPay
         local cid = target.PlayerData.citizenid
         local cash = target.PlayerData.money['cash']
         local bank = target.PlayerData.money['bank']
-        local vehiclePrice = NADRP.Shared.Vehicles[vehicle]['price']
+        local vehiclePrice = denalifw.Shared.Vehicles[vehicle]['price']
         local timer = (Config.PaymentInterval * 60)
         local minDown = tonumber(round((Config.MinimumDown/100) * vehiclePrice))
-        if downPayment > vehiclePrice then return TriggerClientEvent('NADRP:Notify', src, 'Vehicle is not worth that much', 'error') end
-        if downPayment < minDown then return TriggerClientEvent('NADRP:Notify', src, 'Down payment too small', 'error') end
-        if paymentAmount > Config.MaximumPayments then return TriggerClientEvent('NADRP:Notify', src, 'Exceeded maximum payment amount', 'error') end
+        if downPayment > vehiclePrice then return TriggerClientEvent('denalifw:Notify', src, 'Vehicle is not worth that much', 'error') end
+        if downPayment < minDown then return TriggerClientEvent('denalifw:Notify', src, 'Down payment too small', 'error') end
+        if paymentAmount > Config.MaximumPayments then return TriggerClientEvent('denalifw:Notify', src, 'Exceeded maximum payment amount', 'error') end
         local plate = GeneratePlate()
         local balance, vehPaymentAmount = calculateFinance(vehiclePrice, downPayment, paymentAmount)
         if cash >= downPayment then
@@ -373,10 +373,10 @@ RegisterNetEvent('NADRP-vehicleshop:server:sellfinanceVehicle', function(downPay
                 paymentAmount,
                 timer
             })
-            TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
+            TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
             target.Functions.RemoveMoney('cash', downPayment, 'vehicle-bought-in-showroom')
-            TriggerEvent('NADRP-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
-            TriggerClientEvent('NADRP:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
+            TriggerEvent('denalifw-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
+            TriggerClientEvent('denalifw:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
         elseif bank >= downPayment then
             MySQL.Async.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, state, balance, paymentamount, paymentsleft, financetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', {
                 target.PlayerData.license,
@@ -391,22 +391,22 @@ RegisterNetEvent('NADRP-vehicleshop:server:sellfinanceVehicle', function(downPay
                 paymentAmount,
                 timer
             })
-            TriggerClientEvent('NADRP-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
+            TriggerClientEvent('denalifw-vehicleshop:client:buyShowroomVehicle', target.PlayerData.source, vehicle, plate)
             target.Functions.RemoveMoney('bank', downPayment, 'vehicle-bought-in-showroom')
-            TriggerEvent('NADRP-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
-            TriggerClientEvent('NADRP:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
+            TriggerEvent('denalifw-bossmenu:server:addAccountMoney', player.PlayerData.job.name, vehiclePrice)
+            TriggerClientEvent('denalifw:Notify', target.PlayerData.source, 'Congratulations on your purchase!', 'success')
         else
-            TriggerClientEvent('NADRP:Notify', src, 'Not enough money', 'error')
+            TriggerClientEvent('denalifw:Notify', src, 'Not enough money', 'error')
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, 'This player is not close enough', 'error')
+        TriggerClientEvent('denalifw:Notify', src, 'This player is not close enough', 'error')
     end
 end)
 
 -- Check if payment is due
-RegisterNetEvent('NADRP-vehicleshop:server:checkFinance', function()
+RegisterNetEvent('denalifw-vehicleshop:server:checkFinance', function()
     local src = source
-    local player = NADRP.Functions.GetPlayer(src)
+    local player = denalifw.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid})
     for k,v in pairs(result) do
         if v.balance >= 1 and v.financetime < 1 then
@@ -414,14 +414,14 @@ RegisterNetEvent('NADRP-vehicleshop:server:checkFinance', function()
         end
     end
     if paymentDue then
-        TriggerClientEvent('NADRP:Notify', src, 'Your vehicle payment is due within '..Config.PaymentWarning..' minutes')
+        TriggerClientEvent('denalifw:Notify', src, 'Your vehicle payment is due within '..Config.PaymentWarning..' minutes')
         Wait(Config.PaymentWarning * 60000)
         MySQL.Sync.fetchAll('SELECT * FROM player_vehicles WHERE citizenid = ?', {player.PlayerData.citizenid}, function(vehicles)
             for k,v in pairs(vehicles) do
                 if v.balance >= 1 and v.financetime < 1 then
                     local plate = v.plate
                     MySQL.Async.execute('DELETE FROM player_vehicles WHERE plate = @plate', {['@plate'] = plate})
-                    TriggerClientEvent('NADRP:Notify', src, 'Your vehicle with plate '..plate..' has been repossessed', 'error')
+                    TriggerClientEvent('denalifw:Notify', src, 'Your vehicle with plate '..plate..' has been repossessed', 'error')
                 end
             end
         end)
@@ -429,41 +429,41 @@ RegisterNetEvent('NADRP-vehicleshop:server:checkFinance', function()
 end)
 
 -- Transfer vehicle to player in passenger seat
-NADRP.Commands.Add('transferVehicle', 'Gift or sell your vehicle', {{ name = 'amount', help = 'Sell amount' }}, false, function(source, args)
+denalifw.Commands.Add('transferVehicle', 'Gift or sell your vehicle', {{ name = 'amount', help = 'Sell amount' }}, false, function(source, args)
     local src = source
     local ped = GetPlayerPed(src)
-    local player = NADRP.Functions.GetPlayer(src)
+    local player = denalifw.Functions.GetPlayer(src)
     local citizenid = player.PlayerData.citizenid
     local sellAmount = tonumber(args[1])
     local vehicle = GetVehiclePedIsIn(ped, false)
-    if vehicle == 0 then return TriggerClientEvent('NADRP:Notify', src, 'Must be in a vehicle', 'error') end
+    if vehicle == 0 then return TriggerClientEvent('denalifw:Notify', src, 'Must be in a vehicle', 'error') end
     local driver = GetPedInVehicleSeat(vehicle, -1)
     local passenger = GetPedInVehicleSeat(vehicle, 0)
-    local plate = NADRP.Functions.GetPlate(vehicle)
+    local plate = denalifw.Functions.GetPlate(vehicle)
     local isOwned = MySQL.Sync.fetchScalar('SELECT citizenid FROM player_vehicles WHERE plate = ?', {plate})
-    if isOwned ~= citizenid then return TriggerClientEvent('NADRP:Notify', src, 'You dont own this vehicle', 'error') end
-    if ped ~= driver then return TriggerClientEvent('NADRP:Notify', src, 'Must be driver', 'error') end
-    if passenger == 0 then return TriggerClientEvent('NADRP:Notify', src, 'No passenger', 'error') end
+    if isOwned ~= citizenid then return TriggerClientEvent('denalifw:Notify', src, 'You dont own this vehicle', 'error') end
+    if ped ~= driver then return TriggerClientEvent('denalifw:Notify', src, 'Must be driver', 'error') end
+    if passenger == 0 then return TriggerClientEvent('denalifw:Notify', src, 'No passenger', 'error') end
     local targetid = NetworkGetEntityOwner(passenger)
-    local target = NADRP.Functions.GetPlayer(targetid)
-    if not target then return TriggerClientEvent('NADRP:Notify', src, 'Couldnt get passenger info', 'error') end
+    local target = denalifw.Functions.GetPlayer(targetid)
+    if not target then return TriggerClientEvent('denalifw:Notify', src, 'Couldnt get passenger info', 'error') end
     if sellAmount then
         if target.Functions.GetMoney('cash') > sellAmount then
             local targetcid = target.PlayerData.citizenid
             MySQL.Async.execute('UPDATE player_vehicles SET citizenid = ? WHERE plate = ?', {targetcid, plate})
             player.Functions.AddMoney('cash', sellAmount)
-            TriggerClientEvent('NADRP:Notify', src, 'You sold your vehicle for $'..comma_value(sellAmount), 'success')
+            TriggerClientEvent('denalifw:Notify', src, 'You sold your vehicle for $'..comma_value(sellAmount), 'success')
             target.Functions.RemoveMoney('cash', sellAmount)
             TriggerClientEvent('vehiclekeys:client:SetOwner', target.PlayerData.source, plate)
-            TriggerClientEvent('NADRP:Notify', target.PlayerData.source, 'You bought a vehicle for $'..comma_value(sellAmount), 'success')
+            TriggerClientEvent('denalifw:Notify', target.PlayerData.source, 'You bought a vehicle for $'..comma_value(sellAmount), 'success')
         else
-            TriggerClientEvent('NADRP:Notify', src, 'Not enough money', 'error')
+            TriggerClientEvent('denalifw:Notify', src, 'Not enough money', 'error')
         end
     else
         local targetcid = target.PlayerData.citizenid
         MySQL.Async.execute('UPDATE player_vehicles SET citizenid = ? WHERE plate = ?', {targetcid, plate})
-        TriggerClientEvent('NADRP:Notify', src, 'You gifted your vehicle', 'success')
+        TriggerClientEvent('denalifw:Notify', src, 'You gifted your vehicle', 'success')
         TriggerClientEvent('vehiclekeys:client:SetOwner', target.PlayerData.source, plate)
-        TriggerClientEvent('NADRP:Notify', target.PlayerData.source, 'You were gifted a vehicle', 'success')
+        TriggerClientEvent('denalifw:Notify', target.PlayerData.source, 'You were gifted a vehicle', 'success')
     end
 end, 'user')

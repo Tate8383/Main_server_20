@@ -1,4 +1,4 @@
-NADRP = exports['NADRP-core']:GetCoreObject()
+denalifw = exports['denalifw-core']:GetCoreObject()
 local ShowBlips = false
 local ShowNames = false
 local NetCheck1 = false
@@ -8,34 +8,34 @@ CreateThread(function()
     while true do
         Wait(1000)
         if NetCheck1 or NetCheck2 then
-            TriggerServerEvent('NADRP-admin:server:GetPlayersForBlips')
+            TriggerServerEvent('denalifw-admin:server:GetPlayersForBlips')
         end
     end
 end)
 
-RegisterNetEvent('NADRP-admin:client:toggleBlips', function()
+RegisterNetEvent('denalifw-admin:client:toggleBlips', function()
     if not ShowBlips then
         ShowBlips = true
         NetCheck1 = true
-        NADRP.Functions.Notify(Lang:t("success.blips_activated"), "success")
+        denalifw.Functions.Notify(Lang:t("success.blips_activated"), "success")
     else
         ShowBlips = false
-        NADRP.Functions.Notify(Lang:t("error.blips_deactivated"), "error")
+        denalifw.Functions.Notify(Lang:t("error.blips_deactivated"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-admin:client:toggleNames', function()
+RegisterNetEvent('denalifw-admin:client:toggleNames', function()
     if not ShowNames then
         ShowNames = true
         NetCheck2 = true
-        NADRP.Functions.Notify(Lang:t("success.names_activated"), "success")
+        denalifw.Functions.Notify(Lang:t("success.names_activated"), "success")
     else
         ShowNames = false
-        NADRP.Functions.Notify(Lang:t("error.names_deactivated"), "error")
+        denalifw.Functions.Notify(Lang:t("error.names_deactivated"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-admin:client:Show', function(players)
+RegisterNetEvent('denalifw-admin:client:Show', function(players)
     for k, player in pairs(players) do
         local playeridx = GetPlayerFromServerId(player.id)
         local ped = GetPlayerPed(playeridx)

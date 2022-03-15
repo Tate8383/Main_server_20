@@ -1,7 +1,7 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 CreateThread(function()
-	for i, v in pairs(NADRP.Shared.Vehicles) do
+	for i, v in pairs(denalifw.Shared.Vehicles) do
 		local text
 		if v["brand"] then
 			text = v["brand"] .. " " .. v["name"]

@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local pedDisplaying = {}
 local displayTime = 8000
 Citizen.CreateThread(function()

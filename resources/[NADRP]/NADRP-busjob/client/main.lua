@@ -1,6 +1,6 @@
 -- Variables
 
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local lastLocation = nil
 local route = 1
 local max = 0
@@ -112,7 +112,7 @@ local function GetDeliveryLocation()
                         SetEntityAsNoLongerNeeded(NpcData.Npc)
                         local targetCoords = Config.NPCLocations.Locations[NpcData.LastNpc]
                         TaskGoStraightToCoord(NpcData.Npc, targetCoords.x, targetCoords.y, targetCoords.z, 1.0, -1, 0.0, 0.0)
-                        NADRP.Functions.Notify(Lang:t('success.dropped_off'), 'success')
+                        denalifw.Functions.Notify(Lang:t('success.dropped_off'), 'success')
                         if NpcData.DeliveryBlip ~= nil then
                             RemoveBlip(NpcData.DeliveryBlip)
                         end
@@ -124,7 +124,7 @@ local function GetDeliveryLocation()
                         RemovePed(NpcData.Npc)
                         ResetNpcTask()
                         route = route + 1
-                        TriggerEvent('NADRP-busjob:client:DoBusNpc')
+                        TriggerEvent('denalifw-busjob:client:DoBusNpc')
                         break
                     end
                 end
@@ -147,7 +147,7 @@ function BusGarage()
         vehicleMenu[#vehicleMenu+1] = {
             header = v.label,
             params = {
-                event = "NADRP-busjob:client:TakeVehicle",
+                event = "denalifw-busjob:client:TakeVehicle",
                 args = {
                     model = v.model
                 }
@@ -157,38 +157,38 @@ function BusGarage()
     vehicleMenu[#vehicleMenu+1] = {
         header = Lang:t('menu.bus_close'),
         params = {
-            event = "NADRP-menu:client:closeMenu"
+            event = "denalifw-menu:client:closeMenu"
         }
     }
-    exports['NADRP-menu']:openMenu(vehicleMenu)
+    exports['denalifw-menu']:openMenu(vehicleMenu)
 end
 
-RegisterNetEvent("NADRP-busjob:client:TakeVehicle", function(data)
+RegisterNetEvent("denalifw-busjob:client:TakeVehicle", function(data)
     local coords = Config.Location
     if(BusData.Active) then
-        NADRP.Functions.Notify(Lang:t('error.one_bus_active'), 'error')
+        denalifw.Functions.Notify(Lang:t('error.one_bus_active'), 'error')
         return
     else
-    NADRP.Functions.SpawnVehicle(data.model, function(veh)
+    denalifw.Functions.SpawnVehicle(data.model, function(veh)
         SetVehicleNumberPlateText(veh, Lang:t('info.bus_plate')..tostring(math.random(1000, 9999)))
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         closeMenuFull()
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
     end, coords, true)
     Wait(1000)
-    TriggerEvent('NADRP-busjob:client:DoBusNpc')
+    TriggerEvent('denalifw-busjob:client:DoBusNpc')
     end
 end)
 
 function closeMenuFull()
-    exports['NADRP-menu']:closeMenu()
+    exports['denalifw-menu']:closeMenu()
 end
 
 -- Events
 
-RegisterNetEvent('NADRP-busjob:client:DoBusNpc', function()
+RegisterNetEvent('denalifw-busjob:client:DoBusNpc', function()
     if whitelistedVehicle() then
         if not NpcData.Active then
             local Gender = math.random(1, #Config.NpcSkins)
@@ -204,7 +204,7 @@ RegisterNetEvent('NADRP-busjob:client:DoBusNpc', function()
             if NpcData.NpcBlip ~= nil then
                 RemoveBlip(NpcData.NpcBlip)
             end
-            NADRP.Functions.Notify(Lang:t('info.goto_busstop'), 'primary')
+            denalifw.Functions.Notify(Lang:t('info.goto_busstop'), 'primary')
             NpcData.NpcBlip = AddBlipForCoord(Config.NPCLocations.Locations[route].x, Config.NPCLocations.Locations[route].y, Config.NPCLocations.Locations[route].z)
             SetBlipColour(NpcData.NpcBlip, 3)
             SetBlipRoute(NpcData.NpcBlip, true)
@@ -239,13 +239,13 @@ RegisterNetEvent('NADRP-busjob:client:DoBusNpc', function()
                                 ClearPedTasksImmediately(NpcData.Npc)
                                 FreezeEntityPosition(NpcData.Npc, false)
                                 TaskEnterVehicle(NpcData.Npc, veh, -1, freeSeat, 1.0, 0)
-                                NADRP.Functions.Notify(Lang:t('info.goto_busstop'), 'primary')
+                                denalifw.Functions.Notify(Lang:t('info.goto_busstop'), 'primary')
                                 if NpcData.NpcBlip ~= nil then
                                     RemoveBlip(NpcData.NpcBlip)
                                 end
                                 GetDeliveryLocation()
                                 NpcData.NpcTaken = true
-                                TriggerServerEvent('NADRP-busjob:server:NpcPay', math.random(15, 25))
+                                TriggerServerEvent('denalifw-busjob:server:NpcPay', math.random(15, 25))
                             end
                         end
                     end
@@ -253,10 +253,10 @@ RegisterNetEvent('NADRP-busjob:client:DoBusNpc', function()
                 end
             end)
         else
-            NADRP.Functions.Notify(Lang:t('error.already_driving_bus'), 'error')
+            denalifw.Functions.Notify(Lang:t('error.already_driving_bus'), 'error')
         end
     else
-        NADRP.Functions.Notify(Lang:t('error.not_in_bus'), 'error')
+        denalifw.Functions.Notify(Lang:t('error.not_in_bus'), 'error')
     end
 end)
 
@@ -278,7 +278,7 @@ CreateThread(function()
     while true do
         inRange = false
         if LocalPlayer.state.isLoggedIn then
-            local Player = NADRP.Functions.GetPlayerData()
+            local Player = denalifw.Functions.GetPlayerData()
             if Player.job.name == "bus" then
                 local ped = PlayerPedId()
                 local pos = GetEntityCoords(ped)
@@ -299,7 +299,7 @@ CreateThread(function()
                                         RemoveBlip(NpcData.NpcBlip)
                                     end
                                 else
-                                    NADRP.Functions.Notify(Lang:t('error.drop_off_passengers'), 'error')
+                                    denalifw.Functions.Notify(Lang:t('error.drop_off_passengers'), 'error')
                                 end
                             end
                         else

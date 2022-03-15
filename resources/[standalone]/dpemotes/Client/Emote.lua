@@ -1,4 +1,4 @@
-NADRP = exports['NADRP-core']:GetCoreObject()
+denalifw = exports['denalifw-core']:GetCoreObject()
 -- You probably shouldnt touch these.
 local AnimationDuration = -1
 local ChosenAnimation = ""
@@ -141,7 +141,7 @@ AddEventHandler('animations:client:EmoteCommandStart', function(args)
   if CanDoEmote then
     EmoteCommandStart(source, args)
   else
-    NADRP.Functions.Notify("Cannot Be Done Right Now", "error")
+    denalifw.Functions.Notify("Cannot Be Done Right Now", "error")
   end
 end)
 
@@ -280,7 +280,7 @@ function EmoteCommandStart(source, args, raw)
         if IsInAnimation then
             EmoteCancel()
         else
-          NADRP.Functions.Notify('No Emote To Cancel', 'error')
+          denalifw.Functions.Notify('No Emote To Cancel', 'error')
         end
       return
     elseif name == "help" then
@@ -294,7 +294,7 @@ function EmoteCommandStart(source, args, raw)
     elseif DP.PropEmotes[name] ~= nil then
       if OnEmotePlay(DP.PropEmotes[name]) then end return
     else
-      NADRP.Functions.Notify('That Is Not A Valid Command', 'error')
+      denalifw.Functions.Notify('That Is Not A Valid Command', 'error')
     end
   end
 end

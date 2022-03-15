@@ -1,12 +1,12 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Inventory'
+description 'denalifw-Inventory'
 version '1.0.0'
 
 shared_scripts {
 	'config.lua',
-	'@NADRP-weapons/config.lua'
+	'@denalifw-weapons/config.lua'
 }
 
 server_scripts {
@@ -30,6 +30,6 @@ files {
 	'html/*.ttf'
 }
 
-dependency 'NADRP-weapons'
+dependency 'denalifw-weapons'
 
 lua54 'yes'

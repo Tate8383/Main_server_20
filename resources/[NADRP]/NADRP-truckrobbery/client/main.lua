@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local MissionMarker =  vector3(960.71197509766, -215.51979064941, 76.2552947998) --<<place where is the marker with the mission
 local dealerCoords =  vector3(960.78, -216.25, 76.25)  							--<< place where the NPC dealer stands
 local VehicleSpawn1 = vector3(-1327.479736328, -86.045326232910, 49.31)  		--<< below the coordinates for random vehicle responses
@@ -28,15 +28,15 @@ local VehicleCoords = nil
 local dealer
 local PlayerJob = {}
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded')
-AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
-    NADRP.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded')
+AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
+    denalifw.Functions.GetPlayerData(function(PlayerData)
         PlayerJob = PlayerData.job
     end)
 end)
 
-RegisterNetEvent('NADRP:Client:OnJobUpdate')
-AddEventHandler('NADRP:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('denalifw:Client:OnJobUpdate')
+AddEventHandler('denalifw:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
 
@@ -158,8 +158,8 @@ AddEventHandler('AttackTransport:InfoForLspd', function(x, y, z)
 	end
 end)
 
-RegisterNetEvent('NADRP-armoredtruckheist:client:911alert')
-AddEventHandler('NADRP-armoredtruckheist:client:911alert', function()
+RegisterNetEvent('denalifw-armoredtruckheist:client:911alert')
+AddEventHandler('denalifw-armoredtruckheist:client:911alert', function()
 	if PoliceAlert == 0 then
 		local transCoords = GetEntityCoords(transport)
 
@@ -171,20 +171,20 @@ AddEventHandler('NADRP-armoredtruckheist:client:911alert', function()
 			streetLabel = streetLabel .. " " .. street2
 		end
 
-			TriggerServerEvent("NADRP-armoredtruckheist:server:callCops", streetLabel, transCoords)
+			TriggerServerEvent("denalifw-armoredtruckheist:server:callCops", streetLabel, transCoords)
 
 		PlaySoundFrontend(-1, "Mission_Pass_Notify", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", 0)
 		PoliceAlert = 1
 	end
 end)
 
-RegisterNetEvent('NADRP-armoredtruckheist:client:robberyCall')
-AddEventHandler('NADRP-armoredtruckheist:client:robberyCall', function(streetLabel, coords)
+RegisterNetEvent('denalifw-armoredtruckheist:client:robberyCall')
+AddEventHandler('denalifw-armoredtruckheist:client:robberyCall', function(streetLabel, coords)
     if PlayerJob.name == "police" then
         local store = "Armored Truck"
 
             PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-            TriggerEvent('NADRP-policealerts:client:AddPoliceAlert', {
+            TriggerEvent('denalifw-policealerts:client:AddPoliceAlert', {
                 timeOut = 10000,
                 alertTitle = "Armored Truck Robbery Attempt",
                 coords = {
@@ -202,7 +202,7 @@ AddEventHandler('NADRP-armoredtruckheist:client:robberyCall', function(streetLab
                         detail = streetLabel,
                     },
                 },
-                callSign = NADRP.Functions.GetPlayerData().metadata["callsign"],
+                callSign = denalifw.Functions.GetPlayerData().metadata["callsign"],
             })
 
         local transG = 250
@@ -231,7 +231,7 @@ end)
 
 function MissionNotification()
 	Citizen.Wait(2000)
-	TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+	TriggerServerEvent('denalifw-phone:server:sendNewMail', {
 	sender = "The Boss",
 	subject = "New Target",
 	message = "So you are intrested in making some money? good... go get yourself a Gun and make it happen... sending you the location now.",
@@ -320,7 +320,7 @@ Citizen.CreateThread(function()
 				DrawMarker(0, transCoords.x, transCoords.y, transCoords.z+4.5, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 135, 31, 35, 100, 1, 0, 0, 0)
 				if warning == 0 then
 				warning = 1
-				NADRP.Functions.Notify("Get rid of the guards before you place the bomb.", "error")
+				denalifw.Functions.Notify("Get rid of the guards before you place the bomb.", "error")
 				end
 
 				if GuardsDead == 0 then
@@ -340,7 +340,7 @@ Citizen.CreateThread(function()
 				end
 				if IsControlPressed(0, 47) and GuardsDead == 1 then
 					CheckVehicleInformation()
-					TriggerEvent("NADRP-armoredtruckheist:client:911alert")
+					TriggerEvent("denalifw-armoredtruckheist:client:911alert")
 					Citizen.Wait(500)
 				end
 			end
@@ -371,7 +371,7 @@ if IsVehicleStopped(transport) then
 			ClearPedTasks(PlayerPedId())
 			DetachEntity(prop)
 			AttachEntityToEntity(prop, transport, GetEntityBoneIndexByName(transport, 'door_pside_r'), -0.7, 0.0, 0.0, 0.0, 0.0, 0.0, true, true, false, true, 1, true)
-			NADRP.Functions.Notify('The load will be detonated in '..TimeToBlow / 1000 ..' seconds.', "error")
+			denalifw.Functions.Notify('The load will be detonated in '..TimeToBlow / 1000 ..' seconds.', "error")
 			FreezeEntityPosition(PlayerPedId(), false)
 			Citizen.Wait(TimeToBlow)
 			local transCoords = GetEntityCoords(transport)
@@ -381,16 +381,16 @@ if IsVehicleStopped(transport) then
 			ApplyForceToEntity(transport, 0, transCoords.x,transCoords.y,transCoords.z, 0.0, 0.0, 0.0, 1, false, true, true, true, true)
 			BlownUp = 1
 			lootable = 1
-			NADRP.Functions.Notify('You can start collecting cash.', "success")
+			denalifw.Functions.Notify('You can start collecting cash.', "success")
 			RemoveBlip(TruckBlip)
 		else
-			NADRP.Functions.Notify('Get out of the water', "error")
+			denalifw.Functions.Notify('Get out of the water', "error")
 		end
 	else
-		NADRP.Functions.Notify('The vehicle must be empty to place the load', "error")
+		denalifw.Functions.Notify('The vehicle must be empty to place the load', "error")
 	end
 else
-	NADRP.Functions.Notify('You cant rob a vehicle that is moving.', "error")
+	denalifw.Functions.Notify('You cant rob a vehicle that is moving.', "error")
 end
 end
 
@@ -454,7 +454,7 @@ function TakingMoney()
 	AttachEntityToEntity(bag, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 57005), 0.0, 0.0, -0.16, 250.0, -30.0, 0.0, false, false, false, false, 2, true)
 	TaskPlayAnim(PlayerPedId(), "anim@heists@ornate_bank@grab_cash_heels", "grab", 8.0, -8.0, -1, 1, 0, false, false, false)
 	FreezeEntityPosition(PlayerPedId(), true)
-	NADRP.Functions.Notify('You are packing cash into a bag', "success")
+	denalifw.Functions.Notify('You are packing cash into a bag', "success")
 	local _time = GetGameTimer()
 	while GetGameTimer() - _time < 20000 do
 		if IsControlPressed(0, 47) then

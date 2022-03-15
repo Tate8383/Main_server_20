@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local Races = {}
 local InRace = false
 local RaceId = 0
@@ -32,7 +32,7 @@ CreateThread(function()
                         if #(pos - vector3(Races[k].startx, Races[k].starty, Races[k].startz)) < 15.0 and not Races[k].started then
                             DrawText3Ds(Races[k].startx, Races[k].starty, Races[k].startz, "[~g~H~w~] To Join The Race (~g~$"..Races[k].amount..",-~w~)")
                             if IsControlJustReleased(0, 74) then
-                                TriggerServerEvent("NADRP-streetraces:JoinRace", k)
+                                TriggerServerEvent("denalifw-streetraces:JoinRace", k)
                             end
                         end
                     end
@@ -50,7 +50,7 @@ CreateThread(function()
                 if #(pos - vector3(Races[RaceId].endx, Races[RaceId].endy, pos.z)) < 250.0 and Races[RaceId].started then
                     DrawText3Ds(Races[RaceId].endx, Races[RaceId].endy, pos.z + 0.98, "FINISH")
                     if #(pos - vector3(Races[RaceId].endx, Races[RaceId].endy, pos.z)) < 15.0 then
-                        TriggerServerEvent("NADRP-streetraces:RaceWon", RaceId)
+                        TriggerServerEvent("denalifw-streetraces:RaceWon", RaceId)
                         InRace = false
                     end
                 end
@@ -65,7 +65,7 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('NADRP-streetraces:StartRace', function(race)
+RegisterNetEvent('denalifw-streetraces:StartRace', function(race)
     if RaceId ~= 0 and RaceId == race then
         SetNewWaypoint(Races[RaceId].endx, Races[RaceId].endy)
         InRace = true
@@ -73,20 +73,20 @@ RegisterNetEvent('NADRP-streetraces:StartRace', function(race)
     end
 end)
 
-RegisterNetEvent('NADRP-streetraces:RaceDone', function(race, winner)
+RegisterNetEvent('denalifw-streetraces:RaceDone', function(race, winner)
     if RaceId ~= 0 and RaceId == race then
         RaceId = 0
         InRace = false
-        NADRP.Functions.Notify("Race Is Over! The Winner Is "..winner.. "!")
+        denalifw.Functions.Notify("Race Is Over! The Winner Is "..winner.. "!")
     end
 end)
 
-RegisterNetEvent('NADRP-streetraces:StopRace', function()
+RegisterNetEvent('denalifw-streetraces:StopRace', function()
     RaceId = 0
     InRace = false
 end)
 
-RegisterNetEvent('NADRP-streetraces:CreateRace', function(amount)
+RegisterNetEvent('denalifw-streetraces:CreateRace', function(amount)
     local pos = GetEntityCoords(PlayerPedId(), true)
     local WaypointHandle = GetFirstBlipInfoId(8)
     if DoesBlipExist(WaypointHandle) then
@@ -106,21 +106,21 @@ RegisterNetEvent('NADRP-streetraces:CreateRace', function(amount)
                 pot = amount,
                 joined = {}
             }
-            TriggerServerEvent("NADRP-streetraces:NewRace", race)
-            NADRP.Functions.Notify("Race Made For $"..amount.."", "success")
+            TriggerServerEvent("denalifw-streetraces:NewRace", race)
+            denalifw.Functions.Notify("Race Made For $"..amount.."", "success")
         else
-            NADRP.Functions.Notify("End Position Is Too Close", "error")
+            denalifw.Functions.Notify("End Position Is Too Close", "error")
         end
     else
-        NADRP.Functions.Notify("You Need To Drop A Marker", "error")
+        denalifw.Functions.Notify("You Need To Drop A Marker", "error")
     end
 end)
 
-RegisterNetEvent('NADRP-streetraces:SetRace', function(RaceTable)
+RegisterNetEvent('denalifw-streetraces:SetRace', function(RaceTable)
     Races = RaceTable
 end)
 
-RegisterNetEvent('NADRP-streetraces:SetRaceId', function(race)
+RegisterNetEvent('denalifw-streetraces:SetRaceId', function(race)
     RaceId = race
     SetNewWaypoint(Races[RaceId].endx, Races[RaceId].endy)
 end)
@@ -130,12 +130,12 @@ function RaceCountDown()
     while RaceCount ~= 0 do
         FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), true), true)
         PlaySound(-1, "slow", "SHORT_PLAYER_SWITCH_SOUND_SET", 0, 0, 1)
-        NADRP.Functions.Notify(RaceCount, 'primary', 800)
+        denalifw.Functions.Notify(RaceCount, 'primary', 800)
         Wait(1000)
         RaceCount = RaceCount - 1
     end
     ShowCountDown = false
     RaceCount = 5
     FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), true), false)
-    NADRP.Functions.Notify("GOOOOOOOOO!!!")
+    denalifw.Functions.Notify("GOOOOOOOOO!!!")
 end

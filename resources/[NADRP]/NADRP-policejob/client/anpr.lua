@@ -16,8 +16,8 @@ function HandlespeedCam(speedCam, hasBeenBusted)
 		if IsPedInAnyVehicle(myPed, false) then
 			if GetPedInVehicleSeat(vehicle, -1) == myPed then
 				if GetVehicleClass(vehicle) ~= 18 then
-                    local plate = NADRP.Functions.GetPlate(vehicle)
-					NADRP.Functions.TriggerCallback('police:IsPlateFlagged', function(result)
+                    local plate = denalifw.Functions.GetPlate(vehicle)
+					denalifw.Functions.TriggerCallback('police:IsPlateFlagged', function(result)
 						if result then
 							local coords = GetEntityCoords(PlayerPedId())
 							local blipsettings = {

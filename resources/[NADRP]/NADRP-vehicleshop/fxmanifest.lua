@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-vehicleshop'
+description 'denalifw-vehicleshop'
 version '2.0.0'
 
 shared_script 'config.lua'

@@ -1,13 +1,13 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local PlayerJob = {}
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    NADRP.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    denalifw.Functions.GetPlayerData(function(PlayerData)
         PlayerJob = PlayerData.job
     end)
 end)
 
-RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
 
@@ -76,7 +76,7 @@ CreateThread(function()
 							if PlayerJob.name == "vineyard" then
 								startVineyard = true
 							else
-								NADRP.Functions.Notify(Lang:t("error.invalid_job"), "error")
+								denalifw.Functions.Notify(Lang:t("error.invalid_job"), "error")
 							end
 						end
 					end
@@ -95,11 +95,11 @@ CreateThread(function()
 			if tasking then
 				Wait(5000)
 			else
-				TriggerEvent("NADRP-vineyard:client:startVineyard")
+				TriggerEvent("denalifw-vineyard:client:startVineyard")
 				pickedGrapes = pickedGrapes + 1
 				print(pickedGrapes)
 				if pickedGrapes == Config.PickAmount then
-					TriggerEvent("NADRP-vineyard:client:startVineyard")
+					TriggerEvent("denalifw-vineyard:client:startVineyard")
 					Wait(20000)
 					startVineyard = false
 					pickedGrapes = 0
@@ -110,7 +110,7 @@ CreateThread(function()
 	end
 end)
 
-RegisterNetEvent('NADRP-vineyard:client:startVineyard', function()
+RegisterNetEvent('denalifw-vineyard:client:startVineyard', function()
 	if tasking then
 		return
 	end
@@ -139,7 +139,7 @@ end)
 function pickgrapes()
 	local success = true
 	if success then
-		TriggerServerEvent("NADRP-vineyard:server:getGrapes")
+		TriggerServerEvent("denalifw-vineyard:server:getGrapes")
 		tasking = false
 		DeleteBlip()
 	end
@@ -164,7 +164,7 @@ function DeleteBlip()
 end
 
 function pickProcess()
-    NADRP.Functions.Progressbar("pick_grape", Lang:t("progress.pick_grapes"), math.random(6000,8000), false, true, {
+    denalifw.Functions.Progressbar("pick_grape", Lang:t("progress.pick_grapes"), math.random(6000,8000), false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
@@ -174,7 +174,7 @@ function pickProcess()
         ClearPedTasks(PlayerPedId())
     end, function() -- Cancel
         ClearPedTasks(PlayerPedId())
-        NADRP.Functions.Notify(Lang:t("task.cancel_task"), "error")
+        denalifw.Functions.Notify(Lang:t("task.cancel_task"), "error")
     end)
 end
 
@@ -201,9 +201,9 @@ CreateThread(function()
 									DrawText3Ds(Config.Vineyard["wine"].coords.x, Config.Vineyard["wine"].coords.y,  Config.Vineyard["wine"].coords.z + 0.2, Lang:t("task.load_ingrediants"))
 									if IsControlJustPressed(0, 38) then
 										if PlayerJob.name == "vineyard" then
-											TriggerServerEvent("NADRP-vineyard:server:loadIngredients")
+											TriggerServerEvent("denalifw-vineyard:server:loadIngredients")
 										else
-											NADRP.Functions.Notify(Lang:t("error.invalid_job"), "error")
+											denalifw.Functions.Notify(Lang:t("error.invalid_job"), "error")
 										end
 									end
 								end
@@ -215,7 +215,7 @@ CreateThread(function()
 											if PlayerJob.name == "vineyard" then
 												StartWineProcess()
 											else
-												NADRP.Functions.Notify(Lang:t("error.invalid_job"), "error")
+												denalifw.Functions.Notify(Lang:t("error.invalid_job"), "error")
 											end
 										end
 									end
@@ -224,12 +224,12 @@ CreateThread(function()
 										DrawText3Ds(Config.Vineyard["wine"].coords.x, Config.Vineyard["wine"].coords.y, Config.Vineyard["wine"].coords.z + 0.2, Lang:t("task.get_wine"))
 										if IsControlJustPressed(0, 38) then
 											if PlayerJob.name == "vineyard" then
-												TriggerServerEvent("NADRP-vineyard:server:receiveWine")
+												TriggerServerEvent("denalifw-vineyard:server:receiveWine")
 												finishedWine = false
 												loadIngredients = false
 												wineStarted = false
 											else
-												NADRP.Functions.Notify(Lang:t("error.invalid_job"), "error")
+												denalifw.Functions.Notify(Lang:t("error.invalid_job"), "error")
 											end
 										end
 									end
@@ -260,9 +260,9 @@ CreateThread(function()
 						DrawText3Ds(Config.Vineyard["grapejuice"].coords.x, Config.Vineyard["grapejuice"].coords.y,  Config.Vineyard["grapejuice"].coords.z + 0.2, Lang:t("task.make_grape_juice"))
 						if IsControlJustPressed(0, 38) then
 							if PlayerJob.name == "vineyard" then
-								TriggerServerEvent("NADRP-vineyard:server:grapeJuice")
+								TriggerServerEvent("denalifw-vineyard:server:grapeJuice")
 							else
-								NADRP.Functions.Notify(Lang:t("error.invalid_job"), "error")
+								denalifw.Functions.Notify(Lang:t("error.invalid_job"), "error")
 							end
 						end
 					end
@@ -275,12 +275,12 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('NADRP-vineyard:client:grapeJuice', function()
+RegisterNetEvent('denalifw-vineyard:client:grapeJuice', function()
 	PrepareAnim()
 	grapeJuiceProcess()
 end)
 
-RegisterNetEvent('NADRP-vineyard:client:loadIngredients', function()
+RegisterNetEvent('denalifw-vineyard:client:loadIngredients', function()
 	loadIngredients = true
 end)
 
@@ -298,17 +298,17 @@ function StartWineProcess()
 end
 
 function grapeJuiceProcess()
-    NADRP.Functions.Progressbar("grape_juice", Lang:t("progress.process_grapes"), math.random(15000,20000), false, true, {
+    denalifw.Functions.Progressbar("grape_juice", Lang:t("progress.process_grapes"), math.random(15000,20000), false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerServerEvent("NADRP-vineyard:server:receiveGrapeJuice")
+        TriggerServerEvent("denalifw-vineyard:server:receiveGrapeJuice")
         ClearPedTasks(PlayerPedId())
     end, function() -- Cancel
         ClearPedTasks(PlayerPedId())
-        NADRP.Functions.Notify(Lang:t("task.cancel_task"), "error")
+        denalifw.Functions.Notify(Lang:t("task.cancel_task"), "error")
     end)
 end
 

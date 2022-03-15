@@ -32,7 +32,7 @@ $(document).on('click', '.save-bindings', function(e){
     keyData['F10'] = [$("#command-F10").val(), $("#argument-F10").val()]
     
 
-    $.post('https://NADRP-commandbinding/save', JSON.stringify({
+    $.post('https://denalifw-commandbinding/save', JSON.stringify({
         keyData: keyData
     }));
 });
@@ -55,5 +55,5 @@ qBinding.Open = function(data) {
 
 qBinding.Close = function() {
     $(".container").fadeOut(150);
-    $.post('https://NADRP-commandbinding/close');
+    $.post('https://denalifw-commandbinding/close');
 }

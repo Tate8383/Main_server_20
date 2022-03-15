@@ -1,17 +1,17 @@
-NADRP.Functions = {}
+denalifw.Functions = {}
 
 -- Getters
 -- Get your player first and then trigger a function on them
--- ex: local player = NADRP.Functions.GetPlayer(source)
+-- ex: local player = denalifw.Functions.GetPlayer(source)
 -- ex: local example = player.Functions.functionname(parameter)
 
-function NADRP.Functions.GetCoords(entity)
+function denalifw.Functions.GetCoords(entity)
     local coords = GetEntityCoords(entity, false)
     local heading = GetEntityHeading(entity)
     return vector4(coords.x, coords.y, coords.z, heading)
 end
 
-function NADRP.Functions.GetIdentifier(source, idtype)
+function denalifw.Functions.GetIdentifier(source, idtype)
     local src = source
     local idtype = idtype or QBConfig.IdentifierType
     for _, identifier in pairs(GetPlayerIdentifiers(src)) do
@@ -22,8 +22,8 @@ function NADRP.Functions.GetIdentifier(source, idtype)
     return nil
 end
 
-function NADRP.Functions.GetSource(identifier)
-    for src, player in pairs(NADRP.Players) do
+function denalifw.Functions.GetSource(identifier)
+    for src, player in pairs(denalifw.Players) do
         local idens = GetPlayerIdentifiers(src)
         for _, id in pairs(idens) do
             if identifier == id then
@@ -34,38 +34,38 @@ function NADRP.Functions.GetSource(identifier)
     return 0
 end
 
-function NADRP.Functions.GetPlayer(source)
+function denalifw.Functions.GetPlayer(source)
     local src = source
     if type(src) == 'number' then
-        return NADRP.Players[src]
+        return denalifw.Players[src]
     else
-        return NADRP.Players[NADRP.Functions.GetSource(src)]
+        return denalifw.Players[denalifw.Functions.GetSource(src)]
     end
 end
 
-function NADRP.Functions.GetPlayerByCitizenId(citizenid)
-    for src, player in pairs(NADRP.Players) do
+function denalifw.Functions.GetPlayerByCitizenId(citizenid)
+    for src, player in pairs(denalifw.Players) do
         local cid = citizenid
-        if NADRP.Players[src].PlayerData.citizenid == cid then
-            return NADRP.Players[src]
+        if denalifw.Players[src].PlayerData.citizenid == cid then
+            return denalifw.Players[src]
         end
     end
     return nil
 end
 
-function NADRP.Functions.GetPlayerByPhone(number)
-    for src, player in pairs(NADRP.Players) do
+function denalifw.Functions.GetPlayerByPhone(number)
+    for src, player in pairs(denalifw.Players) do
         local cid = citizenid
-        if NADRP.Players[src].PlayerData.charinfo.phone == number then
-            return NADRP.Players[src]
+        if denalifw.Players[src].PlayerData.charinfo.phone == number then
+            return denalifw.Players[src]
         end
     end
     return nil
 end
 
-function NADRP.Functions.GetPlayers()
+function denalifw.Functions.GetPlayers()
     local sources = {}
-    for k, v in pairs(NADRP.Players) do
+    for k, v in pairs(denalifw.Players) do
         sources[#sources+1] = k
     end
     return sources
@@ -73,16 +73,16 @@ end
 
 -- Will return an array of QB Player class instances
 -- unlike the GetPlayers() wrapper which only returns IDs
-function NADRP.Functions.GetQBPlayers()
-    return NADRP.Players
+function denalifw.Functions.GetQBPlayers()
+    return denalifw.Players
 end
 
 --- Gets a list of all on duty players of a specified job and the number
-function NADRP.Functions.GetPlayersOnDuty(job)
+function denalifw.Functions.GetPlayersOnDuty(job)
     local players = {}
     local count = 0
 
-    for src, Player in pairs(NADRP.Players) do
+    for src, Player in pairs(denalifw.Players) do
         if Player.PlayerData.job.name == job then
             if Player.PlayerData.job.onduty then
                 players[#players + 1] = src
@@ -94,10 +94,10 @@ function NADRP.Functions.GetPlayersOnDuty(job)
 end
 
 -- Returns only the amount of players on duty for the specified job
-function NADRP.Functions.GetDutyCount(job)
+function denalifw.Functions.GetDutyCount(job)
     local count = 0
 
-    for _, Player in pairs(NADRP.Functions.GetQBPlayers()) do
+    for _, Player in pairs(denalifw.Functions.GetQBPlayers()) do
         if Player.PlayerData.job.name == job then
             if Player.PlayerData.job.onduty then
                 count = count + 1
@@ -113,15 +113,15 @@ _G.Entity_Buckets = {} -- Bucket array containing all entities that have been se
 
 
 --- Returns the objects related to buckets, first returned value is the player buckets , second one is entity buckets
-function NADRP.Functions.GetBucketObjects()
+function denalifw.Functions.GetBucketObjects()
     return _G.Player_Buckets, _G.Entity_Buckets
 end
 
 
 --- Will set the provided player id / source into the provided bucket id
-function NADRP.Functions.SetPlayerBucket(player_source --[[int]],bucket --[[int]])
+function denalifw.Functions.SetPlayerBucket(player_source --[[int]],bucket --[[int]])
     if player_source and bucket then
-        local plicense = NADRP.Functions.GetIdentifier(player_source, 'license')
+        local plicense = denalifw.Functions.GetIdentifier(player_source, 'license')
         SetPlayerRoutingBucket(player_source, bucket)
         _G.Player_Buckets[plicense] = {player_id = player_source, player_bucket = bucket}
         return true
@@ -131,7 +131,7 @@ function NADRP.Functions.SetPlayerBucket(player_source --[[int]],bucket --[[int]
 end
 
 --- Will set any entity into the provided bucket, for example peds / vehicles / props / etc...
-function NADRP.Functions.SetEntityBucket(entity --[[int]],bucket --[[int]])
+function denalifw.Functions.SetEntityBucket(entity --[[int]],bucket --[[int]])
     if entity and bucket then
         SetEntityRoutingBucket(entity, bucket)
         _G.Entity_Buckets[entity] = {entity_id = entity, entity_bucket = bucket}
@@ -143,7 +143,7 @@ end
 
 
 -- Will return an array of all the player ids inside the current bucket
-function NADRP.Functions.GetPlayersInBucket(bucket --[[int]])
+function denalifw.Functions.GetPlayersInBucket(bucket --[[int]])
     local curr_bucket_pool = {}
     if _G.Player_Buckets ~= nil then
         for k, v in pairs(_G.Player_Buckets) do
@@ -159,7 +159,7 @@ end
 
 
 --- Will return an array of all the entities inside the current bucket (Not player entities , use GetPlayersInBucket for that)
-function NADRP.Functions.GetEntitiesInBucket(bucket --[[int]])
+function denalifw.Functions.GetEntitiesInBucket(bucket --[[int]])
     local curr_bucket_pool = {}
     if _G.Entity_Buckets ~= nil then
         for k, v in pairs(_G.Entity_Buckets) do
@@ -174,7 +174,7 @@ function NADRP.Functions.GetEntitiesInBucket(bucket --[[int]])
 end
 
 --- Will return true / false wheter the mentioned player id is present in the bucket provided
-function NADRP.Functions.IsPlayerInBucket(player_source --[[int]] ,bucket --[[int]])
+function denalifw.Functions.IsPlayerInBucket(player_source --[[int]] ,bucket --[[int]])
     local curr_player_bucket = GetPlayerRoutingBucket(player_source)
     return curr_player_bucket == bucket
 end
@@ -182,66 +182,66 @@ end
 -- Paychecks (standalone - don't touch)
 
 function PaycheckLoop()
-    local Players = NADRP.Functions.GetQBPlayers()
+    local Players = denalifw.Functions.GetQBPlayers()
     for _, Player in pairs(Players) do
         local payment = Player.PlayerData.job.payment
         if Player.PlayerData.job and payment > 0 and (QBShared.Jobs[Player.PlayerData.job.name].offDutyPay or Player.PlayerData.job.onduty) then
-            if NADRP.Config.Money.PayCheckSociety then
-                local account = exports['NADRP-bossmenu']:GetAccount(Player.PlayerData.job.name)
+            if denalifw.Config.Money.PayCheckSociety then
+                local account = exports['denalifw-bossmenu']:GetAccount(Player.PlayerData.job.name)
                 if account ~= 0 then -- Checks if player is employed by a society
                     if account < payment then -- Checks if company has enough money to pay society
-                        TriggerClientEvent('NADRP:Notify', Player.PlayerData.source, Lang:t('error.company_too_poor'), 'error')
+                        TriggerClientEvent('denalifw:Notify', Player.PlayerData.source, Lang:t('error.company_too_poor'), 'error')
                     else
                         Player.Functions.AddMoney('bank', payment)
-                        TriggerEvent('NADRP-bossmenu:server:removeAccountMoney', Player.PlayerData.job.name, payment)
-                        TriggerClientEvent('NADRP:Notify', Player.PlayerData.source, Lang:t('info.received_paycheck', {value = payment}))
+                        TriggerEvent('denalifw-bossmenu:server:removeAccountMoney', Player.PlayerData.job.name, payment)
+                        TriggerClientEvent('denalifw:Notify', Player.PlayerData.source, Lang:t('info.received_paycheck', {value = payment}))
                     end
                 else
                     Player.Functions.AddMoney('bank', payment)
-                    TriggerClientEvent('NADRP:Notify', Player.PlayerData.source, Lang:t('info.received_paycheck', {value = payment}))
+                    TriggerClientEvent('denalifw:Notify', Player.PlayerData.source, Lang:t('info.received_paycheck', {value = payment}))
                 end
             else
                 Player.Functions.AddMoney('bank', payment)
-                TriggerClientEvent('NADRP:Notify', Player.PlayerData.source, Lang:t('info.received_paycheck', {value = payment}))
+                TriggerClientEvent('denalifw:Notify', Player.PlayerData.source, Lang:t('info.received_paycheck', {value = payment}))
             end
         end
     end
-    SetTimeout(NADRP.Config.Money.PayCheckTimeOut * (60 * 1000), PaycheckLoop)
+    SetTimeout(denalifw.Config.Money.PayCheckTimeOut * (60 * 1000), PaycheckLoop)
 end
 
 -- Callbacks
 
-function NADRP.Functions.CreateCallback(name, cb)
-    NADRP.ServerCallbacks[name] = cb
+function denalifw.Functions.CreateCallback(name, cb)
+    denalifw.ServerCallbacks[name] = cb
 end
 
-function NADRP.Functions.TriggerCallback(name, source, cb, ...)
+function denalifw.Functions.TriggerCallback(name, source, cb, ...)
     local src = source
-    if NADRP.ServerCallbacks[name] then
-        NADRP.ServerCallbacks[name](src, cb, ...)
+    if denalifw.ServerCallbacks[name] then
+        denalifw.ServerCallbacks[name](src, cb, ...)
     end
 end
 
 -- Items
 
-function NADRP.Functions.CreateUseableItem(item, cb)
-    NADRP.UseableItems[item] = cb
+function denalifw.Functions.CreateUseableItem(item, cb)
+    denalifw.UseableItems[item] = cb
 end
 
-function NADRP.Functions.CanUseItem(item)
-    return NADRP.UseableItems[item]
+function denalifw.Functions.CanUseItem(item)
+    return denalifw.UseableItems[item]
 end
 
-function NADRP.Functions.UseItem(source, item)
+function denalifw.Functions.UseItem(source, item)
     local src = source
-    NADRP.UseableItems[item.name](src, item)
+    denalifw.UseableItems[item.name](src, item)
 end
 
 -- Kick Player
 
-function NADRP.Functions.Kick(source, reason, setKickReason, deferrals)
+function denalifw.Functions.Kick(source, reason, setKickReason, deferrals)
     local src = source
-    reason = '\n' .. reason .. '\n🔸 Check our Discord for further information: ' .. NADRP.Config.Server.discord
+    reason = '\n' .. reason .. '\n🔸 Check our Discord for further information: ' .. denalifw.Config.Server.discord
     if setKickReason then
         setKickReason(reason)
     end
@@ -274,11 +274,11 @@ end
 
 -- Check if player is whitelisted (not used anywhere)
 
-function NADRP.Functions.IsWhitelisted(source)
+function denalifw.Functions.IsWhitelisted(source)
     local src = source
-    local plicense = NADRP.Functions.GetIdentifier(src, 'license')
+    local plicense = denalifw.Functions.GetIdentifier(src, 'license')
     local identifiers = GetPlayerIdentifiers(src)
-    if NADRP.Config.Server.whitelist then
+    if denalifw.Config.Server.whitelist then
         local result = MySQL.Sync.fetchSingle('SELECT * FROM whitelist WHERE license = ?', { plicense })
         if result then
             for _, id in pairs(identifiers) do
@@ -295,12 +295,12 @@ end
 
 -- Setting & Removing Permissions
 
-function NADRP.Functions.AddPermission(source, permission)
+function denalifw.Functions.AddPermission(source, permission)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local plicense = Player.PlayerData.license
     if Player then
-        NADRP.Config.Server.PermissionList[plicense] = {
+        denalifw.Config.Server.PermissionList[plicense] = {
             license = plicense,
             permission = permission:lower(),
         }
@@ -313,16 +313,16 @@ function NADRP.Functions.AddPermission(source, permission)
         })
 
         Player.Functions.UpdatePlayerData()
-        TriggerClientEvent('NADRP:Client:OnPermissionUpdate', src, permission)
+        TriggerClientEvent('denalifw:Client:OnPermissionUpdate', src, permission)
     end
 end
 
-function NADRP.Functions.RemovePermission(source)
+function denalifw.Functions.RemovePermission(source)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local license = Player.PlayerData.license
     if Player then
-        NADRP.Config.Server.PermissionList[license] = nil
+        denalifw.Config.Server.PermissionList[license] = nil
         MySQL.Async.execute('DELETE FROM permissions WHERE license = ?', { license })
         Player.Functions.UpdatePlayerData()
     end
@@ -330,16 +330,16 @@ end
 
 -- Checking for Permission Level
 
-function NADRP.Functions.HasPermission(source, permission)
+function denalifw.Functions.HasPermission(source, permission)
     local src = source
-    local license = NADRP.Functions.GetIdentifier(src, 'license')
+    local license = denalifw.Functions.GetIdentifier(src, 'license')
     local permission = tostring(permission:lower())
     if permission == 'user' then
         return true
     else
-        if NADRP.Config.Server.PermissionList[license] then
-            if NADRP.Config.Server.PermissionList[license].license == license then
-                if NADRP.Config.Server.PermissionList[license].permission == permission or NADRP.Config.Server.PermissionList[license].permission == 'god' then
+        if denalifw.Config.Server.PermissionList[license] then
+            if denalifw.Config.Server.PermissionList[license].license == license then
+                if denalifw.Config.Server.PermissionList[license].permission == permission or denalifw.Config.Server.PermissionList[license].permission == 'god' then
                     return true
                 end
             end
@@ -348,13 +348,13 @@ function NADRP.Functions.HasPermission(source, permission)
     return false
 end
 
-function NADRP.Functions.GetPermission(source)
+function denalifw.Functions.GetPermission(source)
     local src = source
-    local license = NADRP.Functions.GetIdentifier(src, 'license')
+    local license = denalifw.Functions.GetIdentifier(src, 'license')
     if license then
-        if NADRP.Config.Server.PermissionList[license] then
-            if NADRP.Config.Server.PermissionList[license].license == license then
-                return NADRP.Config.Server.PermissionList[license].permission
+        if denalifw.Config.Server.PermissionList[license] then
+            if denalifw.Config.Server.PermissionList[license].license == license then
+                return denalifw.Config.Server.PermissionList[license].permission
             end
         end
     end
@@ -363,29 +363,29 @@ end
 
 -- Opt in or out of admin reports
 
-function NADRP.Functions.IsOptin(source)
+function denalifw.Functions.IsOptin(source)
     local src = source
-    local license = NADRP.Functions.GetIdentifier(src, 'license')
-    if NADRP.Functions.HasPermission(src, 'admin') then
-        return NADRP.Config.Server.PermissionList[license].optin
+    local license = denalifw.Functions.GetIdentifier(src, 'license')
+    if denalifw.Functions.HasPermission(src, 'admin') then
+        return denalifw.Config.Server.PermissionList[license].optin
     end
 end
 
-function NADRP.Functions.ToggleOptin(source)
+function denalifw.Functions.ToggleOptin(source)
     local src = source
-    local license = NADRP.Functions.GetIdentifier(src, 'license')
-    if NADRP.Functions.HasPermission(src, 'admin') then
-        NADRP.Config.Server.PermissionList[license].optin = not NADRP.Config.Server.PermissionList[license].optin
+    local license = denalifw.Functions.GetIdentifier(src, 'license')
+    if denalifw.Functions.HasPermission(src, 'admin') then
+        denalifw.Config.Server.PermissionList[license].optin = not denalifw.Config.Server.PermissionList[license].optin
     end
 end
 
 -- Check if player is banned
 
-function NADRP.Functions.IsPlayerBanned(source)
+function denalifw.Functions.IsPlayerBanned(source)
     local src = source
     local retval = false
     local message = ''
-    local plicense = NADRP.Functions.GetIdentifier(src, 'license')
+    local plicense = denalifw.Functions.GetIdentifier(src, 'license')
     local result = MySQL.Sync.fetchSingle('SELECT * FROM bans WHERE license = ?', { plicense })
     if result then
         if os.time() < result.expire then
@@ -401,7 +401,7 @@ end
 
 -- Check for duplicate license
 
-function NADRP.Functions.IsLicenseInUse(license)
+function denalifw.Functions.IsLicenseInUse(license)
     local players = GetPlayers()
     for _, player in pairs(players) do
         local identifiers = GetPlayerIdentifiers(player)

@@ -1,10 +1,10 @@
 RegisterNetEvent('police:client:CheckDistance', function()
-    local player, distance = NADRP.Functions.GetClosestPlayer()
+    local player, distance = denalifw.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         TriggerServerEvent("police:server:SetTracker", playerId)
     else
-        NADRP.Functions.Notify(Lang:t("error.none_nearby"), "error")
+        denalifw.Functions.Notify(Lang:t("error.none_nearby"), "error")
     end
 end)
 
@@ -20,9 +20,9 @@ RegisterNetEvent('police:client:SetTracker', function(bool)
             ["accessory"] = { item = 13, texture = 0}
         }
 
-        TriggerEvent('NADRP-clothing:client:loadOutfit', trackerClothingData)
+        TriggerEvent('denalifw-clothing:client:loadOutfit', trackerClothingData)
     else
-        TriggerEvent('NADRP-clothing:client:loadOutfit', trackerClothingData)
+        TriggerEvent('denalifw-clothing:client:loadOutfit', trackerClothingData)
     end
 end)
 
@@ -35,7 +35,7 @@ end)
 
 RegisterNetEvent('police:client:TrackerMessage', function(msg, coords)
     PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-    NADRP.Functions.Notify(msg, 'police')
+    denalifw.Functions.Notify(msg, 'police')
     local transG = 250
     local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
     SetBlipSprite(blip, 458)

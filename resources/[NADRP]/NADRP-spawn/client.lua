@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local camZPlus1 = 1500
 local camZPlus2 = 50
 local pointCamCoords = 75
@@ -21,12 +21,12 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-spawn:client:openUI', function(value)
+RegisterNetEvent('denalifw-spawn:client:openUI', function(value)
     SetEntityVisible(PlayerPedId(), false)
     DoScreenFadeOut(250)
     Wait(1000)
     DoScreenFadeIn(250)
-    NADRP.Functions.GetPlayerData(function(PlayerData)
+    denalifw.Functions.GetPlayerData(function(PlayerData)
         cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", PlayerData.position.x, PlayerData.position.y, PlayerData.position.z + camZPlus1, -85.00, 0.00, 0.00, 100.00, false, 0)
         SetCamActive(cam, true)
         RenderScriptCams(true, false, 1, true, true)
@@ -35,13 +35,13 @@ RegisterNetEvent('NADRP-spawn:client:openUI', function(value)
     SetDisplay(value)
 end)
 
-RegisterNetEvent('NADRP-houses:client:setHouseConfig', function(houseConfig)
+RegisterNetEvent('denalifw-houses:client:setHouseConfig', function(houseConfig)
     Config.Houses = houseConfig
 end)
 
-RegisterNetEvent('NADRP-spawn:client:setupSpawns', function(cData, new, apps)
+RegisterNetEvent('denalifw-spawn:client:setupSpawns', function(cData, new, apps)
     if not new then
-        NADRP.Functions.TriggerCallback('NADRP-spawn:server:getOwnedHouses', function(houses)
+        denalifw.Functions.TriggerCallback('denalifw-spawn:server:getOwnedHouses', function(houses)
             local myHouses = {}
             if houses ~= nil then
                 for i = 1, (#houses), 1 do
@@ -113,7 +113,7 @@ RegisterNUICallback('setCam', function(data)
     end
 
     if type == "current" then
-        NADRP.Functions.GetPlayerData(function(PlayerData)
+        denalifw.Functions.GetPlayerData(function(PlayerData)
             SetCam(PlayerData.position)
         end)
     elseif type == "house" then
@@ -132,8 +132,8 @@ RegisterNUICallback('chooseAppa', function(data)
     DoScreenFadeOut(500)
     Wait(5000)
     TriggerServerEvent("apartments:server:CreateApartment", appaYeet, Apartments.Locations[appaYeet].label)
-    TriggerServerEvent('NADRP:Server:OnPlayerLoaded')
-    TriggerEvent('NADRP:Client:OnPlayerLoaded')
+    TriggerServerEvent('denalifw:Server:OnPlayerLoaded')
+    TriggerEvent('denalifw:Client:OnPlayerLoaded')
     FreezeEntityPosition(ped, false)
     RenderScriptCams(false, true, 500, true, true)
     SetCamActive(cam, false)
@@ -165,12 +165,12 @@ RegisterNUICallback('spawnplayer', function(data)
     local location = tostring(data.spawnloc)
     local type = tostring(data.typeLoc)
     local ped = PlayerPedId()
-    local PlayerData = NADRP.Functions.GetPlayerData()
+    local PlayerData = denalifw.Functions.GetPlayerData()
     local insideMeta = PlayerData.metadata["inside"]
 
     if type == "current" then
         PreSpawnPlayer()
-        NADRP.Functions.GetPlayerData(function(PlayerData)
+        denalifw.Functions.GetPlayerData(function(PlayerData)
             SetEntityCoords(PlayerPedId(), PlayerData.position.x, PlayerData.position.y, PlayerData.position.z)
             SetEntityHeading(PlayerPedId(), PlayerData.position.a)
             FreezeEntityPosition(PlayerPedId(), false)
@@ -178,31 +178,31 @@ RegisterNUICallback('spawnplayer', function(data)
 
         if insideMeta.house ~= nil then
             local houseId = insideMeta.house
-            TriggerEvent('NADRP-houses:client:LastLocationHouse', houseId)
+            TriggerEvent('denalifw-houses:client:LastLocationHouse', houseId)
         elseif insideMeta.apartment.apartmentType ~= nil or insideMeta.apartment.apartmentId ~= nil then
             local apartmentType = insideMeta.apartment.apartmentType
             local apartmentId = insideMeta.apartment.apartmentId
-            TriggerEvent('NADRP-apartments:client:LastLocationHouse', apartmentType, apartmentId)
+            TriggerEvent('denalifw-apartments:client:LastLocationHouse', apartmentType, apartmentId)
         end
-        TriggerServerEvent('NADRP:Server:OnPlayerLoaded')
-        TriggerEvent('NADRP:Client:OnPlayerLoaded')
+        TriggerServerEvent('denalifw:Server:OnPlayerLoaded')
+        TriggerEvent('denalifw:Client:OnPlayerLoaded')
         PostSpawnPlayer()
     elseif type == "house" then
         PreSpawnPlayer()
-        TriggerEvent('NADRP-houses:client:enterOwnedHouse', location)
-        TriggerServerEvent('NADRP:Server:OnPlayerLoaded')
-        TriggerEvent('NADRP:Client:OnPlayerLoaded')
-        TriggerServerEvent('NADRP-houses:server:SetInsideMeta', 0, false)
-        TriggerServerEvent('NADRP-apartments:server:SetInsideMeta', 0, 0, false)
+        TriggerEvent('denalifw-houses:client:enterOwnedHouse', location)
+        TriggerServerEvent('denalifw:Server:OnPlayerLoaded')
+        TriggerEvent('denalifw:Client:OnPlayerLoaded')
+        TriggerServerEvent('denalifw-houses:server:SetInsideMeta', 0, false)
+        TriggerServerEvent('denalifw-apartments:server:SetInsideMeta', 0, 0, false)
         PostSpawnPlayer()
     elseif type == "normal" then
         local pos = QB.Spawns[location].coords
         PreSpawnPlayer()
         SetEntityCoords(ped, pos.x, pos.y, pos.z)
-        TriggerServerEvent('NADRP:Server:OnPlayerLoaded')
-        TriggerEvent('NADRP:Client:OnPlayerLoaded')
-        TriggerServerEvent('NADRP-houses:server:SetInsideMeta', 0, false)
-        TriggerServerEvent('NADRP-apartments:server:SetInsideMeta', 0, 0, false)
+        TriggerServerEvent('denalifw:Server:OnPlayerLoaded')
+        TriggerEvent('denalifw:Client:OnPlayerLoaded')
+        TriggerServerEvent('denalifw-houses:server:SetInsideMeta', 0, false)
+        TriggerServerEvent('denalifw-apartments:server:SetInsideMeta', 0, 0, false)
         Wait(500)
         SetEntityCoords(ped, pos.x, pos.y, pos.z)
         SetEntityHeading(ped, pos.w)

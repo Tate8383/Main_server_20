@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local currentHouseGarage = nil
 local hasGarageKey = nil
 local currentGarage = nil
@@ -7,30 +7,30 @@ local PlayerData = {}
 local PlayerGang = {}
 local PlayerJob = {}
 
-AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
-    PlayerData = NADRP.Functions.GetPlayerData()
+AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
+    PlayerData = denalifw.Functions.GetPlayerData()
     PlayerGang = PlayerData.gang
     PlayerJob = PlayerData.job
 end)
 
-RegisterNetEvent('NADRP:Client:OnGangUpdate', function(gang)
+RegisterNetEvent('denalifw:Client:OnGangUpdate', function(gang)
     PlayerGang = gang
 end)
 
-RegisterNetEvent('NADRP:Client:OnJobUpdate', function(job)
+RegisterNetEvent('denalifw:Client:OnJobUpdate', function(job)
     PlayerJob = job
 end)
 
-RegisterNetEvent('NADRP-garages:client:setHouseGarage', function(house, hasKey)
+RegisterNetEvent('denalifw-garages:client:setHouseGarage', function(house, hasKey)
     currentHouseGarage = house
     hasGarageKey = hasKey
 end)
 
-RegisterNetEvent('NADRP-garages:client:houseGarageConfig', function(garageConfig)
+RegisterNetEvent('denalifw-garages:client:houseGarageConfig', function(garageConfig)
     HouseGarages = garageConfig
 end)
 
-RegisterNetEvent('NADRP-garages:client:addHouseGarage', function(house, garageInfo)
+RegisterNetEvent('denalifw-garages:client:addHouseGarage', function(house, garageInfo)
     HouseGarages[house] = garageInfo
 end)
 
@@ -56,7 +56,7 @@ local function round(num, numDecimalPlaces)
 end
 
 local function MenuGarage()
-    exports['NADRP-menu']:openMenu({
+    exports['denalifw-menu']:openMenu({
         {
             header = Lang:t("info.public_garage"),
             isMenuHeader = true
@@ -65,21 +65,21 @@ local function MenuGarage()
             header = Lang:t("info.my_vehicles"),
             txt = Lang:t("info.view_stored"),
             params = {
-                event = "NADRP-garages:client:VehicleList"
+                event = "denalifw-garages:client:VehicleList"
             }
         },
         {
             header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
-                event = "NADRP-menu:closeMenu"
+                event = "denalifw-menu:closeMenu"
             }
         },
     })
 end
 
 local function GangMenuGarage()
-    exports['NADRP-menu']:openMenu({
+    exports['denalifw-menu']:openMenu({
         {
             header = Lang:t("info.gang_garage"),
             isMenuHeader = true
@@ -88,21 +88,21 @@ local function GangMenuGarage()
             header = Lang:t("info.my_vehicles"),
             txt = Lang:t("info.view_stored"),
             params = {
-                event = "NADRP-garages:client:GangVehicleList"
+                event = "denalifw-garages:client:GangVehicleList"
             }
         },
         {
             header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
-                event = "NADRP-menu:closeMenu"
+                event = "denalifw-menu:closeMenu"
             }
         },
     })
 end
 
 local function JobMenuGarage()
-    exports['NADRP-menu']:openMenu({
+    exports['denalifw-menu']:openMenu({
         {
             header = Lang:t("info.job_garage"),
             isMenuHeader = true
@@ -111,21 +111,21 @@ local function JobMenuGarage()
             header = Lang:t("info.my_vehicles"),
             txt = Lang:t("info.view_stored"),
             params = {
-                event = "NADRP-garages:client:JobVehicleList"
+                event = "denalifw-garages:client:JobVehicleList"
             }
         },
         {
             header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
-                event = "NADRP-menu:closeMenu"
+                event = "denalifw-menu:closeMenu"
             }
         },
     })
 end
 
 local function MenuDepot()
-    exports['NADRP-menu']:openMenu({
+    exports['denalifw-menu']:openMenu({
         {
             header = Lang:t("info.impound"),
             isMenuHeader = true
@@ -134,21 +134,21 @@ local function MenuDepot()
             header = Lang:t("info.my_vehicles"),
             txt = Lang:t("info.view_stored"),
             params = {
-                event = "NADRP-garages:client:DepotList"
+                event = "denalifw-garages:client:DepotList"
             }
         },
         {
             header = Lang:t("info.leave_depot"),
             txt = "",
             params = {
-                event = "NADRP-menu:closeMenu"
+                event = "denalifw-menu:closeMenu"
             }
         },
     })
 end
 
 local function MenuHouseGarage(house)
-    exports['NADRP-menu']:openMenu({
+    exports['denalifw-menu']:openMenu({
         {
             header = Lang:t("info.job_garage"),
             isMenuHeader = true
@@ -157,7 +157,7 @@ local function MenuHouseGarage(house)
             header = Lang:t("info.my_vehicles"),
             txt = Lang:t("info.view_stored"),
             params = {
-                event = "NADRP-garages:client:HouseGarage",
+                event = "denalifw-garages:client:HouseGarage",
                 args = house
             }
         },
@@ -165,14 +165,14 @@ local function MenuHouseGarage(house)
             header = Lang:t("info.leave_garage"),
             txt = "",
             params = {
-                event = "NADRP-menu:closeMenu"
+                event = "denalifw-menu:closeMenu"
             }
         },
     })
 end
 
 local function ClearMenu()
-	TriggerEvent("NADRP-menu:closeMenu")
+	TriggerEvent("denalifw-menu:closeMenu")
 end
 
 local function closeMenuFull()
@@ -241,22 +241,22 @@ local function CheckPlayers(vehicle)
             TaskLeaveVehicle(seat,vehicle,0)
             SetVehicleDoorsLocked(vehicle)
             Wait(1500)
-            NADRP.Functions.DeleteVehicle(vehicle)
+            denalifw.Functions.DeleteVehicle(vehicle)
         end
    end
 end
 
 -- Events
 
-RegisterNetEvent('NADRP-garages:client:takeOutDepot', function(vehicle)
+RegisterNetEvent('denalifw-garages:client:takeOutDepot', function(vehicle)
     local VehExists = DoesEntityExist(OutsideVehicles[vehicle.plate])
     if not VehExists then
         if OutsideVehicles and next(OutsideVehicles) then
             if OutsideVehicles[vehicle.plate] then
                 local Engine = GetVehicleEngineHealth(OutsideVehicles[vehicle.plate])
-                NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-                    NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
-                        NADRP.Functions.SetVehicleProperties(veh, properties)
+                denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+                    denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
+                        denalifw.Functions.SetVehicleProperties(veh, properties)
                         enginePercent = round(vehicle.engine / 10, 0)
                         bodyPercent = round(vehicle.body / 10, 0)
                         currentFuel = vehicle.fuel
@@ -264,7 +264,7 @@ RegisterNetEvent('NADRP-garages:client:takeOutDepot', function(vehicle)
                         if vehicle.plate then
                             DeleteVehicle(OutsideVehicles[vehicle.plate])
                             OutsideVehicles[vehicle.plate] = veh
-                            TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                            TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                         end
 
                         SetVehicleNumberPlateText(veh, vehicle.plate)
@@ -273,27 +273,27 @@ RegisterNetEvent('NADRP-garages:client:takeOutDepot', function(vehicle)
                         exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                         SetEntityAsMissionEntity(veh, true, true)
                         doCarDamage(veh, vehicle)
-                        TriggerServerEvent('NADRP-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-                        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                        TriggerServerEvent('denalifw-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                         closeMenuFull()
                         SetVehicleEngineOn(veh, true, true)
                     end, vehicle.plate)
                     TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
                 end, Depots[currentGarage].spawnPoint, true)
                 SetTimeout(250, function()
-                    TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
+                    TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
                 end)
             else
-                NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-                    NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
-                        NADRP.Functions.SetVehicleProperties(veh, properties)
+                denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+                    denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
+                        denalifw.Functions.SetVehicleProperties(veh, properties)
                         enginePercent = round(vehicle.engine / 10, 0)
                         bodyPercent = round(vehicle.body / 10, 0)
                         currentFuel = vehicle.fuel
 
                         if vehicle.plate then
                             OutsideVehicles[vehicle.plate] = veh
-                            TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                            TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                         end
 
                         SetVehicleNumberPlateText(veh, vehicle.plate)
@@ -302,28 +302,28 @@ RegisterNetEvent('NADRP-garages:client:takeOutDepot', function(vehicle)
                         exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                         SetEntityAsMissionEntity(veh, true, true)
                         doCarDamage(veh, vehicle)
-                        TriggerServerEvent('NADRP-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-                        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                        TriggerServerEvent('denalifw-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                         closeMenuFull()
                         SetVehicleEngineOn(veh, true, true)
                     end, vehicle.plate)
                     TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
                 end, Depots[currentGarage].spawnPoint, true)
                 SetTimeout(250, function()
-                    TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
+                    TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
                 end)
             end
         else
-            NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-                NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
-                    NADRP.Functions.SetVehicleProperties(veh, properties)
+            denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+                denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
+                    denalifw.Functions.SetVehicleProperties(veh, properties)
                     enginePercent = round(vehicle.engine / 10, 0)
                     bodyPercent = round(vehicle.body / 10, 0)
                     currentFuel = vehicle.fuel
 
                     if vehicle.plate then
                         OutsideVehicles[vehicle.plate] = veh
-                        TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                        TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                     end
 
                     SetVehicleNumberPlateText(veh, vehicle.plate)
@@ -332,26 +332,26 @@ RegisterNetEvent('NADRP-garages:client:takeOutDepot', function(vehicle)
                     exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                     SetEntityAsMissionEntity(veh, true, true)
                     doCarDamage(veh, vehicle)
-                    TriggerServerEvent('NADRP-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
-                    TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                    TriggerServerEvent('denalifw-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                    TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                     closeMenuFull()
                     SetVehicleEngineOn(veh, true, true)
                 end, vehicle.plate)
                 TriggerEvent("vehiclekeys:client:SetOwner", vehicle.plate)
             end, Depots[currentGarage].spawnPoint, true)
             SetTimeout(250, function()
-                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
+                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(GetVehiclePedIsIn(PlayerPedId(), false)))
             end)
         end
     else
-        NADRP.Functions.Notify(Lang:t("error.not_impound"), "error", 5000)
+        denalifw.Functions.Notify(Lang:t("error.not_impound"), "error", 5000)
     end
 end)
 
-RegisterNetEvent("NADRP-garages:client:HouseGarage", function(house)
-    NADRP.Functions.TriggerCallback("NADRP-garage:server:GetHouseVehicles", function(result)
+RegisterNetEvent("denalifw-garages:client:HouseGarage", function(house)
+    denalifw.Functions.TriggerCallback("denalifw-garage:server:GetHouseVehicles", function(result)
         if result == nil then
-            NADRP.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
+            denalifw.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuHouseGarageOptions = {
                 {
@@ -365,7 +365,7 @@ RegisterNetEvent("NADRP-garages:client:HouseGarage", function(house)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
                 curGarage = HouseGarages[house].label
-                vname = NADRP.Shared.Vehicles[v.vehicle].name
+                vname = denalifw.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = Lang:t("info.out")
@@ -379,7 +379,7 @@ RegisterNetEvent("NADRP-garages:client:HouseGarage", function(house)
                     header = vname.." ["..v.plate.."]",
                     txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
-                        event = "NADRP-garages:client:TakeOutHouseGarage",
+                        event = "denalifw-garages:client:TakeOutHouseGarage",
                         args = v
                     }
                 }
@@ -389,18 +389,18 @@ RegisterNetEvent("NADRP-garages:client:HouseGarage", function(house)
                 header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
-                    event = "NADRP-menu:closeMenu",
+                    event = "denalifw-menu:closeMenu",
                 }
             }
-            exports['NADRP-menu']:openMenu(MenuHouseGarageOptions)
+            exports['denalifw-menu']:openMenu(MenuHouseGarageOptions)
         end
     end, house)
 end)
 
-RegisterNetEvent("NADRP-garages:client:DepotList", function()
-    NADRP.Functions.TriggerCallback("NADRP-garage:server:GetDepotVehicles", function(result)
+RegisterNetEvent("denalifw-garages:client:DepotList", function()
+    denalifw.Functions.TriggerCallback("denalifw-garage:server:GetDepotVehicles", function(result)
         if result == nil then
-            NADRP.Functions.Notify(Lang:t("error.no_vehicles_impounded"), "error", 5000)
+            denalifw.Functions.Notify(Lang:t("error.no_vehicles_impounded"), "error", 5000)
         else
             local MenuDepotOptions = {
                 {
@@ -412,7 +412,7 @@ RegisterNetEvent("NADRP-garages:client:DepotList", function()
                 enginePercent = round(v.engine / 10, 0)
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
-                vname = NADRP.Shared.Vehicles[v.vehicle].name
+                vname = denalifw.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = Lang:t("info.impounded")
@@ -422,7 +422,7 @@ RegisterNetEvent("NADRP-garages:client:DepotList", function()
                     header = vname.." ["..v.depotprice.."]",
                     txt = Lang:t('info.depot_line', {value = v.plate, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
-                        event = "NADRP-garages:client:TakeOutDepotVehicle",
+                        event = "denalifw-garages:client:TakeOutDepotVehicle",
                         args = v
                     }
                 }
@@ -432,18 +432,18 @@ RegisterNetEvent("NADRP-garages:client:DepotList", function()
                 header = Lang:t("info.leave_depot"),
                 txt = "",
                 params = {
-                    event = "NADRP-menu:closeMenu",
+                    event = "denalifw-menu:closeMenu",
                 }
             }
-            exports['NADRP-menu']:openMenu(MenuDepotOptions)
+            exports['denalifw-menu']:openMenu(MenuDepotOptions)
         end
     end)
 end)
 
-RegisterNetEvent("NADRP-garages:client:VehicleList", function()
-    NADRP.Functions.TriggerCallback("NADRP-garage:server:GetUserVehicles", function(result)
+RegisterNetEvent("denalifw-garages:client:VehicleList", function()
+    denalifw.Functions.TriggerCallback("denalifw-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            NADRP.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
+            denalifw.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuPublicGarageOptions = {
                 {
@@ -456,7 +456,7 @@ RegisterNetEvent("NADRP-garages:client:VehicleList", function()
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
                 curGarage = Garages[v.garage].label
-                vname = NADRP.Shared.Vehicles[v.vehicle].name
+                vname = denalifw.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = Lang:t("info.out")
@@ -470,7 +470,7 @@ RegisterNetEvent("NADRP-garages:client:VehicleList", function()
                     header = vname.." ["..v.plate.."]",
                     txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
-                        event = "NADRP-garages:client:takeOutPublicGarage",
+                        event = "denalifw-garages:client:takeOutPublicGarage",
                         args = v,
                     }
                 }
@@ -480,18 +480,18 @@ RegisterNetEvent("NADRP-garages:client:VehicleList", function()
                 header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
-                    event = "NADRP-menu:closeMenu",
+                    event = "denalifw-menu:closeMenu",
                 }
             }
-            exports['NADRP-menu']:openMenu(MenuPublicGarageOptions)
+            exports['denalifw-menu']:openMenu(MenuPublicGarageOptions)
         end
     end, currentGarage)
 end)
 
-RegisterNetEvent("NADRP-garages:client:GangVehicleList", function()
-    NADRP.Functions.TriggerCallback("NADRP-garage:server:GetUserVehicles", function(result)
+RegisterNetEvent("denalifw-garages:client:GangVehicleList", function()
+    denalifw.Functions.TriggerCallback("denalifw-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            NADRP.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
+            denalifw.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuGangGarageOptions = {
                 {
@@ -504,7 +504,7 @@ RegisterNetEvent("NADRP-garages:client:GangVehicleList", function()
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
                 curGarage = GangGarages[v.garage].label
-                vname = NADRP.Shared.Vehicles[v.vehicle].name
+                vname = denalifw.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = Lang:t("info.out")
@@ -518,7 +518,7 @@ RegisterNetEvent("NADRP-garages:client:GangVehicleList", function()
                     header = vname.." ["..v.plate.."]",
                     txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
-                        event = "NADRP-garages:client:takeOutGangGarage",
+                        event = "denalifw-garages:client:takeOutGangGarage",
                         args = v
                     }
                 }
@@ -528,18 +528,18 @@ RegisterNetEvent("NADRP-garages:client:GangVehicleList", function()
                 header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
-                    event = "NADRP-menu:closeMenu",
+                    event = "denalifw-menu:closeMenu",
                 }
             }
-            exports['NADRP-menu']:openMenu(MenuGangGarageOptions)
+            exports['denalifw-menu']:openMenu(MenuGangGarageOptions)
         end
     end, currentGarage)
 end)
 
-RegisterNetEvent("NADRP-garages:client:JobVehicleList", function()
-    NADRP.Functions.TriggerCallback("NADRP-garage:server:GetUserVehicles", function(result)
+RegisterNetEvent("denalifw-garages:client:JobVehicleList", function()
+    denalifw.Functions.TriggerCallback("denalifw-garage:server:GetUserVehicles", function(result)
         if result == nil then
-            NADRP.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
+            denalifw.Functions.Notify(Lang:t("error.no_vehicles"), "error", 5000)
         else
             local MenuJobGarageOptions = {
                 {
@@ -552,7 +552,7 @@ RegisterNetEvent("NADRP-garages:client:JobVehicleList", function()
                 bodyPercent = round(v.body / 10, 0)
                 currentFuel = v.fuel
                 curGarage = JobGarages[v.garage].label
-                vname = NADRP.Shared.Vehicles[v.vehicle].name
+                vname = denalifw.Shared.Vehicles[v.vehicle].name
 
                 if v.state == 0 then
                     v.state = Lang:t("info.out")
@@ -566,7 +566,7 @@ RegisterNetEvent("NADRP-garages:client:JobVehicleList", function()
                     header = vname.." ["..v.plate.."]",
                     txt = Lang:t('info.garage_line', {value = v.state, value2 = currentFuel, value3 = enginePercent, value4 = bodyPercent}),
                     params = {
-                        event = "NADRP-garages:client:takeOutJobGarage",
+                        event = "denalifw-garages:client:takeOutJobGarage",
                         args = v
                     }
                 }
@@ -576,134 +576,134 @@ RegisterNetEvent("NADRP-garages:client:JobVehicleList", function()
                 header = Lang:t("info.leave_garage"),
                 txt = "",
                 params = {
-                    event = "NADRP-menu:closeMenu",
+                    event = "denalifw-menu:closeMenu",
                 }
             }
-            exports['NADRP-menu']:openMenu(MenuJobGarageOptions)
+            exports['denalifw-menu']:openMenu(MenuJobGarageOptions)
         end
     end, currentGarage)
 end)
 
-RegisterNetEvent('NADRP-garages:client:takeOutPublicGarage', function(vehicle)
+RegisterNetEvent('denalifw-garages:client:takeOutPublicGarage', function(vehicle)
     if vehicle.state == Lang:t("info.garaged") then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
         currentFuel = vehicle.fuel
 
-        NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-            NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
+        denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+            denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
 
                 if vehicle.plate then
                     OutsideVehicles[vehicle.plate] = veh
-                    TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                    TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                 end
 
-                NADRP.Functions.SetVehicleProperties(veh, properties)
+                denalifw.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, Garages[currentGarage].spawnPoint.w)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
-                TriggerServerEvent('NADRP-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                TriggerServerEvent('denalifw-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 closeMenuFull()
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
 
         end, Garages[currentGarage].spawnPoint, true)
     elseif vehicle.state == Lang:t("info.out") then
-        NADRP.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
+        denalifw.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
     elseif vehicle.state == Lang:t("info.impounded") then
-        NADRP.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
+        denalifw.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
     end
 end)
 
-RegisterNetEvent('NADRP-garages:client:takeOutGangGarage', function(vehicle)
+RegisterNetEvent('denalifw-garages:client:takeOutGangGarage', function(vehicle)
     if vehicle.state == Lang:t("info.garaged") then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
         currentFuel = vehicle.fuel
 
-        NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-            NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
+        denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+            denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
 
                 if vehicle.plate then
                     OutsideVehicles[vehicle.plate] = veh
-                    TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                    TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                 end
 
-                NADRP.Functions.SetVehicleProperties(veh, properties)
+                denalifw.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, GangGarages[currentGarage].spawnPoint.w)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
-                TriggerServerEvent('NADRP-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                TriggerServerEvent('denalifw-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 closeMenuFull()
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
 
         end, GangGarages[currentGarage].spawnPoint, true)
     elseif vehicle.state == Lang:t("info.out") then
-        NADRP.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
+        denalifw.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
     elseif vehicle.state == Lang:t("info.impounded") then
-        NADRP.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
+        denalifw.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
     end
 end)
 
-RegisterNetEvent('NADRP-garages:client:takeOutJobGarage', function(vehicle)
+RegisterNetEvent('denalifw-garages:client:takeOutJobGarage', function(vehicle)
     if vehicle.state == Lang:t("info.garaged") then
         enginePercent = round(vehicle.engine / 10, 1)
         bodyPercent = round(vehicle.body / 10, 1)
         currentFuel = vehicle.fuel
-        NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-            NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
+        denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+            denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
                 if vehicle.plate then
                     OutsideVehicles[vehicle.plate] = veh
-                    TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                    TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                 end
-                NADRP.Functions.SetVehicleProperties(veh, properties)
+                denalifw.Functions.SetVehicleProperties(veh, properties)
                 SetVehicleNumberPlateText(veh, vehicle.plate)
                 SetEntityHeading(veh, JobGarages[currentGarage].spawnPoint.w)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 doCarDamage(veh, vehicle)
                 SetEntityAsMissionEntity(veh, true, true)
-                TriggerServerEvent('NADRP-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                TriggerServerEvent('denalifw-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 closeMenuFull()
                 TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
         end, JobGarages[currentGarage].spawnPoint, true)
     elseif vehicle.state == Lang:t("info.out") then
-        NADRP.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
+        denalifw.Functions.Notify(Lang:t("error.vehicle_at_depot"), "error", 2500)
     elseif vehicle.state == Lang:t("info.impounded") then
-        NADRP.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
+        denalifw.Functions.Notify(Lang:t("error.impounded_by_police"), "error", 4000)
     end
 end)
 
-RegisterNetEvent('NADRP-garages:client:TakeOutDepotVehicle', function(vehicle)
+RegisterNetEvent('denalifw-garages:client:TakeOutDepotVehicle', function(vehicle)
     if vehicle.state == Lang:t("info.impounded") then
-        TriggerServerEvent("NADRP-garage:server:PayDepotPrice", vehicle)
+        TriggerServerEvent("denalifw-garage:server:PayDepotPrice", vehicle)
         Wait(1000)
     end
 end)
 
-RegisterNetEvent('NADRP-garages:client:TakeOutHouseGarage', function(vehicle)
+RegisterNetEvent('denalifw-garages:client:TakeOutHouseGarage', function(vehicle)
     if vehicle.state == Lang:t("info.garaged") then
-        NADRP.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
-            NADRP.Functions.TriggerCallback('NADRP-garage:server:GetVehicleProperties', function(properties)
-                NADRP.Functions.SetVehicleProperties(veh, properties)
+        denalifw.Functions.SpawnVehicle(vehicle.vehicle, function(veh)
+            denalifw.Functions.TriggerCallback('denalifw-garage:server:GetVehicleProperties', function(properties)
+                denalifw.Functions.SetVehicleProperties(veh, properties)
                 enginePercent = round(vehicle.engine / 10, 1)
                 bodyPercent = round(vehicle.body / 10, 1)
                 currentFuel = vehicle.fuel
 
                 if vehicle.plate then
                     OutsideVehicles[vehicle.plate] = veh
-                    TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                    TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                 end
 
                 SetVehicleNumberPlateText(veh, vehicle.plate)
@@ -712,9 +712,9 @@ RegisterNetEvent('NADRP-garages:client:TakeOutHouseGarage', function(vehicle)
                 exports['LegacyFuel']:SetFuel(veh, vehicle.fuel)
                 SetEntityAsMissionEntity(veh, true, true)
                 doCarDamage(veh, vehicle)
-                TriggerServerEvent('NADRP-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
+                TriggerServerEvent('denalifw-garage:server:updateVehicleState', 0, vehicle.plate, vehicle.garage)
                 closeMenuFull()
-                TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
+                TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
                 SetVehicleEngineOn(veh, true, true)
             end, vehicle.plate)
         end, HouseGarages[currentHouseGarage].takeVehicle, true)
@@ -758,24 +758,24 @@ CreateThread(function()
                     DrawText3Ds(Garages[k].putVehicle.x, Garages[k].putVehicle.y, Garages[k].putVehicle.z + 0.5, Lang:t("info.park_e"))
                     if IsControlJustPressed(0, 38) then
                         local curVeh = GetVehiclePedIsIn(ped)
-                        local plate = NADRP.Functions.GetPlate(curVeh)
-                        NADRP.Functions.TriggerCallback('NADRP-garage:server:checkVehicleOwner', function(owned)
+                        local plate = denalifw.Functions.GetPlate(curVeh)
+                        denalifw.Functions.TriggerCallback('denalifw-garage:server:checkVehicleOwner', function(owned)
                             if owned then
                                 local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                 local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                 local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-                                local vehProperties = NADRP.Functions.GetVehicleProperties(curVeh)
+                                local vehProperties = denalifw.Functions.GetVehicleProperties(curVeh)
                                 CheckPlayers(curVeh)
-                                TriggerServerEvent('NADRP-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, k)
-                                TriggerServerEvent('NADRP-garage:server:updateVehicleState', 1, plate, k)
-                                TriggerServerEvent('NADRP-vehicletuning:server:SaveVehicleProps', vehProperties)
+                                TriggerServerEvent('denalifw-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, k)
+                                TriggerServerEvent('denalifw-garage:server:updateVehicleState', 1, plate, k)
+                                TriggerServerEvent('denalifw-vehicletuning:server:SaveVehicleProps', vehProperties)
                                 if plate then
                                     OutsideVehicles[plate] = veh
-                                    TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                                    TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                 end
-                                NADRP.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
+                                denalifw.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                             else
-                                NADRP.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
+                                denalifw.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                             end
                         end, plate)
                     end
@@ -825,29 +825,29 @@ CreateThread(function()
                         DrawText3Ds(GangGarages[Name].putVehicle.x, GangGarages[Name].putVehicle.y, GangGarages[Name].putVehicle.z + 0.5, Lang:t("info.park_e"))
                         if IsControlJustPressed(0, 38) then
                             local curVeh = GetVehiclePedIsIn(ped)
-                            local plate = NADRP.Functions.GetPlate(curVeh)
-                            NADRP.Functions.TriggerCallback('NADRP-garage:server:checkVehicleOwner', function(owned)
+                            local plate = denalifw.Functions.GetPlate(curVeh)
+                            denalifw.Functions.TriggerCallback('denalifw-garage:server:checkVehicleOwner', function(owned)
                                 if owned then
                                     local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                     local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                     local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-                                    local vehProperties = NADRP.Functions.GetVehicleProperties(curVeh)
+                                    local vehProperties = denalifw.Functions.GetVehicleProperties(curVeh)
                                     CheckPlayers(curVeh)
                                     Wait(500)
                                     if DoesEntityExist(curVeh) then
-                                        NADRP.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
+                                        denalifw.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
                                     else
-                                    TriggerServerEvent('NADRP-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, Name)
-                                    TriggerServerEvent('NADRP-garage:server:updateVehicleState', 1, plate, Name)
-                                    TriggerServerEvent('NADRP-vehicletuning:server:SaveVehicleProps', vehProperties)
+                                    TriggerServerEvent('denalifw-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, Name)
+                                    TriggerServerEvent('denalifw-garage:server:updateVehicleState', 1, plate, Name)
+                                    TriggerServerEvent('denalifw-vehicletuning:server:SaveVehicleProps', vehProperties)
                                     if plate then
                                         OutsideVehicles[plate] = veh
-                                        TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                                        TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                     end
-                                    NADRP.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
+                                    denalifw.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                                 end
                                 else
-                                    NADRP.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
+                                    denalifw.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                                 end
                             end, plate)
                         end
@@ -898,29 +898,29 @@ CreateThread(function()
                         DrawText3Ds(JobGarages[Name].putVehicle.x, JobGarages[Name].putVehicle.y, JobGarages[Name].putVehicle.z + 0.5, Lang:t("info.park_e"))
                         if IsControlJustPressed(0, 38) then
                             local curVeh = GetVehiclePedIsIn(ped)
-                            local plate = NADRP.Functions.GetPlate(curVeh)
-                            NADRP.Functions.TriggerCallback('NADRP-garage:server:checkVehicleOwner', function(owned)
+                            local plate = denalifw.Functions.GetPlate(curVeh)
+                            denalifw.Functions.TriggerCallback('denalifw-garage:server:checkVehicleOwner', function(owned)
                                 if owned then
                                     local bodyDamage = math.ceil(GetVehicleBodyHealth(curVeh))
                                     local engineDamage = math.ceil(GetVehicleEngineHealth(curVeh))
                                     local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-                                    local vehProperties = NADRP.Functions.GetVehicleProperties(curVeh)
+                                    local vehProperties = denalifw.Functions.GetVehicleProperties(curVeh)
                                     CheckPlayers(curVeh)
                                     Wait(500)
                                     if DoesEntityExist(curVeh) then
-                                        NADRP.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
+                                        denalifw.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
                                     else
-                                    TriggerServerEvent('NADRP-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, Name)
-                                    TriggerServerEvent('NADRP-garage:server:updateVehicleState', 1, plate, Name)
-                                    TriggerServerEvent('NADRP-vehicletuning:server:SaveVehicleProps', vehProperties)
+                                    TriggerServerEvent('denalifw-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, Name)
+                                    TriggerServerEvent('denalifw-garage:server:updateVehicleState', 1, plate, Name)
+                                    TriggerServerEvent('denalifw-vehicletuning:server:SaveVehicleProps', vehProperties)
                                     if plate then
                                         OutsideVehicles[plate] = veh
-                                        TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                                        TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                     end
-                                    NADRP.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
+                                    denalifw.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                                 end
                                 else
-                                    NADRP.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
+                                    denalifw.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                                 end
                             end, plate)
                         end
@@ -959,29 +959,29 @@ CreateThread(function()
                                 DrawText3Ds(HouseGarages[currentHouseGarage].takeVehicle.x, HouseGarages[currentHouseGarage].takeVehicle.y, HouseGarages[currentHouseGarage].takeVehicle.z + 0.5, Lang:t("info.park_e"))
                                 if IsControlJustPressed(0, 38) then
                                     local curVeh = GetVehiclePedIsIn(ped)
-                                    local plate = NADRP.Functions.GetPlate(curVeh)
-                                    NADRP.Functions.TriggerCallback('NADRP-garage:server:checkVehicleHouseOwner', function(owned)
+                                    local plate = denalifw.Functions.GetPlate(curVeh)
+                                    denalifw.Functions.TriggerCallback('denalifw-garage:server:checkVehicleHouseOwner', function(owned)
                                         if owned then
                                             local bodyDamage = round(GetVehicleBodyHealth(curVeh), 1)
                                             local engineDamage = round(GetVehicleEngineHealth(curVeh), 1)
                                             local totalFuel = exports['LegacyFuel']:GetFuel(curVeh)
-                                            local vehProperties = NADRP.Functions.GetVehicleProperties(curVeh)
+                                            local vehProperties = denalifw.Functions.GetVehicleProperties(curVeh)
                                                 CheckPlayers(curVeh)
                                             if DoesEntityExist(curVeh) then
-                                                    NADRP.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
+                                                    denalifw.Functions.Notify(Lang:t("error.someone_inside"), "error", 4500)
                                             else
-                                            TriggerServerEvent('NADRP-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, currentHouseGarage)
-                                            TriggerServerEvent('NADRP-garage:server:updateVehicleState', 1, plate, currentHouseGarage)
-                                            TriggerServerEvent('NADRP-vehicletuning:server:SaveVehicleProps', vehProperties)
-                                            NADRP.Functions.DeleteVehicle(curVeh)
+                                            TriggerServerEvent('denalifw-garage:server:updateVehicleStatus', totalFuel, engineDamage, bodyDamage, plate, currentHouseGarage)
+                                            TriggerServerEvent('denalifw-garage:server:updateVehicleState', 1, plate, currentHouseGarage)
+                                            TriggerServerEvent('denalifw-vehicletuning:server:SaveVehicleProps', vehProperties)
+                                            denalifw.Functions.DeleteVehicle(curVeh)
                                             if plate then
                                                 OutsideVehicles[plate] = veh
-                                                TriggerServerEvent('NADRP-garages:server:UpdateOutsideVehicles', OutsideVehicles)
+                                                TriggerServerEvent('denalifw-garages:server:UpdateOutsideVehicles', OutsideVehicles)
                                             end
-                                            NADRP.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
+                                            denalifw.Functions.Notify(Lang:t("success.vehicle_parked"), "primary", 4500)
                                         end
                                         else
-                                            NADRP.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
+                                            denalifw.Functions.Notify(Lang:t("error.not_owned"), "error", 3500)
                                         end
 
                                     end, plate, currentHouseGarage)

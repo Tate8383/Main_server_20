@@ -27,7 +27,7 @@ function createMenu(items) {
             }
             
             if (item.items == null && item.shouldClose != null) {
-                $.post('https://NADRP-radialmenu/selectItem', JSON.stringify({
+                $.post('https://denalifw-radialmenu/selectItem', JSON.stringify({
                     itemData: item
                 }))
             }

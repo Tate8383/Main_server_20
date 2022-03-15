@@ -1,4 +1,4 @@
-NADRP = exports['NADRP-core']:GetCoreObject()
+denalifw = exports['denalifw-core']:GetCoreObject()
 local RainbowNeon = false
 LastEngineMultiplier = 1.0
 
@@ -24,39 +24,39 @@ function resetVeh(veh)
 end
 
 RegisterNUICallback('save', function(data)
-    NADRP.Functions.TriggerCallback('NADRP-tunerchip:server:HasChip', function(HasChip)
+    denalifw.Functions.TriggerCallback('denalifw-tunerchip:server:HasChip', function(HasChip)
         if HasChip then
             local ped = PlayerPedId()
             local veh = GetVehiclePedIsUsing(ped)
             setVehData(veh, data)
-            NADRP.Functions.Notify('TunerChip v1.05: Vehicle Tuned!', 'error')
+            denalifw.Functions.Notify('TunerChip v1.05: Vehicle Tuned!', 'error')
 
-            TriggerServerEvent('NADRP-tunerchip:server:TuneStatus', NADRP.Functions.GetPlate(veh), true)
+            TriggerServerEvent('denalifw-tunerchip:server:TuneStatus', denalifw.Functions.GetPlate(veh), true)
         end
     end)
 end)
 
-RegisterNetEvent('NADRP-tunerchip:client:TuneStatus', function()
+RegisterNetEvent('denalifw-tunerchip:client:TuneStatus', function()
     local ped = PlayerPedId()
     local closestVehicle = GetClosestVehicle(GetEntityCoords(ped), 5.0, 0, 70)
-    local plate = NADRP.Functions.GetPlate(closestVehicle)
+    local plate = denalifw.Functions.GetPlate(closestVehicle)
     local vehModel = GetEntityModel(closestVehicle)
     if vehModel ~= 0 then
-        NADRP.Functions.TriggerCallback('NADRP-tunerchip:server:GetStatus', function(status)
+        denalifw.Functions.TriggerCallback('denalifw-tunerchip:server:GetStatus', function(status)
             if status then
-                NADRP.Functions.Notify('This Vehicle Has Been Tuned', 'success')
+                denalifw.Functions.Notify('This Vehicle Has Been Tuned', 'success')
             else
-                NADRP.Functions.Notify('This Vehicle Has Not Been Tuned', 'error')
+                denalifw.Functions.Notify('This Vehicle Has Not Been Tuned', 'error')
             end
         end, plate)
     else
-        NADRP.Functions.Notify('No Vehicle Nearby', 'error')
+        denalifw.Functions.Notify('No Vehicle Nearby', 'error')
     end
 end)
 
 RegisterNUICallback('checkItem', function(data, cb)
     local retval = false
-    NADRP.Functions.TriggerCallback('NADRP:HasItem', function(result)
+    denalifw.Functions.TriggerCallback('denalifw:HasItem', function(result)
         if result then
             retval = true
         end
@@ -68,15 +68,15 @@ RegisterNUICallback('reset', function(data)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsUsing(ped)
     resetVeh(veh)
-    NADRP.Functions.Notify('TunerChip v1.05: Vehicle has been reset!', 'error')
+    denalifw.Functions.Notify('TunerChip v1.05: Vehicle has been reset!', 'error')
 end)
 
-RegisterNetEvent('NADRP-tunerchip:client:openChip', function()
+RegisterNetEvent('denalifw-tunerchip:client:openChip', function()
     local ped = PlayerPedId()
     local inVehicle = IsPedInAnyVehicle(ped)
 
     if inVehicle then
-        NADRP.Functions.Progressbar("connect_laptop", "Tunerchip v1.05: Vehicle Has Been Reset!", 2000, false, true, {
+        denalifw.Functions.Progressbar("connect_laptop", "Tunerchip v1.05: Vehicle Has Been Reset!", 2000, false, true, {
             disableMovement = true,
             disableCarMovement = true,
             disableMouse = false,
@@ -90,10 +90,10 @@ RegisterNetEvent('NADRP-tunerchip:client:openChip', function()
             openTunerLaptop(true)
         end, function() -- Cancel
             StopAnimTask(PlayerPedId(), "anim@amb@clubhouse@tutorial@bkr_tut_ig3@", "machinic_loop_mechandplayer", 1.0)
-            NADRP.Functions.Notify("Canceled", "error")
+            denalifw.Functions.Notify("Canceled", "error")
         end)
     else
-        NADRP.Functions.Notify("You Are Not In A Vehicle", "error")
+        denalifw.Functions.Notify("You Are Not In A Vehicle", "error")
     end
 end)
 
@@ -138,7 +138,7 @@ local RainbowNeonColors = {
 }
 
 RegisterNUICallback('saveNeon', function(data)
-    NADRP.Functions.TriggerCallback('NADRP-tunerchip:server:HasChip', function(HasChip)
+    denalifw.Functions.TriggerCallback('denalifw-tunerchip:server:HasChip', function(HasChip)
         if HasChip then
             if not data.rainbowEnabled then
                 local ped = PlayerPedId()
@@ -207,7 +207,7 @@ local RainbowHeadlight = false
 local RainbowHeadlightValue = 0
 
 RegisterNUICallback('saveHeadlights', function(data)
-    NADRP.Functions.TriggerCallback('NADRP-tunerchip:server:HasChip', function(HasChip)
+    denalifw.Functions.TriggerCallback('denalifw-tunerchip:server:HasChip', function(HasChip)
         if HasChip then
             if data.rainbowEnabled then
                 RainbowHeadlight = true

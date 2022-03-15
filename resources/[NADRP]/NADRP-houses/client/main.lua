@@ -1,4 +1,4 @@
-NADRP = exports['NADRP-core']:GetCoreObject()
+denalifw = exports['denalifw-core']:GetCoreObject()
 IsInside = false
 ClosestHouse = nil
 HasHouseKey = false
@@ -65,7 +65,7 @@ local function openContract(bool)
 end
 
 local function GetClosestPlayer()
-    local closestPlayers = NADRP.Functions.GetPlayersFromCoords()
+    local closestPlayers = denalifw.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -151,7 +151,7 @@ local function FrontDoorCam(coords)
     cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", coords.x, coords.y, coords.z + 0.5, 0.0, 0.00, coords.h - 180, 80.00, false, 0)
     SetCamActive(cam, true)
     RenderScriptCams(true, true, 500, true, true)
-    TriggerEvent('NADRP-weathersync:client:EnableSync')
+    TriggerEvent('denalifw-weathersync:client:EnableSync')
     FrontCam = true
     FreezeEntityPosition(PlayerPedId(), true)
     Wait(500)
@@ -244,18 +244,18 @@ local function SetClosestHouse()
         end
         ClosestHouse = current
         if ClosestHouse ~= nil and tonumber(dist) < 30 then
-            NADRP.Functions.TriggerCallback('NADRP-houses:server:ProximityKO', function(key, owned)
+            denalifw.Functions.TriggerCallback('denalifw-houses:server:ProximityKO', function(key, owned)
                 HasHouseKey = key
                 isOwned = owned
             end, ClosestHouse)
         end
     end
-    TriggerEvent('NADRP-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
+    TriggerEvent('denalifw-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
 end
 
 local function setHouseLocations()
     if ClosestHouse ~= nil then
-        NADRP.Functions.TriggerCallback('NADRP-houses:server:getHouseLocations', function(result)
+        denalifw.Functions.TriggerCallback('denalifw-houses:server:getHouseLocations', function(result)
             if result ~= nil then
                 if result.stash ~= nil then
                     stashLocation = json.decode(result.stash)
@@ -285,7 +285,7 @@ end
 
 local function LoadDecorations(house)
 	if Config.Houses[house].decorations == nil or next(Config.Houses[house].decorations) == nil then
-		NADRP.Functions.TriggerCallback('NADRP-houses:server:getHouseDecorations', function(result)
+		denalifw.Functions.TriggerCallback('denalifw-houses:server:getHouseDecorations', function(result)
 			Config.Houses[house].decorations = result
 			if Config.Houses[house].decorations ~= nil then
 				ObjectList = {}
@@ -343,11 +343,11 @@ end
 -- GUI Functions
 
 function CloseMenuFull()
-    exports['NADRP-menu']:closeMenu()
+    exports['denalifw-menu']:closeMenu()
 end
 
 local function RemoveHouseKey(citizenData)
-    TriggerServerEvent('NADRP-houses:server:removeHouseKey', ClosestHouse, citizenData)
+    TriggerServerEvent('denalifw-houses:server:removeHouseKey', ClosestHouse, citizenData)
     CloseMenuFull()
 end
 
@@ -356,7 +356,7 @@ local function getKeyHolders()
     fetchingHouseKeys = true
 
     local p = promise.new()
-    NADRP.Functions.TriggerCallback('NADRP-houses:server:getHouseKeyHolders', function(holders)
+    denalifw.Functions.TriggerCallback('denalifw-houses:server:getHouseKeyHolders', function(holders)
         p:resolve(holders)
     end,ClosestHouse)
 
@@ -368,7 +368,7 @@ function HouseKeysMenu()
     fetchingHouseKeys = false
 
     if holders == nil or next(holders) == nil then
-        NADRP.Functions.Notify(Lang:t("error.no_key_holders"), "error", 3500)
+        denalifw.Functions.Notify(Lang:t("error.no_key_holders"), "error", 3500)
         CloseMenuFull()
     else
         keyholderMenu = {}
@@ -377,14 +377,14 @@ function HouseKeysMenu()
             keyholderMenu[#keyholderMenu+1] = {
                 header = holders[k].firstname .. " " .. holders[k].lastname,
                 params = {
-                    event = "NADRP-houses:client:OpenClientOptions",
+                    event = "denalifw-houses:client:OpenClientOptions",
                     args = {
                         citizenData = holders[k]
                     }
                 }
             }
         end
-        exports['NADRP-menu']:openMenu(keyholderMenu)
+        exports['denalifw-menu']:openMenu(keyholderMenu)
     end
 
 end
@@ -394,7 +394,7 @@ local function optionMenu(citizenData)
         {
             header = Lang:t("menu.remove_key"),
             params = {
-                event = "NADRP-houses:client:RevokeKey",
+                event = "denalifw-houses:client:RevokeKey",
                 args = {
                     citizenData = citizenData
                 }
@@ -403,29 +403,29 @@ local function optionMenu(citizenData)
         {
             header = Lang:t("menu.back"),
             params = {
-                event = "NADRP-houses:client:removeHouseKey",
+                event = "denalifw-houses:client:removeHouseKey",
                 args = {}
             }
         },
     }
 
-    exports['NADRP-menu']:openMenu(keyholderOptions)
+    exports['denalifw-menu']:openMenu(keyholderOptions)
 end
 
 -- Shell Configuration
 local function getDataForHouseTier(house, coords)
     local houseTier = Config.Houses[house].tier
     local shells = {
-        [1] = function(coords) return exports['NADRP-interior']:CreateApartmentShell(coords) end,
-        [2] = function(coords) return exports['NADRP-interior']:CreateTier1House(coords) end,
-        [3] = function(coords) return exports['NADRP-interior']:CreateTrevorsShell(coords) end,
-        [4] = function(coords) return exports['NADRP-interior']:CreateCaravanShell(coords) end,
-        [5] = function(coords) return exports['NADRP-interior']:CreateLesterShell(coords) end,
-        [6] = function(coords) return exports['NADRP-interior']:CreateRanchShell(coords) end
+        [1] = function(coords) return exports['denalifw-interior']:CreateApartmentShell(coords) end,
+        [2] = function(coords) return exports['denalifw-interior']:CreateTier1House(coords) end,
+        [3] = function(coords) return exports['denalifw-interior']:CreateTrevorsShell(coords) end,
+        [4] = function(coords) return exports['denalifw-interior']:CreateCaravanShell(coords) end,
+        [5] = function(coords) return exports['denalifw-interior']:CreateLesterShell(coords) end,
+        [6] = function(coords) return exports['denalifw-interior']:CreateRanchShell(coords) end
     }
 
     if not shells[houseTier] then
-        NADRP.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
+        denalifw.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
         return nil
     else
         return shells[houseTier](coords)
@@ -436,129 +436,129 @@ end
 
 -- local function getDataForHouseTier(house, coords)
 --     if Config.Houses[house].tier == 1 then
---         return exports['NADRP-interior']:CreateApartmentShell(coords)
+--         return exports['denalifw-interior']:CreateApartmentShell(coords)
 --     elseif Config.Houses[house].tier == 2 then
---         return exports['NADRP-interior']:CreateTier1House(coords)
+--         return exports['denalifw-interior']:CreateTier1House(coords)
 --     elseif Config.Houses[house].tier == 3 then
---         return exports['NADRP-interior']:CreateTrevorsShell(coords)
+--         return exports['denalifw-interior']:CreateTrevorsShell(coords)
 --     elseif Config.Houses[house].tier == 4 then
---         return exports['NADRP-interior']:CreateCaravanShell(coords)
+--         return exports['denalifw-interior']:CreateCaravanShell(coords)
 --     elseif Config.Houses[house].tier == 5 then
---         return exports['NADRP-interior']:CreateLesterShell(coords)
+--         return exports['denalifw-interior']:CreateLesterShell(coords)
 --     elseif Config.Houses[house].tier == 6 then
---         return exports['NADRP-interior']:CreateRanchShell(coords)
+--         return exports['denalifw-interior']:CreateRanchShell(coords)
 --     elseif Config.Houses[house].tier == 7 then
---         return exports['NADRP-interior']:CreateFranklinAunt(coords)
+--         return exports['denalifw-interior']:CreateFranklinAunt(coords)
 --     elseif Config.Houses[house].tier == 8 then
---         return exports['NADRP-interior']:CreateMedium2(coords)
+--         return exports['denalifw-interior']:CreateMedium2(coords)
 --     elseif Config.Houses[house].tier == 9 then
---         return exports['NADRP-interior']:CreateMedium3(coords)
+--         return exports['denalifw-interior']:CreateMedium3(coords)
 --     elseif Config.Houses[house].tier == 10 then
---         return exports['NADRP-interior']:CreateBanham(coords)
+--         return exports['denalifw-interior']:CreateBanham(coords)
 --     elseif Config.Houses[house].tier == 11 then
---         return exports['NADRP-interior']:CreateWestons(coords)
+--         return exports['denalifw-interior']:CreateWestons(coords)
 --     elseif Config.Houses[house].tier == 12 then
---         return exports['NADRP-interior']:CreateWestons2(coords)
+--         return exports['denalifw-interior']:CreateWestons2(coords)
 --     elseif Config.Houses[house].tier == 13 then
---         return exports['NADRP-interior']:CreateClassicHouse(coords)
+--         return exports['denalifw-interior']:CreateClassicHouse(coords)
 --     elseif Config.Houses[house].tier == 14 then
---         return exports['NADRP-interior']:CreateClassicHouse2(coords)
+--         return exports['denalifw-interior']:CreateClassicHouse2(coords)
 --     elseif Config.Houses[house].tier == 15 then
---         return exports['NADRP-interior']:CreateClassicHouse3(coords)
+--         return exports['denalifw-interior']:CreateClassicHouse3(coords)
 --     elseif Config.Houses[house].tier == 16 then
---         return exports['NADRP-interior']:CreateHighend1(coords)
+--         return exports['denalifw-interior']:CreateHighend1(coords)
 --     elseif Config.Houses[house].tier == 17 then
---         return exports['NADRP-interior']:CreateHighend2(coords)
+--         return exports['denalifw-interior']:CreateHighend2(coords)
 --     elseif Config.Houses[house].tier == 18 then
---         return exports['NADRP-interior']:CreateHighend3(coords)
+--         return exports['denalifw-interior']:CreateHighend3(coords)
 --     elseif Config.Houses[house].tier == 19 then
---         return exports['NADRP-interior']:CreateHighend(coords)
+--         return exports['denalifw-interior']:CreateHighend(coords)
 --     elseif Config.Houses[house].tier == 20 then
---         return exports['NADRP-interior']:CreateHighendV2(coords)
+--         return exports['denalifw-interior']:CreateHighendV2(coords)
 --     elseif Config.Houses[house].tier == 21 then
---         return exports['NADRP-interior']:CreateMichael(coords)
+--         return exports['denalifw-interior']:CreateMichael(coords)
 --     elseif Config.Houses[house].tier == 22 then
---         return exports['NADRP-interior']:CreateStashHouse(coords)
+--         return exports['denalifw-interior']:CreateStashHouse(coords)
 --     elseif Config.Houses[house].tier == 23 then
---         return exports['NADRP-interior']:CreateStashHouse2(coords)
+--         return exports['denalifw-interior']:CreateStashHouse2(coords)
 --     elseif Config.Houses[house].tier == 24 then
---         return exports['NADRP-interior']:CreateContainer(coords)
+--         return exports['denalifw-interior']:CreateContainer(coords)
 --     elseif Config.Houses[house].tier == 25 then
---         return exports['NADRP-interior']:CreateGarageLow(coords)
+--         return exports['denalifw-interior']:CreateGarageLow(coords)
 --     elseif Config.Houses[house].tier == 26 then
---         return exports['NADRP-interior']:CreateGarageMed(coords)
+--         return exports['denalifw-interior']:CreateGarageMed(coords)
 --     elseif Config.Houses[house].tier == 27 then
---         return exports['NADRP-interior']:CreateGarageHigh(coords)
+--         return exports['denalifw-interior']:CreateGarageHigh(coords)
 --     elseif Config.Houses[house].tier == 28 then
---         return exports['NADRP-interior']:CreateOffice1(coords)
+--         return exports['denalifw-interior']:CreateOffice1(coords)
 --     elseif Config.Houses[house].tier == 29 then
---         return exports['NADRP-interior']:CreateOffice2(coords)
+--         return exports['denalifw-interior']:CreateOffice2(coords)
 --     elseif Config.Houses[house].tier == 30 then
---         return exports['NADRP-interior']:CreateOfficeBig(coords)
+--         return exports['denalifw-interior']:CreateOfficeBig(coords)
 --     elseif Config.Houses[house].tier == 31 then
---         return exports['NADRP-interior']:CreateBarber(coords)
+--         return exports['denalifw-interior']:CreateBarber(coords)
 --     elseif Config.Houses[house].tier == 32 then
---         return exports['NADRP-interior']:CreateGunstore(coords)
+--         return exports['denalifw-interior']:CreateGunstore(coords)
 --     elseif Config.Houses[house].tier == 33 then
---         return exports['NADRP-interior']:CreateStore1(coords)
+--         return exports['denalifw-interior']:CreateStore1(coords)
 --     elseif Config.Houses[house].tier == 34 then
---         return exports['NADRP-interior']:CreateStore2(coords)
+--         return exports['denalifw-interior']:CreateStore2(coords)
 --     elseif Config.Houses[house].tier == 35 then
---         return exports['NADRP-interior']:CreateStore3(coords)
+--         return exports['denalifw-interior']:CreateStore3(coords)
 --     elseif Config.Houses[house].tier == 36 then
---         return exports['NADRP-interior']:CreateWarehouse1(coords)
+--         return exports['denalifw-interior']:CreateWarehouse1(coords)
 --     elseif Config.Houses[house].tier == 37 then
---         return exports['NADRP-interior']:CreateWarehouse2(coords)
+--         return exports['denalifw-interior']:CreateWarehouse2(coords)
 --     elseif Config.Houses[house].tier == 38 then
---         return exports['NADRP-interior']:CreateWarehouse3(coords)
+--         return exports['denalifw-interior']:CreateWarehouse3(coords)
 --     elseif Config.Houses[house].tier == 39 then
---         return exports['NADRP-interior']:CreateK4Coke(coords)
+--         return exports['denalifw-interior']:CreateK4Coke(coords)
 --     elseif Config.Houses[house].tier == 40 then
---         return exports['NADRP-interior']:CreateK4Meth(coords)
+--         return exports['denalifw-interior']:CreateK4Meth(coords)
 --     elseif Config.Houses[house].tier == 41 then
---         return exports['NADRP-interior']:CreateK4Weed(coords)
+--         return exports['denalifw-interior']:CreateK4Weed(coords)
 --     elseif Config.Houses[house].tier == 42 then
---         return exports['NADRP-interior']:CreateContainer2(coords)
+--         return exports['denalifw-interior']:CreateContainer2(coords)
 --     elseif Config.Houses[house].tier == 43 then
---         return exports['NADRP-interior']:CreateFurniStash1(coords)
+--         return exports['denalifw-interior']:CreateFurniStash1(coords)
 --     elseif Config.Houses[house].tier == 44 then
---         return exports['NADRP-interior']:CreateFurniStash3(coords)
+--         return exports['denalifw-interior']:CreateFurniStash3(coords)
 --     elseif Config.Houses[house].tier == 45 then
---         return exports['NADRP-interior']:CreateFurniLow(coords)
+--         return exports['denalifw-interior']:CreateFurniLow(coords)
 --     elseif Config.Houses[house].tier == 46 then
---         return exports['NADRP-interior']:CreateFurniMid(coords)
+--         return exports['denalifw-interior']:CreateFurniMid(coords)
 --     elseif Config.Houses[house].tier == 47 then
---         return exports['NADRP-interior']:CreateFurniMotel(coords)
+--         return exports['denalifw-interior']:CreateFurniMotel(coords)
 --     elseif Config.Houses[house].tier == 48 then
---         return exports['NADRP-interior']:CreateFurniMotelClassic(coords)
+--         return exports['denalifw-interior']:CreateFurniMotelClassic(coords)
 --     elseif Config.Houses[house].tier == 49 then
---         return exports['NADRP-interior']:CreateFurniMotelStandard(coords)
+--         return exports['denalifw-interior']:CreateFurniMotelStandard(coords)
 --     elseif Config.Houses[house].tier == 50 then
---         return exports['NADRP-interior']:CreateFurniMotelHigh(coords)
+--         return exports['denalifw-interior']:CreateFurniMotelHigh(coords)
 --     elseif Config.Houses[house].tier == 51 then
---         return exports['NADRP-interior']:CreateFurniMotelModern(coords)
+--         return exports['denalifw-interior']:CreateFurniMotelModern(coords)
 --     elseif Config.Houses[house].tier == 52 then
---         return exports['NADRP-interior']:CreateFurniMotelModern2(coords)
+--         return exports['denalifw-interior']:CreateFurniMotelModern2(coords)
 --     elseif Config.Houses[house].tier == 53 then
---         return exports['NADRP-interior']:CreateFurniMotelModern3(coords)
+--         return exports['denalifw-interior']:CreateFurniMotelModern3(coords)
 --     elseif Config.Houses[house].tier == 54 then
---         return exports['NADRP-interior']:CreateCoke(coords)
+--         return exports['denalifw-interior']:CreateCoke(coords)
 --     elseif Config.Houses[house].tier == 55 then
---         return exports['NADRP-interior']:CreateCoke2(coords)
+--         return exports['denalifw-interior']:CreateCoke2(coords)
 --     elseif Config.Houses[house].tier == 56 then
---         return exports['NADRP-interior']:CreateMeth(coords)
+--         return exports['denalifw-interior']:CreateMeth(coords)
 --     elseif Config.Houses[house].tier == 57 then
---         return exports['NADRP-interior']:CreateWeed(coords)
+--         return exports['denalifw-interior']:CreateWeed(coords)
 --     elseif Config.Houses[house].tier == 58 then
---         return exports['NADRP-interior']:CreateWeed2(coords)
+--         return exports['denalifw-interior']:CreateWeed2(coords)
 --     elseif Config.Houses[house].tier == 59 then
---         return exports['NADRP-interior']:CreateMansion(coords)
+--         return exports['denalifw-interior']:CreateMansion(coords)
 --     elseif Config.Houses[house].tier == 60 then
---         return exports['NADRP-interior']:CreateMansion2(coords)
+--         return exports['denalifw-interior']:CreateMansion2(coords)
 --     elseif Config.Houses[house].tier == 61 then
---         return exports['NADRP-interior']:CreateMansion3(coords)
+--         return exports['denalifw-interior']:CreateMansion3(coords)
 --     else
---         NADRP.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
+--         denalifw.Functions.Notify(Lang:t("error.invalid_tier"), 'error')
 --     end
 -- end
 
@@ -577,10 +577,10 @@ local function enterOwnedHouse(house)
     POIOffsets = data[2]
     entering = true
     Wait(500)
-    TriggerServerEvent('NADRP-houses:server:SetInsideMeta', house, true)
-    --TriggerEvent('NADRP-weathersync:client:DisableSync')
-    TriggerEvent('NADRP-weathersync:client:EnableSync')
-    TriggerEvent('NADRP-weed:client:getHousePlants', house)
+    TriggerServerEvent('denalifw-houses:server:SetInsideMeta', house, true)
+    --TriggerEvent('denalifw-weathersync:client:DisableSync')
+    TriggerEvent('denalifw-weathersync:client:EnableSync')
+    TriggerEvent('denalifw-weed:client:getHousePlants', house)
     entering = false
     setHouseLocations()
     CloseMenuFull()
@@ -594,15 +594,15 @@ local function LeaveOwnedHouse(house)
         Wait(250)
         DoScreenFadeOut(250)
         Wait(500)
-        exports['NADRP-interior']:DespawnInterior(houseObj, function()
+        exports['denalifw-interior']:DespawnInterior(houseObj, function()
             UnloadDecorations()
-            TriggerEvent('NADRP-weathersync:client:EnableSync')
+            TriggerEvent('denalifw-weathersync:client:EnableSync')
             Wait(250)
             DoScreenFadeIn(250)
             SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
             SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
-            TriggerEvent('NADRP-weed:client:leaveHouse')
-            TriggerServerEvent('NADRP-houses:server:SetInsideMeta', house, false)
+            TriggerEvent('denalifw-weed:client:leaveHouse')
+            TriggerServerEvent('denalifw-houses:server:SetInsideMeta', house, false)
             CurrentHouse = nil
         end)
     end
@@ -622,10 +622,10 @@ local function enterNonOwnedHouse(house)
     POIOffsets = data[2]
     entering = true
     Wait(500)
-    TriggerServerEvent('NADRP-houses:server:SetInsideMeta', house, true)
-    --TriggerEvent('NADRP-weathersync:client:DisableSync')
-    TriggerEvent('NADRP-weathersync:client:EnableSync')
-    TriggerEvent('NADRP-weed:client:getHousePlants', house)
+    TriggerServerEvent('denalifw-houses:server:SetInsideMeta', house, true)
+    --TriggerEvent('denalifw-weathersync:client:DisableSync')
+    TriggerEvent('denalifw-weathersync:client:EnableSync')
+    TriggerEvent('denalifw-weed:client:getHousePlants', house)
     entering = false
     InOwnedHouse = true
     setHouseLocations()
@@ -640,16 +640,16 @@ local function LeaveNonOwnedHouse(house)
         Wait(250)
         DoScreenFadeOut(250)
         Wait(500)
-        exports['NADRP-interior']:DespawnInterior(houseObj, function()
+        exports['denalifw-interior']:DespawnInterior(houseObj, function()
             UnloadDecorations()
-            TriggerEvent('NADRP-weathersync:client:EnableSync')
+            TriggerEvent('denalifw-weathersync:client:EnableSync')
             Wait(250)
             DoScreenFadeIn(250)
             SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.2)
             SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
             InOwnedHouse = false
-            TriggerEvent('NADRP-weed:client:leaveHouse')
-            TriggerServerEvent('NADRP-houses:server:SetInsideMeta', house, false)
+            TriggerEvent('denalifw-weed:client:leaveHouse')
+            TriggerServerEvent('denalifw-houses:server:SetInsideMeta', house, false)
             CurrentHouse = nil
         end)
     end
@@ -673,20 +673,20 @@ exports('isNearHouses', isNearHouses)
 
 -- Events
 
-RegisterNetEvent('NADRP-houses:server:sethousedecorations', function(house, decorations)
+RegisterNetEvent('denalifw-houses:server:sethousedecorations', function(house, decorations)
 	Config.Houses[house].decorations = decorations
 	if IsInside and ClosestHouse == house then
 		LoadDecorations(house)
 	end
 end)
 
-RegisterNetEvent('NADRP-houses:client:sellHouse', function()
+RegisterNetEvent('denalifw-houses:client:sellHouse', function()
     if ClosestHouse and HasHouseKey then
-        TriggerServerEvent('NADRP-houses:server:viewHouse', ClosestHouse)
+        TriggerServerEvent('denalifw-houses:server:viewHouse', ClosestHouse)
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:EnterHouse', function()
+RegisterNetEvent('denalifw-houses:client:EnterHouse', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
 
@@ -704,23 +704,23 @@ RegisterNetEvent('NADRP-houses:client:EnterHouse', function()
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:RequestRing', function()
+RegisterNetEvent('denalifw-houses:client:RequestRing', function()
     if ClosestHouse ~= nil then
-        TriggerServerEvent('NADRP-houses:server:RingDoor', ClosestHouse)
+        TriggerServerEvent('denalifw-houses:server:RingDoor', ClosestHouse)
     end
 end)
 
-AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
-    TriggerServerEvent('NADRP-houses:server:setHouses')
+AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
+    TriggerServerEvent('denalifw-houses:server:setHouses')
     SetClosestHouse()
-    TriggerEvent('NADRP-houses:client:setupHouseBlips')
-    if Config.UnownedBlips then TriggerEvent('NADRP-houses:client:setupHouseBlips2') end
+    TriggerEvent('denalifw-houses:client:setupHouseBlips')
+    if Config.UnownedBlips then TriggerEvent('denalifw-houses:client:setupHouseBlips2') end
     Wait(100)
-    TriggerEvent('NADRP-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
-    TriggerServerEvent("NADRP-houses:server:setHouses")
+    TriggerEvent('denalifw-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
+    TriggerServerEvent("denalifw-houses:server:setHouses")
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     IsInside = false
     ClosestHouse = nil
     HasHouseKey = false
@@ -735,15 +735,15 @@ RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:setHouseConfig', function(houseConfig)
+RegisterNetEvent('denalifw-houses:client:setHouseConfig', function(houseConfig)
     Config.Houses = houseConfig
 end)
 
-RegisterNetEvent('NADRP-houses:client:lockHouse', function(bool, house)
+RegisterNetEvent('denalifw-houses:client:lockHouse', function(bool, house)
     Config.Houses[house].locked = bool
 end)
 
-RegisterNetEvent('NADRP-houses:client:createHouses', function(price, tier)
+RegisterNetEvent('denalifw-houses:client:createHouses', function(price, tier)
     local pos = GetEntityCoords(PlayerPedId())
     local heading = GetEntityHeading(PlayerPedId())
 	local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
@@ -753,11 +753,11 @@ RegisterNetEvent('NADRP-houses:client:createHouses', function(price, tier)
         cam 	= { x = pos.x, y = pos.y, z = pos.z, h = heading, yaw = -10.00},
     }
     street = street:gsub("%-", " ")
-    TriggerServerEvent('NADRP-houses:server:addNewHouse', street, coords, price, tier)
-    if Config.UnownedBlips then TriggerServerEvent('NADRP-houses:server:createBlip') end
+    TriggerServerEvent('denalifw-houses:server:addNewHouse', street, coords, price, tier)
+    if Config.UnownedBlips then TriggerServerEvent('denalifw-houses:server:createBlip') end
 end)
 
-RegisterNetEvent('NADRP-houses:client:addGarage', function()
+RegisterNetEvent('denalifw-houses:client:addGarage', function()
     if ClosestHouse ~= nil then
         local pos = GetEntityCoords(PlayerPedId())
         local heading = GetEntityHeading(PlayerPedId())
@@ -767,88 +767,88 @@ RegisterNetEvent('NADRP-houses:client:addGarage', function()
             z = pos.z,
             h = heading,
         }
-        TriggerServerEvent('NADRP-houses:server:addGarage', ClosestHouse, coords)
+        TriggerServerEvent('denalifw-houses:server:addGarage', ClosestHouse, coords)
     else
-        NADRP.Functions.Notify(Lang:t("error.no_house"), "error")
+        denalifw.Functions.Notify(Lang:t("error.no_house"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:toggleDoorlock', function()
+RegisterNetEvent('denalifw-houses:client:toggleDoorlock', function()
     local pos = GetEntityCoords(PlayerPedId())
     local dist = #(pos - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
     if dist <= 1.5 then
         if HasHouseKey then
             if Config.Houses[ClosestHouse].locked then
-                TriggerServerEvent('NADRP-houses:server:lockHouse', false, ClosestHouse)
-                NADRP.Functions.Notify(Lang:t("success.unlocked"), "success", 2500)
+                TriggerServerEvent('denalifw-houses:server:lockHouse', false, ClosestHouse)
+                denalifw.Functions.Notify(Lang:t("success.unlocked"), "success", 2500)
             else
-                TriggerServerEvent('NADRP-houses:server:lockHouse', true, ClosestHouse)
-                NADRP.Functions.Notify(Lang:t("error.locked"), "error", 2500)
+                TriggerServerEvent('denalifw-houses:server:lockHouse', true, ClosestHouse)
+                denalifw.Functions.Notify(Lang:t("error.locked"), "error", 2500)
             end
         else
-            NADRP.Functions.Notify(Lang:t("error.no_keys"), "error", 3500)
+            denalifw.Functions.Notify(Lang:t("error.no_keys"), "error", 3500)
         end
     else
-        NADRP.Functions.Notify(Lang:t("error.no_door"), "error", 3500)
+        denalifw.Functions.Notify(Lang:t("error.no_door"), "error", 3500)
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:RingDoor', function(player, house)
+RegisterNetEvent('denalifw-houses:client:RingDoor', function(player, house)
     if ClosestHouse == house and IsInside then
         CurrentDoorBell = player
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "doorbell", 0.1)
-        NADRP.Functions.Notify(Lang:t("info.door_ringing"))
+        denalifw.Functions.Notify(Lang:t("info.door_ringing"))
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:giveHouseKey', function()
+RegisterNetEvent('denalifw-houses:client:giveHouseKey', function()
     local player, distance = GetClosestPlayer()
     if player ~= -1 and distance < 2.5 and ClosestHouse ~= nil then
         local playerId = GetPlayerServerId(player)
         local pedpos = GetEntityCoords(PlayerPedId())
         local housedist = #(pedpos - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
         if housedist < 10 then
-            TriggerServerEvent('NADRP-houses:server:giveHouseKey', playerId, ClosestHouse)
+            TriggerServerEvent('denalifw-houses:server:giveHouseKey', playerId, ClosestHouse)
         else
-            NADRP.Functions.Notify(Lang:t("error.no_door"), "error")
+            denalifw.Functions.Notify(Lang:t("error.no_door"), "error")
         end
     elseif ClosestHouse == nil then
-        NADRP.Functions.Notify(Lang:t("error.no_house"), "error")
+        denalifw.Functions.Notify(Lang:t("error.no_house"), "error")
     else
-        NADRP.Functions.Notify(Lang:t("error.no_one_near"), "error")
+        denalifw.Functions.Notify(Lang:t("error.no_one_near"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:removeHouseKey', function()
+RegisterNetEvent('denalifw-houses:client:removeHouseKey', function()
     if ClosestHouse ~= nil then
         local pedpos = GetEntityCoords(PlayerPedId())
         local housedist = #(pedpos - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
         if housedist <= 5 then
-            NADRP.Functions.TriggerCallback('NADRP-houses:server:getHouseOwner', function(result)
-                if NADRP.Functions.GetPlayerData().citizenid == result then
+            denalifw.Functions.TriggerCallback('denalifw-houses:server:getHouseOwner', function(result)
+                if denalifw.Functions.GetPlayerData().citizenid == result then
                     HouseKeysMenu()
                 else
-                    NADRP.Functions.Notify(Lang:t("error.not_owner"), "error")
+                    denalifw.Functions.Notify(Lang:t("error.not_owner"), "error")
                 end
             end, ClosestHouse)
         else
-            NADRP.Functions.Notify(Lang:t("error.no_door"), "error")
+            denalifw.Functions.Notify(Lang:t("error.no_door"), "error")
         end
     else
-        NADRP.Functions.Notify(Lang:t("error.no_door"), "error")
+        denalifw.Functions.Notify(Lang:t("error.no_door"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:RevokeKey', function(data)
+RegisterNetEvent('denalifw-houses:client:RevokeKey', function(data)
     RemoveHouseKey(data.citizenData)
 end)
 
-RegisterNetEvent('NADRP-houses:client:refreshHouse', function(data)
+RegisterNetEvent('denalifw-houses:client:refreshHouse', function(data)
     Wait(100)
     SetClosestHouse()
 end)
 
-RegisterNetEvent('NADRP-houses:client:SpawnInApartment', function(house)
+RegisterNetEvent('denalifw-houses:client:SpawnInApartment', function(house)
     local pos = GetEntityCoords(PlayerPedId())
     if rangDoorbell ~= nil then
         if #(pos - vector3(Config.Houses[house].coords.enter.x, Config.Houses[house].coords.enter.y, Config.Houses[house].coords.enter.z)) > 5 then
@@ -859,27 +859,27 @@ RegisterNetEvent('NADRP-houses:client:SpawnInApartment', function(house)
     enterNonOwnedHouse(house)
 end)
 
-RegisterNetEvent('NADRP-houses:client:enterOwnedHouse', function(house)
-    NADRP.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('denalifw-houses:client:enterOwnedHouse', function(house)
+    denalifw.Functions.GetPlayerData(function(PlayerData)
 		if PlayerData.metadata["injail"] == 0 then
 			enterOwnedHouse(house)
 		end
 	end)
 end)
 
-RegisterNetEvent('NADRP-houses:client:LastLocationHouse', function(houseId)
-    NADRP.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('denalifw-houses:client:LastLocationHouse', function(houseId)
+    denalifw.Functions.GetPlayerData(function(PlayerData)
 		if PlayerData.metadata["injail"] == 0 then
 			enterOwnedHouse(houseId)
 		end
 	end)
 end)
 
-RegisterNetEvent('NADRP-houses:client:setupHouseBlips', function() -- Setup owned on load
+RegisterNetEvent('denalifw-houses:client:setupHouseBlips', function() -- Setup owned on load
     CreateThread(function()
         Wait(2000)
         if LocalPlayer.state['isLoggedIn'] then
-            NADRP.Functions.TriggerCallback('NADRP-houses:server:getOwnedHouses', function(ownedHouses)
+            denalifw.Functions.TriggerCallback('denalifw-houses:server:getOwnedHouses', function(ownedHouses)
                 if ownedHouses then
                     for k, v in pairs(ownedHouses) do
                         local house = Config.Houses[ownedHouses[k]]
@@ -900,7 +900,7 @@ RegisterNetEvent('NADRP-houses:client:setupHouseBlips', function() -- Setup owne
     end)
 end)
 
-RegisterNetEvent('NADRP-houses:client:setupHouseBlips2', function() -- Setup unowned on load
+RegisterNetEvent('denalifw-houses:client:setupHouseBlips2', function() -- Setup unowned on load
     for k,v in pairs(Config.Houses) do
         if not v.owned then
             HouseBlip2 = AddBlipForCoord(v.coords.enter.x, v.coords.enter.y, v.coords.enter.z)
@@ -917,7 +917,7 @@ RegisterNetEvent('NADRP-houses:client:setupHouseBlips2', function() -- Setup uno
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:createBlip', function(coords) -- Create unowned on command
+RegisterNetEvent('denalifw-houses:client:createBlip', function(coords) -- Create unowned on command
     NewHouseBlip = AddBlipForCoord(coords.x, coords.y, coords.z)
     SetBlipSprite (NewHouseBlip, 40)
     SetBlipDisplay(NewHouseBlip, 4)
@@ -930,17 +930,17 @@ RegisterNetEvent('NADRP-houses:client:createBlip', function(coords) -- Create un
     UnownedHouseBlips[#UnownedHouseBlips+1] = NewHouseBlip
 end)
 
-RegisterNetEvent('NADRP-houses:client:refreshBlips', function() -- Refresh unowned on buy
+RegisterNetEvent('denalifw-houses:client:refreshBlips', function() -- Refresh unowned on buy
     for k,v in pairs(UnownedHouseBlips) do RemoveBlip(v) end
     Wait(250)
-    TriggerEvent('NADRP-houses:client:setupHouseBlips2')
+    TriggerEvent('denalifw-houses:client:setupHouseBlips2')
 end)
 
-RegisterNetEvent('NADRP-houses:client:SetClosestHouse', function()
+RegisterNetEvent('denalifw-houses:client:SetClosestHouse', function()
     SetClosestHouse()
 end)
 
-RegisterNetEvent('NADRP-houses:client:viewHouse', function(houseprice, brokerfee, bankfee, taxes, firstname, lastname)
+RegisterNetEvent('denalifw-houses:client:viewHouse', function(houseprice, brokerfee, bankfee, taxes, firstname, lastname)
     setViewCam(Config.Houses[ClosestHouse].coords.cam, Config.Houses[ClosestHouse].coords.cam.h, Config.Houses[ClosestHouse].coords.yaw)
     Wait(500)
     openContract(true)
@@ -957,28 +957,28 @@ RegisterNetEvent('NADRP-houses:client:viewHouse', function(houseprice, brokerfee
     })
 end)
 
-RegisterNetEvent('NADRP-houses:client:setLocation', function(data)
+RegisterNetEvent('denalifw-houses:client:setLocation', function(data)
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local coords = {x = pos.x, y = pos.y, z = pos.z}
     if IsInside then
         if HasHouseKey then
             if data.id == 'setstash' then
-                TriggerServerEvent('NADRP-houses:server:setLocation', coords, ClosestHouse, 1)
+                TriggerServerEvent('denalifw-houses:server:setLocation', coords, ClosestHouse, 1)
             elseif data.id == 'setoutift' then
-                TriggerServerEvent('NADRP-houses:server:setLocation', coords, ClosestHouse, 2)
+                TriggerServerEvent('denalifw-houses:server:setLocation', coords, ClosestHouse, 2)
             elseif data.id == 'setlogout' then
-                TriggerServerEvent('NADRP-houses:server:setLocation', coords, ClosestHouse, 3)
+                TriggerServerEvent('denalifw-houses:server:setLocation', coords, ClosestHouse, 3)
             end
         else
-            NADRP.Functions.Notify(Lang:t("error.not_owner"), "error")
+            denalifw.Functions.Notify(Lang:t("error.not_owner"), "error")
         end
     else
-        NADRP.Functions.Notify(Lang:t("error.not_in_house"), "error")
+        denalifw.Functions.Notify(Lang:t("error.not_in_house"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:refreshLocations', function(house, location, type)
+RegisterNetEvent('denalifw-houses:client:refreshLocations', function(house, location, type)
     if ClosestHouse == house then
         if IsInside then
             if type == 1 then
@@ -992,12 +992,12 @@ RegisterNetEvent('NADRP-houses:client:refreshLocations', function(house, locatio
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:HomeInvasion', function()
+RegisterNetEvent('denalifw-houses:client:HomeInvasion', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
-    local Skillbar = exports['NADRP-skillbar']:GetSkillbarObject()
+    local Skillbar = exports['denalifw-skillbar']:GetSkillbarObject()
     if ClosestHouse ~= nil then
-        NADRP.Functions.TriggerCallback('police:server:IsPoliceForcePresent', function(IsPresent)
+        denalifw.Functions.TriggerCallback('police:server:IsPoliceForcePresent', function(IsPresent)
             if IsPresent then
                 local dist = #(pos - vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z))
                 if Config.Houses[ClosestHouse].IsRaming == nil then
@@ -1013,10 +1013,10 @@ RegisterNetEvent('NADRP-houses:client:HomeInvasion', function()
                                 width = math.random(10, 20),
                             }, function()
                                 if RamsDone + 1 >= Config.RamsNeeded then
-                                    TriggerServerEvent('NADRP-houses:server:lockHouse', false, ClosestHouse)
-                                    NADRP.Functions.Notify(Lang:t("success.home_invasion"), 'success')
-                                    TriggerServerEvent('NADRP-houses:server:SetHouseRammed', true, ClosestHouse)
-                                    TriggerServerEvent('NADRP-houses:server:SetRamState', false, ClosestHouse)
+                                    TriggerServerEvent('denalifw-houses:server:lockHouse', false, ClosestHouse)
+                                    denalifw.Functions.Notify(Lang:t("success.home_invasion"), 'success')
+                                    TriggerServerEvent('denalifw-houses:server:SetHouseRammed', true, ClosestHouse)
+                                    TriggerServerEvent('denalifw-houses:server:SetRamState', false, ClosestHouse)
                                     DoRamAnimation(false)
                                 else
                                     DoRamAnimation(true)
@@ -1029,80 +1029,80 @@ RegisterNetEvent('NADRP-houses:client:HomeInvasion', function()
                                 end
                             end, function()
                                 RamsDone = 0
-                                TriggerServerEvent('NADRP-houses:server:SetRamState', false, ClosestHouse)
-                                NADRP.Functions.Notify(Lang:t("error.failed_invasion"), 'error')
+                                TriggerServerEvent('denalifw-houses:server:SetRamState', false, ClosestHouse)
+                                denalifw.Functions.Notify(Lang:t("error.failed_invasion"), 'error')
                                 DoRamAnimation(false)
                             end)
-                            TriggerServerEvent('NADRP-houses:server:SetRamState', true, ClosestHouse)
+                            TriggerServerEvent('denalifw-houses:server:SetRamState', true, ClosestHouse)
                         else
-                            NADRP.Functions.Notify(Lang:t("error.inprogress_invasion"), 'error')
+                            denalifw.Functions.Notify(Lang:t("error.inprogress_invasion"), 'error')
                         end
                     else
-                        NADRP.Functions.Notify(Lang:t("error.already_open"), 'error')
+                        denalifw.Functions.Notify(Lang:t("error.already_open"), 'error')
                     end
                 else
-                    NADRP.Functions.Notify(Lang:t("error.no_house"), "error")
+                    denalifw.Functions.Notify(Lang:t("error.no_house"), "error")
                 end
             else
-                NADRP.Functions.Notify(Lang:t("error.no_police"), 'error')
+                denalifw.Functions.Notify(Lang:t("error.no_police"), 'error')
             end
         end)
     else
-        NADRP.Functions.Notify(Lang:t("error.no_house"), "error")
+        denalifw.Functions.Notify(Lang:t("error.no_house"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:SetRamState', function(bool, house)
+RegisterNetEvent('denalifw-houses:client:SetRamState', function(bool, house)
     Config.Houses[house].IsRaming = bool
 end)
 
-RegisterNetEvent('NADRP-houses:client:SetHouseRammed', function(bool, house)
+RegisterNetEvent('denalifw-houses:client:SetHouseRammed', function(bool, house)
     Config.Houses[house].IsRammed = bool
 end)
 
-RegisterNetEvent('NADRP-houses:client:ResetHouse', function()
+RegisterNetEvent('denalifw-houses:client:ResetHouse', function()
     if ClosestHouse ~= nil then
         if Config.Houses[ClosestHouse].IsRammed == nil then
             Config.Houses[ClosestHouse].IsRammed = false
-            TriggerServerEvent('NADRP-houses:server:SetHouseRammed', false, ClosestHouse)
-            TriggerServerEvent('NADRP-houses:server:SetRamState', false, ClosestHouse)
+            TriggerServerEvent('denalifw-houses:server:SetHouseRammed', false, ClosestHouse)
+            TriggerServerEvent('denalifw-houses:server:SetRamState', false, ClosestHouse)
         end
         if Config.Houses[ClosestHouse].IsRammed then
             openHouseAnim()
-            TriggerServerEvent('NADRP-houses:server:SetHouseRammed', false, ClosestHouse)
-            TriggerServerEvent('NADRP-houses:server:SetRamState', false, ClosestHouse)
-            TriggerServerEvent('NADRP-houses:server:lockHouse', true, ClosestHouse)
+            TriggerServerEvent('denalifw-houses:server:SetHouseRammed', false, ClosestHouse)
+            TriggerServerEvent('denalifw-houses:server:SetRamState', false, ClosestHouse)
+            TriggerServerEvent('denalifw-houses:server:lockHouse', true, ClosestHouse)
             RamsDone = 0
-            NADRP.Functions.Notify(Lang:t("success.lock_invasion"), 'success')
+            denalifw.Functions.Notify(Lang:t("success.lock_invasion"), 'success')
         else
-            NADRP.Functions.Notify(Lang:t("error.no_invasion"), 'error')
+            denalifw.Functions.Notify(Lang:t("error.no_invasion"), 'error')
         end
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:ExitOwnedHouse', function()
+RegisterNetEvent('denalifw-houses:client:ExitOwnedHouse', function()
     local door = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z)
     if CheckDistance(door, 1.5) then
         LeaveOwnedHouse(CurrentHouse)
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:FrontDoorCam', function()
+RegisterNetEvent('denalifw-houses:client:FrontDoorCam', function()
     local door = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z)
     if CheckDistance(door, 1.5) then
         FrontDoorCam(Config.Houses[CurrentHouse].coords.enter)
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:AnswerDoorbell', function()
+RegisterNetEvent('denalifw-houses:client:AnswerDoorbell', function()
     local door = vector3(Config.Houses[CurrentHouse].coords.enter.x + POIOffsets.exit.x, Config.Houses[CurrentHouse].coords.enter.y + POIOffsets.exit.y, Config.Houses[CurrentHouse].coords.enter.z - Config.MinZOffset + POIOffsets.exit.z)
     if CheckDistance(door, 1.5) and CurrentDoorBell ~= 0 then
-        TriggerServerEvent("NADRP-houses:server:OpenDoor", CurrentDoorBell, ClosestHouse)
+        TriggerServerEvent("denalifw-houses:server:OpenDoor", CurrentDoorBell, ClosestHouse)
         CurrentDoorBell = 0
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:OpenStash', function()
+RegisterNetEvent('denalifw-houses:client:OpenStash', function()
     local stashLoc = vector3(stashLocation.x, stashLocation.y, stashLocation.z)
     if CheckDistance(stashLoc, 1.5) then
         TriggerServerEvent("inventory:server:OpenInventory", "stash", CurrentHouse)
@@ -1111,46 +1111,46 @@ RegisterNetEvent('NADRP-houses:client:OpenStash', function()
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:ChangeCharacter', function()
+RegisterNetEvent('denalifw-houses:client:ChangeCharacter', function()
     local stashLoc = vector3(logoutLocation.x, logoutLocation.y, logoutLocation.z)
     if CheckDistance(stashLoc, 1.5) then
         DoScreenFadeOut(250)
         while not IsScreenFadedOut() do
             Wait(10)
         end
-        exports['NADRP-interior']:DespawnInterior(houseObj, function()
-            TriggerEvent('NADRP-weathersync:client:EnableSync')
+        exports['denalifw-interior']:DespawnInterior(houseObj, function()
+            TriggerEvent('denalifw-weathersync:client:EnableSync')
             SetEntityCoords(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.x, Config.Houses[CurrentHouse].coords.enter.y, Config.Houses[CurrentHouse].coords.enter.z + 0.5)
             SetEntityHeading(PlayerPedId(), Config.Houses[CurrentHouse].coords.enter.h)
             InOwnedHouse = false
             IsInside = false
-            TriggerServerEvent('NADRP-houses:server:LogoutLocation')
+            TriggerServerEvent('denalifw-houses:server:LogoutLocation')
         end)
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:ChangeOutfit', function()
+RegisterNetEvent('denalifw-houses:client:ChangeOutfit', function()
     local outfitLoc = vector3(outfitLocation.x, outfitLocation.y, outfitLocation.z)
     if CheckDistance(outfitLoc, 1.5) then
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "Clothes1", 0.4)
-        TriggerEvent('NADRP-clothing:client:openOutfitMenu')
+        TriggerEvent('denalifw-clothing:client:openOutfitMenu')
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:ViewHouse', function()
+RegisterNetEvent('denalifw-houses:client:ViewHouse', function()
     local houseCoords = vector3(Config.Houses[ClosestHouse].coords.enter.x, Config.Houses[ClosestHouse].coords.enter.y, Config.Houses[ClosestHouse].coords.enter.z)
     if CheckDistance(houseCoords, 1.5) then
-        TriggerServerEvent('NADRP-houses:server:viewHouse', ClosestHouse)
+        TriggerServerEvent('denalifw-houses:server:viewHouse', ClosestHouse)
     end
 end)
 
-RegisterNetEvent('NADRP-houses:client:KeyholderOptions', function(data)
+RegisterNetEvent('denalifw-houses:client:KeyholderOptions', function(data)
     optionMenu(data.citizenData)
 end)
 -- NUI Callbacks
 
 RegisterNUICallback('HasEnoughMoney', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-houses:server:HasEnoughMoney', function(hasEnough)
+    denalifw.Functions.TriggerCallback('denalifw-houses:server:HasEnoughMoney', function(hasEnough)
     end, data.objectData)
 end)
 
@@ -1158,8 +1158,8 @@ RegisterNUICallback('buy', function()
     openContract(false)
     disableViewCam()
     Config.Houses[ClosestHouse].owned = true
-    if Config.UnownedBlips then TriggerEvent('NADRP-houses:client:refreshBlips') end
-    TriggerServerEvent('NADRP-houses:server:buyHouse', ClosestHouse)
+    if Config.UnownedBlips then TriggerEvent('denalifw-houses:client:refreshBlips') end
+    TriggerServerEvent('denalifw-houses:server:buyHouse', ClosestHouse)
 end)
 
 RegisterNUICallback('exit', function()
@@ -1171,13 +1171,13 @@ end)
 
 CreateThread(function()
     Wait(1000)
-    TriggerServerEvent('NADRP-houses:server:setHouses')
+    TriggerServerEvent('denalifw-houses:server:setHouses')
     SetClosestHouse()
-    TriggerEvent('NADRP-houses:client:setupHouseBlips')
-    if Config.UnownedBlips then TriggerEvent('NADRP-houses:client:setupHouseBlips2') end
+    TriggerEvent('denalifw-houses:client:setupHouseBlips')
+    if Config.UnownedBlips then TriggerEvent('denalifw-houses:client:setupHouseBlips2') end
     Wait(100)
-    TriggerEvent('NADRP-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
-    TriggerServerEvent("NADRP-houses:server:setHouses")
+    TriggerEvent('denalifw-garages:client:setHouseGarage', ClosestHouse, HasHouseKey)
+    TriggerServerEvent("denalifw-houses:server:setHouses")
 end)
 
 CreateThread(function()
@@ -1218,14 +1218,14 @@ CreateThread(function()
                                     {
                                         header = Lang:t("menu.enter_house"),
                                         params = {
-                                            event = "NADRP-houses:client:EnterHouse",
+                                            event = "denalifw-houses:client:EnterHouse",
 
                                         }
                                     },
                                     {
                                         header = Lang:t("menu.give_house_key"),
                                         params = {
-                                            event = "NADRP-houses:client:giveHouseKey",
+                                            event = "denalifw-houses:client:giveHouseKey",
                                         }
                                     }
                                 }
@@ -1240,14 +1240,14 @@ CreateThread(function()
                                     {
                                         header = Lang:t("menu.exit_property"),
                                         params = {
-                                            event = 'NADRP-houses:client:ExitOwnedHouse',
+                                            event = 'denalifw-houses:client:ExitOwnedHouse',
                                             args = {}
                                         }
                                     },
                                     {
                                         header = Lang:t("menu.front_camera"),
                                         params = {
-                                            event = 'NADRP-houses:client:FrontDoorCam',
+                                            event = 'denalifw-houses:client:FrontDoorCam',
                                             args = {}
                                         }
                                     }
@@ -1257,7 +1257,7 @@ CreateThread(function()
                                     houseMenu[#houseMenu+1] = {
                                         header = Lang:t("menu.open_door"),
                                         params = {
-                                            event = 'NADRP-houses:client:AnswerDoorbell',
+                                            event = 'denalifw-houses:client:AnswerDoorbell',
                                             args = {}
                                         }
                                     }
@@ -1277,7 +1277,7 @@ CreateThread(function()
                                         {
                                             header = Lang:t("menu.view_house"),
                                             params = {
-                                                event = 'NADRP-houses:client:ViewHouse',
+                                                event = 'denalifw-houses:client:ViewHouse',
                                                 args = {}
                                             }
                                         }
@@ -1295,7 +1295,7 @@ CreateThread(function()
                                     {
                                         header = Lang:t("menu.ring_door"),
                                         params = {
-                                            event = 'NADRP-houses:client:RequestRing',
+                                            event = 'denalifw-houses:client:RequestRing',
                                             args = {}
                                         }
                                     }
@@ -1304,14 +1304,14 @@ CreateThread(function()
                                     houseMenu[#houseMenu+1] = {
                                         header = Lang:t("menu.enter_unlocked_house"),
                                         params = {
-                                            event = "NADRP-houses:client:EnterHouse",
+                                            event = "denalifw-houses:client:EnterHouse",
                                         }
                                     }
-                                    if NADRP.Functions.GetPlayerData().job.name == 'police' then
+                                    if denalifw.Functions.GetPlayerData().job.name == 'police' then
                                         houseMenu[#houseMenu+1] = {
                                             header = Lang:t("menu.lock_door_police"),
                                             params = {
-                                                event = "NADRP-houses:client:ResetHouse",
+                                                event = "denalifw-houses:client:ResetHouse",
                                             }
                                         }
                                     end
@@ -1328,7 +1328,7 @@ CreateThread(function()
                                     {
                                         header = Lang:t("menu.exit_door"),
                                         params = {
-                                            event = 'NADRP-houses:client:ExitOwnedHouse',
+                                            event = 'denalifw-houses:client:ExitOwnedHouse',
                                             args = {}
                                         }
                                     }
@@ -1347,7 +1347,7 @@ CreateThread(function()
                                 {
                                     header = Lang:t("menu.open_stash"),
                                     params = {
-                                        event = "NADRP-houses:client:OpenStash",
+                                        event = "denalifw-houses:client:OpenStash",
                                         args = {}
                                     }
                                 }
@@ -1365,7 +1365,7 @@ CreateThread(function()
                                 {
                                     header = Lang:t("menu.change_outfit"),
                                     params = {
-                                        event = "NADRP-houses:client:ChangeOutfit",
+                                        event = "denalifw-houses:client:ChangeOutfit",
                                         args = {}
                                     }
                                 }
@@ -1382,7 +1382,7 @@ CreateThread(function()
                                 {
                                     header = Lang:t("menu.change_character"),
                                     params = {
-                                        event = "NADRP-houses:client:ChangeCharacter",
+                                        event = "denalifw-houses:client:ChangeCharacter",
                                         args = {}
                                     }
                                 }
@@ -1394,7 +1394,7 @@ CreateThread(function()
                 end
 
                 if nearLocation and not shownMenu then
-                    exports['NADRP-menu']:showHeader(houseMenu)
+                    exports['denalifw-menu']:showHeader(houseMenu)
                     shownMenu = true
                 end
 

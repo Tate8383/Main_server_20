@@ -1,5 +1,5 @@
 local Accounts = {}
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 CreateThread(function()
     Wait(500)
@@ -16,7 +16,7 @@ CreateThread(function()
     end
 end)
 
-NADRP.Functions.CreateCallback('NADRP-bossmenu:server:GetAccount', function(source, cb, jobname)
+denalifw.Functions.CreateCallback('denalifw-bossmenu:server:GetAccount', function(source, cb, jobname)
     local result = GetAccount(jobname)
     cb(result)
 end)
@@ -27,10 +27,10 @@ function GetAccount(account)
 end
 
 -- Withdraw Money
-RegisterServerEvent("NADRP-bossmenu:server:withdrawMoney")
-AddEventHandler("NADRP-bossmenu:server:withdrawMoney", function(amount)
+RegisterServerEvent("denalifw-bossmenu:server:withdrawMoney")
+AddEventHandler("denalifw-bossmenu:server:withdrawMoney", function(amount)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local job = Player.PlayerData.job.name
 
     if not Accounts[job] then
@@ -41,18 +41,18 @@ AddEventHandler("NADRP-bossmenu:server:withdrawMoney", function(amount)
         Accounts[job] = Accounts[job] - amount
         Player.Functions.AddMoney("cash", amount)
     else
-        TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Not Enough Money"}, 'error')
+        TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Not Enough Money"}, 'error')
         return
     end
     SaveResourceFile(GetCurrentResourceName(), "./accounts.json", json.encode(Accounts), -1)
-    TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Withdraw Money', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' successfully withdrew $' .. amount .. ' (' .. job .. ')', false)
+    TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Withdraw Money', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' successfully withdrew $' .. amount .. ' (' .. job .. ')', false)
 end)
 
 -- Deposit Money
-RegisterServerEvent("NADRP-bossmenu:server:depositMoney")
-AddEventHandler("NADRP-bossmenu:server:depositMoney", function(amount)
+RegisterServerEvent("denalifw-bossmenu:server:depositMoney")
+AddEventHandler("denalifw-bossmenu:server:depositMoney", function(amount)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local job = Player.PlayerData.job.name
 
     if not Accounts[job] then
@@ -62,26 +62,26 @@ AddEventHandler("NADRP-bossmenu:server:depositMoney", function(amount)
     if Player.Functions.RemoveMoney("cash", amount) then
         Accounts[job] = Accounts[job] + amount
     else
-        TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Not Enough Money"}, "error")
+        TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Not Enough Money"}, "error")
         return
     end
     SaveResourceFile(GetCurrentResourceName(), "./accounts.json", json.encode(Accounts), -1)
-    TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Deposit Money', 'lightgreen', "Successfully deposited $" .. amount .. ' (' .. job .. ')', false)
+    TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Deposit Money', 'lightgreen', "Successfully deposited $" .. amount .. ' (' .. job .. ')', false)
 end)
 
-RegisterServerEvent("NADRP-bossmenu:server:addAccountMoney")
-AddEventHandler("NADRP-bossmenu:server:addAccountMoney", function(account, amount)
+RegisterServerEvent("denalifw-bossmenu:server:addAccountMoney")
+AddEventHandler("denalifw-bossmenu:server:addAccountMoney", function(account, amount)
     if not Accounts[account] then
         Accounts[account] = 0
     end
 
     Accounts[account] = Accounts[account] + amount
-    TriggerClientEvent('NADRP-bossmenu:client:refreshSociety', -1, account, Accounts[account])
+    TriggerClientEvent('denalifw-bossmenu:client:refreshSociety', -1, account, Accounts[account])
     SaveResourceFile(GetCurrentResourceName(), "./accounts.json", json.encode(Accounts), -1)
 end)
 
-RegisterServerEvent("NADRP-bossmenu:server:removeAccountMoney")
-AddEventHandler("NADRP-bossmenu:server:removeAccountMoney", function(account, amount)
+RegisterServerEvent("denalifw-bossmenu:server:removeAccountMoney")
+AddEventHandler("denalifw-bossmenu:server:removeAccountMoney", function(account, amount)
     if not Accounts[account] then
         Accounts[account] = 0
     end
@@ -90,12 +90,12 @@ AddEventHandler("NADRP-bossmenu:server:removeAccountMoney", function(account, am
         Accounts[account] = Accounts[account] - amount
     end
 
-    TriggerClientEvent('NADRP-bossmenu:client:refreshSociety', -1, account, Accounts[account])
+    TriggerClientEvent('denalifw-bossmenu:client:refreshSociety', -1, account, Accounts[account])
     SaveResourceFile(GetCurrentResourceName(), "./accounts.json", json.encode(Accounts), -1)
 end)
 
 -- Get Employees
-NADRP.Functions.CreateCallback('NADRP-bossmenu:server:GetEmployees', function(source, cb, jobname)
+denalifw.Functions.CreateCallback('denalifw-bossmenu:server:GetEmployees', function(source, cb, jobname)
     local src = source
     local employees = {}
     if not Accounts[jobname] then
@@ -104,7 +104,7 @@ NADRP.Functions.CreateCallback('NADRP-bossmenu:server:GetEmployees', function(so
     local players = exports.oxmysql:executeSync("SELECT * FROM `players` WHERE `job` LIKE '%".. jobname .."%'")
     if players[1] ~= nil then
         for key, value in pairs(players) do
-            local isOnline = NADRP.Functions.GetPlayerByCitizenId(value.citizenid)
+            local isOnline = denalifw.Functions.GetPlayerByCitizenId(value.citizenid)
 
             if isOnline then
                 employees[#employees+1] = {
@@ -129,23 +129,23 @@ NADRP.Functions.CreateCallback('NADRP-bossmenu:server:GetEmployees', function(so
 end)
 
 -- Grade Change
-RegisterServerEvent('NADRP-bossmenu:server:updateGrade')
-AddEventHandler('NADRP-bossmenu:server:updateGrade', function(target, grade)
+RegisterServerEvent('denalifw-bossmenu:server:updateGrade')
+AddEventHandler('denalifw-bossmenu:server:updateGrade', function(target, grade)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
-    local Employee = NADRP.Functions.GetPlayerByCitizenId(target)
+    local Player = denalifw.Functions.GetPlayer(src)
+    local Employee = denalifw.Functions.GetPlayerByCitizenId(target)
     if grade == nil then
-        TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Invalid grade. Numbers only, with 0 being the lowest grade. What is this, amateur hour?"}, "error", 6000)
+        TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Invalid grade. Numbers only, with 0 being the lowest grade. What is this, amateur hour?"}, "error", 6000)
         return
     end
     if Player.PlayerData.job.grade.level >= grade and grade <= Player.PlayerData.job.grade.level then
         if Employee then
             if Employee.Functions.SetJob(Player.PlayerData.job.name, grade) then
-                TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Job Grade Changed', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' changed grade to ' .. grade .. ' for ' .. Employee.PlayerData.charinfo.firstname .. ' ' .. Employee.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.job.name .. ')', false)
-                TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Grade Changed Successfully!"}, "success")
-                TriggerClientEvent('NADRP:Notify', Employee.PlayerData.source, {text="Boss Menu", caption="Your new job grade is now [" ..grade.."]."}, "success")
+                TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Job Grade Changed', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' changed grade to ' .. grade .. ' for ' .. Employee.PlayerData.charinfo.firstname .. ' ' .. Employee.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.job.name .. ')', false)
+                TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Grade Changed Successfully!"}, "success")
+                TriggerClientEvent('denalifw:Notify', Employee.PlayerData.source, {text="Boss Menu", caption="Your new job grade is now [" ..grade.."]."}, "success")
             else
-                TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Grade Does Not Exist"}, "error")
+                TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Grade Does Not Exist"}, "error")
             end
         else
             local playerJob = '%' .. Player.PlayerData.job.name .. '%'
@@ -153,40 +153,40 @@ AddEventHandler('NADRP-bossmenu:server:updateGrade', function(target, grade)
             if result then
                 jobFinal = checkJob(Player.PlayerData.job.name, grade)
                 if jobFinal ~= false then
-                    TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Job Grade Changed', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' changed grade to ' .. jobFinal.grade.name .. ' for '  .. target .. ' (' .. Player.PlayerData.job.name .. ')', false)
-                    TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Grade Changed Successfully!"}, "success")
+                    TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Job Grade Changed', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' changed grade to ' .. jobFinal.grade.name .. ' for '  .. target .. ' (' .. Player.PlayerData.job.name .. ')', false)
+                    TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Grade Changed Successfully!"}, "success")
                     exports.oxmysql:execute('UPDATE players SET job = ? WHERE citizenid = ?', { json.encode(jobFinal), target })
                 else
-                    TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Invalid grade. Numbers only, with 0 being the lowest grade. What is this, amateur hour?"}, "error", 6000)
+                    TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Invalid grade. Numbers only, with 0 being the lowest grade. What is this, amateur hour?"}, "error", 6000)
                 end
             else
-                TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="This person is not on your payroll"}, "error", 5000)
+                TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="This person is not on your payroll"}, "error", 5000)
             end
         end
     else
-        TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Unfair Job Change', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' tried to changed grade to ' .. checkJob(Player.PlayerData.job.name, grade).grade.name .. ' ('.. grade ..') for '  .. target .. ' (' .. Player.PlayerData.job.name .. ') but failed because they are lower rank than the person or are trying to give themselves a promotion.', true)
-        TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu",caption="You are not authorized to do this. This has been reported."}, "error", 8000)
+        TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Unfair Job Change', 'lightgreen', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' tried to changed grade to ' .. checkJob(Player.PlayerData.job.name, grade).grade.name .. ' ('.. grade ..') for '  .. target .. ' (' .. Player.PlayerData.job.name .. ') but failed because they are lower rank than the person or are trying to give themselves a promotion.', true)
+        TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu",caption="You are not authorized to do this. This has been reported."}, "error", 8000)
     end
 end)
 
 -- Fire Employee
-RegisterServerEvent('NADRP-bossmenu:server:fireEmployee')
-AddEventHandler('NADRP-bossmenu:server:fireEmployee', function(target)
+RegisterServerEvent('denalifw-bossmenu:server:fireEmployee')
+AddEventHandler('denalifw-bossmenu:server:fireEmployee', function(target)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
-    local Employee = NADRP.Functions.GetPlayerByCitizenId(target)
+    local Player = denalifw.Functions.GetPlayer(src)
+    local Employee = denalifw.Functions.GetPlayerByCitizenId(target)
     if Employee then
         if Player.PlayerData.job.grade.level >= Employee.PlayerData.job.grade.level then
             if Employee.Functions.SetJob("unemployed", '0') then
-                TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Job Fire', 'red', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. ' ' .. Employee.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.job.name .. ')', false)
-                TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu",caption="You have fired your employee. We will be sending the records to " .. Player.PlayerData.job.label .. " and government."}, "error", 5000)
-                TriggerClientEvent('NADRP:Notify', Employee.PlayerData.source , {text="Boss Menu", caption="You Were Fired. Please look for a new job at the courthouse (City Services) and pick up your belongings."}, "error", 10000)
+                TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Job Fire', 'red', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. ' ' .. Employee.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.job.name .. ')', false)
+                TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu",caption="You have fired your employee. We will be sending the records to " .. Player.PlayerData.job.label .. " and government."}, "error", 5000)
+                TriggerClientEvent('denalifw:Notify', Employee.PlayerData.source , {text="Boss Menu", caption="You Were Fired. Please look for a new job at the courthouse (City Services) and pick up your belongings."}, "error", 10000)
             else
-                TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Mail in a video raffle ticket with full details regarding this error."}, "error")
+                TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Mail in a video raffle ticket with full details regarding this error."}, "error")
             end
         else
-            TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Unfair Firing', 'red', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' tried to fire ('.. target .. ') at (' .. Player.PlayerData.job.name .. ') but failed because they are lower rank than the person. Something amiss is afoot.', true)
-            TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu",caption="You are not authorized to do this. This has been reported to " .. Player.PlayerData.job.label .. " and government."}, "error", 15000)
+            TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Unfair Firing', 'red', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' tried to fire ('.. target .. ') at (' .. Player.PlayerData.job.name .. ') but failed because they are lower rank than the person. Something amiss is afoot.', true)
+            TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu",caption="You are not authorized to do this. This has been reported to " .. Player.PlayerData.job.label .. " and government."}, "error", 15000)
         end
     else
         local playerJob = '%' .. Player.PlayerData.job.name .. '%'
@@ -195,13 +195,13 @@ AddEventHandler('NADRP-bossmenu:server:fireEmployee', function(target)
             jobFinal = checkJob('unemployed', 0)
             if jobFinal ~= false then
                 exports.oxmysql:execute('UPDATE players SET job = ? WHERE citizenid = ?', { json.encode(jobFinal), target })
-                TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Fired Employee', 'red', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' fired ('.. target .. ') at (' .. Player.PlayerData.job.name .. ')', false)
-                TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu",caption="You have fired your employee. We will be sending the records to " .. Player.PlayerData.job.label .. " and government."}, "error", 5000)
+                TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Fired Employee', 'red', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' fired ('.. target .. ') at (' .. Player.PlayerData.job.name .. ')', false)
+                TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu",caption="You have fired your employee. We will be sending the records to " .. Player.PlayerData.job.label .. " and government."}, "error", 5000)
             else
-                TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="Something failed. Did you try turning it off and on again?"}, "error")
+                TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="Something failed. Did you try turning it off and on again?"}, "error")
             end
         else
-            TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="This person is not on your payroll."}, "error", 4000)
+            TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="This person is not on your payroll."}, "error", 4000)
         end
 
 
@@ -211,16 +211,16 @@ AddEventHandler('NADRP-bossmenu:server:fireEmployee', function(target)
 end)
 
 -- Recruit Player
-RegisterServerEvent('NADRP-bossmenu:server:giveJob')
-AddEventHandler('NADRP-bossmenu:server:giveJob', function(recruit)
+RegisterServerEvent('denalifw-bossmenu:server:giveJob')
+AddEventHandler('denalifw-bossmenu:server:giveJob', function(recruit)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
-    local Target = NADRP.Functions.GetPlayer(recruit)
+    local Player = denalifw.Functions.GetPlayer(src)
+    local Target = denalifw.Functions.GetPlayer(recruit)
     if Player.PlayerData.job.isboss == true and (Target.PlayerData.job.name == 'unemployed' or Target.PlayerData.job.name == 'garbage' or Target.PlayerData.job.name == 'taxi' or Target.PlayerData.job.name == 'reporter' or Target.PlayerData.job.name == 'trucker' or Target.PlayerData.job.name == 'tow' or Target.PlayerData.job.name == 'vineyard' or Target.PlayerData.job.name == 'hotdog' or Target.PlayerData.job.name == nil) then
         if Target and Target.Functions.SetJob(Player.PlayerData.job.name, 0) then
-            TriggerClientEvent('NADRP:Notify', src, {text="Boss Menu", caption="You Recruited " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " To " .. Player.PlayerData.job.label .. ""}, "success")
-            TriggerClientEvent('NADRP:Notify', Target.PlayerData.source , {text="Boss Menu", caption="You've Been Recruited To " .. Player.PlayerData.job.label .. "!"}, "success")
-            TriggerEvent('NADRP-log:server:CreateLog', 'bossmenu', 'Job Recruit', 'yellow', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' successfully recruited ' .. Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.job.name .. ')', false)
+            TriggerClientEvent('denalifw:Notify', src, {text="Boss Menu", caption="You Recruited " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " To " .. Player.PlayerData.job.label .. ""}, "success")
+            TriggerClientEvent('denalifw:Notify', Target.PlayerData.source , {text="Boss Menu", caption="You've Been Recruited To " .. Player.PlayerData.job.label .. "!"}, "success")
+            TriggerEvent('denalifw-log:server:CreateLog', 'bossmenu', 'Job Recruit', 'yellow', Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname .. ' successfully recruited ' .. Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.job.name .. ')', false)
         end
     end
 end)
@@ -229,12 +229,12 @@ end)
 function checkJob(jobName, grade)
     job = {}
     grade = tostring(grade) or '0'
-    if NADRP.Shared.Jobs[jobName] then
+    if denalifw.Shared.Jobs[jobName] then
         job.name = jobName
-        job.label = NADRP.Shared.Jobs[jobName].label
-        job.onduty = NADRP.Shared.Jobs[jobName].defaultDuty
-            if NADRP.Shared.Jobs[jobName].grades[grade] then
-                local jobgrade = NADRP.Shared.Jobs[jobName].grades[grade]
+        job.label = denalifw.Shared.Jobs[jobName].label
+        job.onduty = denalifw.Shared.Jobs[jobName].defaultDuty
+            if denalifw.Shared.Jobs[jobName].grades[grade] then
+                local jobgrade = denalifw.Shared.Jobs[jobName].grades[grade]
                 job.grade = {}
                 job.grade.name = jobgrade.name
                 job.grade.level = tonumber(grade)

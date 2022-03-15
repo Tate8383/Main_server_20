@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local Countdown = 10
 local ToFarCountdown = 10
 local FinishedUITimeout = false
@@ -159,10 +159,10 @@ local function DeleteCheckpoint()
             end
             CreatorData.Checkpoints = NewCheckpoints
         else
-            NADRP.Functions.Notify('You cant go to fast', 'error')
+            denalifw.Functions.Notify('You cant go to fast', 'error')
         end
     else
-        NADRP.Functions.Notify('You cant go too fast', 'error')
+        denalifw.Functions.Notify('You cant go too fast', 'error')
     end
 end
 
@@ -178,9 +178,9 @@ local function SaveRace()
 
     CreatorData.RaceDistance = RaceDistance
 
-    TriggerServerEvent('NADRP-lapraces:server:SaveRace', CreatorData)
+    TriggerServerEvent('denalifw-lapraces:server:SaveRace', CreatorData)
 
-    NADRP.Functions.Notify('Race: '..CreatorData.RaceName..' is saved!', 'success')
+    denalifw.Functions.Notify('Race: '..CreatorData.RaceName..' is saved!', 'success')
 
     for id,_ in pairs(CreatorData.Checkpoints) do
         if CreatorData.Checkpoints[id].blip ~= nil then
@@ -272,7 +272,7 @@ local function CreatorLoop()
                     if CreatorData.Checkpoints ~= nil and next(CreatorData.Checkpoints) ~= nil then
                         DeleteCheckpoint()
                     else
-                        NADRP.Functions.Notify('You have not placed any checkpoints yet..', 'error')
+                        denalifw.Functions.Notify('You have not placed any checkpoints yet..', 'error')
                     end
                 end
 
@@ -280,7 +280,7 @@ local function CreatorLoop()
                     if CreatorData.Checkpoints ~= nil and #CreatorData.Checkpoints >= 2 then
                         SaveRace()
                     else
-                        NADRP.Functions.Notify('You must have at least 10 checkpoints', 'error')
+                        denalifw.Functions.Notify('You must have at least 10 checkpoints', 'error')
                     end
                 end
 
@@ -288,7 +288,7 @@ local function CreatorLoop()
                     if CreatorData.TireDistance + 1.0 ~= 16.0 then
                         CreatorData.TireDistance = CreatorData.TireDistance + 1.0
                     else
-                        NADRP.Functions.Notify('You can not go higher than 15')
+                        denalifw.Functions.Notify('You can not go higher than 15')
                     end
                 end
 
@@ -296,7 +296,7 @@ local function CreatorLoop()
                     if CreatorData.TireDistance - 1.0 ~= 1.0 then
                         CreatorData.TireDistance = CreatorData.TireDistance - 1.0
                     else
-                        NADRP.Functions.Notify('You cannot go lower than 2')
+                        denalifw.Functions.Notify('You cannot go lower than 2')
                     end
                 end
             else
@@ -307,7 +307,7 @@ local function CreatorLoop()
             if IsControlJustPressed(0, 163) or IsDisabledControlJustPressed(0, 163) then
                 if not CreatorData.ConfirmDelete then
                     CreatorData.ConfirmDelete = true
-                    NADRP.Functions.Notify('Press [9] again to confirm', 'error', 5000)
+                    denalifw.Functions.Notify('Press [9] again to confirm', 'error', 5000)
                 else
                     for id, CheckpointData in pairs(CreatorData.Checkpoints) do
                         if CheckpointData.blip ~= nil then
@@ -336,7 +336,7 @@ local function CreatorLoop()
                     RaceData.InCreator = false
                     CreatorData.RaceName = nil
                     CreatorData.Checkpoints = {}
-                    NADRP.Functions.Notify('Race-editor canceled!', 'error')
+                    denalifw.Functions.Notify('Race-editor canceled!', 'error')
                     CreatorData.ConfirmDelete = false
                 end
             end
@@ -505,11 +505,11 @@ local function SecondsToClock(seconds)
 end
 
 local function FinishRace()
-    TriggerServerEvent('NADRP-lapraces:server:FinishPlayer', CurrentRaceData, CurrentRaceData.TotalTime, CurrentRaceData.TotalLaps, CurrentRaceData.BestLap)
+    TriggerServerEvent('denalifw-lapraces:server:FinishPlayer', CurrentRaceData, CurrentRaceData.TotalTime, CurrentRaceData.TotalLaps, CurrentRaceData.BestLap)
     if CurrentRaceData.BestLap ~= 0 then
-        NADRP.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime)..', with the best lap: '..SecondsToClock(CurrentRaceData.BestLap))
+        denalifw.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime)..', with the best lap: '..SecondsToClock(CurrentRaceData.BestLap))
     else
-        NADRP.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime))
+        denalifw.Functions.Notify('Race finished in '..SecondsToClock(CurrentRaceData.TotalTime))
     end
     for k, v in pairs(CurrentRaceData.Checkpoints) do
         if CurrentRaceData.Checkpoints[k].blip ~= nil then
@@ -573,35 +573,35 @@ exports('IsInRace', IsInRace)
 
 -- Events
 
-RegisterNetEvent('NADRP-lapraces:client:StartRaceEditor', function(RaceName)
+RegisterNetEvent('denalifw-lapraces:client:StartRaceEditor', function(RaceName)
     if not RaceData.InCreator then
         CreatorData.RaceName = RaceName
         RaceData.InCreator = true
         CreatorUI()
         CreatorLoop()
     else
-        NADRP.Functions.Notify('You are already making a race.', 'error')
+        denalifw.Functions.Notify('You are already making a race.', 'error')
     end
 end)
 
-RegisterNetEvent('NADRP-lapraces:client:UpdateRaceRacerData', function(RaceId, RaceData)
+RegisterNetEvent('denalifw-lapraces:client:UpdateRaceRacerData', function(RaceId, RaceData)
     if (CurrentRaceData.RaceId ~= nil) and CurrentRaceData.RaceId == RaceId then
         CurrentRaceData.Racers = RaceData.Racers
     end
 end)
 
-RegisterNetEvent('NADRP-lapraces:client:JoinRace', function(Data, Laps)
+RegisterNetEvent('denalifw-lapraces:client:JoinRace', function(Data, Laps)
     if not RaceData.InRace then
         RaceData.InRace = true
         SetupRace(Data, Laps)
-        TriggerServerEvent('NADRP-lapraces:server:UpdateRaceState', CurrentRaceData.RaceId, false, true)
+        TriggerServerEvent('denalifw-lapraces:server:UpdateRaceState', CurrentRaceData.RaceId, false, true)
     else
-        NADRP.Functions.Notify('Youre already in a race..', 'error')
+        denalifw.Functions.Notify('Youre already in a race..', 'error')
     end
 end)
 
-RegisterNetEvent('NADRP-lapraces:client:LeaveRace', function(data)
-    NADRP.Functions.Notify('You have completed the race!')
+RegisterNetEvent('denalifw-lapraces:client:LeaveRace', function(data)
+    denalifw.Functions.Notify('You have completed the race!')
     for k, v in pairs(CurrentRaceData.Checkpoints) do
         if CurrentRaceData.Checkpoints[k].blip ~= nil then
             RemoveBlip(CurrentRaceData.Checkpoints[k].blip)
@@ -636,16 +636,16 @@ RegisterNetEvent('NADRP-lapraces:client:LeaveRace', function(data)
     FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), false), false)
 end)
 
-RegisterNetEvent('NADRP-lapraces:client:RaceCountdown', function()
-    TriggerServerEvent('NADRP-lapraces:server:UpdateRaceState', CurrentRaceData.RaceId, true, false)
+RegisterNetEvent('denalifw-lapraces:client:RaceCountdown', function()
+    TriggerServerEvent('denalifw-lapraces:server:UpdateRaceState', CurrentRaceData.RaceId, true, false)
     if CurrentRaceData.RaceId ~= nil then
         while Countdown ~= 0 do
             if CurrentRaceData.RaceName ~= nil then
                 if Countdown == 10 then
-                    NADRP.Functions.Notify('The race will start in 10 seconds', 'error', 2500)
+                    denalifw.Functions.Notify('The race will start in 10 seconds', 'error', 2500)
                     PlaySound(-1, "slow", "SHORT_PLAYER_SWITCH_SOUND_SET", 0, 0, 1)
                 elseif Countdown <= 5 then
-                    NADRP.Functions.Notify(Countdown, 'error', 500)
+                    denalifw.Functions.Notify(Countdown, 'error', 500)
                     PlaySound(-1, "slow", "SHORT_PLAYER_SWITCH_SOUND_SET", 0, 0, 1)
                 end
                 Countdown = Countdown - 1
@@ -657,7 +657,7 @@ RegisterNetEvent('NADRP-lapraces:client:RaceCountdown', function()
         end
         if CurrentRaceData.RaceName ~= nil then
             SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
-            NADRP.Functions.Notify('GO!', 'success', 1000)
+            denalifw.Functions.Notify('GO!', 'success', 1000)
             SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].blip, 1.0)
             FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), true), false)
             DoPilePfx()
@@ -668,19 +668,19 @@ RegisterNetEvent('NADRP-lapraces:client:RaceCountdown', function()
             Countdown = 10
         end
     else
-        NADRP.Functions.Notify('You are not currently in a race..', 'error')
+        denalifw.Functions.Notify('You are not currently in a race..', 'error')
     end
 end)
 
-RegisterNetEvent('NADRP-lapraces:client:PlayerFinishs', function(RaceId, Place, FinisherData)
+RegisterNetEvent('denalifw-lapraces:client:PlayerFinishs', function(RaceId, Place, FinisherData)
     if CurrentRaceData.RaceId ~= nil then
         if CurrentRaceData.RaceId == RaceId then
-            NADRP.Functions.Notify(FinisherData.PlayerData.charinfo.firstname..' is finished on spot: '..Place, 'error', 3500)
+            denalifw.Functions.Notify(FinisherData.PlayerData.charinfo.firstname..' is finished on spot: '..Place, 'error', 3500)
         end
     end
 end)
 
-RegisterNetEvent('NADRP-lapraces:client:WaitingDistanceCheck', function()
+RegisterNetEvent('denalifw-lapraces:client:WaitingDistanceCheck', function()
     Wait(1000)
     CreateThread(function()
         while true do
@@ -693,9 +693,9 @@ RegisterNetEvent('NADRP-lapraces:client:WaitingDistanceCheck', function()
                     if dist > 115.0 then
                         if ToFarCountdown ~= 0 then
                             ToFarCountdown = ToFarCountdown - 1
-                            NADRP.Functions.Notify('Go back to the start or you will be kicked from the race: '..ToFarCountdown..'s', 'error', 500)
+                            denalifw.Functions.Notify('Go back to the start or you will be kicked from the race: '..ToFarCountdown..'s', 'error', 500)
                         else
-                            TriggerServerEvent('NADRP-lapraces:server:LeaveRace', CurrentRaceData)
+                            TriggerServerEvent('denalifw-lapraces:server:LeaveRace', CurrentRaceData)
                             ToFarCountdown = 10
                             break
                         end
@@ -767,7 +767,7 @@ CreateThread(function()
                         if CurrentRaceData.CurrentCheckpoint + 1 < #CurrentRaceData.Checkpoints then
                             CurrentRaceData.CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint + 1
                             SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
-                            TriggerServerEvent('NADRP-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
+                            TriggerServerEvent('denalifw-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
                             DoPilePfx()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                             SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint].blip, 0.6)
@@ -776,7 +776,7 @@ CreateThread(function()
                             DoPilePfx()
                             PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                             CurrentRaceData.CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint + 1
-                            TriggerServerEvent('NADRP-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, true)
+                            TriggerServerEvent('denalifw-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, true)
                             FinishRace()
                         end
                     else
@@ -785,7 +785,7 @@ CreateThread(function()
                                 DoPilePfx()
                                 PlaySound(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0, 0, 1)
                                 CurrentRaceData.CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint + 1
-                                TriggerServerEvent('NADRP-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, true)
+                                TriggerServerEvent('denalifw-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, true)
                                 FinishRace()
                             else
                                 DoPilePfx()
@@ -799,18 +799,18 @@ CreateThread(function()
                                 CurrentRaceData.Lap = CurrentRaceData.Lap + 1
                                 CurrentRaceData.CurrentCheckpoint = 1
                                 SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
-                                TriggerServerEvent('NADRP-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
+                                TriggerServerEvent('denalifw-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
                             end
                         else
                             CurrentRaceData.CurrentCheckpoint = CurrentRaceData.CurrentCheckpoint + 1
                             if CurrentRaceData.CurrentCheckpoint ~= #CurrentRaceData.Checkpoints then
                                 SetNewWaypoint(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.x, CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].coords.y)
-                                TriggerServerEvent('NADRP-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
+                                TriggerServerEvent('denalifw-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
                                 SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint].blip, 0.6)
                                 SetBlipScale(CurrentRaceData.Checkpoints[CurrentRaceData.CurrentCheckpoint + 1].blip, 1.0)
                             else
                                 SetNewWaypoint(CurrentRaceData.Checkpoints[1].coords.x, CurrentRaceData.Checkpoints[1].coords.y)
-                                TriggerServerEvent('NADRP-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
+                                TriggerServerEvent('denalifw-lapraces:server:UpdateRacerData', CurrentRaceData.RaceId, CurrentRaceData.CurrentCheckpoint, CurrentRaceData.Lap, false)
                                 SetBlipScale(CurrentRaceData.Checkpoints[#CurrentRaceData.Checkpoints].blip, 0.6)
                                 SetBlipScale(CurrentRaceData.Checkpoints[1].blip, 1.0)
                             end

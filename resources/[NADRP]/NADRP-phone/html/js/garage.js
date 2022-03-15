@@ -18,7 +18,7 @@ $(document).on('click', '.garage-vehicle', function(e){
 
 $(document).on('click', '#track-vehicle', function(e){
     e.preventDefault()
-    $.post("https://NADRP-phone/track-vehicle", JSON.stringify({
+    $.post("https://denalifw-phone/track-vehicle", JSON.stringify({
         veh: veh,
     }));
 });

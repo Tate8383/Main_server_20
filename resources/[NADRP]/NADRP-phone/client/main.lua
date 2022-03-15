@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local PlayerJob = {}
 local patt = "[?!@#]"
 PhoneData = {
@@ -77,7 +77,7 @@ local function CalculateTimeToDisplay()
 end
 
 local function GetClosestPlayer()
-    local closestPlayers = NADRP.Functions.GetPlayersFromCoords()
+    local closestPlayers = denalifw.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -134,11 +134,11 @@ local function ReorganizeChats(key)
 end
 
 local function findVehFromPlateAndLocate(plate)
-    local gameVehicles = NADRP.Functions.GetVehicles()
+    local gameVehicles = denalifw.Functions.GetVehicles()
     for i = 1, #gameVehicles do
         local vehicle = gameVehicles[i]
         if DoesEntityExist(vehicle) then
-            if NADRP.Functions.GetPlate(vehicle) == plate then
+            if denalifw.Functions.GetPlate(vehicle) == plate then
                 local vehCoords = GetEntityCoords(vehicle)
                 SetNewWaypoint(vehCoords.x, vehCoords.y)
                 return true
@@ -170,9 +170,9 @@ end
 
 local function LoadPhone()
     Wait(100)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetPhoneData', function(pData)
-        PlayerJob = NADRP.Functions.GetPlayerData().job
-        PhoneData.PlayerData = NADRP.Functions.GetPlayerData()
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetPhoneData', function(pData)
+        PlayerJob = denalifw.Functions.GetPlayerData().job
+        PhoneData.PlayerData = denalifw.Functions.GetPlayerData()
         local PhoneMeta = PhoneData.PlayerData.metadata["phone"]
         PhoneData.MetaData = PhoneMeta
 
@@ -268,9 +268,9 @@ local function LoadPhone()
 end
 
 local function OpenPhone()
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:HasPhone', function(HasPhone)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:HasPhone', function(HasPhone)
         if HasPhone then
-            PhoneData.PlayerData = NADRP.Functions.GetPlayerData()
+            PhoneData.PlayerData = denalifw.Functions.GetPlayerData()
             SetNuiFocus(true, true)
             SendNUIMessage({
                 action = "open",
@@ -298,11 +298,11 @@ local function OpenPhone()
                 newPhoneProp()
             end)
 
-            NADRP.Functions.TriggerCallback('NADRP-phone:server:GetGarageVehicles', function(vehicles)
+            denalifw.Functions.TriggerCallback('denalifw-phone:server:GetGarageVehicles', function(vehicles)
                 PhoneData.GarageVehicles = vehicles
             end)
         else
-            NADRP.Functions.Notify("You don't have a phone", "error")
+            denalifw.Functions.Notify("You don't have a phone", "error")
         end
     end)
 end
@@ -320,8 +320,8 @@ local function CallContact(CallData, AnonymousCall)
     PhoneData.CallData.AnsweredCall = false
     PhoneData.CallData.CallId = GenerateCallId(PhoneData.PlayerData.charinfo.phone, CallData.number)
 
-    TriggerServerEvent('NADRP-phone:server:CallContact', PhoneData.CallData.TargetData, PhoneData.CallData.CallId, AnonymousCall)
-    TriggerServerEvent('NADRP-phone:server:SetCallState', true)
+    TriggerServerEvent('denalifw-phone:server:CallContact', PhoneData.CallData.TargetData, PhoneData.CallData.CallId, AnonymousCall)
+    TriggerServerEvent('denalifw-phone:server:SetCallState', true)
 
     for i = 1, Config.CallRepeats + 1, 1 do
         if not PhoneData.CallData.AnsweredCall then
@@ -344,7 +344,7 @@ local function CallContact(CallData, AnonymousCall)
 end
 
 local function CancelCall()
-    TriggerServerEvent('NADRP-phone:server:CancelCall', PhoneData.CallData)
+    TriggerServerEvent('denalifw-phone:server:CancelCall', PhoneData.CallData)
     if PhoneData.CallData.CallType == "ongoing" then
         exports['pma-voice']:removePlayerFromCall(PhoneData.CallData.CallId)
     end
@@ -364,7 +364,7 @@ local function CancelCall()
         PhoneData.AnimationData.anim = nil
     end
 
-    TriggerServerEvent('NADRP-phone:server:SetCallState', false)
+    TriggerServerEvent('denalifw-phone:server:SetCallState', false)
 
     if not PhoneData.isOpen then
         SendNUIMessage({
@@ -407,7 +407,7 @@ local function AnswerCall()
         SendNUIMessage({ action = "AnswerCall", CallData = PhoneData.CallData})
         SendNUIMessage({ action = "SetupHomeCall", CallData = PhoneData.CallData})
 
-        TriggerServerEvent('NADRP-phone:server:SetCallState', true)
+        TriggerServerEvent('denalifw-phone:server:SetCallState', true)
 
         if PhoneData.isOpen then
             DoPhoneAnimation('cellphone_text_to_call')
@@ -432,7 +432,7 @@ local function AnswerCall()
             end
         end)
 
-        TriggerServerEvent('NADRP-phone:server:AnswerCall', PhoneData.CallData)
+        TriggerServerEvent('denalifw-phone:server:AnswerCall', PhoneData.CallData)
         exports['pma-voice']:addPlayerToCall(PhoneData.CallData.CallId)
     else
         PhoneData.CallData.InCall = false
@@ -458,12 +458,12 @@ end
 -- Command
 
 RegisterCommand('phone', function()
-    PlayerData = NADRP.Functions.GetPlayerData()
+    PlayerData = denalifw.Functions.GetPlayerData()
     if not PhoneData.isOpen and LocalPlayer.state.isLoggedIn then
         if not PlayerData.metadata['ishandcuffed'] and not PlayerData.metadata['inlaststand'] and not PlayerData.metadata['isdead'] and not IsPauseMenuActive() then
             OpenPhone()
         else
-            NADRP.Functions.Notify("Action not available at the moment..", "error")
+            denalifw.Functions.Notify("Action not available at the moment..", "error")
         end
     end
 end)
@@ -489,7 +489,7 @@ RegisterNUICallback('AnswerCall', function()
 end)
 
 RegisterNUICallback('ClearRecentAlerts', function(data, cb)
-    TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "phone", 0)
+    TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "phone", 0)
     Config.PhoneApplications["phone"].Alerts = 0
     SendNUIMessage({ action = "RefreshAppAlerts", AppData = Config.PhoneApplications })
 end)
@@ -497,7 +497,7 @@ end)
 RegisterNUICallback('SetBackground', function(data)
     local background = data.background
     PhoneData.MetaData.background = background
-    TriggerServerEvent('NADRP-phone:server:SaveMetaData', PhoneData.MetaData)
+    TriggerServerEvent('denalifw-phone:server:SaveMetaData', PhoneData.MetaData)
 end)
 
 RegisterNUICallback('GetMissedCalls', function(data, cb)
@@ -509,7 +509,7 @@ RegisterNUICallback('GetSuggestedContacts', function(data, cb)
 end)
 
 RegisterNUICallback('HasPhone', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:HasPhone', function(HasPhone)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:HasPhone', function(HasPhone)
         cb(HasPhone)
     end)
 end)
@@ -520,7 +520,7 @@ end)
 
 RegisterNUICallback('RemoveMail', function(data, cb)
     local MailId = data.mailId
-    TriggerServerEvent('NADRP-phone:server:RemoveMail', MailId)
+    TriggerServerEvent('denalifw-phone:server:RemoveMail', MailId)
     cb('ok')
 end)
 
@@ -548,7 +548,7 @@ RegisterNUICallback('AcceptMailButton', function(data)
     if data.buttonEvent ~= nil or  data.buttonData ~= nil then
         TriggerEvent(data.buttonEvent, data.buttonData)
     end
-    TriggerServerEvent('NADRP-phone:server:ClearButtonData', data.mailId)
+    TriggerServerEvent('denalifw-phone:server:ClearButtonData', data.mailId)
 end)
 
 RegisterNUICallback('AddNewContact', function(data, cb)
@@ -562,7 +562,7 @@ RegisterNUICallback('AddNewContact', function(data, cb)
     if PhoneData.Chats[data.ContactNumber] ~= nil and next(PhoneData.Chats[data.ContactNumber]) ~= nil then
         PhoneData.Chats[data.ContactNumber].name = data.ContactName
     end
-    TriggerServerEvent('NADRP-phone:server:AddNewContact', data.ContactName, data.ContactNumber, data.ContactIban)
+    TriggerServerEvent('denalifw-phone:server:AddNewContact', data.ContactName, data.ContactNumber, data.ContactIban)
 end)
 
 RegisterNUICallback('GetMails', function(data, cb)
@@ -579,7 +579,7 @@ end)
 
 RegisterNUICallback('GetProfilePicture', function(data, cb)
     local number = data.number
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetPicture', function(picture)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetPicture', function(picture)
         cb(picture)
     end, number)
 end)
@@ -614,11 +614,11 @@ RegisterNUICallback('SharedLocation', function(data)
 end)
 
 RegisterNUICallback('PostAdvert', function(data)
-    TriggerServerEvent('NADRP-phone:server:AddAdvert', data.message, data.url)
+    TriggerServerEvent('denalifw-phone:server:AddAdvert', data.message, data.url)
 end)
 
 RegisterNUICallback("DeleteAdvert", function()
-    TriggerServerEvent("NADRP-phone:server:DeleteAdvert")
+    TriggerServerEvent("denalifw-phone:server:DeleteAdvert")
 end)
 
 RegisterNUICallback('LoadAdverts', function()
@@ -635,7 +635,7 @@ RegisterNUICallback('ClearAlerts', function(data, cb)
     if PhoneData.Chats[ChatKey].Unread ~= nil then
         local newAlerts = (Config.PhoneApplications['whatsapp'].Alerts - PhoneData.Chats[ChatKey].Unread)
         Config.PhoneApplications['whatsapp'].Alerts = newAlerts
-        TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "whatsapp", newAlerts)
+        TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "whatsapp", newAlerts)
 
         PhoneData.Chats[ChatKey].Unread = 0
 
@@ -654,11 +654,11 @@ RegisterNUICallback('PayInvoice', function(data, cb)
     local amount = data.amount
     local invoiceId = data.invoiceId
 
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:PayInvoice', function(CanPay, Invoices)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:PayInvoice', function(CanPay, Invoices)
         if CanPay then PhoneData.Invoices = Invoices end
         cb(CanPay)
     end, society, amount, invoiceId, senderCitizenId)
-    TriggerServerEvent('NADRP-phone:server:BillingEmail', data, true)
+    TriggerServerEvent('denalifw-phone:server:BillingEmail', data, true)
 end)
 
 RegisterNUICallback('DeclineInvoice', function(data, cb)
@@ -667,11 +667,11 @@ RegisterNUICallback('DeclineInvoice', function(data, cb)
     local amount = data.amount
     local invoiceId = data.invoiceId
 
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:DeclineInvoice', function(CanPay, Invoices)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:DeclineInvoice', function(CanPay, Invoices)
         PhoneData.Invoices = Invoices
         cb('ok')
     end, society, amount, invoiceId)
-    TriggerServerEvent('NADRP-phone:server:BillingEmail', data, false)
+    TriggerServerEvent('denalifw-phone:server:BillingEmail', data, false)
 end)
 
 RegisterNUICallback('EditContact', function(data, cb)
@@ -694,7 +694,7 @@ RegisterNUICallback('EditContact', function(data, cb)
     end
     Wait(100)
     cb(PhoneData.Contacts)
-    TriggerServerEvent('NADRP-phone:server:EditContact', NewName, NewNumber, NewIban, OldName, OldNumber, OldIban)
+    TriggerServerEvent('denalifw-phone:server:EditContact', NewName, NewNumber, NewIban, OldName, OldNumber, OldIban)
 end)
 
 RegisterNUICallback('GetHashtagMessages', function(data, cb)
@@ -712,7 +712,7 @@ end)
 RegisterNUICallback('UpdateProfilePicture', function(data)
     local pf = data.profilepicture
     PhoneData.MetaData.profilepicture = pf
-    TriggerServerEvent('NADRP-phone:server:SaveMetaData', PhoneData.MetaData)
+    TriggerServerEvent('denalifw-phone:server:SaveMetaData', PhoneData.MetaData)
 end)
 
 RegisterNUICallback('PostNewTweet', function(data, cb)
@@ -738,7 +738,7 @@ RegisterNUICallback('PostNewTweet', function(data, cb)
             if InvalidSymbol then
                 Handle = Handle:gsub("%"..InvalidSymbol, "")
             end
-            TriggerServerEvent('NADRP-phone:server:UpdateHashtags', Handle, TweetMessage)
+            TriggerServerEvent('denalifw-phone:server:UpdateHashtags', Handle, TweetMessage)
         end
     end
 
@@ -752,7 +752,7 @@ RegisterNUICallback('PostNewTweet', function(data, cb)
 
             if (Firstname ~= nil and Firstname ~= "") and (Lastname ~= nil and Lastname ~= "") then
                 if Firstname ~= PhoneData.PlayerData.charinfo.firstname and Lastname ~= PhoneData.PlayerData.charinfo.lastname then
-                    TriggerServerEvent('NADRP-phone:server:MentionedPlayer', Firstname, Lastname, TweetMessage)
+                    TriggerServerEvent('denalifw-phone:server:MentionedPlayer', Firstname, Lastname, TweetMessage)
                 end
             end
         end
@@ -762,11 +762,11 @@ RegisterNUICallback('PostNewTweet', function(data, cb)
     Wait(100)
     cb(PhoneData.Tweets)
 
-    TriggerServerEvent('NADRP-phone:server:UpdateTweets', PhoneData.Tweets, TweetMessage)
+    TriggerServerEvent('denalifw-phone:server:UpdateTweets', PhoneData.Tweets, TweetMessage)
 end)
 
 RegisterNUICallback('DeleteTweet',function(data)
-    TriggerServerEvent('NADRP-phone:server:DeleteTweet', data.id)
+    TriggerServerEvent('denalifw-phone:server:DeleteTweet', data.id)
 end)
 
 RegisterNUICallback('GetMentionedTweets', function(data, cb)
@@ -782,7 +782,7 @@ RegisterNUICallback('GetHashtags', function(data, cb)
 end)
 
 RegisterNUICallback('FetchSearchResults', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:FetchResult', function(result)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:FetchResult', function(result)
         cb(result)
     end, data.input)
 end)
@@ -796,7 +796,7 @@ RegisterNUICallback('InstallApplication', function(data, cb)
     end
 
     if NewSlot <= Config.MaxSlots then
-        TriggerServerEvent('NADRP-phone:server:InstallApplication', {
+        TriggerServerEvent('denalifw-phone:server:InstallApplication', {
             app = data.app,
         })
         cb({
@@ -809,12 +809,12 @@ RegisterNUICallback('InstallApplication', function(data, cb)
 end)
 
 RegisterNUICallback('RemoveApplication', function(data, cb)
-    TriggerServerEvent('NADRP-phone:server:RemoveInstallation', data.app)
+    TriggerServerEvent('denalifw-phone:server:RemoveInstallation', data.app)
 end)
 
 RegisterNUICallback('GetTruckerData', function(data, cb)
-    local TruckerMeta = NADRP.Functions.GetPlayerData().metadata["jobrep"]["trucker"]
-    local TierData = exports['NADRP-trucker']:GetTier(TruckerMeta)
+    local TruckerMeta = denalifw.Functions.GetPlayerData().metadata["jobrep"]["trucker"]
+    local TierData = exports['denalifw-trucker']:GetTier(TruckerMeta)
     cb(TierData)
 end)
 
@@ -824,9 +824,9 @@ RegisterNUICallback('GetGalleryData', function(data, cb)
 end)
 
 RegisterNUICallback('DeleteImage', function(image,cb)
-    TriggerServerEvent('NADRP-phone:server:RemoveImageFromGallery',image)
+    TriggerServerEvent('denalifw-phone:server:RemoveImageFromGallery',image)
     Wait(400)
-    TriggerServerEvent('NADRP-phone:server:getImageFromGallery')
+    TriggerServerEvent('denalifw-phone:server:getImageFromGallery')
     cb(true)
 end)
 
@@ -834,9 +834,9 @@ end)
 RegisterNUICallback('track-vehicle', function(data, cb)
     local veh = data.veh
     if findVehFromPlateAndLocate(veh.plate) then
-        NADRP.Functions.Notify("Your vehicle has been marked", "success")
+        denalifw.Functions.Notify("Your vehicle has been marked", "success")
     else
-        NADRP.Functions.Notify("This vehicle cannot be located", "error")
+        denalifw.Functions.Notify("This vehicle cannot be located", "error")
     end
 end)
 
@@ -867,29 +867,29 @@ RegisterNUICallback('DeleteContact', function(data, cb)
     if PhoneData.Chats[Number] ~= nil and next(PhoneData.Chats[Number]) ~= nil then
         PhoneData.Chats[Number].name = Number
     end
-    TriggerServerEvent('NADRP-phone:server:RemoveContact', Name, Number)
+    TriggerServerEvent('denalifw-phone:server:RemoveContact', Name, Number)
 end)
 
 RegisterNUICallback('GetCryptoData', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-crypto:server:GetCryptoData', function(CryptoData)
+    denalifw.Functions.TriggerCallback('denalifw-crypto:server:GetCryptoData', function(CryptoData)
         cb(CryptoData)
     end, data.crypto)
 end)
 
 RegisterNUICallback('BuyCrypto', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-crypto:server:BuyCrypto', function(CryptoData)
+    denalifw.Functions.TriggerCallback('denalifw-crypto:server:BuyCrypto', function(CryptoData)
         cb(CryptoData)
     end, data)
 end)
 
 RegisterNUICallback('SellCrypto', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-crypto:server:SellCrypto', function(CryptoData)
+    denalifw.Functions.TriggerCallback('denalifw-crypto:server:SellCrypto', function(CryptoData)
         cb(CryptoData)
     end, data)
 end)
 
 RegisterNUICallback('TransferCrypto', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-crypto:server:TransferCrypto', function(CryptoData)
+    denalifw.Functions.TriggerCallback('denalifw-crypto:server:TransferCrypto', function(CryptoData)
         cb(CryptoData)
     end, data)
 end)
@@ -902,26 +902,26 @@ RegisterNUICallback('GetCryptoTransactions', function(data, cb)
 end)
 
 RegisterNUICallback('GetAvailableRaces', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:GetRaces', function(Races)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:GetRaces', function(Races)
         cb(Races)
     end)
 end)
 
 RegisterNUICallback('JoinRace', function(data)
-    TriggerServerEvent('NADRP-lapraces:server:JoinRace', data.RaceData)
+    TriggerServerEvent('denalifw-lapraces:server:JoinRace', data.RaceData)
 end)
 
 RegisterNUICallback('LeaveRace', function(data)
-    TriggerServerEvent('NADRP-lapraces:server:LeaveRace', data.RaceData)
+    TriggerServerEvent('denalifw-lapraces:server:LeaveRace', data.RaceData)
 end)
 
 RegisterNUICallback('StartRace', function(data)
-    TriggerServerEvent('NADRP-lapraces:server:StartRace', data.RaceData.RaceId)
+    TriggerServerEvent('denalifw-lapraces:server:StartRace', data.RaceData.RaceId)
 end)
 
 RegisterNUICallback('SetAlertWaypoint', function(data)
     local coords = data.alert.coords
-    NADRP.Functions.Notify('GPS Location set: '..data.alert.title)
+    denalifw.Functions.Notify('GPS Location set: '..data.alert.title)
     SetNewWaypoint(coords.x, coords.y)
 end)
 
@@ -937,10 +937,10 @@ RegisterNUICallback('RemoveSuggestion', function(data, cb)
 end)
 
 RegisterNUICallback('FetchVehicleResults', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetVehicleSearchResults', function(result)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetVehicleSearchResults', function(result)
         if result ~= nil then
             for k, v in pairs(result) do
-                NADRP.Functions.TriggerCallback('police:IsPlateFlagged', function(flagged)
+                denalifw.Functions.TriggerCallback('police:IsPlateFlagged', function(flagged)
                     result[k].isFlagged = flagged
                 end, result[k].plate)
                 Wait(50)
@@ -951,14 +951,14 @@ RegisterNUICallback('FetchVehicleResults', function(data, cb)
 end)
 
 RegisterNUICallback('FetchVehicleScan', function(data, cb)
-    local vehicle = NADRP.Functions.GetClosestVehicle()
-    local plate = NADRP.Functions.GetPlate(vehicle)
+    local vehicle = denalifw.Functions.GetClosestVehicle()
+    local plate = denalifw.Functions.GetPlate(vehicle)
     local vehname = GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)):lower()
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:ScanPlate', function(result)
-        NADRP.Functions.TriggerCallback('police:IsPlateFlagged', function(flagged)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:ScanPlate', function(result)
+        denalifw.Functions.TriggerCallback('police:IsPlateFlagged', function(flagged)
             result.isFlagged = flagged
-	    if NADRP.Shared.Vehicles[vehname] ~= nil then
-                result.label = NADRP.Shared.Vehicles[vehname]['name']
+	    if denalifw.Shared.Vehicles[vehname] ~= nil then
+                result.label = denalifw.Shared.Vehicles[vehname]['name']
             else
                 result.label = 'Unknown brand..'
             end
@@ -968,38 +968,38 @@ RegisterNUICallback('FetchVehicleScan', function(data, cb)
 end)
 
 RegisterNUICallback('GetRaces', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:GetListedRaces', function(Races)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:GetListedRaces', function(Races)
         cb(Races)
     end)
 end)
 
 RegisterNUICallback('GetTrackData', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:GetTrackData', function(TrackData, CreatorData)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:GetTrackData', function(TrackData, CreatorData)
         TrackData.CreatorData = CreatorData
         cb(TrackData)
     end, data.RaceId)
 end)
 
 RegisterNUICallback('SetupRace', function(data, cb)
-    TriggerServerEvent('NADRP-lapraces:server:SetupRace', data.RaceId, tonumber(data.AmountOfLaps))
+    TriggerServerEvent('denalifw-lapraces:server:SetupRace', data.RaceId, tonumber(data.AmountOfLaps))
 end)
 
 RegisterNUICallback('HasCreatedRace', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:HasCreatedRace', function(HasCreated)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:HasCreatedRace', function(HasCreated)
         cb(HasCreated)
     end)
 end)
 
 RegisterNUICallback('IsInRace', function(data, cb)
-    local InRace = exports['NADRP-lapraces']:IsInRace()
+    local InRace = exports['denalifw-lapraces']:IsInRace()
     cb(InRace)
 end)
 
 RegisterNUICallback('IsAuthorizedToCreateRaces', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:IsAuthorizedToCreateRaces', function(IsAuthorized, NameAvailable)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:IsAuthorizedToCreateRaces', function(IsAuthorized, NameAvailable)
         local data = {
             IsAuthorized = IsAuthorized,
-            IsBusy = exports['NADRP-lapraces']:IsInEditor(),
+            IsBusy = exports['denalifw-lapraces']:IsInEditor(),
             IsNameAvailable = NameAvailable,
         }
         cb(data)
@@ -1007,28 +1007,28 @@ RegisterNUICallback('IsAuthorizedToCreateRaces', function(data, cb)
 end)
 
 RegisterNUICallback('StartTrackEditor', function(data, cb)
-    TriggerServerEvent('NADRP-lapraces:server:CreateLapRace', data.TrackName)
+    TriggerServerEvent('denalifw-lapraces:server:CreateLapRace', data.TrackName)
 end)
 
 RegisterNUICallback('GetRacingLeaderboards', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:GetRacingLeaderboards', function(Races)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:GetRacingLeaderboards', function(Races)
         cb(Races)
     end)
 end)
 
 RegisterNUICallback('RaceDistanceCheck', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:GetRacingData', function(RaceData)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:GetRacingData', function(RaceData)
         local ped = PlayerPedId()
         local coords = GetEntityCoords(ped)
         local checkpointcoords = RaceData.Checkpoints[1].coords
         local dist = #(coords - vector3(checkpointcoords.x, checkpointcoords.y, checkpointcoords.z))
         if dist <= 115.0 then
             if data.Joined then
-                TriggerEvent('NADRP-lapraces:client:WaitingDistanceCheck')
+                TriggerEvent('denalifw-lapraces:client:WaitingDistanceCheck')
             end
             cb(true)
         else
-            NADRP.Functions.Notify('You\'re too far away from the race. GPS has been set to the race.', 'error', 5000)
+            denalifw.Functions.Notify('You\'re too far away from the race. GPS has been set to the race.', 'error', 5000)
             SetNewWaypoint(checkpointcoords.x, checkpointcoords.y)
             cb(false)
         end
@@ -1037,37 +1037,37 @@ end)
 
 RegisterNUICallback('IsBusyCheck', function(data, cb)
     if data.check == "editor" then
-        cb(exports['NADRP-lapraces']:IsInEditor())
+        cb(exports['denalifw-lapraces']:IsInEditor())
     else
-        cb(exports['NADRP-lapraces']:IsInRace())
+        cb(exports['denalifw-lapraces']:IsInRace())
     end
 end)
 
 RegisterNUICallback('CanRaceSetup', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-lapraces:server:CanRaceSetup', function(CanSetup)
+    denalifw.Functions.TriggerCallback('denalifw-lapraces:server:CanRaceSetup', function(CanSetup)
         cb(CanSetup)
     end)
 end)
 
 RegisterNUICallback('GetPlayerHouses', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetPlayerHouses', function(Houses)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetPlayerHouses', function(Houses)
         cb(Houses)
     end)
 end)
 
 RegisterNUICallback('GetPlayerKeys', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetHouseKeys', function(Keys)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetHouseKeys', function(Keys)
         cb(Keys)
     end)
 end)
 
 RegisterNUICallback('SetHouseLocation', function(data, cb)
     SetNewWaypoint(data.HouseData.HouseData.coords.enter.x, data.HouseData.HouseData.coords.enter.y)
-    NADRP.Functions.Notify("GPS has been set to " .. data.HouseData.HouseData.adress .. "!", "success")
+    denalifw.Functions.Notify("GPS has been set to " .. data.HouseData.HouseData.adress .. "!", "success")
 end)
 
 RegisterNUICallback('RemoveKeyholder', function(data)
-    TriggerServerEvent('NADRP-houses:server:removeHouseKey', data.HouseData.name, {
+    TriggerServerEvent('denalifw-houses:server:removeHouseKey', data.HouseData.name, {
         citizenid = data.HolderData.citizenid,
         firstname = data.HolderData.charinfo.firstname,
         lastname = data.HolderData.charinfo.lastname,
@@ -1077,13 +1077,13 @@ end)
 RegisterNUICallback('TransferCid', function(data, cb)
     local TransferedCid = data.newBsn
 
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:TransferCid', function(CanTransfer)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:TransferCid', function(CanTransfer)
         cb(CanTransfer)
     end, TransferedCid, data.HouseData)
 end)
 
 RegisterNUICallback('FetchPlayerHouses', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:MeosGetPlayerHouses', function(result)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:MeosGetPlayerHouses', function(result)
         cb(result)
     end, data.input)
 end)
@@ -1092,7 +1092,7 @@ RegisterNUICallback('SetGPSLocation', function(data, cb)
     local ped = PlayerPedId()
 
     SetNewWaypoint(data.coords.x, data.coords.y)
-    NADRP.Functions.Notify('GPS has been set!', 'success')
+    denalifw.Functions.Notify('GPS has been set!', 'success')
 end)
 
 RegisterNUICallback('SetApartmentLocation', function(data, cb)
@@ -1100,17 +1100,17 @@ RegisterNUICallback('SetApartmentLocation', function(data, cb)
     local TypeData = Apartments.Locations[ApartmentData.type]
 
     SetNewWaypoint(TypeData.coords.enter.x, TypeData.coords.enter.y)
-    NADRP.Functions.Notify('GPS has been set!', 'success')
+    denalifw.Functions.Notify('GPS has been set!', 'success')
 end)
 
 RegisterNUICallback('GetCurrentLawyers', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetCurrentLawyers', function(lawyers)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetCurrentLawyers', function(lawyers)
         cb(lawyers)
     end)
 end)
 
 RegisterNUICallback('SetupStoreApps', function(data, cb)
-    local PlayerData = NADRP.Functions.GetPlayerData()
+    local PlayerData = denalifw.Functions.GetPlayerData()
     local data = {
         StoreApps = Config.StoreApps,
         PhoneData = PlayerData.metadata["phonedata"]
@@ -1124,7 +1124,7 @@ RegisterNUICallback('ClearMentions', function()
         action = "RefreshAppAlerts",
         AppData = Config.PhoneApplications
     })
-    TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "twitter", 0)
+    TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "twitter", 0)
     SendNUIMessage({ action = "RefreshAppAlerts", AppData = Config.PhoneApplications })
 end)
 
@@ -1135,7 +1135,7 @@ RegisterNUICallback('ClearGeneralAlerts', function(data)
             action = "RefreshAppAlerts",
             AppData = Config.PhoneApplications
         })
-        TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', data.app, 0)
+        TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', data.app, 0)
         SendNUIMessage({ action = "RefreshAppAlerts", AppData = Config.PhoneApplications })
     end)
 end)
@@ -1144,7 +1144,7 @@ RegisterNUICallback('TransferMoney', function(data, cb)
     data.amount = tonumber(data.amount)
     if tonumber(PhoneData.PlayerData.money.bank) >= data.amount then
         local amaountata = PhoneData.PlayerData.money.bank - data.amount
-        TriggerServerEvent('NADRP-phone:server:TransferMoney', data.iban, data.amount)
+        TriggerServerEvent('denalifw-phone:server:TransferMoney', data.iban, data.amount)
         local cbdata = {
             CanTransfer = true,
             NewAmount = amaountata
@@ -1162,10 +1162,10 @@ end)
 RegisterNUICallback('CanTransferMoney', function(data, cb)
     local amount = tonumber(data.amountOf)
     local iban = data.sendTo
-    local PlayerData = NADRP.Functions.GetPlayerData()
+    local PlayerData = denalifw.Functions.GetPlayerData()
 
     if (PlayerData.money.bank - amount) >= 0 then
-        NADRP.Functions.TriggerCallback('NADRP-phone:server:CanTransferMoney', function(Transferd)
+        denalifw.Functions.TriggerCallback('denalifw-phone:server:CanTransferMoney', function(Transferd)
             if Transferd then
                 cb({TransferedMoney = true, NewBalance = (PlayerData.money.bank - amount)})
             else
@@ -1179,13 +1179,13 @@ RegisterNUICallback('CanTransferMoney', function(data, cb)
 end)
 
 RegisterNUICallback('GetWhatsappChats', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetContactPictures', function(Chats)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetContactPictures', function(Chats)
         cb(Chats)
     end, PhoneData.Chats)
 end)
 
 RegisterNUICallback('CallContact', function(data, cb)
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetCallState', function(CanCall, IsOnline, contactData)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetCallState', function(CanCall, IsOnline, contactData)
         local status = {
             CanCall = CanCall,
             IsOnline = IsOnline,
@@ -1243,7 +1243,7 @@ RegisterNUICallback('SendMessage', function(data, cb)
                     },
                 }
             end
-            TriggerServerEvent('NADRP-phone:server:UpdateMessages', PhoneData.Chats[NumberKey].messages, ChatNumber, false)
+            TriggerServerEvent('denalifw-phone:server:UpdateMessages', PhoneData.Chats[NumberKey].messages, ChatNumber, false)
             NumberKey = GetKeyByNumber(ChatNumber)
             ReorganizeChats(NumberKey)
         else
@@ -1282,7 +1282,7 @@ RegisterNUICallback('SendMessage', function(data, cb)
                     },
                 }
             end
-            TriggerServerEvent('NADRP-phone:server:UpdateMessages', PhoneData.Chats[NumberKey].messages, ChatNumber, true)
+            TriggerServerEvent('denalifw-phone:server:UpdateMessages', PhoneData.Chats[NumberKey].messages, ChatNumber, true)
             NumberKey = GetKeyByNumber(ChatNumber)
             ReorganizeChats(NumberKey)
         end
@@ -1328,12 +1328,12 @@ RegisterNUICallback('SendMessage', function(data, cb)
                 },
             }
         end
-        TriggerServerEvent('NADRP-phone:server:UpdateMessages', PhoneData.Chats[NumberKey].messages, ChatNumber, true)
+        TriggerServerEvent('denalifw-phone:server:UpdateMessages', PhoneData.Chats[NumberKey].messages, ChatNumber, true)
         NumberKey = GetKeyByNumber(ChatNumber)
         ReorganizeChats(NumberKey)
     end
 
-    NADRP.Functions.TriggerCallback('NADRP-phone:server:GetContactPicture', function(Chat)
+    denalifw.Functions.TriggerCallback('denalifw-phone:server:GetContactPicture', function(Chat)
         SendNUIMessage({
             action = "UpdateChat",
             chatData = Chat,
@@ -1358,15 +1358,15 @@ RegisterNUICallback("TakePhoto", function(data,cb)
             takePhoto = false
             break
         elseif IsControlJustPressed(1, 176) then -- TAKE.. PIC
-            NADRP.Functions.TriggerCallback("NADRP-phone:server:GetWebhook",function(hook)
+            denalifw.Functions.TriggerCallback("denalifw-phone:server:GetWebhook",function(hook)
                 if hook then
                     exports['screenshot-basic']:requestScreenshotUpload(tostring(hook), "files[]", function(data)
                         local image = json.decode(data)
                         DestroyMobilePhone()
                         CellCamActivate(false, false)
-                        TriggerServerEvent('NADRP-phone:server:addImageToGallery', image.attachments[1].proxy_url)
+                        TriggerServerEvent('denalifw-phone:server:addImageToGallery', image.attachments[1].proxy_url)
                         Wait(400)
-                        TriggerServerEvent('NADRP-phone:server:getImageFromGallery')
+                        TriggerServerEvent('denalifw-phone:server:getImageFromGallery')
                         cb(json.encode(image.attachments[1].proxy_url))
                     end)
                 else
@@ -1389,21 +1389,21 @@ RegisterNUICallback("TakePhoto", function(data,cb)
 end)
 
 RegisterCommand('ping', function(source, args)
-    local PlayerData = NADRP.Functions.GetPlayerData()
+    local PlayerData = denalifw.Functions.GetPlayerData()
     if not args[1] then
-        NADRP.Functions.Notify("You need to input a Player ID", "error")
+        denalifw.Functions.Notify("You need to input a Player ID", "error")
     else
-        TriggerServerEvent('NADRP-phone:server:sendPing', args[1])
+        TriggerServerEvent('denalifw-phone:server:sendPing', args[1])
     end
 end)
 
 -- Handler Events
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
     LoadPhone()
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     PhoneData = {
         MetaData = {},
         isOpen = false,
@@ -1429,7 +1429,7 @@ RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
     }
 end)
 
-RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
     SendNUIMessage({
         action = "UpdateApplications",
         JobData = JobInfo,
@@ -1441,13 +1441,13 @@ end)
 
 -- Events
 
-RegisterNetEvent('NADRP-phone:client:TransferMoney', function(amount, newmoney)
+RegisterNetEvent('denalifw-phone:client:TransferMoney', function(amount, newmoney)
     PhoneData.PlayerData.money.bank = newmoney
     SendNUIMessage({ action = "PhoneNotification", PhoneNotify = { title = "QBank", text = "&#36;"..amount.." has been added to your account!", icon = "fas fa-university", color = "#8c7ae6", }, })
     SendNUIMessage({ action = "UpdateBank", NewBalance = PhoneData.PlayerData.money.bank })
 end)
 
--- RegisterNetEvent('NADRP-phone:client:UpdateTweetsDel', function(source, Tweets)
+-- RegisterNetEvent('denalifw-phone:client:UpdateTweetsDel', function(source, Tweets)
 --     PhoneData.Tweets = Tweets
 --     print(source)
 --     print(PhoneData.PlayerData.source)
@@ -1461,7 +1461,7 @@ end)
 --     end
 -- end)
 
-RegisterNetEvent('NADRP-phone:client:UpdateTweets', function(src, Tweets, NewTweetData, delete)
+RegisterNetEvent('denalifw-phone:client:UpdateTweets', function(src, Tweets, NewTweetData, delete)
     PhoneData.Tweets = Tweets
     local MyPlayerId = PhoneData.PlayerData.source
     if not delete then -- New Tweet
@@ -1511,7 +1511,7 @@ RegisterNetEvent('NADRP-phone:client:UpdateTweets', function(src, Tweets, NewTwe
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:RaceNotify', function(message)
+RegisterNetEvent('denalifw-phone:client:RaceNotify', function(message)
     SendNUIMessage({
         action = "PhoneNotification",
         PhoneNotify = {
@@ -1524,7 +1524,7 @@ RegisterNetEvent('NADRP-phone:client:RaceNotify', function(message)
     })
 end)
 
-RegisterNetEvent('NADRP-phone:client:AddRecentCall', function(data, time, type)
+RegisterNetEvent('denalifw-phone:client:AddRecentCall', function(data, time, type)
     PhoneData.RecentCalls[#PhoneData.RecentCalls+1] = {
         name = IsNumberInContacts(data.number),
         time = time,
@@ -1532,7 +1532,7 @@ RegisterNetEvent('NADRP-phone:client:AddRecentCall', function(data, time, type)
         number = data.number,
         anonymous = data.anonymous
     }
-    TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "phone")
+    TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "phone")
     Config.PhoneApplications["phone"].Alerts = Config.PhoneApplications["phone"].Alerts + 1
     SendNUIMessage({
         action = "RefreshAppAlerts",
@@ -1540,7 +1540,7 @@ RegisterNetEvent('NADRP-phone:client:AddRecentCall', function(data, time, type)
     })
 end)
 
-RegisterNetEvent("NADRP-phone-new:client:BankNotify", function(text)
+RegisterNetEvent("denalifw-phone-new:client:BankNotify", function(text)
     SendNUIMessage({
         action = "PhoneNotification",
         NotifyData = {
@@ -1553,7 +1553,7 @@ RegisterNetEvent("NADRP-phone-new:client:BankNotify", function(text)
     })
 end)
 
-RegisterNetEvent('NADRP-phone:client:NewMailNotify', function(MailData)
+RegisterNetEvent('denalifw-phone:client:NewMailNotify', function(MailData)
     SendNUIMessage({
         action = "PhoneNotification",
         PhoneNotify = {
@@ -1565,10 +1565,10 @@ RegisterNetEvent('NADRP-phone:client:NewMailNotify', function(MailData)
         },
     })
     Config.PhoneApplications['mail'].Alerts = Config.PhoneApplications['mail'].Alerts + 1
-    TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "mail")
+    TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "mail")
 end)
 
-RegisterNetEvent('NADRP-phone:client:UpdateMails', function(NewMails)
+RegisterNetEvent('denalifw-phone:client:UpdateMails', function(NewMails)
     SendNUIMessage({
         action = "UpdateMails",
         Mails = NewMails
@@ -1576,7 +1576,7 @@ RegisterNetEvent('NADRP-phone:client:UpdateMails', function(NewMails)
     PhoneData.Mails = NewMails
 end)
 
-RegisterNetEvent('NADRP-phone:client:UpdateAdvertsDel', function(Adverts)
+RegisterNetEvent('denalifw-phone:client:UpdateAdvertsDel', function(Adverts)
     PhoneData.Adverts = Adverts
     SendNUIMessage({
         action = "RefreshAdverts",
@@ -1584,7 +1584,7 @@ RegisterNetEvent('NADRP-phone:client:UpdateAdvertsDel', function(Adverts)
     })
 end)
 
-RegisterNetEvent('NADRP-phone:client:UpdateAdverts', function(Adverts, LastAd)
+RegisterNetEvent('denalifw-phone:client:UpdateAdverts', function(Adverts, LastAd)
     PhoneData.Adverts = Adverts
     SendNUIMessage({
         action = "PhoneNotification",
@@ -1602,15 +1602,15 @@ RegisterNetEvent('NADRP-phone:client:UpdateAdverts', function(Adverts, LastAd)
     })
 end)
 
-RegisterNetEvent('NADRP-phone:client:BillingEmail', function(data, paid, name)
+RegisterNetEvent('denalifw-phone:client:BillingEmail', function(data, paid, name)
     if paid then
-        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
             sender = 'Billing Department',
             subject = 'Invoice Paid',
             message = 'Invoice Has Been Paid From '..name..' In The Amount Of $'..data.amount,
         })
     else
-        TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+        TriggerServerEvent('denalifw-phone:server:sendNewMail', {
             sender = 'Billing Department',
             subject = 'Invoice Declined',
             message = 'Invoice Has Been Declined From '..name..' In The Amount Of $'..data.amount,
@@ -1618,7 +1618,7 @@ RegisterNetEvent('NADRP-phone:client:BillingEmail', function(data, paid, name)
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:CancelCall', function()
+RegisterNetEvent('denalifw-phone:client:CancelCall', function()
     if PhoneData.CallData.CallType == "ongoing" then
         SendNUIMessage({
             action = "CancelOngoingCall"
@@ -1640,7 +1640,7 @@ RegisterNetEvent('NADRP-phone:client:CancelCall', function()
         PhoneData.AnimationData.anim = nil
     end
 
-    TriggerServerEvent('NADRP-phone:server:SetCallState', false)
+    TriggerServerEvent('denalifw-phone:server:SetCallState', false)
 
     if not PhoneData.isOpen then
         SendNUIMessage({
@@ -1675,7 +1675,7 @@ RegisterNetEvent('NADRP-phone:client:CancelCall', function()
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:GetCalled', function(CallerNumber, CallId, AnonymousCall)
+RegisterNetEvent('denalifw-phone:client:GetCalled', function(CallerNumber, CallId, AnonymousCall)
     local RepeatCount = 0
     local CallData = {
         number = CallerNumber,
@@ -1693,7 +1693,7 @@ RegisterNetEvent('NADRP-phone:client:GetCalled', function(CallerNumber, CallId, 
     PhoneData.CallData.TargetData = CallData
     PhoneData.CallData.CallId = CallId
 
-    TriggerServerEvent('NADRP-phone:server:SetCallState', true)
+    TriggerServerEvent('denalifw-phone:server:SetCallState', true)
 
     SendNUIMessage({
         action = "SetupHomeCall",
@@ -1704,7 +1704,7 @@ RegisterNetEvent('NADRP-phone:client:GetCalled', function(CallerNumber, CallId, 
         if not PhoneData.CallData.AnsweredCall then
             if RepeatCount + 1 ~= Config.CallRepeats + 1 then
                 if PhoneData.CallData.InCall then
-                    NADRP.Functions.TriggerCallback('NADRP-phone:server:HasPhone', function(HasPhone)
+                    denalifw.Functions.TriggerCallback('denalifw-phone:server:HasPhone', function(HasPhone)
                         if HasPhone then
                             RepeatCount = RepeatCount + 1
                             TriggerServerEvent("InteractSound_SV:PlayOnSource", "ringing", 0.2)
@@ -1726,7 +1726,7 @@ RegisterNetEvent('NADRP-phone:client:GetCalled', function(CallerNumber, CallId, 
                         Canceled = true,
                         AnonymousCall = AnonymousCall,
                     })
-                    TriggerServerEvent('NADRP-phone:server:AddRecentCall', "missed", CallData)
+                    TriggerServerEvent('denalifw-phone:server:AddRecentCall', "missed", CallData)
                     break
                 end
                 Wait(Config.RepeatTimeout)
@@ -1737,17 +1737,17 @@ RegisterNetEvent('NADRP-phone:client:GetCalled', function(CallerNumber, CallId, 
                     Canceled = true,
                     AnonymousCall = AnonymousCall,
                 })
-                TriggerServerEvent('NADRP-phone:server:AddRecentCall', "missed", CallData)
+                TriggerServerEvent('denalifw-phone:server:AddRecentCall', "missed", CallData)
                 break
             end
         else
-            TriggerServerEvent('NADRP-phone:server:AddRecentCall', "missed", CallData)
+            TriggerServerEvent('denalifw-phone:server:AddRecentCall', "missed", CallData)
             break
         end
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:UpdateMessages', function(ChatMessages, SenderNumber, New)
+RegisterNetEvent('denalifw-phone:client:UpdateMessages', function(ChatMessages, SenderNumber, New)
     local NumberKey = GetKeyByNumber(SenderNumber)
 
     if New then
@@ -1800,7 +1800,7 @@ RegisterNetEvent('NADRP-phone:client:UpdateMessages', function(ChatMessages, Sen
             ReorganizeChats(NumberKey)
 
             Wait(100)
-            NADRP.Functions.TriggerCallback('NADRP-phone:server:GetContactPictures', function(Chats)
+            denalifw.Functions.TriggerCallback('denalifw-phone:server:GetContactPictures', function(Chats)
                 SendNUIMessage({
                     action = "UpdateChat",
                     chatData = Chats[GetKeyByNumber(SenderNumber)],
@@ -1820,7 +1820,7 @@ RegisterNetEvent('NADRP-phone:client:UpdateMessages', function(ChatMessages, Sen
 	        },
 	    })
             Config.PhoneApplications['whatsapp'].Alerts = Config.PhoneApplications['whatsapp'].Alerts + 1
-            TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "whatsapp")
+            TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "whatsapp")
         end
     else
         PhoneData.Chats[NumberKey].messages = ChatMessages
@@ -1860,7 +1860,7 @@ RegisterNetEvent('NADRP-phone:client:UpdateMessages', function(ChatMessages, Sen
             ReorganizeChats(NumberKey)
 
             Wait(100)
-            NADRP.Functions.TriggerCallback('NADRP-phone:server:GetContactPictures', function(Chats)
+            denalifw.Functions.TriggerCallback('denalifw-phone:server:GetContactPictures', function(Chats)
                 SendNUIMessage({
                     action = "UpdateChat",
                     chatData = Chats[GetKeyByNumber(SenderNumber)],
@@ -1884,12 +1884,12 @@ RegisterNetEvent('NADRP-phone:client:UpdateMessages', function(ChatMessages, Sen
             ReorganizeChats(NumberKey)
 
             Config.PhoneApplications['whatsapp'].Alerts = Config.PhoneApplications['whatsapp'].Alerts + 1
-            TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "whatsapp")
+            TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "whatsapp")
         end
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:RemoveBankMoney', function(amount)
+RegisterNetEvent('denalifw-phone:client:RemoveBankMoney', function(amount)
     if amount > 0 then
         SendNUIMessage({
             action = "PhoneNotification",
@@ -1904,7 +1904,7 @@ RegisterNetEvent('NADRP-phone:client:RemoveBankMoney', function(amount)
     end
 end)
 
-RegisterNetEvent('NADRP-phone:RefreshPhone', function()
+RegisterNetEvent('denalifw-phone:RefreshPhone', function()
     LoadPhone()
     SetTimeout(250, function()
         SendNUIMessage({
@@ -1914,7 +1914,7 @@ RegisterNetEvent('NADRP-phone:RefreshPhone', function()
     end)
 end)
 
-RegisterNetEvent('NADRP-phone:client:AddTransaction', function(SenderData, TransactionData, Message, Title)
+RegisterNetEvent('denalifw-phone:client:AddTransaction', function(SenderData, TransactionData, Message, Title)
     local Data = {
         TransactionTitle = Title,
         TransactionMessage = Message,
@@ -1935,10 +1935,10 @@ RegisterNetEvent('NADRP-phone:client:AddTransaction', function(SenderData, Trans
         CryptoTransactions = PhoneData.CryptoTransactions
     })
 
-    TriggerServerEvent('NADRP-phone:server:AddTransaction', Data)
+    TriggerServerEvent('denalifw-phone:server:AddTransaction', Data)
 end)
 
-RegisterNetEvent('NADRP-phone:client:AddNewSuggestion', function(SuggestionData)
+RegisterNetEvent('denalifw-phone:client:AddNewSuggestion', function(SuggestionData)
     PhoneData.SuggestedContacts[#PhoneData.SuggestedContacts+1] = SuggestionData
     SendNUIMessage({
         action = "PhoneNotification",
@@ -1951,10 +1951,10 @@ RegisterNetEvent('NADRP-phone:client:AddNewSuggestion', function(SuggestionData)
         },
     })
     Config.PhoneApplications["phone"].Alerts = Config.PhoneApplications["phone"].Alerts + 1
-    TriggerServerEvent('NADRP-phone:server:SetPhoneAlerts', "phone", Config.PhoneApplications["phone"].Alerts)
+    TriggerServerEvent('denalifw-phone:server:SetPhoneAlerts', "phone", Config.PhoneApplications["phone"].Alerts)
 end)
 
-RegisterNetEvent('NADRP-phone:client:UpdateHashtags', function(Handle, msgData)
+RegisterNetEvent('denalifw-phone:client:UpdateHashtags', function(Handle, msgData)
     if PhoneData.Hashtags[Handle] ~= nil then
         PhoneData.Hashtags[Handle].messages[#PhoneData.Hashtags[Handle].messages+1] = msgData
     else
@@ -1971,7 +1971,7 @@ RegisterNetEvent('NADRP-phone:client:UpdateHashtags', function(Handle, msgData)
     })
 end)
 
-RegisterNetEvent('NADRP-phone:client:AnswerCall', function()
+RegisterNetEvent('denalifw-phone:client:AnswerCall', function()
     if (PhoneData.CallData.CallType == "incoming" or PhoneData.CallData.CallType == "outgoing") and PhoneData.CallData.InCall and not PhoneData.CallData.AnsweredCall then
         PhoneData.CallData.CallType = "ongoing"
         PhoneData.CallData.AnsweredCall = true
@@ -1980,7 +1980,7 @@ RegisterNetEvent('NADRP-phone:client:AnswerCall', function()
         SendNUIMessage({ action = "AnswerCall", CallData = PhoneData.CallData})
         SendNUIMessage({ action = "SetupHomeCall", CallData = PhoneData.CallData})
 
-        TriggerServerEvent('NADRP-phone:server:SetCallState', true)
+        TriggerServerEvent('denalifw-phone:server:SetCallState', true)
 
         if PhoneData.isOpen then
             DoPhoneAnimation('cellphone_text_to_call')
@@ -2022,8 +2022,8 @@ RegisterNetEvent('NADRP-phone:client:AnswerCall', function()
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:addPoliceAlert', function(alertData)
-    PlayerJob = NADRP.Functions.GetPlayerData().job
+RegisterNetEvent('denalifw-phone:client:addPoliceAlert', function(alertData)
+    PlayerJob = denalifw.Functions.GetPlayerData().job
     if PlayerJob.name == 'police' and PlayerJob.onduty then
         SendNUIMessage({
             action = "AddPoliceAlert",
@@ -2032,23 +2032,23 @@ RegisterNetEvent('NADRP-phone:client:addPoliceAlert', function(alertData)
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:GiveContactDetails', function()
+RegisterNetEvent('denalifw-phone:client:GiveContactDetails', function()
     local player, distance = GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local PlayerId = GetPlayerServerId(player)
-        TriggerServerEvent('NADRP-phone:server:GiveContactDetails', PlayerId)
+        TriggerServerEvent('denalifw-phone:server:GiveContactDetails', PlayerId)
     else
-        NADRP.Functions.Notify("No one nearby!", "error")
+        denalifw.Functions.Notify("No one nearby!", "error")
     end
 end)
 
-RegisterNetEvent('NADRP-phone:client:UpdateLapraces', function()
+RegisterNetEvent('denalifw-phone:client:UpdateLapraces', function()
     SendNUIMessage({
         action = "UpdateRacingApp",
     })
 end)
 
-RegisterNetEvent('NADRP-phone:client:GetMentioned', function(TweetMessage, AppAlerts)
+RegisterNetEvent('denalifw-phone:client:GetMentioned', function(TweetMessage, AppAlerts)
     Config.PhoneApplications["twitter"].Alerts = AppAlerts
     SendNUIMessage({ action = "PhoneNotification", PhoneNotify = { title = "You have been mentioned in a Tweet!", text = TweetMessage.message, icon = "fab fa-twitter", color = "#1DA1F2", }, })
     local TweetMessage = {firstName = TweetMessage.firstName, lastName = TweetMessage.lastName, message = escape_str(TweetMessage.message), time = TweetMessage.time, picture = TweetMessage.picture}
@@ -2057,11 +2057,11 @@ RegisterNetEvent('NADRP-phone:client:GetMentioned', function(TweetMessage, AppAl
     SendNUIMessage({ action = "UpdateMentionedTweets", Tweets = PhoneData.MentionedTweets })
 end)
 
-RegisterNetEvent('NADRP-phone:refreshImages', function(images)
+RegisterNetEvent('denalifw-phone:refreshImages', function(images)
     PhoneData.Images = images
 end)
 
-RegisterNetEvent("NADRP-phone:client:CustomNotification", function(title, text, icon, color, timeout) -- Send a PhoneNotification to the phone from anywhere
+RegisterNetEvent("denalifw-phone:client:CustomNotification", function(title, text, icon, color, timeout) -- Send a PhoneNotification to the phone from anywhere
     SendNUIMessage({
         action = "PhoneNotification",
         PhoneNotify = {
@@ -2097,7 +2097,7 @@ CreateThread(function()
     while true do
         Wait(60000)
         if LocalPlayer.state.isLoggedIn then
-            NADRP.Functions.TriggerCallback('NADRP-phone:server:GetPhoneData', function(pData)
+            denalifw.Functions.TriggerCallback('denalifw-phone:server:GetPhoneData', function(pData)
                 if pData.PlayerContacts ~= nil and next(pData.PlayerContacts) ~= nil then
                     PhoneData.Contacts = pData.PlayerContacts
                 end

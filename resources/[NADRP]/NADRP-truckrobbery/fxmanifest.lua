@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-TruckRobbery'
+description 'denalifw-TruckRobbery'
 version '1.0.0'
 
 server_script 'server/main.lua'

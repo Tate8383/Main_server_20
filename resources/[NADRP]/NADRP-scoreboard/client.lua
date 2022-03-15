@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local scoreboardOpen = false
 local PlayerOptin = {}
 
@@ -54,13 +54,13 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded', function()
-    NADRP.Functions.TriggerCallback('NADRP-scoreboard:server:GetConfig', function(config)
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded', function()
+    denalifw.Functions.TriggerCallback('denalifw-scoreboard:server:GetConfig', function(config)
         Config.IllegalActions = config
     end)
 end)
 
-RegisterNetEvent('NADRP-scoreboard:client:SetActivityBusy', function(activity, busy)
+RegisterNetEvent('denalifw-scoreboard:client:SetActivityBusy', function(activity, busy)
     Config.IllegalActions[activity].busy = busy
 end)
 
@@ -68,9 +68,9 @@ end)
 
 RegisterCommand('scoreboard', function()
     if not scoreboardOpen then
-        NADRP.Functions.TriggerCallback('NADRP-scoreboard:server:GetPlayersArrays', function(playerList)
-            NADRP.Functions.TriggerCallback('NADRP-scoreboard:server:GetActivity', function(cops, ambulance)
-                NADRP.Functions.TriggerCallback("NADRP-scoreboard:server:GetCurrentPlayers", function(Players)
+        denalifw.Functions.TriggerCallback('denalifw-scoreboard:server:GetPlayersArrays', function(playerList)
+            denalifw.Functions.TriggerCallback('denalifw-scoreboard:server:GetActivity', function(cops, ambulance)
+                denalifw.Functions.TriggerCallback("denalifw-scoreboard:server:GetCurrentPlayers", function(Players)
                     PlayerOptin = playerList
                     Config.CurrentCops = cops
 

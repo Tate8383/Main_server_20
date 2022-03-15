@@ -1,2 +1,2 @@
 # progressbar
-Dependency For NADRP-core
+Dependency For denalifw-core

@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local robberyBusy = false
 local timeOut = false
 local blackoutActive = false
@@ -52,19 +52,19 @@ local function CheckStationHits()
     end
     if Config.PowerStations[11].hit and Config.PowerStations[1].hit and Config.PowerStations[2].hit then
         TriggerClientEvent("police:client:SetCamera", -1, 21, false)
-        TriggerClientEvent("NADRP-bankrobbery:client:BankSecurity", 1, false)
+        TriggerClientEvent("denalifw-bankrobbery:client:BankSecurity", 1, false)
         TriggerClientEvent("police:client:SetCamera", -1, 22, false)
-        TriggerClientEvent("NADRP-bankrobbery:client:BankSecurity", 2, false)
+        TriggerClientEvent("denalifw-bankrobbery:client:BankSecurity", 2, false)
     end
     if Config.PowerStations[8].hit and Config.PowerStations[4].hit and Config.PowerStations[5].hit and Config.PowerStations[6].hit then
         TriggerClientEvent("police:client:SetCamera", -1, 23, false)
-        TriggerClientEvent("NADRP-bankrobbery:client:BankSecurity", 3, false)
+        TriggerClientEvent("denalifw-bankrobbery:client:BankSecurity", 3, false)
     end
     if Config.PowerStations[12].hit and Config.PowerStations[13].hit then
         TriggerClientEvent("police:client:SetCamera", -1, 24, false)
-        TriggerClientEvent("NADRP-bankrobbery:client:BankSecurity", 4, false)
+        TriggerClientEvent("denalifw-bankrobbery:client:BankSecurity", 4, false)
         TriggerClientEvent("police:client:SetCamera", -1, 25, false)
-        TriggerClientEvent("NADRP-bankrobbery:client:BankSecurity", 5, false)
+        TriggerClientEvent("denalifw-bankrobbery:client:BankSecurity", 5, false)
     end
 end
 
@@ -89,34 +89,34 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-bankrobbery:server:setBankState', function(bankId, state)
+RegisterNetEvent('denalifw-bankrobbery:server:setBankState', function(bankId, state)
     if bankId == "paleto" then
         if not robberyBusy then
             Config.BigBanks["paleto"]["isOpened"] = state
-            TriggerClientEvent('NADRP-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('NADRP-scoreboard:server:SetActivityBusy', "paleto", true)
-            TriggerEvent('NADRP-bankrobbery:server:setTimeout')
+            TriggerClientEvent('denalifw-bankrobbery:client:setBankState', -1, bankId, state)
+            TriggerEvent('denalifw-scoreboard:server:SetActivityBusy', "paleto", true)
+            TriggerEvent('denalifw-bankrobbery:server:setTimeout')
         end
     elseif bankId == "pacific" then
         if not robberyBusy then
             Config.BigBanks["pacific"]["isOpened"] = state
-            TriggerClientEvent('NADRP-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('NADRP-scoreboard:server:SetActivityBusy', "pacific", true)
-            TriggerEvent('NADRP-bankrobbery:server:setTimeout')
+            TriggerClientEvent('denalifw-bankrobbery:client:setBankState', -1, bankId, state)
+            TriggerEvent('denalifw-scoreboard:server:SetActivityBusy', "pacific", true)
+            TriggerEvent('denalifw-bankrobbery:server:setTimeout')
         end
     else
         if not robberyBusy then
             Config.SmallBanks[bankId]["isOpened"] = state
-            TriggerClientEvent('NADRP-bankrobbery:client:setBankState', -1, bankId, state)
-            TriggerEvent('NADRP-banking:server:SetBankClosed', bankId, true)
-            TriggerEvent('NADRP-scoreboard:server:SetActivityBusy', "bankrobbery", true)
-            TriggerEvent('NADRP-bankrobbery:server:SetSmallbankTimeout', bankId)
+            TriggerClientEvent('denalifw-bankrobbery:client:setBankState', -1, bankId, state)
+            TriggerEvent('denalifw-banking:server:SetBankClosed', bankId, true)
+            TriggerEvent('denalifw-scoreboard:server:SetActivityBusy', "bankrobbery", true)
+            TriggerEvent('denalifw-bankrobbery:server:SetSmallbankTimeout', bankId)
         end
     end
     robberyBusy = true
 end)
 
-RegisterNetEvent('NADRP-bankrobbery:server:setLockerState', function(bankId, lockerId, state, bool)
+RegisterNetEvent('denalifw-bankrobbery:server:setLockerState', function(bankId, lockerId, state, bool)
     if bankId == "paleto" then
         Config.BigBanks["paleto"]["lockers"][lockerId][state] = bool
     elseif bankId == "pacific" then
@@ -125,12 +125,12 @@ RegisterNetEvent('NADRP-bankrobbery:server:setLockerState', function(bankId, loc
         Config.SmallBanks[bankId]["lockers"][lockerId][state] = bool
     end
 
-    TriggerClientEvent('NADRP-bankrobbery:client:setLockerState', -1, bankId, lockerId, state, bool)
+    TriggerClientEvent('denalifw-bankrobbery:client:setLockerState', -1, bankId, lockerId, state, bool)
 end)
 
-RegisterNetEvent('NADRP-bankrobbery:server:recieveItem', function(type)
+RegisterNetEvent('denalifw-bankrobbery:server:recieveItem', function(type)
     local src = source
-    local ply = NADRP.Functions.GetPlayer(src)
+    local ply = denalifw.Functions.GetPlayer(src)
 
     if type == "small" then
         local itemType = math.random(#Config.RewardTypes)
@@ -146,21 +146,21 @@ RegisterNetEvent('NADRP-bankrobbery:server:recieveItem', function(type)
                      local item = Config.LockerRewards["tier"..tier][math.random(#Config.LockerRewards["tier"..tier])]
                      local itemAmount = math.random(item.minAmount, item.maxAmount)
                      ply.Functions.AddItem(item.item, itemAmount)
-                     TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[item.item], "add")
+                     TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[item.item], "add")
                  elseif Config.RewardTypes[itemType].type == "money" then
                     local info = {
                         worth = math.random(2300, 3200)
                     }
                     ply.Functions.AddItem('markedbills', math.random(2,3), false, info)
-                    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['markedbills'], "add")
+                    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['markedbills'], "add")
                 end
             else
                 ply.Functions.AddItem('security_card_01', 1)
-                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['security_card_01'], "add")
+                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['security_card_01'], "add")
             end
         else
             ply.Functions.AddItem('weapon_stungun', 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['weapon_stungun'], "add")
+            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['weapon_stungun'], "add")
         end
     elseif type == "paleto" then
         local itemType = math.random(#Config.RewardTypes)
@@ -176,21 +176,21 @@ RegisterNetEvent('NADRP-bankrobbery:server:recieveItem', function(type)
                      local itemAmount = math.random(item.minAmount, item.maxAmount)
 
                      ply.Functions.AddItem(item.item, itemAmount)
-                     TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[item.item], "add")
+                     TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[item.item], "add")
                  elseif Config.RewardTypes[itemType].type == "money" then
                      local info = {
                          worth = math.random(4000, 6000)
                      }
                     ply.Functions.AddItem('markedbills', math.random(1,4), false, info)
-                    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['markedbills'], "add")
+                    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['markedbills'], "add")
                  end
             else
                 ply.Functions.AddItem('security_card_02', 1)
-                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['security_card_02'], "add")
+                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['security_card_02'], "add")
             end
         else
             ply.Functions.AddItem('weapon_vintagepistol', 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['weapon_vintagepistol'], "add")
+            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['weapon_vintagepistol'], "add")
         end
     elseif type == "pacific" then
         local itemType = math.random(#Config.RewardTypes)
@@ -209,43 +209,43 @@ RegisterNetEvent('NADRP-bankrobbery:server:recieveItem', function(type)
                     local itemAmount = math.random(maxAmount)
 
                     ply.Functions.AddItem(item.item, itemAmount)
-                    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items[item.item], "add")
+                    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items[item.item], "add")
                 elseif Config.RewardTypes[itemType].type == "money" then
                      local moneyAmount = math.random(1200, 7000)
                      local info = {
                          worth = math.random(19000, 21000)
                      }
                     ply.Functions.AddItem('markedbills', math.random(1,4), false, info)
-                    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['markedbills'], "add")
+                    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['markedbills'], "add")
                 end
             else
                  local info = {
                      worth = math.random(19000, 21000)
                  }
                 ply.Functions.AddItem('markedbills', math.random(1,4), false, info)
-                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['markedbills'], "add")
+                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['markedbills'], "add")
                  local info = {
                      crypto = math.random(1, 3)
                  }
                  ply.Functions.AddItem("cryptostick", 1, false, info)
-                 TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['cryptostick'], "add")
+                 TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['cryptostick'], "add")
             end
         else
             local chance = math.random(1, 2)
             local odd = math.random(1, 2)
             if chance == odd then
                 ply.Functions.AddItem('weapon_microsmg', 1)
-                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['weapon_microsmg'], "add")
+                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['weapon_microsmg'], "add")
             else
                 ply.Functions.AddItem('weapon_minismg', 1)
-                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items['weapon_minismg'], "add")
+                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items['weapon_minismg'], "add")
             end
 
         end
     end
 end)
 
-RegisterNetEvent('NADRP-bankrobbery:server:setTimeout', function()
+RegisterNetEvent('denalifw-bankrobbery:server:setTimeout', function()
     if not robberyBusy then
         if not timeOut then
             timeOut = true
@@ -253,8 +253,8 @@ RegisterNetEvent('NADRP-bankrobbery:server:setTimeout', function()
                 Wait(90 * (60 * 1000))
                 timeOut = false
                 robberyBusy = false
-                TriggerEvent('NADRP-scoreboard:server:SetActivityBusy', "bankrobbery", false)
-                TriggerEvent('NADRP-scoreboard:server:SetActivityBusy', "pacific", false)
+                TriggerEvent('denalifw-scoreboard:server:SetActivityBusy', "bankrobbery", false)
+                TriggerEvent('denalifw-scoreboard:server:SetActivityBusy', "pacific", false)
 
                 for k, v in pairs(Config.BigBanks["pacific"]["lockers"]) do
                     Config.BigBanks["pacific"]["lockers"][k]["isBusy"] = false
@@ -266,7 +266,7 @@ RegisterNetEvent('NADRP-bankrobbery:server:setTimeout', function()
                     Config.BigBanks["paleto"]["lockers"][k]["isOpened"] = false
                 end
 
-                TriggerClientEvent('NADRP-bankrobbery:client:ClearTimeoutDoors', -1)
+                TriggerClientEvent('denalifw-bankrobbery:client:ClearTimeoutDoors', -1)
                 Config.BigBanks["paleto"]["isOpened"] = false
                 Config.BigBanks["pacific"]["isOpened"] = false
             end)
@@ -274,7 +274,7 @@ RegisterNetEvent('NADRP-bankrobbery:server:setTimeout', function()
     end
 end)
 
-RegisterNetEvent('NADRP-bankrobbery:server:SetSmallbankTimeout', function(BankId)
+RegisterNetEvent('denalifw-bankrobbery:server:SetSmallbankTimeout', function(BankId)
     if not robberyBusy then
         if not timeOut then
             timeOut = true
@@ -290,14 +290,14 @@ RegisterNetEvent('NADRP-bankrobbery:server:SetSmallbankTimeout', function(BankId
 
                 timeOut = false
                 robberyBusy = false
-            	TriggerClientEvent('NADRP-bankrobbery:client:ResetFleecaLockers', -1, BankId)
-            	TriggerEvent('NADRP-banking:server:SetBankClosed', BankId, false)
+            	TriggerClientEvent('denalifw-bankrobbery:client:ResetFleecaLockers', -1, BankId)
+            	TriggerEvent('denalifw-banking:server:SetBankClosed', BankId, false)
             end)
 		end
     end
 end)
 
-RegisterNetEvent('NADRP-bankrobbery:server:callCops', function(type, bank, streetLabel, coords)
+RegisterNetEvent('denalifw-bankrobbery:server:callCops', function(type, bank, streetLabel, coords)
     local cameraId = 4
     local bankLabel = "Fleeca"
     local msg = ""
@@ -318,17 +318,17 @@ RegisterNetEvent('NADRP-bankrobbery:server:callCops', function(type, bank, stree
         coords = {x = coords.x, y = coords.y, z = coords.z},
         description = msg,
     }
-    TriggerClientEvent("NADRP-bankrobbery:client:robberyCall", -1, type, bank, streetLabel, coords)
-    TriggerClientEvent("NADRP-phone:client:addPoliceAlert", -1, alertData)
+    TriggerClientEvent("denalifw-bankrobbery:client:robberyCall", -1, type, bank, streetLabel, coords)
+    TriggerClientEvent("denalifw-phone:client:addPoliceAlert", -1, alertData)
 end)
 
-RegisterNetEvent('NADRP-bankrobbery:server:SetStationStatus', function(key, isHit)
+RegisterNetEvent('denalifw-bankrobbery:server:SetStationStatus', function(key, isHit)
     Config.PowerStations[key].hit = isHit
-    TriggerClientEvent("NADRP-bankrobbery:client:SetStationStatus", -1, key, isHit)
+    TriggerClientEvent("denalifw-bankrobbery:client:SetStationStatus", -1, key, isHit)
     if AllStationsHit() then
-        TriggerEvent("NADRP-weathersync:server:toggleBlackout")
+        TriggerEvent("denalifw-weathersync:server:toggleBlackout")
         TriggerClientEvent("police:client:DisableAllCameras", -1)
-        TriggerClientEvent("NADRP-bankrobbery:client:disableAllBankSecurity", -1)
+        TriggerClientEvent("denalifw-bankrobbery:client:disableAllBankSecurity", -1)
         blackoutActive = true
     else
         CheckStationHits()
@@ -353,18 +353,18 @@ end)
 
 -- Callbacks
 
-NADRP.Functions.CreateCallback('NADRP-bankrobbery:server:isRobberyActive', function(source, cb)
+denalifw.Functions.CreateCallback('denalifw-bankrobbery:server:isRobberyActive', function(source, cb)
     cb(robberyBusy)
 end)
 
-NADRP.Functions.CreateCallback('NADRP-bankrobbery:server:GetConfig', function(source, cb)
+denalifw.Functions.CreateCallback('denalifw-bankrobbery:server:GetConfig', function(source, cb)
     cb(Config)
 end)
 
-NADRP.Functions.CreateCallback("thermite:server:check", function(source, cb)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateCallback("thermite:server:check", function(source, cb)
+    local Player = denalifw.Functions.GetPlayer(source)
     if Player.Functions.RemoveItem("thermite", 1) then
-        TriggerClientEvent('inventory:client:ItemBox', source, NADRP.Shared.Items["thermite"], "remove")
+        TriggerClientEvent('inventory:client:ItemBox', source, denalifw.Shared.Items["thermite"], "remove")
         cb(true)
     else
         cb(false)
@@ -373,31 +373,31 @@ end)
 
 -- Items
 
-NADRP.Functions.CreateUseableItem("thermite", function(source, item)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateUseableItem("thermite", function(source, item)
+    local Player = denalifw.Functions.GetPlayer(source)
 	if Player.Functions.GetItemByName('lighter') ~= nil then
         TriggerClientEvent("thermite:UseThermite", source)
     else
-        TriggerClientEvent('NADRP:Notify', source, "You're missing ignition source ", "error")
+        TriggerClientEvent('denalifw:Notify', source, "You're missing ignition source ", "error")
     end
 end)
 
-NADRP.Functions.CreateUseableItem("security_card_01", function(source, item)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateUseableItem("security_card_01", function(source, item)
+    local Player = denalifw.Functions.GetPlayer(source)
 	if Player.Functions.GetItemByName('security_card_01') ~= nil then
-        TriggerClientEvent("NADRP-bankrobbery:UseBankcardA", source)
+        TriggerClientEvent("denalifw-bankrobbery:UseBankcardA", source)
     end
 end)
 
-NADRP.Functions.CreateUseableItem("security_card_02", function(source, item)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateUseableItem("security_card_02", function(source, item)
+    local Player = denalifw.Functions.GetPlayer(source)
 	if Player.Functions.GetItemByName('security_card_02') ~= nil then
-        TriggerClientEvent("NADRP-bankrobbery:UseBankcardB", source)
+        TriggerClientEvent("denalifw-bankrobbery:UseBankcardB", source)
     end
 end)
 
-NADRP.Functions.CreateUseableItem("electronickit", function(source, item)
-    local Player = NADRP.Functions.GetPlayer(source)
+denalifw.Functions.CreateUseableItem("electronickit", function(source, item)
+    local Player = denalifw.Functions.GetPlayer(source)
     if Player.Functions.GetItemByName('electronickit') ~= nil then
         TriggerClientEvent("electronickit:UseElectronickit", source)
     end
@@ -409,9 +409,9 @@ CreateThread(function()
     while true do
         Wait(1000 * 60 * 10)
         if blackoutActive then
-            TriggerEvent("NADRP-weathersync:server:toggleBlackout")
+            TriggerEvent("denalifw-weathersync:server:toggleBlackout")
             TriggerClientEvent("police:client:EnableAllCameras", -1)
-            TriggerClientEvent("NADRP-bankrobbery:client:enableAllBankSecurity", -1)
+            TriggerClientEvent("denalifw-bankrobbery:client:enableAllBankSecurity", -1)
             blackoutActive = false
         end
     end
@@ -420,7 +420,7 @@ end)
 CreateThread(function()
     while true do
         Wait(1000 * 60 * 30)
-        TriggerClientEvent("NADRP-bankrobbery:client:enableAllBankSecurity", -1)
+        TriggerClientEvent("denalifw-bankrobbery:client:enableAllBankSecurity", -1)
         TriggerClientEvent("police:client:EnableAllCameras", -1)
     end
 end)

@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local keyPressed = false
 local inKeyBinding = false
 local availableKeys = {
@@ -12,7 +12,7 @@ local availableKeys = {
 }
 
 function openBindingMenu()
-    local PlayerData = NADRP.Functions.GetPlayerData()
+    local PlayerData = denalifw.Functions.GetPlayerData()
     local keyMeta = PlayerData.metadata["commandbinds"]
     SendNUIMessage({
         action = "openBinding",
@@ -30,27 +30,27 @@ end
 
 RegisterNUICallback('close', closeBindingMenu)
 
-RegisterNetEvent('NADRP-commandbinding:client:openUI', function()
+RegisterNetEvent('denalifw-commandbinding:client:openUI', function()
     openBindingMenu()
 end)
 
 for k, v in pairs(availableKeys) do
     RegisterCommand(v[1], function()
         if LocalPlayer.state.isLoggedIn and not keyPressed and GetLastInputMethod(0) then
-            local keyMeta = NADRP.Functions.GetPlayerData().metadata["commandbinds"]
+            local keyMeta = denalifw.Functions.GetPlayerData().metadata["commandbinds"]
             local args = {}
             if next(keyMeta) ~= nil then
                 if keyMeta[v[2]]["command"] ~= "" then
                     if keyMeta[v[2]]["argument"] ~= "" then args = {[1] = keyMeta[v[2]]["argument"]} else args = {[1] = nil} end
-                    TriggerServerEvent('NADRP:CallCommand', keyMeta[v[2]]["command"], args)
+                    TriggerServerEvent('denalifw:CallCommand', keyMeta[v[2]]["command"], args)
                     keyPressed = true
                     Wait(1000)
                     keyPressed = false
                 else
-                    NADRP.Functions.Notify('There is still nothing ['..v[2]..'] bound, /binds to bind a command', 'primary', 4000)
+                    denalifw.Functions.Notify('There is still nothing ['..v[2]..'] bound, /binds to bind a command', 'primary', 4000)
                 end
             else
-                NADRP.Functions.Notify('You have not bound any commands, /binds to bind a command', 'primary', 4000)
+                denalifw.Functions.Notify('You have not bound any commands, /binds to bind a command', 'primary', 4000)
             end
         end
     end, false)
@@ -67,6 +67,6 @@ RegisterNUICallback('save', function(data)
         ["F9"]  = {["command"] = data.keyData["F9"][1],  ["argument"] = data.keyData["F9"][2]},
         ["F10"] = {["command"] = data.keyData["F10"][1], ["argument"] = data.keyData["F10"][2]},
     }
-    NADRP.Functions.Notify('Command bindings have been saved!', 'success')
-    TriggerServerEvent('NADRP-commandbinding:server:setKeyMeta', keyData)
+    denalifw.Functions.Notify('Command bindings have been saved!', 'success')
+    TriggerServerEvent('denalifw-commandbinding:server:setKeyMeta', keyData)
 end)

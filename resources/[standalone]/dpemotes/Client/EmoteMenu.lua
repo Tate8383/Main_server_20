@@ -3,23 +3,23 @@ TriggerServerEvent("dp:CheckVersion")
 rightPosition = {x = 1450, y = 100}
 leftPosition = {x = 0, y = 100}
 menuPosition = {x = 0, y = 200}
-PlayerData = NADRP.Functions.GetPlayerData()
+PlayerData = denalifw.Functions.GetPlayerData()
 isLoggedIn = false
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded')
-AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
-    PlayerData = NADRP.Functions.GetPlayerData()
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded')
+AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
+    PlayerData = denalifw.Functions.GetPlayerData()
     isLoggedIn = true
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload')
-AddEventHandler('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload')
+AddEventHandler('denalifw:Client:OnPlayerUnload', function()
     PlayerData = {}
     isLoggedIn = false
 end)
 
-RegisterNetEvent('NADRP:Player:SetPlayerData')
-AddEventHandler('NADRP:Player:SetPlayerData', function(val)
+RegisterNetEvent('denalifw:Player:SetPlayerData')
+AddEventHandler('denalifw:Player:SetPlayerData', function(val)
     PlayerData = val
 end)
 
@@ -335,7 +335,7 @@ end)
 AddEventHandler('onResourceStart', function(resource)
   if resource == GetCurrentResourceName() then
       Wait(200)
-      PlayerData = NADRP.Functions.GetPlayerData()
+      PlayerData = denalifw.Functions.GetPlayerData()
       isLoggedIn = true
   end
 end)

@@ -1,12 +1,12 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'NADRP-Apartments'
+description 'denalifw-Apartments'
 version '1.0.0'
 
 shared_scripts {
     'config.lua',
-    '@NADRP-core/shared/locale.lua',
+    '@denalifw-core/shared/locale.lua',
     'locales/en.lua', -- Change to the language you want
 }
 
@@ -21,10 +21,10 @@ client_scripts {
 }
 
 dependencies {
-	'NADRP-core',
-	'NADRP-interior',
-	'NADRP-clothing',
-	'NADRP-weathersync'
+	'denalifw-core',
+	'denalifw-interior',
+	'denalifw-clothing',
+	'denalifw-weathersync'
 }
 
 lua54 'yes'

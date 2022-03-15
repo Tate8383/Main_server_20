@@ -100,10 +100,10 @@ function Process(action, start, tick, finish)
                 end
             end)
         else
-            TriggerEvent("NADRP:Notify", "You are already doing something!", "error")
+            TriggerEvent("denalifw:Notify", "You are already doing something!", "error")
         end
     else
-        TriggerEvent("NADRP:Notify", "Cant do that action!", "error")
+        TriggerEvent("denalifw:Notify", "Cant do that action!", "error")
     end
 end
 

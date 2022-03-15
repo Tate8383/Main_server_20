@@ -11,7 +11,7 @@ local isEscorting = false
 -- Functions
 
 local function GetClosestPlayer()
-    local closestPlayers = NADRP.Functions.GetPlayersFromCoords()
+    local closestPlayers = denalifw.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -93,7 +93,7 @@ function SetLaststand(bool, spawn)
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
                 elseif LaststandTime - 1 <= 0 then
-                    NADRP.Functions.Notify(Lang:t('error.bled_out'), "error")
+                    denalifw.Functions.Notify(Lang:t('error.bled_out'), "error")
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                     local killer = GetPedSourceOfDeath(ped)
@@ -106,12 +106,12 @@ function SetLaststand(bool, spawn)
                     local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
                     local weaponLabel = Lang:t('info.wep_unknown')
                     local weaponName = Lang:t('info.wep_unknown')
-                    local weaponItem = NADRP.Shared.Weapons[killerWeapon]
+                    local weaponItem = denalifw.Shared.Weapons[killerWeapon]
                     if weaponItem then
                         weaponLabel = weaponItem.label
                         weaponName = weaponItem.name
                     end
-                    TriggerServerEvent("NADRP-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
+                    TriggerServerEvent("denalifw-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
                     deathTime = 0
                     OnDeath()
                     DeathTimer()
@@ -145,7 +145,7 @@ RegisterNetEvent('hospital:client:UseFirstAid', function()
             TriggerServerEvent('hospital:server:UseFirstAid', playerId)
         end
     else
-        NADRP.Functions.Notify(Lang:t('error.impossible'), 'error')
+        denalifw.Functions.Notify(Lang:t('error.impossible'), 'error')
     end
 end)
 
@@ -164,7 +164,7 @@ end)
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
     isHealingPerson = true
-    NADRP.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
+    denalifw.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -176,11 +176,11 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     }, {}, {}, function() -- Done
         isHealingPerson = false
         ClearPedTasks(ped)
-        NADRP.Functions.Notify(Lang:t('success.revived'), 'success')
+        denalifw.Functions.Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     end, function() -- Cancel
         isHealingPerson = false
         ClearPedTasks(ped)
-        NADRP.Functions.Notify(Lang:t('error.canceled'), "error")
+        denalifw.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)

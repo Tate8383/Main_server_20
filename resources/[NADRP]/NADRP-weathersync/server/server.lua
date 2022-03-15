@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local CurrentWeather = Config.StartWeather
 local baseTime = Config.BaseTime
 local timeOffset = Config.TimeOffset
@@ -10,7 +10,7 @@ local newWeatherTimer = Config.NewWeatherTimer
 --- @param src number - Source to check
 --- @return boolean - has permission
 local function isAllowedToChange(src)
-    if src == 0 or NADRP.Functions.HasPermission(src, "admin") or IsPlayerAceAllowed(src, 'command') then
+    if src == 0 or denalifw.Functions.HasPermission(src, "admin") or IsPlayerAceAllowed(src, 'command') then
         return true
     end
     return false
@@ -45,7 +45,7 @@ local function nextWeatherStage()
     elseif CurrentWeather == "SMOG" or CurrentWeather == "FOGGY" then CurrentWeather = "CLEAR"
     else CurrentWeather = "CLEAR"
     end
-    TriggerEvent("NADRP-weathersync:server:RequestStateSync")
+    TriggerEvent("denalifw-weathersync:server:RequestStateSync")
 end
 
 --- Switch to a specified weather type
@@ -61,7 +61,7 @@ local function setWeather(weather)
     if not validWeatherType then return false end
     CurrentWeather = string.upper(weather)
     newWeatherTimer = Config.NewWeatherTimer
-    TriggerEvent('NADRP-weathersync:server:RequestStateSync')
+    TriggerEvent('denalifw-weathersync:server:RequestStateSync')
     return true
 end
 
@@ -79,7 +79,7 @@ local function setTime(hour, minute)
     shiftToHour((argh < 24) and argh or 0)
     shiftToMinute((argm < 60) and argm or 0)
     print(Lang:t('time.change', {value = argh, value2 = argm}))
-    TriggerEvent('NADRP-weathersync:server:RequestStateSync')
+    TriggerEvent('denalifw-weathersync:server:RequestStateSync')
     return true
 end
 
@@ -90,7 +90,7 @@ local function setBlackout(state)
     if state == nil then state = not blackout end
     if state then blackout = true
     else blackout = false end
-    TriggerEvent('NADRP-weathersync:server:RequestStateSync')
+    TriggerEvent('denalifw-weathersync:server:RequestStateSync')
     return blackout
 end
 
@@ -101,7 +101,7 @@ local function setTimeFreeze(state)
     if state == nil then state = not freezeTime end
     if state then freezeTime = true
     else freezeTime = false end
-    TriggerEvent('NADRP-weathersync:server:RequestStateSync')
+    TriggerEvent('denalifw-weathersync:server:RequestStateSync')
     return freezeTime
 end
 
@@ -112,79 +112,79 @@ local function setDynamicWeather(state)
     if state == nil then state = not Config.DynamicWeather end
     if state then Config.DynamicWeather = true
     else Config.DynamicWeather = false end
-    TriggerEvent('NADRP-weathersync:server:RequestStateSync')
+    TriggerEvent('denalifw-weathersync:server:RequestStateSync')
     return Config.DynamicWeather
 end
 
 -- EVENTS
 
-RegisterNetEvent('NADRP-weathersync:server:RequestStateSync', function()
-    TriggerClientEvent('NADRP-weathersync:client:SyncWeather', -1, CurrentWeather, blackout)
-    TriggerClientEvent('NADRP-weathersync:client:SyncTime', -1, baseTime, timeOffset, freezeTime)
+RegisterNetEvent('denalifw-weathersync:server:RequestStateSync', function()
+    TriggerClientEvent('denalifw-weathersync:client:SyncWeather', -1, CurrentWeather, blackout)
+    TriggerClientEvent('denalifw-weathersync:client:SyncTime', -1, baseTime, timeOffset, freezeTime)
 end)
 
-RegisterNetEvent('NADRP-weathersync:server:RequestCommands', function()
+RegisterNetEvent('denalifw-weathersync:server:RequestCommands', function()
     local src = source
     if isAllowedToChange(src) then
-        TriggerClientEvent('NADRP-weathersync:client:RequestCommands', src, true)
+        TriggerClientEvent('denalifw-weathersync:client:RequestCommands', src, true)
     end
 end)
 
-RegisterNetEvent('NADRP-weathersync:server:setWeather', function(weather)
+RegisterNetEvent('denalifw-weathersync:server:setWeather', function(weather)
     local src = source
     if isAllowedToChange(src) then
         local success = setWeather(weather)
         if src > 0 then
-            if (success) then TriggerClientEvent('NADRP:Notify', src, Lang:t('weather.updated'))
-            else TriggerClientEvent('NADRP:Notify', src, Lang:t('weather.invalid'))
+            if (success) then TriggerClientEvent('denalifw:Notify', src, Lang:t('weather.updated'))
+            else TriggerClientEvent('denalifw:Notify', src, Lang:t('weather.invalid'))
             end
         end
     end
 end)
 
-RegisterNetEvent('NADRP-weathersync:server:setTime', function(hour, minute)
+RegisterNetEvent('denalifw-weathersync:server:setTime', function(hour, minute)
     local src = source
     if isAllowedToChange(src) then
         local success = setTime(hour, minute)
         if src > 0 then
-            if (success) then TriggerClientEvent('NADRP:Notify', src, Lang:t('time.change', {value = hour, value2 = minute or "00"}))
-            else TriggerClientEvent('NADRP:Notify', src, Lang:t('time.invalid'))
+            if (success) then TriggerClientEvent('denalifw:Notify', src, Lang:t('time.change', {value = hour, value2 = minute or "00"}))
+            else TriggerClientEvent('denalifw:Notify', src, Lang:t('time.invalid'))
             end
         end
     end
 end)
 
-RegisterNetEvent('NADRP-weathersync:server:toggleBlackout', function(state)
+RegisterNetEvent('denalifw-weathersync:server:toggleBlackout', function(state)
     local src = source
     if isAllowedToChange(src) then
         local newstate = setBlackout(state)
         if src > 0 then
-            if (newstate) then TriggerClientEvent('NADRP:Notify', src, Lang:t('blackout.enabled'))
-            else TriggerClientEvent('NADRP:Notify', src, Lang:t('blackout.disabled'))
+            if (newstate) then TriggerClientEvent('denalifw:Notify', src, Lang:t('blackout.enabled'))
+            else TriggerClientEvent('denalifw:Notify', src, Lang:t('blackout.disabled'))
             end
         end
     end
 end)
 
-RegisterNetEvent('NADRP-weathersync:server:toggleFreezeTime', function(state)
+RegisterNetEvent('denalifw-weathersync:server:toggleFreezeTime', function(state)
     local src = source
     if isAllowedToChange(src) then
         local newstate = setTimeFreeze(state)
         if src > 0 then
-            if (newstate) then TriggerClientEvent('NADRP:Notify', src, Lang:t('time.now_frozen'))
-            else TriggerClientEvent('NADRP:Notify', src, Lang:t('time.now_unfrozen'))
+            if (newstate) then TriggerClientEvent('denalifw:Notify', src, Lang:t('time.now_frozen'))
+            else TriggerClientEvent('denalifw:Notify', src, Lang:t('time.now_unfrozen'))
             end
         end
     end
 end)
 
-RegisterNetEvent('NADRP-weathersync:server:toggleDynamicWeather', function(state)
+RegisterNetEvent('denalifw-weathersync:server:toggleDynamicWeather', function(state)
     local src = source
     if isAllowedToChange(src) then
         local newstate = setDynamicWeather(state)
         if src > 0 then
-            if (newstate) then TriggerClientEvent('NADRP:Notify', src, Lang:t('weather.now_unfrozen'))
-            else TriggerClientEvent('NADRP:Notify', src, Lang:t('weather.now_frozen'))
+            if (newstate) then TriggerClientEvent('denalifw:Notify', src, Lang:t('weather.now_unfrozen'))
+            else TriggerClientEvent('denalifw:Notify', src, Lang:t('weather.now_frozen'))
             end
         end
     end
@@ -196,43 +196,43 @@ RegisterCommand('freezetime', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         local newstate = setTimeFreeze()
         if source > 0 then
-            if (newstate) then return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.frozenc')) end
-            return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.unfrozenc'))
+            if (newstate) then return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.frozenc')) end
+            return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.unfrozenc'))
         end
         if (newstate) then return print(Lang:t('time.now_frozen')) end
         return print(Lang:t('time.now_unfrozen'))
     end
-    TriggerClientEvent('NADRP:Notify', source, Lang:t('error.not_allowed'), 'error')
+    TriggerClientEvent('denalifw:Notify', source, Lang:t('error.not_allowed'), 'error')
 end)
 
 RegisterCommand('freezeweather', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         local newstate = setDynamicWeather()
         if source > 0 then
-            if (newstate) then return TriggerClientEvent('NADRP:Notify', source, Lang:t('dynamic_weather.enabled')) end
-            return TriggerClientEvent('NADRP:Notify', source, Lang:t('dynamic_weather.disabled'))
+            if (newstate) then return TriggerClientEvent('denalifw:Notify', source, Lang:t('dynamic_weather.enabled')) end
+            return TriggerClientEvent('denalifw:Notify', source, Lang:t('dynamic_weather.disabled'))
         end
         if (newstate) then return print(Lang:t('weather.now_unfrozen')) end
         return print(Lang:t('weather.now_frozen'))
     end
-    TriggerClientEvent('NADRP:Notify', source, Lang:t('error.not_allowed'), 'error')
+    TriggerClientEvent('denalifw:Notify', source, Lang:t('error.not_allowed'), 'error')
 end)
 
 RegisterCommand('weather', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         if args[1] == nil then
-            if source > 0 then return TriggerClientEvent('NADRP:Notify', source, Lang:t('weather.invalid_syntaxc'), 'error') end
+            if source > 0 then return TriggerClientEvent('denalifw:Notify', source, Lang:t('weather.invalid_syntaxc'), 'error') end
             return print(Lang:t('weather.invalid_syntax'))
         end
         local success = setWeather(args[1])
         if source > 0 then
-            if (success) then return TriggerClientEvent('NADRP:Notify', source, Lang:t('weather.willchangeto', {value = string.lower(args[1])})) end
-            return TriggerClientEvent('NADRP:Notify', source, Lang:t('weather.invalidc'), 'error')
+            if (success) then return TriggerClientEvent('denalifw:Notify', source, Lang:t('weather.willchangeto', {value = string.lower(args[1])})) end
+            return TriggerClientEvent('denalifw:Notify', source, Lang:t('weather.invalidc'), 'error')
         end
         if (success) then return print(Lang:t('weather.updated')) end
         return print(Lang:t('weather.invalid'))
     else
-        TriggerClientEvent('NADRP:Notify', Lang:t('error.not_access'), 'error')
+        TriggerClientEvent('denalifw:Notify', Lang:t('error.not_access'), 'error')
     end
 end)
 
@@ -241,66 +241,66 @@ RegisterCommand('blackout', function(source, args, rawCommand)
     if isAllowedToChange(src) then
         local newstate = setBlackout()
         if src > 0 then
-            if (newstate) then return TriggerClientEvent('NADRP:Notify', src, Lang:t('blackout.enabledc')) end
-            return TriggerClientEvent('NADRP:Notify', src, Lang:t('blackout.disabledc'))
+            if (newstate) then return TriggerClientEvent('denalifw:Notify', src, Lang:t('blackout.enabledc')) end
+            return TriggerClientEvent('denalifw:Notify', src, Lang:t('blackout.disabledc'))
         end
         if (newstate) then return print(Lang:t('blackout.enabled')) end
         return print(Lang:t('blackout.disabled'))
     end
-    TriggerClientEvent('NADRP:Notify', src, Lang:t('error.not_allowed'), 'error')
+    TriggerClientEvent('denalifw:Notify', src, Lang:t('error.not_allowed'), 'error')
 end)
 
 RegisterCommand('morning', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         setTime(9, 0)
-        if source > 0 then return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.morning')) end
+        if source > 0 then return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.morning')) end
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t('error.not_allowed'), 'error')
+        TriggerClientEvent('denalifw:Notify', source, Lang:t('error.not_allowed'), 'error')
     end
 end)
 
 RegisterCommand('noon', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         setTime(12, 0)
-        if source > 0 then return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.noon')) end
+        if source > 0 then return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.noon')) end
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t('error.not_allowed'), 'error')
+        TriggerClientEvent('denalifw:Notify', source, Lang:t('error.not_allowed'), 'error')
     end
 end)
 
 RegisterCommand('evening', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         setTime(18, 0)
-        if source > 0 then return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.evening')) end
+        if source > 0 then return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.evening')) end
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t('error.not_allowed'), 'error')
+        TriggerClientEvent('denalifw:Notify', source, Lang:t('error.not_allowed'), 'error')
     end
 end)
 
 RegisterCommand('night', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         setTime(23, 0)
-        if source > 0 then return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.night')) end
+        if source > 0 then return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.night')) end
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t('error.not_allowed'), 'error')
+        TriggerClientEvent('denalifw:Notify', source, Lang:t('error.not_allowed'), 'error')
     end
 end)
 
 RegisterCommand('time', function(source, args, rawCommand)
     if isAllowedToChange(source) then
         if args[1] == nil then
-            if source > 0 then return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.invalidc'), 'error') end
+            if source > 0 then return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.invalidc'), 'error') end
             return print(Lang:t('time.invalid'))
         end
         local success = setTime(args[1], args[2])
         if source > 0 then
-            if (success) then return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.changec', {value = args[1]..':'..(args[2] or "00")})) end
-            return TriggerClientEvent('NADRP:Notify', source, Lang:t('time.invalidc'), 'error')
+            if (success) then return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.changec', {value = args[1]..':'..(args[2] or "00")})) end
+            return TriggerClientEvent('denalifw:Notify', source, Lang:t('time.invalidc'), 'error')
         end
         if (success) then return print(Lang:t('time.change', {value = args[1], value2 = args[2] or "00"})) end
         return print(Lang:t('time.invalid'))
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t('time.access'), 'error')
+        TriggerClientEvent('denalifw:Notify', source, Lang:t('time.access'), 'error')
     end
 end)
 
@@ -324,14 +324,14 @@ end)
 CreateThread(function()
     while true do
         Wait(2000)                                          --Change to send every minute in game sync
-        TriggerClientEvent('NADRP-weathersync:client:SyncTime', -1, baseTime, timeOffset, freezeTime)
+        TriggerClientEvent('denalifw-weathersync:client:SyncTime', -1, baseTime, timeOffset, freezeTime)
     end
 end)
 
 CreateThread(function()
     while true do
         Wait(300000)
-        TriggerClientEvent('NADRP-weathersync:client:SyncWeather', -1, CurrentWeather, blackout)
+        TriggerClientEvent('denalifw-weathersync:client:SyncWeather', -1, CurrentWeather, blackout)
     end
 end)
 

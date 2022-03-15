@@ -1,15 +1,15 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local PlayerJob = {}
 local isInMenu = false
 local sleep
 
-RegisterNetEvent('NADRP:Client:OnPlayerLoaded')
-AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
-    PlayerJob = NADRP.Functions.GetPlayerData().job
+RegisterNetEvent('denalifw:Client:OnPlayerLoaded')
+AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
+    PlayerJob = denalifw.Functions.GetPlayerData().job
 end)
 
-RegisterNetEvent('NADRP:Client:OnJobUpdate')
-AddEventHandler('NADRP:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('denalifw:Client:OnJobUpdate')
+AddEventHandler('denalifw:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
 
@@ -19,8 +19,8 @@ local menu2 = MenuV:CreateMenu(false, 'Society money', 'topright', 155, 0, 0, 's
 local menu3 = MenuV:CreateMenu(false, 'Employee Management', 'topright', 155, 0, 0, 'size-125', 'none', 'menuv', 'employees')
 local menu4 = MenuV:CreateMenu(false, 'Recruit Menu', 'topright', 155, 0, 0, 'size-125', 'none', 'menuv', 'recruit')
 
-RegisterNetEvent('NADRP-bossmenu:client:openMenu')
-AddEventHandler('NADRP-bossmenu:client:openMenu', function()
+RegisterNetEvent('denalifw-bossmenu:client:openMenu')
+AddEventHandler('denalifw-bossmenu:client:openMenu', function()
     for k, v in pairs(Config.Jobs) do
         if k == PlayerJob.name and PlayerJob.isboss then
             MenuV:OpenMenu(menu)
@@ -90,7 +90,7 @@ end)
 -- Outfit
 menu_button3:On("select", function()
     MenuV:CloseMenu(menu)
-    TriggerEvent('NADRP-clothing:client:openOutfitMenu')
+    TriggerEvent('denalifw-clothing:client:openOutfitMenu')
 end)
 
 -- Society
@@ -102,7 +102,7 @@ end)
 menu_button6:On("select", function()
     local result = LocalInput('Withdrawal Amount', 16, '')
     if result ~= nil then
-        TriggerServerEvent("NADRP-bossmenu:server:withdrawMoney", tonumber(result))
+        TriggerServerEvent("denalifw-bossmenu:server:withdrawMoney", tonumber(result))
         UpdateSociety()
     end
 end)
@@ -111,7 +111,7 @@ end)
 menu_button7:On("select", function()
     local result = LocalInput('Deposit Amount', 16, '')
     if result ~= nil then
-        TriggerServerEvent("NADRP-bossmenu:server:depositMoney", tonumber(result))
+        TriggerServerEvent("denalifw-bossmenu:server:depositMoney", tonumber(result))
         UpdateSociety()
     end
 end)
@@ -119,7 +119,7 @@ end)
 -- Employees
 menu_button:On("select", function()
     menu3:ClearItems()
-    NADRP.Functions.TriggerCallback('NADRP-bossmenu:server:GetEmployees', function(cb)
+    denalifw.Functions.TriggerCallback('denalifw-bossmenu:server:GetEmployees', function(cb)
         for k,v in pairs(cb) do
             local menu_button8 = menu3:AddButton({
                 label = v.grade.name.. ' ' ..v.name,
@@ -140,7 +140,7 @@ end)
 menu_button1:On("select", function()
     menu4:ClearItems()
     local playerPed = PlayerPedId()
-    for k,v in pairs(NADRP.Functions.GetPlayersFromCoords(GetEntityCoords(playerPed), 10.0)) do
+    for k,v in pairs(denalifw.Functions.GetPlayersFromCoords(GetEntityCoords(playerPed), 10.0)) do
         if v and v ~= PlayerId() then
             local menu_button10 = menu4:AddButton({
                 label = GetPlayerName(v),
@@ -148,7 +148,7 @@ menu_button1:On("select", function()
                 description = 'Available Recruit',
                 select = function(btn)
                     local select = btn.Value
-                    TriggerServerEvent('NADRP-bossmenu:server:giveJob', GetPlayerServerId(v))
+                    TriggerServerEvent('denalifw-bossmenu:server:giveJob', GetPlayerServerId(v))
                 end
             })
         end
@@ -179,7 +179,7 @@ end)
 
 -- FUNCTIONS
 function UpdateSociety()
-    NADRP.Functions.TriggerCallback('NADRP-bossmenu:server:GetAccount', function(cb)
+    denalifw.Functions.TriggerCallback('denalifw-bossmenu:server:GetAccount', function(cb)
         menu_button5.Label = 'Society Amount: $' ..comma_value(cb)
     end, PlayerJob.name)
 end
@@ -214,10 +214,10 @@ function ManageEmployees(employee)
                     if values == 'promote' then
                         local result = LocalInput('New Grade Level', 3, '')
                         if result ~= nil then
-                            TriggerServerEvent('NADRP-bossmenu:server:updateGrade', employee.empSource, tonumber(result))
+                            TriggerServerEvent('denalifw-bossmenu:server:updateGrade', employee.empSource, tonumber(result))
                         end
                     else
-                        TriggerServerEvent('NADRP-bossmenu:server:fireEmployee', employee.empSource)
+                        TriggerServerEvent('denalifw-bossmenu:server:fireEmployee', employee.empSource)
                     end
                 end
             })

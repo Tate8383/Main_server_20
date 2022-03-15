@@ -1,10 +1,10 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 local closestScrapyard = 0
 local emailSend = false
 local isBusy = false
 
-RegisterNetEvent("NADRP:Client:OnPlayerLoaded", function()
-    TriggerServerEvent("NADRP-scrapyard:server:LoadVehicleList")
+RegisterNetEvent("denalifw:Client:OnPlayerLoaded", function()
+    TriggerServerEvent("denalifw-scrapyard:server:LoadVehicleList")
 end)
 
 CreateThread(function()
@@ -41,19 +41,19 @@ CreateThread(function()
 							if IsControlJustReleased(0, 38) then
 								if GetPedInVehicleSeat(vehicle, -1) == PlayerPedId() then
 									if IsVehicleValid(GetEntityModel(vehicle)) then
-										local vehiclePlate = NADRP.Functions.GetPlate(vehicle)
-										NADRP.Functions.TriggerCallback('NADRP-scrapyard:checkOwnerVehicle',function(retval)
+										local vehiclePlate = denalifw.Functions.GetPlate(vehicle)
+										denalifw.Functions.TriggerCallback('denalifw-scrapyard:checkOwnerVehicle',function(retval)
 											if retval then
 												ScrapVehicle(vehicle)
 											else
-												NADRP.Functions.Notify("You can't smash a vehicle that owns it.", "error")
+												denalifw.Functions.Notify("You can't smash a vehicle that owns it.", "error")
 											end
 										end,vehiclePlate)
 									else
-										NADRP.Functions.Notify("This Vehicle Cannot Be Scrapped.", "error")
+										denalifw.Functions.Notify("This Vehicle Cannot Be Scrapped.", "error")
 									end
 								else
-									NADRP.Functions.Notify("You Are Not The Driver", "error")
+									denalifw.Functions.Notify("You Are Not The Driver", "error")
 								end
 							end
 						end
@@ -72,7 +72,7 @@ CreateThread(function()
 	end
 end)
 
-RegisterNetEvent('NADRP-scapyard:client:setNewVehicles', function(vehicleList)
+RegisterNetEvent('denalifw-scapyard:client:setNewVehicles', function(vehicleList)
 	Config.CurrentVehicles = vehicleList
 end)
 
@@ -82,7 +82,7 @@ function CreateListEmail()
 		local vehicleList = ""
 		for k, v in pairs(Config.CurrentVehicles) do
 			if Config.CurrentVehicles[k] ~= nil then
-				local vehicleInfo = NADRP.Shared.Vehicles[v]
+				local vehicleInfo = denalifw.Shared.Vehicles[v]
 				if vehicleInfo ~= nil then
 					vehicleList = vehicleList  .. vehicleInfo["brand"] .. " " .. vehicleInfo["name"] .. "<br />"
 				end
@@ -90,7 +90,7 @@ function CreateListEmail()
 		end
 		SetTimeout(math.random(15000, 20000), function()
 			emailSend = false
-			TriggerServerEvent('NADRP-phone:server:sendNewMail', {
+			TriggerServerEvent('denalifw-phone:server:sendNewMail', {
 				sender = "Turner’s Auto Wrecking",
 				subject = "Vehicle List",
 				message = "You Can Only Demolish A Number Of Vehicles.<br />You Can Keep Everything You Demolish For Yourself As Long As You Dont Bother Me.<br /><br /><strong>Vehicle List:</strong><br />".. vehicleList,
@@ -98,7 +98,7 @@ function CreateListEmail()
 			})
 		end)
 	else
-		NADRP.Functions.Notify("You Are Not Allowed To Demolish Vehicles Now", "error")
+		denalifw.Functions.Notify("You Are Not Allowed To Demolish Vehicles Now", "error")
 	end
 end
 
@@ -106,21 +106,21 @@ function ScrapVehicle(vehicle)
 	isBusy = true
 	local scrapTime = math.random(28000, 37000)
 	ScrapVehicleAnim(scrapTime)
-	NADRP.Functions.Progressbar("scrap_vehicle", "Demolish Vehicle", scrapTime, false, true, {
+	denalifw.Functions.Progressbar("scrap_vehicle", "Demolish Vehicle", scrapTime, false, true, {
 		disableMovement = true,
 		disableCarMovement = true,
 		disableMouse = false,
 		disableCombat = true,
 	}, {}, {}, {}, function() -- Done
 		StopAnimTask(PlayerPedId(), "mp_car_bomb", "car_bomb_mechanic", 1.0)
-		TriggerServerEvent("NADRP-scrapyard:server:ScrapVehicle", GetVehicleKey(GetEntityModel(vehicle)))
+		TriggerServerEvent("denalifw-scrapyard:server:ScrapVehicle", GetVehicleKey(GetEntityModel(vehicle)))
 		SetEntityAsMissionEntity(vehicle, true, true)
 		DeleteVehicle(vehicle)
 		isBusy = false
 	end, function() -- Cancel
 		StopAnimTask(PlayerPedId(), "mp_car_bomb", "car_bomb_mechanic", 1.0)
 		isBusy = false
-		NADRP.Functions.Notify("Canceled", "error")
+		denalifw.Functions.Notify("Canceled", "error")
 	end)
 end
 

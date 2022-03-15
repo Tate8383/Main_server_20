@@ -35,10 +35,10 @@ $(document).on('click', '#delete-button', function(e){
     let source = $('.image').attr('src')
 
     setTimeout(() => {
-        $.post('https://NADRP-phone/DeleteImage', JSON.stringify({image:source}), function(Hashtags){
+        $.post('https://denalifw-phone/DeleteImage', JSON.stringify({image:source}), function(Hashtags){
             setTimeout(()=>{
                 $('#return-button').click()
-                $.post('https://NADRP-phone/GetGalleryData', JSON.stringify({}), function(data){
+                $.post('https://denalifw-phone/GetGalleryData', JSON.stringify({}), function(data){
                     setTimeout(()=>{
                             setUpGalleryData(data);
                         
@@ -108,7 +108,7 @@ $(document).on('click', '#tweet-button', function(e){
     var imageURL = postImageUrl
     if (TweetMessage != "") {
         var CurrentDate = new Date();
-        $.post('https://NADRP-phone/PostNewTweet', JSON.stringify({
+        $.post('https://denalifw-phone/PostNewTweet', JSON.stringify({
             Message: TweetMessage,
             Date: CurrentDate,
             Picture: QB.Phone.Data.MetaData.profilepicture,
@@ -117,7 +117,7 @@ $(document).on('click', '#tweet-button', function(e){
             QB.Phone.Notifications.LoadTweets(Tweets);
         });
         var TweetMessage = $("#new-textarea").val(' ');
-        $.post('https://NADRP-phone/GetHashtags', JSON.stringify({}), function(Hashtags){
+        $.post('https://denalifw-phone/GetHashtags', JSON.stringify({}), function(Hashtags){
             QB.Phone.Notifications.LoadHashtags(Hashtags)
         })
         // QB.Phone.Animations.TopSlideUp(".twitter-new-tweet-tab", 450, -120);
@@ -143,13 +143,13 @@ $(document).on('click', '#advert-button', function(e){
             left: -30+"vh"
         });
         if (!picture){
-            $.post('https://NADRP-phone/PostAdvert', JSON.stringify({
+            $.post('https://denalifw-phone/PostAdvert', JSON.stringify({
                 message: Advert,
                 url: null
             }));
             returnDetail()
         }else {
-            $.post('https://NADRP-phone/PostAdvert', JSON.stringify({
+            $.post('https://denalifw-phone/PostAdvert', JSON.stringify({
                 message: Advert,
                 url: picture
             }));

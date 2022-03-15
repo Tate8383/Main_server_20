@@ -1,5 +1,5 @@
-RegisterNetEvent('NADRP-bankrobbery:client:ClearTimeoutDoors', function()
-    TriggerServerEvent('NADRP-doorlock:server:updateState', 85, true)
+RegisterNetEvent('denalifw-bankrobbery:client:ClearTimeoutDoors', function()
+    TriggerServerEvent('denalifw-doorlock:server:updateState', 85, true)
     local PaletoObject = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
     if PaletoObject ~= 0 then
         SetEntityHeading(PaletoObject, Config.BigBanks["paleto"]["heading"].closed)
@@ -36,14 +36,14 @@ CreateThread(function()
         if PaletoDist < 15 then
             inRange = true
             if Config.BigBanks["paleto"]["isOpened"] then
-                TriggerServerEvent('NADRP-doorlock:server:updateState', 85, false)
+                TriggerServerEvent('denalifw-doorlock:server:updateState', 85, false)
                 local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
 
                 if object ~= 0 then
                     SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].open)
                 end
             else
-                TriggerServerEvent('NADRP-doorlock:server:updateState', 85, true)
+                TriggerServerEvent('denalifw-doorlock:server:updateState', 85, true)
                 local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
 
                 if object ~= 0 then

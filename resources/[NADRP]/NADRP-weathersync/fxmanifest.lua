@@ -6,7 +6,7 @@ version '2.0.0'
 
 shared_scripts {
 	'config.lua',
-	'@NADRP-core/shared/locale.lua',
+	'@denalifw-core/shared/locale.lua',
 	'locales/en.lua'
 }
 

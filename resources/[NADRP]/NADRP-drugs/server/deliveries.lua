@@ -1,4 +1,4 @@
-local NADRP = exports['NADRP-core']:GetCoreObject()
+local denalifw = exports['denalifw-core']:GetCoreObject()
 
 local function GetDealers()
     return Config.Dealers
@@ -6,36 +6,36 @@ end
 
 exports("GetDealers", GetDealers)
 
-RegisterNetEvent('NADRP-drugs:server:updateDealerItems', function(itemData, amount, dealer)
+RegisterNetEvent('denalifw-drugs:server:updateDealerItems', function(itemData, amount, dealer)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     if Config.Dealers[dealer]["products"][itemData.slot].amount - 1 >= 0 then
         Config.Dealers[dealer]["products"][itemData.slot].amount =
             Config.Dealers[dealer]["products"][itemData.slot].amount - amount
-        TriggerClientEvent('NADRP-drugs:client:setDealerItems', -1, itemData, amount, dealer)
+        TriggerClientEvent('denalifw-drugs:client:setDealerItems', -1, itemData, amount, dealer)
     else
         Player.Functions.RemoveItem(itemData.name, amount)
         Player.Functions.AddMoney('cash', amount * Config.Dealers[dealer]["products"][itemData.slot].price)
 
-        TriggerClientEvent("NADRP:Notify", src, Lang:t("error.item_unavailable"), "error")
+        TriggerClientEvent("denalifw:Notify", src, Lang:t("error.item_unavailable"), "error")
     end
 end)
 
-RegisterNetEvent('NADRP-drugs:server:giveDeliveryItems', function(amount)
+RegisterNetEvent('denalifw-drugs:server:giveDeliveryItems', function(amount)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
 
     Player.Functions.AddItem('weed_brick', amount)
-    TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["weed_brick"], "add")
+    TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["weed_brick"], "add")
 end)
 
-NADRP.Functions.CreateCallback('NADRP-drugs:server:RequestConfig', function(source, cb)
+denalifw.Functions.CreateCallback('denalifw-drugs:server:RequestConfig', function(source, cb)
     cb(Config.Dealers)
 end)
 
-RegisterNetEvent('NADRP-drugs:server:succesDelivery', function(deliveryData, inTime)
+RegisterNetEvent('denalifw-drugs:server:succesDelivery', function(deliveryData, inTime)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local curRep = Player.PlayerData.metadata["dealerrep"]
 
     if inTime then
@@ -62,24 +62,24 @@ RegisterNetEvent('NADRP-drugs:server:succesDelivery', function(deliveryData, inT
                 Player.Functions.AddMoney('cash', (deliveryData["amount"] * price / 100 * 18), "dilvery-drugs")
             end
 
-            TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["weed_brick"], "remove")
-            TriggerClientEvent('NADRP:Notify', src, Lang:t("success.order_delivered"), 'success')
+            TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["weed_brick"], "remove")
+            TriggerClientEvent('denalifw:Notify', src, Lang:t("success.order_delivered"), 'success')
 
             SetTimeout(math.random(5000, 10000), function()
-                TriggerClientEvent('NADRP-drugs:client:sendDeliveryMail', src, 'perfect', deliveryData)
+                TriggerClientEvent('denalifw-drugs:client:sendDeliveryMail', src, 'perfect', deliveryData)
 
                 Player.Functions.SetMetaData('dealerrep', (curRep + 1))
             end)
         else
-            TriggerClientEvent('NADRP:Notify', src, Lang:t("error.order_not_right"), 'error')
+            TriggerClientEvent('denalifw:Notify', src, Lang:t("error.order_not_right"), 'error')
 
             if Player.Functions.GetItemByName('weed_brick').amount ~= nil then
                 Player.Functions.RemoveItem('weed_brick', Player.Functions.GetItemByName('weed_brick').amount)
-                TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["weed_brick"], "remove")
+                TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["weed_brick"], "remove")
                 Player.Functions.AddMoney('cash', (Player.Functions.GetItemByName('weed_brick').amount * 6000 / 100 * 5))
             end
             SetTimeout(math.random(5000, 10000), function()
-                TriggerClientEvent('NADRP-drugs:client:sendDeliveryMail', src, 'bad', deliveryData)
+                TriggerClientEvent('denalifw-drugs:client:sendDeliveryMail', src, 'bad', deliveryData)
                 if curRep - 1 > 0 then
                     Player.Functions.SetMetaData('dealerrep', (curRep - 1))
                 else
@@ -88,15 +88,15 @@ RegisterNetEvent('NADRP-drugs:server:succesDelivery', function(deliveryData, inT
             end)
         end
     else
-        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.too_late"), 'error')
+        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.too_late"), 'error')
 
         Player.Functions.RemoveItem('weed_brick', deliveryData["amount"])
         Player.Functions.AddMoney('cash', (deliveryData["amount"] * 6000 / 100 * 4), "delivery-drugs-too-late")
 
-        TriggerClientEvent('inventory:client:ItemBox', src, NADRP.Shared.Items["weed_brick"], "remove")
+        TriggerClientEvent('inventory:client:ItemBox', src, denalifw.Shared.Items["weed_brick"], "remove")
 
         SetTimeout(math.random(5000, 10000), function()
-            TriggerClientEvent('NADRP-drugs:client:sendDeliveryMail', src, 'late', deliveryData)
+            TriggerClientEvent('denalifw-drugs:client:sendDeliveryMail', src, 'late', deliveryData)
 
             if curRep - 1 > 0 then
                 Player.Functions.SetMetaData('dealerrep', (curRep - 1))
@@ -107,7 +107,7 @@ RegisterNetEvent('NADRP-drugs:server:succesDelivery', function(deliveryData, inT
     end
 end)
 
-RegisterNetEvent('NADRP-drugs:server:callCops', function(streetLabel, coords)
+RegisterNetEvent('denalifw-drugs:server:callCops', function(streetLabel, coords)
     local msg = Lang:t("info.police_message_server")
     local alertData = {
         title = Lang:t("info.drug_deal"),
@@ -118,18 +118,18 @@ RegisterNetEvent('NADRP-drugs:server:callCops', function(streetLabel, coords)
         },
         description = msg
     }
-    for k, v in pairs(NADRP.Functions.GetPlayers()) do
-        local Player = NADRP.Functions.GetPlayer(v)
+    for k, v in pairs(denalifw.Functions.GetPlayers()) do
+        local Player = denalifw.Functions.GetPlayer(v)
         if Player ~= nil then
             if (Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty) then
-                TriggerClientEvent("NADRP-drugs:client:robberyCall", Player.PlayerData.source, msg, streetLabel, coords)
-                TriggerClientEvent("NADRP-phone:client:addPoliceAlert", Player.PlayerData.source, alertData)
+                TriggerClientEvent("denalifw-drugs:client:robberyCall", Player.PlayerData.source, msg, streetLabel, coords)
+                TriggerClientEvent("denalifw-phone:client:addPoliceAlert", Player.PlayerData.source, alertData)
             end
         end
     end
 end)
 
-NADRP.Commands.Add("newdealer", Lang:t("info.newdealer_command_desc"), {{
+denalifw.Commands.Add("newdealer", Lang:t("info.newdealer_command_desc"), {{
     name = Lang:t("info.newdealer_command_help1_name"),
     help = Lang:t("info.newdealer_command_help1_help")
 }, {
@@ -142,10 +142,10 @@ NADRP.Commands.Add("newdealer", Lang:t("info.newdealer_command_desc"), {{
     local dealerName = args[1]
     local mintime = tonumber(args[2])
     local maxtime = tonumber(args[3])
-    TriggerClientEvent('NADRP-drugs:client:CreateDealer', source, dealerName, mintime, maxtime)
+    TriggerClientEvent('denalifw-drugs:client:CreateDealer', source, dealerName, mintime, maxtime)
 end, "admin")
 
-NADRP.Commands.Add("deletedealer", Lang:t("info.deletedealer_command_desc"), {{
+denalifw.Commands.Add("deletedealer", Lang:t("info.deletedealer_command_desc"), {{
     name = Lang:t("info.deletedealer_command_help1_name"),
     help = Lang:t("info.deletedealer_command_help1_help")
 }}, true, function(source, args)
@@ -154,14 +154,14 @@ NADRP.Commands.Add("deletedealer", Lang:t("info.deletedealer_command_desc"), {{
     if result[1] ~= nil then
         MySQL.Async.execute('DELETE FROM dealers WHERE name = ?', {dealerName})
         Config.Dealers[dealerName] = nil
-        TriggerClientEvent('NADRP-drugs:client:RefreshDealers', -1, Config.Dealers)
-        TriggerClientEvent('NADRP:Notify', source, Lang:t("success.dealer_deleted", {dealerName = dealerName}), "success")
+        TriggerClientEvent('denalifw-drugs:client:RefreshDealers', -1, Config.Dealers)
+        TriggerClientEvent('denalifw:Notify', source, Lang:t("success.dealer_deleted", {dealerName = dealerName}), "success")
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t("error.dealer_not_exists_command", {dealerName = dealerName}), "error")
+        TriggerClientEvent('denalifw:Notify', source, Lang:t("error.dealer_not_exists_command", {dealerName = dealerName}), "error")
     end
 end, "admin")
 
-NADRP.Commands.Add("dealers", Lang:t("info.dealers_command_desc"), {}, false, function(source, args)
+denalifw.Commands.Add("dealers", Lang:t("info.dealers_command_desc"), {}, false, function(source, args)
     local DealersText = ""
     if Config.Dealers ~= nil and next(Config.Dealers) ~= nil then
         for k, v in pairs(Config.Dealers) do
@@ -172,20 +172,20 @@ NADRP.Commands.Add("dealers", Lang:t("info.dealers_command_desc"), {}, false, fu
             args = {}
         })
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t("error.no_dealers"), 'error')
+        TriggerClientEvent('denalifw:Notify', source, Lang:t("error.no_dealers"), 'error')
     end
 end, "admin")
 
-NADRP.Commands.Add("dealergoto", Lang:t("info.dealergoto_command_desc"), {{
+denalifw.Commands.Add("dealergoto", Lang:t("info.dealergoto_command_desc"), {{
     name = Lang:t("info.dealergoto_command_help1_name"),
     help = Lang:t("info.dealergoto_command_help1_help")
 }}, true, function(source, args)
     local DealerName = tostring(args[1])
 
     if Config.Dealers[DealerName] ~= nil then
-        TriggerClientEvent('NADRP-drugs:client:GotoDealer', source, Config.Dealers[DealerName])
+        TriggerClientEvent('denalifw-drugs:client:GotoDealer', source, Config.Dealers[DealerName])
     else
-        TriggerClientEvent('NADRP:Notify', source, Lang:t("error.dealer_not_exists"), 'error')
+        TriggerClientEvent('denalifw:Notify', source, Lang:t("error.dealer_not_exists"), 'error')
     end
 end, "admin")
 
@@ -212,15 +212,15 @@ CreateThread(function()
             }
         end
     end
-    TriggerClientEvent('NADRP-drugs:client:RefreshDealers', -1, Config.Dealers)
+    TriggerClientEvent('denalifw-drugs:client:RefreshDealers', -1, Config.Dealers)
 end)
 
-RegisterNetEvent('NADRP-drugs:server:CreateDealer', function(DealerData)
+RegisterNetEvent('denalifw-drugs:server:CreateDealer', function(DealerData)
     local src = source
-    local Player = NADRP.Functions.GetPlayer(src)
+    local Player = denalifw.Functions.GetPlayer(src)
     local result = MySQL.Sync.fetchAll('SELECT * FROM dealers WHERE name = ?', {DealerData.name})
     if result[1] ~= nil then
-        TriggerClientEvent('NADRP:Notify', src, Lang:t("error.dealer_already_exists"), "error")
+        TriggerClientEvent('denalifw:Notify', src, Lang:t("error.dealer_already_exists"), "error")
     else
         MySQL.Async.insert('INSERT INTO dealers (name, coords, time, createdby) VALUES (?, ?, ?, ?)', {DealerData.name, json.encode(DealerData.pos), json.encode(DealerData.time), Player.PlayerData.citizenid}, function()
             Config.Dealers[DealerData.name] = {
@@ -237,7 +237,7 @@ RegisterNetEvent('NADRP-drugs:server:CreateDealer', function(DealerData)
                 ["products"] = Config.Products
             }
 
-            TriggerClientEvent('NADRP-drugs:client:RefreshDealers', -1, Config.Dealers)
+            TriggerClientEvent('denalifw-drugs:client:RefreshDealers', -1, Config.Dealers)
         end)
     end
 end)

@@ -1,6 +1,6 @@
 -- Variables
-local NADRP = exports['NADRP-core']:GetCoreObject()
-local PlayerData = NADRP.Functions.GetPlayerData() -- Just for resource restart (same as event handler)
+local denalifw = exports['denalifw-core']:GetCoreObject()
+local PlayerData = denalifw.Functions.GetPlayerData() -- Just for resource restart (same as event handler)
 local insideZones = {}
 
 for name, shop in pairs(Config.Shops) do -- foreach shop
@@ -22,21 +22,21 @@ end
 
 -- Handlers
 
-AddEventHandler('NADRP:Client:OnPlayerLoaded', function()
-    PlayerData = NADRP.Functions.GetPlayerData()
+AddEventHandler('denalifw:Client:OnPlayerLoaded', function()
+    PlayerData = denalifw.Functions.GetPlayerData()
     local citizenid = PlayerData.citizenid
     local gameTime = GetGameTimer()
-    TriggerServerEvent('NADRP-vehicleshop:server:addPlayer', citizenid, gameTime)
-    TriggerServerEvent('NADRP-vehicleshop:server:checkFinance')
+    TriggerServerEvent('denalifw-vehicleshop:server:addPlayer', citizenid, gameTime)
+    TriggerServerEvent('denalifw-vehicleshop:server:checkFinance')
 end)
 
-RegisterNetEvent('NADRP:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('denalifw:Client:OnJobUpdate', function(JobInfo)
     PlayerData.job = JobInfo
 end)
 
-RegisterNetEvent('NADRP:Client:OnPlayerUnload', function()
+RegisterNetEvent('denalifw:Client:OnPlayerUnload', function()
     local citizenid = PlayerData.citizenid
-    TriggerServerEvent('NADRP-vehicleshop:server:removePlayer', citizenid)
+    TriggerServerEvent('denalifw-vehicleshop:server:removePlayer', citizenid)
     PlayerData = {}
 end)
 
@@ -47,7 +47,7 @@ local vehHeaderMenu = {
         header = 'Vehicle Options',
         txt = 'Interact with the current vehicle',
         params = {
-            event = 'NADRP-vehicleshop:client:showVehOptions'
+            event = 'denalifw-vehicleshop:client:showVehOptions'
         }
     }
 }
@@ -57,7 +57,7 @@ local financeMenu = {
         header = 'Financed Vehicles',
         txt = 'Browse your owned vehicles',
         params = {
-            event = 'NADRP-vehicleshop:client:getVehicles'
+            event = 'denalifw-vehicleshop:client:getVehicles'
         }
     }
 }
@@ -66,7 +66,7 @@ local returnTestDrive = {
     {
         header = 'Finish Test Drive',
         params = {
-            event = 'NADRP-vehicleshop:client:TestDriveReturn'
+            event = 'denalifw-vehicleshop:client:TestDriveReturn'
         }
     }
 }
@@ -96,15 +96,15 @@ local function comma_value(amount)
 end
 
 local function getVehName()
-    return NADRP.Shared.Vehicles[Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle]["name"]
+    return denalifw.Shared.Vehicles[Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle]["name"]
 end
 
 local function getVehPrice()
-    return comma_value(NADRP.Shared.Vehicles[Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle]["price"])
+    return comma_value(denalifw.Shared.Vehicles[Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle]["price"])
 end
 
 local function getVehBrand()
-    return NADRP.Shared.Vehicles[Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle]["brand"]
+    return denalifw.Shared.Vehicles[Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle]["brand"]
 end
 
 local function setClosestShowroomVehicle()
@@ -140,9 +140,9 @@ local function createTestDriveReturn()
     testDriveZone:onPlayerInOut(function(isPointInside)
         if isPointInside and IsPedInAnyVehicle(PlayerPedId()) then
 			SetVehicleForwardSpeed(GetVehiclePedIsIn(PlayerPedId(), false), 0)
-            exports['NADRP-menu']:openMenu(returnTestDrive)
+            exports['denalifw-menu']:openMenu(returnTestDrive)
         else
-            exports['NADRP-menu']:closeMenu()
+            exports['denalifw-menu']:closeMenu()
         end
     end)
 end
@@ -188,18 +188,18 @@ local function createVehZones(shopName) -- This will create an entity zone if co
             local insideShop = getShopInsideOf()
             if isPointInside then
                 if PlayerData.job.name == Config.Shops[insideShop]['Job'] or Config.Shops[insideShop]['Job'] == 'none' then
-                    exports['NADRP-menu']:showHeader(vehHeaderMenu)
+                    exports['denalifw-menu']:showHeader(vehHeaderMenu)
                 end
             else
-                exports['NADRP-menu']:closeMenu()
+                exports['denalifw-menu']:closeMenu()
             end
         end)
     else
-        exports['NADRP-target']:AddGlobalVehicle({
+        exports['denalifw-target']:AddGlobalVehicle({
             options = {
                 {
                     type = "client",
-                    event = "NADRP-vehicleshop:client:showVehOptions",
+                    event = "denalifw-vehicleshop:client:showVehOptions",
                     icon = "fas fa-car",
                     label = "Vehicle Interaction",
                     canInteract = function(entity)
@@ -240,7 +240,7 @@ function createFreeUseShop(shopShape, name)
                             header = 'Test Drive',
                             txt = 'Test drive currently selected vehicle',
                             params = {
-                                event = 'NADRP-vehicleshop:client:TestDrive',
+                                event = 'denalifw-vehicleshop:client:TestDrive',
                             }
                         },
                         {
@@ -248,7 +248,7 @@ function createFreeUseShop(shopShape, name)
                             txt = 'Purchase currently selected vehicle',
                             params = {
                                 isServer = true,
-                                event = 'NADRP-vehicleshop:server:buyShowroomVehicle',
+                                event = 'denalifw-vehicleshop:server:buyShowroomVehicle',
                                 args = {
                                     buyVehicle = Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle
                                 }
@@ -258,7 +258,7 @@ function createFreeUseShop(shopShape, name)
                             header = 'Finance Vehicle',
                             txt = 'Finance currently selected vehicle',
                             params = {
-                                event = 'NADRP-vehicleshop:client:openFinance',
+                                event = 'denalifw-vehicleshop:client:openFinance',
                                 args = {
                                     price = getVehPrice(),
                                     buyVehicle = Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle
@@ -269,7 +269,7 @@ function createFreeUseShop(shopShape, name)
                             header = 'Swap Vehicle',
                             txt = 'Change currently selected vehicle',
                             params = {
-                                event = 'NADRP-vehicleshop:client:vehCategories',
+                                event = 'denalifw-vehicleshop:client:vehCategories',
                             }
                         },
                     }
@@ -306,7 +306,7 @@ function createManagedShop(shopShape, name, jobName)
                             header = 'Test Drive',
                             txt = 'Allow player for test drive',
                             params = {
-                                event = 'NADRP-vehicleshop:client:openIdMenu',
+                                event = 'denalifw-vehicleshop:client:openIdMenu',
                                 args = {
                                     vehicle = Config.Shops[closestShop]["ShowroomVehicles"][ClosestVehicle].chosenVehicle,
                                     type = 'testDrive'
@@ -317,7 +317,7 @@ function createManagedShop(shopShape, name, jobName)
                             header = "Sell Vehicle",
                             txt = 'Sell vehicle to Player',
                             params = {
-                                event = 'NADRP-vehicleshop:client:openIdMenu',
+                                event = 'denalifw-vehicleshop:client:openIdMenu',
                                 args = {
                                     vehicle = Config.Shops[closestShop]["ShowroomVehicles"][ClosestVehicle].chosenVehicle,
                                     type = 'sellVehicle'
@@ -328,7 +328,7 @@ function createManagedShop(shopShape, name, jobName)
                             header = 'Finance Vehicle',
                             txt = 'Finance vehicle to Player',
                             params = {
-                                event = 'NADRP-vehicleshop:client:openCustomFinance',
+                                event = 'denalifw-vehicleshop:client:openCustomFinance',
                                 args = {
                                     price = getVehPrice(),
                                     vehicle = Config.Shops[closestShop]["ShowroomVehicles"][ClosestVehicle].chosenVehicle
@@ -339,7 +339,7 @@ function createManagedShop(shopShape, name, jobName)
                             header = 'Swap Vehicle',
                             txt = 'Change currently selected vehicle',
                             params = {
-                                event = 'NADRP-vehicleshop:client:vehCategories',
+                                event = 'denalifw-vehicleshop:client:vehCategories',
                             }
                         },
                     }
@@ -363,99 +363,99 @@ end
 
 -- Events
 
-RegisterNetEvent('NADRP-vehicleshop:client:homeMenu', function()
-    exports['NADRP-menu']:openMenu(vehicleMenu)
+RegisterNetEvent('denalifw-vehicleshop:client:homeMenu', function()
+    exports['denalifw-menu']:openMenu(vehicleMenu)
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:showVehOptions', function()
-    exports['NADRP-menu']:openMenu(vehicleMenu)
+RegisterNetEvent('denalifw-vehicleshop:client:showVehOptions', function()
+    exports['denalifw-menu']:openMenu(vehicleMenu)
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:TestDrive', function()
+RegisterNetEvent('denalifw-vehicleshop:client:TestDrive', function()
     if not inTestDrive and ClosestVehicle ~= 0 then
         inTestDrive = true
         local prevCoords = GetEntityCoords(PlayerPedId())
-        NADRP.Functions.SpawnVehicle(Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle, function(veh)
+        denalifw.Functions.SpawnVehicle(Config.Shops[getShopInsideOf()]["ShowroomVehicles"][ClosestVehicle].chosenVehicle, function(veh)
             local closestShop = getShopInsideOf()
             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
             exports['LegacyFuel']:SetFuel(veh, 100)
             SetVehicleNumberPlateText(veh, 'TESTDRIVE')
             SetEntityAsMissionEntity(veh, true, true)
             SetEntityHeading(veh, Config.Shops[closestShop]["VehicleSpawn"].w)
-            TriggerEvent('vehiclekeys:client:SetOwner', NADRP.Functions.GetPlate(veh))
-            TriggerServerEvent('NADRP-vehicletuning:server:SaveVehicleProps', NADRP.Functions.GetVehicleProperties(veh))
+            TriggerEvent('vehiclekeys:client:SetOwner', denalifw.Functions.GetPlate(veh))
+            TriggerServerEvent('denalifw-vehicletuning:server:SaveVehicleProps', denalifw.Functions.GetVehicleProperties(veh))
             testDriveVeh = veh
-            NADRP.Functions.Notify('You have '..Config.Shops[closestShop]["TestDriveTimeLimit"]..' minutes remaining')
+            denalifw.Functions.Notify('You have '..Config.Shops[closestShop]["TestDriveTimeLimit"]..' minutes remaining')
             SetTimeout(Config.Shops[closestShop]["TestDriveTimeLimit"] * 60000, function()
                 if testDriveVeh ~= 0 then
                     testDriveVeh = 0
                     inTestDrive = false
-                    NADRP.Functions.DeleteVehicle(veh)
+                    denalifw.Functions.DeleteVehicle(veh)
                     SetEntityCoords(PlayerPedId(), prevCoords)
-                    NADRP.Functions.Notify('Vehicle test drive complete')
+                    denalifw.Functions.Notify('Vehicle test drive complete')
                 end
             end)
         end, Config.Shops[getShopInsideOf()]["VehicleSpawn"], false)
         createTestDriveReturn()
         startTestDriveTimer(Config.Shops[getShopInsideOf()]["TestDriveTimeLimit"] * 60)
     else
-        NADRP.Functions.Notify('Already in test drive', 'error')
+        denalifw.Functions.Notify('Already in test drive', 'error')
     end
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:customTestDrive', function(data)
+RegisterNetEvent('denalifw-vehicleshop:client:customTestDrive', function(data)
     if not inTestDrive then
         inTestDrive = true
         shopInsideOf = getShopInsideOf()
         local vehicle = data
         local prevCoords = GetEntityCoords(PlayerPedId())
-        NADRP.Functions.SpawnVehicle(vehicle, function(veh)
+        denalifw.Functions.SpawnVehicle(vehicle, function(veh)
             local shopInsideOf = getShopInsideOf()
             exports['LegacyFuel']:SetFuel(veh, 100)
             SetVehicleNumberPlateText(veh, 'TESTDRIVE')
             SetEntityAsMissionEntity(veh, true, true)
             SetEntityHeading(veh, Config.Shops[shopInsideOf]["VehicleSpawn"].w)
-            TriggerEvent('vehiclekeys:client:SetOwner', NADRP.Functions.GetPlate(veh))
-            TriggerServerEvent('NADRP-vehicletuning:server:SaveVehicleProps', NADRP.Functions.GetVehicleProperties(veh))
+            TriggerEvent('vehiclekeys:client:SetOwner', denalifw.Functions.GetPlate(veh))
+            TriggerServerEvent('denalifw-vehicletuning:server:SaveVehicleProps', denalifw.Functions.GetVehicleProperties(veh))
             testDriveVeh = veh
-            NADRP.Functions.Notify('You have '..Config.Shops[shopInsideOf]["TestDriveTimeLimit"]..' minutes remaining')
+            denalifw.Functions.Notify('You have '..Config.Shops[shopInsideOf]["TestDriveTimeLimit"]..' minutes remaining')
             SetTimeout(Config.Shops[shopInsideOf]["TestDriveTimeLimit"] * 60000, function()
                 if testDriveVeh ~= 0 then
                     testDriveVeh = 0
                     inTestDrive = false
-                    NADRP.Functions.DeleteVehicle(veh)
+                    denalifw.Functions.DeleteVehicle(veh)
                     SetEntityCoords(PlayerPedId(), prevCoords)
-                    NADRP.Functions.Notify('Vehicle test drive complete')
+                    denalifw.Functions.Notify('Vehicle test drive complete')
                 end
             end)
         end, Config.Shops[shopInsideOf]["VehicleSpawn"], false)
         createTestDriveReturn()
         startTestDriveTimer(Config.Shops[shopInsideOf]["TestDriveTimeLimit"] * 60)
     else
-        NADRP.Functions.Notify('Already in test drive', 'error')
+        denalifw.Functions.Notify('Already in test drive', 'error')
     end
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:TestDriveReturn', function()
+RegisterNetEvent('denalifw-vehicleshop:client:TestDriveReturn', function()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped)
     if veh == testDriveVeh then
         testDriveVeh = 0
         inTestDrive = false
-        NADRP.Functions.DeleteVehicle(veh)
-        exports['NADRP-menu']:closeMenu()
+        denalifw.Functions.DeleteVehicle(veh)
+        exports['denalifw-menu']:closeMenu()
         testDriveZone:destroy()
     else
-        NADRP.Functions.Notify('This is not your test drive vehicle', 'error')
+        denalifw.Functions.Notify('This is not your test drive vehicle', 'error')
     end
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:vehCategories', function()
+RegisterNetEvent('denalifw-vehicleshop:client:vehCategories', function()
     local categoryMenu = {
         {
             header = '< Go Back',
             params = {
-                event = 'NADRP-vehicleshop:client:homeMenu'
+                event = 'denalifw-vehicleshop:client:homeMenu'
             }
         }
     }
@@ -463,33 +463,33 @@ RegisterNetEvent('NADRP-vehicleshop:client:vehCategories', function()
         categoryMenu[#categoryMenu + 1] = {
             header = v,
             params = {
-                event = 'NADRP-vehicleshop:client:openVehCats',
+                event = 'denalifw-vehicleshop:client:openVehCats',
                 args = {
                     catName = k
                 }
             }
         }
     end
-    exports['NADRP-menu']:openMenu(categoryMenu)
+    exports['denalifw-menu']:openMenu(categoryMenu)
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:openVehCats', function(data)
+RegisterNetEvent('denalifw-vehicleshop:client:openVehCats', function(data)
     local vehicleMenu = {
         {
             header = '< Go Back',
             params = {
-                event = 'NADRP-vehicleshop:client:vehCategories'
+                event = 'denalifw-vehicleshop:client:vehCategories'
             }
         }
     }
-    for k,v in pairs(NADRP.Shared.Vehicles) do
-        if NADRP.Shared.Vehicles[k]["category"] == data.catName and NADRP.Shared.Vehicles[k]["shop"] == getShopInsideOf() then
+    for k,v in pairs(denalifw.Shared.Vehicles) do
+        if denalifw.Shared.Vehicles[k]["category"] == data.catName and denalifw.Shared.Vehicles[k]["shop"] == getShopInsideOf() then
             vehicleMenu[#vehicleMenu + 1] = {
                 header = v.name,
                 txt = 'Price: $'..v.price,
                 params = {
                     isServer = true,
-                    event = 'NADRP-vehicleshop:server:swapVehicle',
+                    event = 'denalifw-vehicleshop:server:swapVehicle',
                     args = {
                         toVehicle = v.model,
                         ClosestVehicle = ClosestVehicle,
@@ -499,11 +499,11 @@ RegisterNetEvent('NADRP-vehicleshop:client:openVehCats', function(data)
             }
         end
     end
-    exports['NADRP-menu']:openMenu(vehicleMenu)
+    exports['denalifw-menu']:openMenu(vehicleMenu)
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:openFinance', function(data)
-    local dialog = exports['NADRP-input']:ShowInput({
+RegisterNetEvent('denalifw-vehicleshop:client:openFinance', function(data)
+    local dialog = exports['denalifw-input']:ShowInput({
         header = getVehBrand():upper().. ' ' ..data.buyVehicle:upper().. ' - $' ..data.price,
         submitText = "Submit",
         inputs = {
@@ -523,13 +523,13 @@ RegisterNetEvent('NADRP-vehicleshop:client:openFinance', function(data)
     })
     if dialog then
         if not dialog.downPayment or not dialog.paymentAmount then return end
-        TriggerServerEvent('NADRP-vehicleshop:server:financeVehicle', dialog.downPayment, dialog.paymentAmount, data.buyVehicle)
+        TriggerServerEvent('denalifw-vehicleshop:server:financeVehicle', dialog.downPayment, dialog.paymentAmount, data.buyVehicle)
     end
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:openCustomFinance', function(data)
+RegisterNetEvent('denalifw-vehicleshop:client:openCustomFinance', function(data)
     TriggerEvent('animations:client:EmoteCommandStart', {"tablet2"})
-    local dialog = exports['NADRP-input']:ShowInput({
+    local dialog = exports['denalifw-input']:ShowInput({
         header = getVehBrand():upper().. ' ' ..data.vehicle:upper().. ' - $' ..data.price,
         submitText = "Submit",
         inputs = {
@@ -556,16 +556,16 @@ RegisterNetEvent('NADRP-vehicleshop:client:openCustomFinance', function(data)
     if dialog then
         if not dialog.downPayment or not dialog.paymentAmount or not dialog.playerid then return end
         TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-        TriggerServerEvent('NADRP-vehicleshop:server:sellfinanceVehicle', dialog.downPayment, dialog.paymentAmount, data.vehicle, dialog.playerid)
+        TriggerServerEvent('denalifw-vehicleshop:server:sellfinanceVehicle', dialog.downPayment, dialog.paymentAmount, data.vehicle, dialog.playerid)
     end
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:swapVehicle', function(data)
+RegisterNetEvent('denalifw-vehicleshop:client:swapVehicle', function(data)
     local shopName = getShopInsideOf()
     if Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].chosenVehicle ~= data.toVehicle then
-        local closestVehicle, closestDistance = NADRP.Functions.GetClosestVehicle(vector3(Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].coords.x, Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].coords.y, Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].coords.z))
+        local closestVehicle, closestDistance = denalifw.Functions.GetClosestVehicle(vector3(Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].coords.x, Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].coords.y, Config.Shops[shopName]["ShowroomVehicles"][data.ClosestVehicle].coords.z))
         if closestVehicle == 0 then return end
-        if closestDistance < 5 then NADRP.Functions.DeleteVehicle(closestVehicle) end
+        if closestDistance < 5 then denalifw.Functions.DeleteVehicle(closestVehicle) end
         Wait(250)
         local model = GetHashKey(data.toVehicle)
         RequestModel(model)
@@ -584,30 +584,30 @@ RegisterNetEvent('NADRP-vehicleshop:client:swapVehicle', function(data)
     end
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:buyShowroomVehicle', function(vehicle, plate)
-    NADRP.Functions.SpawnVehicle(vehicle, function(veh)
+RegisterNetEvent('denalifw-vehicleshop:client:buyShowroomVehicle', function(vehicle, plate)
+    denalifw.Functions.SpawnVehicle(vehicle, function(veh)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         exports['LegacyFuel']:SetFuel(veh, 100)
         SetVehicleNumberPlateText(veh, plate)
         SetEntityHeading(veh, Config.Shops[getShopInsideOf()]["VehicleSpawn"].w)
         SetEntityAsMissionEntity(veh, true, true)
-        TriggerEvent("vehiclekeys:client:SetOwner", NADRP.Functions.GetPlate(veh))
-        TriggerServerEvent("NADRP-vehicletuning:server:SaveVehicleProps", NADRP.Functions.GetVehicleProperties(veh))
+        TriggerEvent("vehiclekeys:client:SetOwner", denalifw.Functions.GetPlate(veh))
+        TriggerServerEvent("denalifw-vehicletuning:server:SaveVehicleProps", denalifw.Functions.GetVehicleProperties(veh))
     end, Config.Shops[getShopInsideOf()]["VehicleSpawn"], true)
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:getVehicles', function()
-    NADRP.Functions.TriggerCallback('NADRP-vehicleshop:server:getVehicles', function(vehicles)
+RegisterNetEvent('denalifw-vehicleshop:client:getVehicles', function()
+    denalifw.Functions.TriggerCallback('denalifw-vehicleshop:server:getVehicles', function(vehicles)
         local ownedVehicles = {}
         for k,v in pairs(vehicles) do
             if v.balance then
-                local name = NADRP.Shared.Vehicles[v.vehicle]["name"]
+                local name = denalifw.Shared.Vehicles[v.vehicle]["name"]
                 local plate = v.plate:upper()
                 ownedVehicles[#ownedVehicles + 1] = {
                     header = ''..name..'',
                     txt = 'Plate: ' ..plate,
                     params = {
-                        event = 'NADRP-vehicleshop:client:getVehicleFinance',
+                        event = 'denalifw-vehicleshop:client:getVehicleFinance',
                         args = {
                             vehiclePlate = plate,
                             balance = v.balance,
@@ -618,16 +618,16 @@ RegisterNetEvent('NADRP-vehicleshop:client:getVehicles', function()
                 }
             end
         end
-        exports['NADRP-menu']:openMenu(ownedVehicles)
+        exports['denalifw-menu']:openMenu(ownedVehicles)
     end)
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:getVehicleFinance', function(data)
+RegisterNetEvent('denalifw-vehicleshop:client:getVehicleFinance', function(data)
     local vehFinance = {
         {
             header = '< Go Back',
             params = {
-                event = 'NADRP-vehicleshop:client:getVehicles'
+                event = 'denalifw-vehicleshop:client:getVehicles'
             }
         },
         {
@@ -648,7 +648,7 @@ RegisterNetEvent('NADRP-vehicleshop:client:getVehicleFinance', function(data)
         {
             header = 'Make a payment',
             params = {
-                event = 'NADRP-vehicleshop:client:financePayment',
+                event = 'denalifw-vehicleshop:client:financePayment',
                 args = {
                     vehData = data,
                     paymentsLeft = data.paymentsleft,
@@ -660,7 +660,7 @@ RegisterNetEvent('NADRP-vehicleshop:client:getVehicleFinance', function(data)
             header = 'Payoff vehicle',
             params = {
                 isServer = true,
-                event = 'NADRP-vehicleshop:server:financePaymentFull',
+                event = 'denalifw-vehicleshop:server:financePaymentFull',
                 args = {
                     vehBalance = data.balance,
                     vehPlate = data.vehiclePlate
@@ -668,11 +668,11 @@ RegisterNetEvent('NADRP-vehicleshop:client:getVehicleFinance', function(data)
             }
         },
     }
-    exports['NADRP-menu']:openMenu(vehFinance)
+    exports['denalifw-menu']:openMenu(vehFinance)
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:financePayment', function(data)
-    local dialog = exports['NADRP-input']:ShowInput({
+RegisterNetEvent('denalifw-vehicleshop:client:financePayment', function(data)
+    local dialog = exports['denalifw-input']:ShowInput({
         header = 'Vehicle Payment',
         submitText = "Make Payment",
         inputs = {
@@ -686,13 +686,13 @@ RegisterNetEvent('NADRP-vehicleshop:client:financePayment', function(data)
     })
     if dialog then
         if not dialog.paymentAmount then return end
-        TriggerServerEvent('NADRP-vehicleshop:server:financePayment', dialog.paymentAmount, data.vehData)
+        TriggerServerEvent('denalifw-vehicleshop:server:financePayment', dialog.paymentAmount, data.vehData)
     end
 end)
 
-RegisterNetEvent('NADRP-vehicleshop:client:openIdMenu', function(data)
-    local dialog = exports['NADRP-input']:ShowInput({
-        header = NADRP.Shared.Vehicles[data.vehicle]["name"],
+RegisterNetEvent('denalifw-vehicleshop:client:openIdMenu', function(data)
+    local dialog = exports['denalifw-input']:ShowInput({
+        header = denalifw.Shared.Vehicles[data.vehicle]["name"],
         submitText = "Submit",
         inputs = {
             {
@@ -706,9 +706,9 @@ RegisterNetEvent('NADRP-vehicleshop:client:openIdMenu', function(data)
     if dialog then
         if not dialog.playerid then return end
         if data.type == 'testDrive' then
-            TriggerServerEvent('NADRP-vehicleshop:server:customTestDrive', data.vehicle, dialog.playerid)
+            TriggerServerEvent('denalifw-vehicleshop:server:customTestDrive', data.vehicle, dialog.playerid)
         elseif data.type == 'sellVehicle' then
-            TriggerServerEvent('NADRP-vehicleshop:server:sellShowroomVehicle', data.vehicle, dialog.playerid)
+            TriggerServerEvent('denalifw-vehicleshop:server:sellShowroomVehicle', data.vehicle, dialog.playerid)
         end
     end
 end)
@@ -741,9 +741,9 @@ CreateThread(function()
 
     financeZone:onPlayerInOut(function(isPointInside)
         if isPointInside then
-            exports['NADRP-menu']:showHeader(financeMenu)
+            exports['denalifw-menu']:showHeader(financeMenu)
         else
-            exports['NADRP-menu']:closeMenu()
+            exports['denalifw-menu']:closeMenu()
         end
     end)
 end)
